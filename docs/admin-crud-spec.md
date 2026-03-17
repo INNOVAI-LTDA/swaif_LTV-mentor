@@ -35,23 +35,6 @@ Escopo administrativo coberto por esta especificacao:
 
 ## Regras transversais
 
-### 0. Baseline de superficie administrativa
-
-Os ajustes consolidados no Bloco 1 passam a ser padrao para os proximos blocos do Admin:
-
-1. A abertura do `Centro Institucional` deve priorizar contexto real e ativo, sem excesso de elementos concorrentes.
-2. A area central deve exibir apenas os cards do contexto raiz ativo do bloco corrente.
-3. No contexto raiz, a entrada principal de create deve ficar no topo direito da secao de cards.
-4. Em areas de apoio com contexto selecionado, usar um botao contextual `Cadastrar...` no canto esquerdo da superficie principal para escolher a entidade do create.
-5. O menu `Cadastrar...` pode listar entidades ainda nao implementadas, mas deve sinalizar que pertencem aos proximos blocos sem simular CRUD fora do escopo.
-6. Formularios de create devem abrir em modal, com confirmacao antes da gravacao e mensagem curta de sucesso ao final.
-7. Paineis deslizantes laterais nao devem ser reutilizados nos proximos blocos.
-8. Quando houver selecao de area, a leitura principal deve ficar na propria area central, em composicao limpa e lado a lado quando fizer sentido.
-9. Cards de entidades filhas devem aparecer ao lado do contexto pai selecionado, nao em painel separado.
-10. Estados vazios podem preparar o proximo bloco, mas sem simular CRUD completo fora do escopo atual.
-11. Quando o bloco ainda nao tiver CRUD real da entidade filha seguinte, a superficie deve mostrar apenas o card agregador ou o link minimo necessario para abrir o create, sem detalhes de ficha residual.
-12. A evolucao visual da hierarquia deve ser sequencial, preservando a ordem do metodo ou da operacao para destravar os proximos blocos sem reformatacao ampla da tela.
-
 ### 1. Operacoes permitidas por etapa
 
 Cada bloco deve seguir a ordem abaixo, salvo necessidade tecnica pontual:
@@ -59,7 +42,7 @@ Cada bloco deve seguir a ordem abaixo, salvo necessidade tecnica pontual:
 1. Read
 2. Create
 3. Update
-4. Deactivate
+4. Delete
 
 Nao e obrigatorio concluir as quatro operacoes no mesmo bloco de entrega. O esperado e fechar uma unidade util, abrivel e validavel.
 
@@ -150,15 +133,6 @@ Raiz administrativa do ambiente. Define o contexto para produtos, mentores e alu
 - Nenhuma para create.
 - E pre-requisito para Produto/Mentoria.
 
-### Padrao visual consolidado
-
-- Na abertura do Admin, mostrar apenas clientes ativos na area central.
-- Ao selecionar `Clientes`, exibir o card do cliente selecionado com `nome` e `cnpj`.
-- Produtos ligados ao cliente devem aparecer ao lado do card do cliente, na mesma superficie principal.
-- Na area `Clientes`, o botao contextual `Cadastrar...` fica disponivel no canto esquerdo para destravar os proximos CRUDs administrativos.
-- Se o cliente ainda nao tiver produto, mostrar apenas o link `Cadastrar Produto...` na linha da area de produtos.
-- O cadastro de cliente permanece em modal para preservar leitura limpa.
-
 ## 2. Produto/Mentoria
 
 ### Papel
@@ -198,18 +172,6 @@ Oferta operada dentro do Cliente/Empresa. E o centro da estrutura pedagogica e o
 
 - Depende de Cliente/Empresa ativo.
 - Desbloqueia Mentor, Pilar e vinculos posteriores.
-
-### Padrao visual consolidado
-
-- Ao selecionar `Produtos`, remover qualquer cabecalho residual de `Cliente/Empresa` da area central.
-- A superficie principal de `Produtos` deve seguir a sequencia `Produto -> Mentor -> Pilar`.
-- O primeiro card mostra apenas o produto atual, sem ficha expandida de cadastro.
-- O segundo card representa o contexto de mentor do produto; enquanto o bloco de Mentor nao estiver operacional, manter apenas o estado limpo do card.
-- O terceiro card representa `Pilar` como agregador.
-- Se houver pilares reais, o card agregador deve indicar `Clique para abrir` e preparar a expansao vertical para baixo.
-- Se ainda nao houver pilares, o card deve mostrar `Nenhum Pilar Cadastrado`.
-- O clique no card do produto deve recolher novamente a pilha de pilares, preservando leitura limpa.
-- O botao contextual `Cadastrar...` tambem deve existir na area `Produtos` para manter consistencia de operacao.
 
 ## 3. Mentor
 
