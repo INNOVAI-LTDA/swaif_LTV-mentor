@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "prt_1",
+      "organization_id": "org_1",
+      "name": "Metodo Estrutura",
+      "code": "metodo-estrutura",
+      "metadata": {},
+      "is_active": true
+    }
+  ]
+}

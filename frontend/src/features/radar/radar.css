@@ -1,0 +1,234 @@
+.radar-page {
+  display: grid;
+  gap: 12px;
+  color: #f2f2f2;
+}
+
+.radar-control-row {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) minmax(260px, 1fr) minmax(220px, 280px);
+  gap: 12px;
+}
+
+.radar-select-wrap,
+.radar-slider-wrap,
+.radar-student-chip,
+.radar-panel,
+.radar-insight,
+.radar-kpi-grid article {
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(18, 18, 18, 0.98) 0%, rgba(11, 11, 11, 0.98) 100%);
+  padding: 14px;
+}
+
+.radar-select-wrap span,
+.radar-slider-header span,
+.radar-student-chip p,
+.radar-kpi-grid span {
+  display: block;
+  margin: 0 0 6px;
+  color: #f2ce73;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.radar-select-wrap select {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f2f2f2;
+  padding: 10px 12px;
+}
+
+.radar-slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.radar-slider-header strong {
+  color: #fab800;
+  font-size: 24px;
+}
+
+.radar-slider-wrap input[type="range"] {
+  width: 100%;
+  accent-color: #fab800;
+}
+
+.radar-student-chip strong {
+  display: block;
+  font-size: 18px;
+}
+
+.radar-student-chip span {
+  display: block;
+  margin-top: 4px;
+  color: #b8b8b8;
+  font-size: 12px;
+}
+
+.radar-state {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px 14px;
+}
+
+.radar-state--error {
+  border-color: rgba(214, 69, 69, 0.34);
+  background: rgba(214, 69, 69, 0.08);
+}
+
+.radar-state--error button {
+  margin-top: 8px;
+  border: 1px solid rgba(214, 69, 69, 0.4);
+  border-radius: 999px;
+  background: transparent;
+  color: #ffd2d2;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.radar-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.radar-kpi-grid strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 22px;
+}
+
+.radar-main-grid {
+  display: grid;
+  grid-template-columns: minmax(420px, 58%) minmax(320px, 42%);
+  gap: 12px;
+}
+
+.radar-panel--axis-list header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.radar-panel--axis-list header p {
+  margin: 6px 0 0;
+  color: #b8b8b8;
+  font-size: 12px;
+}
+
+.radar-chart {
+  margin: 0;
+}
+
+.radar-chart figcaption {
+  margin-bottom: 8px;
+  color: #b8b8b8;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.radar-chart svg {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, #121212 0%, #0c0c0c 100%);
+}
+
+.radar-chart-empty {
+  min-height: 220px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  color: #b8b8b8;
+}
+
+.radar-axis-list {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.radar-axis-list li {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+}
+
+.radar-axis-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.radar-axis-top strong {
+  font-size: 14px;
+}
+
+.radar-axis-top span {
+  color: #fab800;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.radar-axis-sub {
+  margin: 4px 0 0;
+  color: #b8b8b8;
+  font-size: 12px;
+}
+
+.radar-axis-values {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 6px 8px;
+}
+
+.radar-axis-values span {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 6px 8px;
+  color: #c0c0c0;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.radar-insight h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #fab800;
+}
+
+.radar-insight p {
+  margin: 0 0 8px;
+  color: #d1d1d1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.radar-insight em {
+  color: #f6df9d;
+}
+
+@media (max-width: 1040px) {
+  .radar-control-row,
+  .radar-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .radar-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "plr_1",
+      "protocol_id": "prt_1",
+      "name": "Compromisso",
+      "code": "compromisso",
+      "order_index": 1,
+      "metadata": {
+        "axis_sub": "Sub A"
+      },
+      "is_active": true
+    },
+    {
+      "id": "plr_2",
+      "protocol_id": "prt_1",
+      "name": "Evolucao",
+      "code": "evolucao",
+      "order_index": 2,
+      "metadata": {
+        "axis_sub": "Sub B"
+      },
+      "is_active": true
+    }
+  ]
+}

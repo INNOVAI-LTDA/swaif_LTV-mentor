@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "mtr_1",
+      "full_name": "Carla Mentora",
+      "email": "carla@swaif.local",
+      "is_active": true,
+      "organization_id": "org_1"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "met_1",
+      "protocol_id": "prt_1",
+      "pillar_id": "plr_1",
+      "name": "Comparecimento",
+      "code": "comparecimento",
+      "direction": "higher_better",
+      "unit": "%",
+      "metadata": {},
+      "is_active": true
+    }
+  ]
+}

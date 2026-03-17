@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "chk_1",
+      "enrollment_id": "enr_1",
+      "week": 1,
+      "status": "green",
+      "label": "Onboarding"
+    },
+    {
+      "id": "chk_2",
+      "enrollment_id": "enr_1",
+      "week": 2,
+      "status": "yellow",
+      "label": "Ajuste de rotina"
+    }
+  ]
+}

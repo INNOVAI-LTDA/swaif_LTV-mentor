@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "std_1",
+      "full_name": "Aluno Delta",
+      "initials": "AD",
+      "email": null,
+      "status": "active",
+      "is_active": true
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "enr_1",
+      "student_id": "std_1",
+      "organization_id": "org_1",
+      "progress_score": 0.2,
+      "engagement_score": 0.0,
+      "urgency_status": "normal",
+      "day": 45,
+      "total_days": 90,
+      "days_left": 45,
+      "ltv_cents": 0,
+      "is_active": true
+    },
+    {
+      "id": "enr_2",
+      "student_id": "std_2",
+      "organization_id": "org_1",
+      "progress_score": 0.4,
+      "engagement_score": 0.7,
+      "urgency_status": "normal",
+      "day": 0,
+      "total_days": 0,
+      "days_left": 80,
+      "ltv_cents": 0,
+      "is_active": true
+    }
+  ]
+}

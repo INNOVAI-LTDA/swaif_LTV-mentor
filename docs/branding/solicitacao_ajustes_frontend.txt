@@ -1,0 +1,36 @@
+# Ajuste nas telas:
+## Ajuste 1.1: Posicionamento do Logo na Tela de Login
+- Tela: Login
+- Ponto autal: Logo
+- Mudança desejada: Agora ficou alto demais (alinhamento foi como centro do logo, e não com o topo). Pode descer, fazendo o mesmo alinhamento atual com outra caixa de texto: "Valida a visão de controle...."
+- Prioridade: Alta
+
+## Ajuste 2: Dimerização do fundo de tela
+- Tela: Login
+- Ponto autal: Imagem do fundo da tela
+- Mudança desejada: O texto que está no fundo de tela está brigando com o texto do logo. Poderia aplicar uma dimerização para apagar um pouco mais o canal das cores contrastantes com o preto (branco, amarelo). 
+- Prioridade: Alta
+
+## Ajuste 3: Conceito
+- Tela: Aluno
+- Ponto autal: Tela geral
+- Mudança desejada: Atualmente essa Tela está mais para algo administrativo (busca por alunos). Contudo, essa tela não é para buscar por alunos. Essa tela é a que um aluno vai ver, de acordo com as suas credenciais. 
+- Prioridade: Alta
+
+## Ajuste 4: Organização dos elementos para visualização em abas
+- Tela: Aluno
+- Ponto autal: Tela geral
+- Mudança desejada: A nova estrutura visa organizar as visões por abas. Dessa forma, a primeira aba que o aluno vai ver será o Radar de Evolução. Depois dela vem a aba de Linha do Tempo e a aba de Indicadores.
+- Prioridade: Alta
+
+## Ajuste 5: Organização dos elementos para visualização da seçãode área de apoio
+- Tela: Aluno
+- Ponto autal: Seção "Areas de Apoio"
+- Mudança desejada: Para as áreas de apoio "Produtos" e "Mentores", sua exibição deveria ser uma lista dos produtos e/ou mentores que o aluno está vinculado. Na área "Usuário", alterar o nome para "Minha Conta". Na sua exibição, manter apenas as seções de "Perfil" e "Preferências" e deixar alguma forma dele poder clicar e acessar posteriormente. Remover a seção "Historico". 
+- Prioridade: Alta
+
+## Ajuste 6: Organização dos elementos para visualização - Parte 1
+- Tela: Aluno
+- Ponto autal: Tela geral
+- Mudança desejada: Colocar na Aba "Indicadores" as seções: "Seu progresso", "Seu engajamento", "Media Atual", "Potencial Projetado". Se o usuário selecionar "Sua jornada" no painel lateral esquerdo, o painel lateral direito precisa estar recolhido, dando mais espaço para a visualização central. O painel lateral direito só aparece (encolhendo a visão central), quando uma das opções da "Area de Apoio" é clicada pelo aluno. 
+- Prioridade: Alta

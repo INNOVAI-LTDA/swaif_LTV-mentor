@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "plr_1",
+      "protocol_id": "prt_1",
+      "name": "Resultados",
+      "code": "resultados",
+      "order_index": 2,
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "plr_2",
+      "protocol_id": "prt_1",
+      "name": "Consistencia",
+      "code": "consistencia",
+      "order_index": 1,
+      "metadata": {},
+      "is_active": true
+    }
+  ]
+}

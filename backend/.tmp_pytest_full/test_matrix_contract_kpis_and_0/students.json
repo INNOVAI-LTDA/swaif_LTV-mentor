@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "std_1",
+      "full_name": "Aluno TopRight",
+      "initials": "AT",
+      "email": null,
+      "status": "active",
+      "is_active": true
+    },
+    {
+      "id": "std_2",
+      "full_name": "Aluno TopLeft",
+      "initials": "AT",
+      "email": null,
+      "status": "active",
+      "is_active": true
+    },
+    {
+      "id": "std_3",
+      "full_name": "Aluno Rescue",
+      "initials": "AR",
+      "email": null,
+      "status": "active",
+      "is_active": true
+    },
+    {
+      "id": "std_4",
+      "full_name": "Aluno TopRight 2",
+      "initials": "AT",
+      "email": null,
+      "status": "active",
+      "is_active": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "prt_1",
+      "organization_id": "org_1",
+      "name": "Metodo A",
+      "code": "metodo-a",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_2",
+      "organization_id": "org_1",
+      "name": "Metodo B",
+      "code": "metodo-b",
+      "metadata": {},
+      "is_active": true
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "met_1",
+      "protocol_id": "prt_1",
+      "pillar_id": "plr_1",
+      "name": "Frequencia",
+      "code": "frequencia",
+      "direction": "higher_better",
+      "unit": null,
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "met_2",
+      "protocol_id": "prt_1",
+      "pillar_id": "plr_2",
+      "name": "Consistencia",
+      "code": "consistencia",
+      "direction": "higher_better",
+      "unit": null,
+      "metadata": {},
+      "is_active": true
+    }
+  ]
+}

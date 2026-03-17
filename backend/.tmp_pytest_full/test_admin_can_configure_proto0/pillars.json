@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "plr_1",
+      "protocol_id": "prt_1",
+      "name": "Frequencia",
+      "code": "frequencia",
+      "order_index": 1,
+      "metadata": {},
+      "is_active": true
+    }
+  ]
+}

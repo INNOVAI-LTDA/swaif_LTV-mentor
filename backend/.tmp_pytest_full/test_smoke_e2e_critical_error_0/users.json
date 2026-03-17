@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "usr_admin",
+      "email": "admin@swaif.local",
+      "password_hash": "pbkdf2_sha256$120000$0af723aa9e713d5cdda288eb036ee7b2$c83520e9c1d4d9246826c893c1cab6009f30e865bcd5c907cc24e7d9d2afa5be",
+      "role": "admin",
+      "is_active": true
+    },
+    {
+      "id": "usr_mentor",
+      "email": "mentor@swaif.local",
+      "password_hash": "pbkdf2_sha256$120000$56591e5cbf9079ffde1351b085de54ff$3c7c44d536fe5c3eef48cb513a091a35cfbd1d6c99af6ede1ab6c6de66085e6f",
+      "role": "mentor",
+      "is_active": true
+    }
+  ]
+}

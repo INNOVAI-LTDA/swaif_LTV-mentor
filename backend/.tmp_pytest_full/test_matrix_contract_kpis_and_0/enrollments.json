@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "enr_1",
+      "student_id": "std_1",
+      "organization_id": "org_1",
+      "progress_score": 0.7,
+      "engagement_score": 0.8,
+      "urgency_status": "normal",
+      "day": 70,
+      "total_days": 100,
+      "days_left": 40,
+      "ltv_cents": 100000,
+      "is_active": true
+    },
+    {
+      "id": "enr_2",
+      "student_id": "std_2",
+      "organization_id": "org_1",
+      "progress_score": 0.4,
+      "engagement_score": 0.7,
+      "urgency_status": "normal",
+      "day": 40,
+      "total_days": 100,
+      "days_left": 80,
+      "ltv_cents": 50000,
+      "is_active": true
+    },
+    {
+      "id": "enr_3",
+      "student_id": "std_3",
+      "organization_id": "org_1",
+      "progress_score": 0.7,
+      "engagement_score": 0.05,
+      "urgency_status": "normal",
+      "day": 70,
+      "total_days": 100,
+      "days_left": 30,
+      "ltv_cents": 70000,
+      "is_active": true
+    },
+    {
+      "id": "enr_4",
+      "student_id": "std_4",
+      "organization_id": "org_1",
+      "progress_score": 0.8,
+      "engagement_score": 0.65,
+      "urgency_status": "normal",
+      "day": 80,
+      "total_days": 100,
+      "days_left": 20,
+      "ltv_cents": 30000,
+      "is_active": true
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "mea_1",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_1",
+      "value_baseline": 50.0,
+      "value_current": 60.0,
+      "value_projected": null,
+      "improving_trend": null
+    },
+    {
+      "id": "mea_2",
+      "enrollment_id": "enr_2",
+      "metric_id": "met_1",
+      "value_baseline": 50.0,
+      "value_current": 60.0,
+      "value_projected": null,
+      "improving_trend": null
+    },
+    {
+      "id": "mea_3",
+      "enrollment_id": "enr_3",
+      "metric_id": "met_1",
+      "value_baseline": 50.0,
+      "value_current": 60.0,
+      "value_projected": null,
+      "improving_trend": null
+    },
+    {
+      "id": "mea_4",
+      "enrollment_id": "enr_4",
+      "metric_id": "met_1",
+      "value_baseline": 50.0,
+      "value_current": 60.0,
+      "value_projected": null,
+      "improving_trend": null
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "chk_1",
+      "enrollment_id": "enr_1",
+      "week": 2,
+      "status": "yellow",
+      "label": "Oscilacao detectada"
+    },
+    {
+      "id": "chk_2",
+      "enrollment_id": "enr_1",
+      "week": 4,
+      "status": "red",
+      "label": "Bloqueio de execucao"
+    }
+  ]
+}

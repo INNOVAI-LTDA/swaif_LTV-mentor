@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "mea_1",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_1",
+      "value_baseline": 52.0,
+      "value_current": 67.0,
+      "value_projected": 74.0,
+      "improving_trend": true
+    }
+  ]
+}

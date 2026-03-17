@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "enr_1",
+      "student_id": "std_1",
+      "organization_id": "org_1",
+      "progress_score": 0.4,
+      "engagement_score": 0.65,
+      "urgency_status": "watch",
+      "day": 15,
+      "total_days": 90,
+      "days_left": 75,
+      "ltv_cents": 180000,
+      "is_active": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "plr_1",
+      "protocol_id": "prt_1",
+      "name": "Consistencia",
+      "code": "consistencia",
+      "order_index": 1,
+      "metadata": {
+        "axis_sub": "Rotina"
+      },
+      "is_active": true
+    }
+  ]
+}

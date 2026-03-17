@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "std_1",
+      "full_name": "Aluno A",
+      "initials": "AA",
+      "email": null,
+      "status": "active",
+      "is_active": true
+    },
+    {
+      "id": "std_2",
+      "full_name": "Aluno B",
+      "initials": "AB",
+      "email": null,
+      "status": "active",
+      "is_active": true
+    }
+  ]
+}

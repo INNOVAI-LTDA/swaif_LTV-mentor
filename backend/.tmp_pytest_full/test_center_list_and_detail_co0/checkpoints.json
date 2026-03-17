@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "chk_1",
+      "enrollment_id": "enr_1",
+      "week": 1,
+      "status": "green",
+      "label": "Inicio"
+    }
+  ]
+}
