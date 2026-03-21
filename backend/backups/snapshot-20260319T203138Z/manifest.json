@@ -1,0 +1,73 @@
+{
+  "created_at": "2026-03-19T20:31:38.238370Z",
+  "storage_root": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data",
+  "snapshot_dir": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\backups\\snapshot-20260319T203138Z",
+  "stores": [
+    {
+      "name": "users",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\users.json",
+      "snapshot_file": "users.json",
+      "size_bytes": 588
+    },
+    {
+      "name": "clients",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\clients.json",
+      "snapshot_file": "clients.json",
+      "size_bytes": 913
+    },
+    {
+      "name": "organizations",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\organizations.json",
+      "snapshot_file": "organizations.json",
+      "size_bytes": 647
+    },
+    {
+      "name": "mentors",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\mentors.json",
+      "snapshot_file": "mentors.json",
+      "size_bytes": 213
+    },
+    {
+      "name": "protocols",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\protocols.json",
+      "snapshot_file": "protocols.json",
+      "size_bytes": 305
+    },
+    {
+      "name": "pillars",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\pillars.json",
+      "snapshot_file": "pillars.json",
+      "size_bytes": 841
+    },
+    {
+      "name": "metrics",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\metrics.json",
+      "snapshot_file": "metrics.json",
+      "size_bytes": 1977
+    },
+    {
+      "name": "students",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\students.json",
+      "snapshot_file": "students.json",
+      "size_bytes": 1976
+    },
+    {
+      "name": "enrollments",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\enrollments.json",
+      "snapshot_file": "enrollments.json",
+      "size_bytes": 3275
+    },
+    {
+      "name": "measurements",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\measurements.json",
+      "snapshot_file": "measurements.json",
+      "size_bytes": 13172
+    },
+    {
+      "name": "checkpoints",
+      "source_path": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data\\checkpoints.json",
+      "snapshot_file": "checkpoints.json",
+      "size_bytes": 7783
+    }
+  ]
+}

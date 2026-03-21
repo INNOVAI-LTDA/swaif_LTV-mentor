@@ -117,9 +117,10 @@ const EMPTY_CHECKPOINT_FORM = {
 };
 
 export function AdminPage() {
-  const { isAuthenticated, user } = useAuth();
+  const { authReady, isAuthenticated, user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const clientsResource = useAdminClients();
+  const canLoadAdmin = authReady && isAuthenticated && user?.role === "admin";
+  const clientsResource = useAdminClients(canLoadAdmin);
 
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
@@ -139,12 +140,12 @@ export function AdminPage() {
   const hasProductContextPanel = isProductsPanel || isMentorsPanel || isStudentsPanel;
   const showClientSectionBar = !hasContextPanel;
 
-  const clientDetailResource = useAdminClientDetail(selectedClientId);
-  const productsResource = useAdminProducts(hasContextPanel ? selectedClientId : null);
-  const mentorsResource = useAdminMentors(hasProductContextPanel ? selectedProductId : null);
-  const pillarsResource = useAdminPillars(hasProductContextPanel ? selectedProductId : null);
-  const metricsResource = useAdminMetrics(isProductsPanel ? selectedPillarId : null);
-  const studentsResource = useAdminStudents(isStudentsPanel ? selectedMentorId : null);
+  const clientDetailResource = useAdminClientDetail(canLoadAdmin ? selectedClientId : null, canLoadAdmin);
+  const productsResource = useAdminProducts(canLoadAdmin && hasContextPanel ? selectedClientId : null);
+  const mentorsResource = useAdminMentors(canLoadAdmin && hasProductContextPanel ? selectedProductId : null);
+  const pillarsResource = useAdminPillars(canLoadAdmin && hasProductContextPanel ? selectedProductId : null);
+  const metricsResource = useAdminMetrics(canLoadAdmin && isProductsPanel ? selectedPillarId : null);
+  const studentsResource = useAdminStudents(canLoadAdmin && isStudentsPanel ? selectedMentorId : null);
 
   const [clientFormState, setClientFormState] = useState(EMPTY_CLIENT_FORM);
   const [clientFormError, setClientFormError] = useState<string | null>(null);
@@ -1009,7 +1010,7 @@ export function AdminPage() {
         {!isAuthenticated || user?.role !== "admin" ? (
           <section className="admin-notice">
             <strong>Entre com o usuario admin para operar o bloco real.</strong>
-            <p>Use `admin@swaif.local` com a senha `admin123`. Sem essa sessao, a API administrativa respondera com erro de autorizacao.</p>
+            <p>Use credenciais administrativas validas para este ambiente. Sem essa sessao, a API administrativa respondera com erro de autorizacao.</p>
           </section>
         ) : null}
 

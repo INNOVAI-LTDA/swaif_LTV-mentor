@@ -1,6 +1,8 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../app/providers/AuthProvider";
+import { getDefaultRouteForRole, isKnownUserRole } from "../shared/auth/roleRouting";
+import { env } from "../shared/config/env";
 
 type PreviewRole = "admin" | "mentor" | "aluno";
 
@@ -12,66 +14,96 @@ const ROLE_PRESETS: Record<
     description: string;
     destination: string;
     summary: string;
-    email: string;
-    password: string;
   }
 > = {
   admin: {
     label: "Admin",
     eyebrow: "Operacao central",
-    description: "Valida a visao de controle, relacionamento entre entidades e a futura camada de operacoes.",
+    description: "Acompanha governanca, cadastros principais e leitura administrativa da operacao.",
     destination: "/app/admin",
-    summary: "Usa autenticacao real local para destravar a operacao administrativa.",
-    email: "admin@swaif.local",
-    password: "admin123"
+    summary: "Usa a autenticacao real configurada para a superficie administrativa."
   },
   mentor: {
     label: "Mentor",
     eyebrow: "Decisao e acompanhamento",
-    description: "Valida a leitura executiva da carteira, acompanhamento de alunos e tomada de decisao.",
+    description: "Acompanha carteira, sinais de risco e decisoes de acompanhamento.",
     destination: "/app/matriz-renovacao",
-    summary: "Pode usar autenticacao real local para navegar nas visoes operacionais ja integradas.",
-    email: "mentor@swaif.local",
-    password: "mentor123"
+    summary: "Usa a autenticacao real configurada para navegar nas visoes operacionais disponiveis."
   },
   aluno: {
     label: "Aluno",
     eyebrow: "Progresso individual",
-    description: "Valida a experiencia mais pessoal, com foco em radar, jornada e proximos marcos.",
+    description: "Acompanha a experiencia individual com foco em radar, jornada e proximos marcos.",
     destination: "/app/aluno",
-    summary: "Segue em modo preview para preservar o escopo incremental da fase administrativa.",
-    email: "aline.rocha@swaif.demo",
-    password: "aluno-preview"
+    summary: "Segue restrito ao modo interno enquanto a experiencia autenticada do aluno evolui."
   }
 };
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { error, loading, login, loginPreview, isAuthenticated, isPreviewSession, user, logout } = useAuth();
-  const [selectedRole, setSelectedRole] = useState<PreviewRole>("mentor");
-  const [email, setEmail] = useState(ROLE_PRESETS.mentor.email);
-  const [password, setPassword] = useState(ROLE_PRESETS.mentor.password);
+  const {
+    error,
+    errorCode,
+    loading,
+    login,
+    loginPreview,
+    isAuthenticated,
+    isPreviewSession,
+    user,
+    logout,
+    canUsePreviewLogin,
+    sessionRecoveryPending,
+    retrySessionValidation,
+    clearPendingSession
+  } = useAuth();
+  const [selectedRole, setSelectedRole] = useState<PreviewRole>("admin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const availableRoles = [
+    "admin",
+    ...(env.internalMentorDemoEnabled ? (["mentor"] as const) : []),
+    ...(canUsePreviewLogin ? (["aluno"] as const) : [])
+  ] as PreviewRole[];
+  const usesInternalAlunoPreview = canUsePreviewLogin && selectedRole === "aluno";
+  const usesInternalMentorWorkspace = env.internalMentorDemoEnabled && selectedRole === "mentor";
 
-  function applyPreset(role: PreviewRole) {
+  function selectRole(role: PreviewRole) {
     setSelectedRole(role);
-    setEmail(ROLE_PRESETS[role].email);
-    setPassword(ROLE_PRESETS[role].password);
+    setEmail("");
+    setPassword("");
   }
+
+  useEffect(() => {
+    if (!availableRoles.includes(selectedRole)) {
+      setSelectedRole(availableRoles[0]);
+    }
+  }, [availableRoles, selectedRole]);
+
+  useEffect(() => {
+    if (isAuthenticated && user && isKnownUserRole(user.role)) {
+      navigate(getDefaultRouteForRole(user.role), { replace: true });
+    }
+  }, [isAuthenticated, navigate, user]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (selectedRole === "aluno") {
-      loginPreview(email.trim(), selectedRole);
+    if (usesInternalAlunoPreview) {
+      loginPreview(selectedRole);
       navigate(ROLE_PRESETS[selectedRole].destination);
       return;
     }
 
-    const success = await login(email.trim(), password);
-    if (success) {
-      navigate(ROLE_PRESETS[selectedRole].destination);
+    const authenticatedUser = await login(email.trim(), password);
+    if (authenticatedUser && isKnownUserRole(authenticatedUser.role)) {
+      navigate(getDefaultRouteForRole(authenticatedUser.role));
     }
   }
+
+  const loginErrorMessage =
+    errorCode === "AUTH_ROLE_INVALID"
+      ? "A autenticacao foi concluida, mas o backend retornou um perfil incompativel com esta entrega."
+      : error;
 
   return (
     <section className="login-shell">
@@ -79,26 +111,31 @@ export function LoginPage() {
       <div className="login-shell__overlay" />
       <div className="login-grid">
         <aside className="login-hero">
-          <img className="login-hero__logo" src="/branding/acelerador-logo.png" alt="Acelerador Medico" />
+          <img className="login-hero__logo" src={env.brandingLogoUrl} alt={env.clientName} />
         </aside>
 
         <div className="login-panel">
           <div className="login-panel__frame">
             <div className="login-panel__header">
-              <img className="login-panel__icon" src="/branding/acelerador-icon.png" alt="" aria-hidden="true" />
+              <img className="login-panel__icon" src={env.brandingIconUrl} alt="" aria-hidden="true" />
               <div className="login-panel__header-copy">
-                <p className="login-panel__eyebrow">Acesso da fase 2</p>
-                <h2 className="login-panel__title">Entrar na nova experiencia</h2>
+                <p className="login-panel__eyebrow">{env.appTagline}</p>
+                <h2 className="login-panel__title">Entrar em {env.appName}</h2>
               </div>
             </div>
 
             <p className="login-panel__intro">
-              Admin e Mentor agora podem usar autenticacao real local. O perfil Aluno continua disponivel em modo preview
-              enquanto a camada administrativa evolui por blocos pequenos.
+              {canUsePreviewLogin
+                ? env.internalMentorDemoEnabled
+                  ? "Admin usa a autenticacao publicada. Mentor e Aluno permanecem disponiveis apenas no modo interno para validacao controlada, sem credenciais predefinidas na interface."
+                  : "Admin usa a autenticacao publicada. O perfil Aluno permanece disponivel apenas no modo interno para validacao controlada, sem credenciais predefinidas na interface."
+                : env.internalMentorDemoEnabled
+                  ? "Use as credenciais do ambiente configurado. A superficie de mentor permanece restrita ao modo interno local."
+                  : "Use as credenciais do ambiente configurado para acessar as superficies protegidas publicadas."}
             </p>
 
             <div className="login-role-picker" role="tablist" aria-label="Selecao de perfil">
-              {(["admin", "mentor", "aluno"] as PreviewRole[]).map((role) => {
+              {availableRoles.map((role) => {
                 const preset = ROLE_PRESETS[role];
                 const isActive = role === selectedRole;
 
@@ -107,7 +144,7 @@ export function LoginPage() {
                     key={role}
                     type="button"
                     className={isActive ? "login-role-card is-active" : "login-role-card"}
-                    onClick={() => applyPreset(role)}
+                    onClick={() => selectRole(role)}
                     aria-pressed={isActive}
                   >
                     <span className="login-role-card__eyebrow">{preset.eyebrow}</span>
@@ -125,50 +162,87 @@ export function LoginPage() {
             </div>
 
             <form className="login-form" onSubmit={(event) => void handleSubmit(event)}>
-              <label className="login-form__field">
-                <span>Usuario</span>
-                <input
-                  type="text"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  required
-                  autoComplete="username"
-                />
-              </label>
-              <label className="login-form__field">
-                <span>Senha</span>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  required
-                  autoComplete="current-password"
-                />
-              </label>
+              {sessionRecoveryPending ? (
+                <div className="login-session-banner" role="alert">
+                  <div>
+                    <p className="login-session-banner__label">Sessao pendente de validacao</p>
+                    <strong>A autenticacao foi concluida, mas a validacao do perfil falhou temporariamente.</strong>
+                    <p>Use Tentar novamente para validar sua sessao atual ou Limpar sessao para reiniciar o acesso.</p>
+                  </div>
+                  <div className="login-session-banner__actions">
+                    <button type="button" onClick={() => void retrySessionValidation()} disabled={loading}>
+                      Tentar novamente
+                    </button>
+                    <button type="button" onClick={clearPendingSession} disabled={loading}>
+                      Limpar sessao
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+              {usesInternalAlunoPreview ? (
+                <div className="login-session-banner" role="note">
+                  <div>
+                    <p className="login-session-banner__label">Acesso interno controlado</p>
+                    <strong>O perfil Aluno usa uma sessao interna temporaria neste modo.</strong>
+                    <p>Nenhuma credencial de demonstracao e exibida na interface para iniciar essa validacao.</p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <label className="login-form__field">
+                    <span>Usuario</span>
+                    <input
+                      type="text"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      required
+                      autoComplete="username"
+                      disabled={sessionRecoveryPending}
+                    />
+                  </label>
+                  <label className="login-form__field">
+                    <span>Senha</span>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      required
+                      autoComplete="current-password"
+                      disabled={sessionRecoveryPending}
+                    />
+                  </label>
+                </>
+              )}
               <p className="login-form__hint">
-                Admin e Mentor usam credenciais locais do backend. Aluno segue em preview para preservar o escopo desta etapa.
+                {usesInternalAlunoPreview
+                  ? "Esse caminho interno existe apenas para validacao controlada e nao representa o acesso publicado ao cliente."
+                  : usesInternalMentorWorkspace
+                    ? "A superficie de mentor segue disponivel apenas para validacao local controlada e nao faz parte do caminho publicado ao cliente."
+                    : canUsePreviewLogin
+                      ? "Admin usa a autenticacao configurada para o ambiente. O perfil Aluno segue restrito ao modo interno."
+                      : "As credenciais deste ambiente sao geridas fora da interface. Nenhum usuario ou senha de demonstracao e exposto ao cliente."}
               </p>
-              {error ? (
+              {loginErrorMessage ? (
                 <p className="login-form__hint" role="alert">
-                  {error}
+                  {loginErrorMessage}
                 </p>
               ) : null}
-              <button className="login-form__submit" type="submit" disabled={loading}>
+              <button className="login-form__submit" type="submit" disabled={loading || sessionRecoveryPending}>
                 {loading ? "Entrando..." : `Entrar como ${ROLE_PRESETS[selectedRole].label}`}
               </button>
             </form>
 
             {isAuthenticated && isPreviewSession && (
               <div className="login-session-banner" role="status">
-                <div>
-                  <p className="login-session-banner__label">Sessao simulada ativa</p>
-                  <strong>{user?.email}</strong>
+                  <div>
+                    <p className="login-session-banner__label">Sessao interna ativa</p>
+                    <strong>{user?.email}</strong>
+                  </div>
+                  <button type="button" onClick={logout}>
+                    Encerrar sessao interna
+                  </button>
                 </div>
-                <button type="button" onClick={logout}>
-                  Limpar preview
-                </button>
-              </div>
-            )}
+              )}
           </div>
         </div>
       </div>

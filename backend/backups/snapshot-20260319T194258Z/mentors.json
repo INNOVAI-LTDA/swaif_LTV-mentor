@@ -1,0 +1,12 @@
+{
+    "version":  1,
+    "items":  [
+                  {
+                      "id":  "mtr_1",
+                      "full_name":  "Rafael Mota",
+                      "email":  "rafael.mota@swaif.demo",
+                      "is_active":  true,
+                      "organization_id":  "org_1"
+                  }
+              ]
+}

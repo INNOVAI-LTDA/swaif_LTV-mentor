@@ -1,0 +1,85 @@
+{
+    "version":  1,
+    "items":  [
+                  {
+                      "id":  "std_1",
+                      "full_name":  "Aline Rocha",
+                      "initials":  "AR",
+                      "email":  "aline.rocha@swaif.demo",
+                      "status":  "active",
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "std_2",
+                      "full_name":  "Diego Nunes",
+                      "initials":  "DN",
+                      "email":  "diego.nunes@swaif.demo",
+                      "status":  "active",
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "std_3",
+                      "full_name":  "Bruno Lima",
+                      "initials":  "BL",
+                      "email":  "bruno.lima@swaif.demo",
+                      "status":  "active",
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "std_4",
+                      "full_name":  "Fernanda Alves",
+                      "initials":  "FA",
+                      "email":  "fernanda.alves@swaif.demo",
+                      "status":  "active",
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "std_5",
+                      "full_name":  "Gustavo Prado",
+                      "initials":  "GP",
+                      "email":  "gustavo.prado@swaif.demo",
+                      "status":  "active",
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "std_6",
+                      "full_name":  "Helena Costa",
+                      "initials":  "HC",
+                      "email":  "helena.costa@swaif.demo",
+                      "status":  "active",
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "std_7",
+                      "full_name":  "Camila Torres",
+                      "initials":  "CT",
+                      "email":  "camila.torres@swaif.demo",
+                      "status":  "active",
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "std_8",
+                      "full_name":  "Igor Batista",
+                      "initials":  "IB",
+                      "email":  "igor.batista@swaif.demo",
+                      "status":  "active",
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "std_9",
+                      "full_name":  "Juliana Mendes",
+                      "initials":  "JM",
+                      "email":  "juliana.mendes@swaif.demo",
+                      "status":  "active",
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "std_10",
+                      "full_name":  "Lucas Freitas",
+                      "initials":  "LF",
+                      "email":  "lucas.freitas@swaif.demo",
+                      "status":  "active",
+                      "is_active":  true
+                  }
+              ]
+}

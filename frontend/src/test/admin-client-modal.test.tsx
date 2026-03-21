@@ -36,8 +36,9 @@ let studentsMockData: AdminStudentDto[] = [];
 
 vi.mock("../app/providers/AuthProvider", () => ({
   useAuth: () => ({
+    authReady: true,
     isAuthenticated: true,
-    user: { id: "usr_admin", email: "admin@swaif.local", role: "admin" }
+    user: { id: "usr_admin", email: "admin@cliente.test", role: "admin" }
   })
 }));
 
@@ -149,9 +150,9 @@ function buildProduct(): AdminProductDto {
   return {
     id: "org_1",
     client_id: "cli_1",
-    name: "Acelerador Medico Premium",
+    name: "Programa Premium",
     code: "AMP-PREMIUM",
-    slug: "acelerador-medico-premium",
+    slug: "programa-premium",
     status: "active",
     is_active: true,
     description: "Produto premium do cliente",
@@ -283,7 +284,7 @@ describe("admin client product mentor and student modals", () => {
     );
 
     expect(screen.getByText("Clinica Horizonte")).toBeInTheDocument();
-    expect(screen.getByText("Acelerador Medico Premium")).toBeInTheDocument();
+    expect(screen.getByText("Programa Premium")).toBeInTheDocument();
   });
 
   it("renderiza a area Produtos com mentor real na hierarquia", () => {
@@ -298,7 +299,7 @@ describe("admin client product mentor and student modals", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("Acelerador Medico Premium")).toBeInTheDocument();
+    expect(screen.getByText("Programa Premium")).toBeInTheDocument();
     expect(screen.getByText("Ana Mentora")).toBeInTheDocument();
     expect(screen.getByText("Nenhum Pilar Cadastrado")).toBeInTheDocument();
   });

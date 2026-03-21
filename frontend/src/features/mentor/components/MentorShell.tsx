@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, NavLink, useLocation, useSearchParams } from "react-router-dom";
 import "../mentor-shell.css";
+import { env } from "../../../shared/config/env";
 
 type MentorShellProps = {
   activeView: "matrix" | "command-center" | "radar";
@@ -21,32 +22,32 @@ const MAIN_NAV = [
 const SUPPORT_PANELS = {
   produtos: {
     label: "Produtos",
-    title: "Portfolio da apresentacao",
-    description: "Carga demo isolada para a carteira do mentor sem interferir no administrativo.",
+    title: "Portfolio acompanhado",
+    description: "Resumo dos programas e estruturas atualmente vinculados ao acompanhamento do mentor.",
     items: [
-      { title: "Mentoria Acelerador Medico", meta: "Grupo Acelerador Medico", detail: "Produto demo principal da apresentacao comercial" },
-      { title: "Dr. Jose Netto", meta: "Mentor responsavel", detail: "Leitura executiva conectada a centro, radar e matriz" },
-      { title: "5 pilares e 12 metricas", meta: "Estrutura do metodo", detail: "Base de valor, conversao, operacao, experiencia e recorrencia" }
+      { title: "Programa principal", meta: "Carteira ativa", detail: "Leitura executiva conectada a centro, radar e matriz." },
+      { title: "Mentor responsavel", meta: "Conta autenticada", detail: "Contexto operacional da carteira vinculada ao acesso atual." },
+      { title: "Pilares e metricas", meta: "Estrutura do metodo", detail: "Base usada para acompanhamento, evolucao e recorrencia." }
     ]
   },
   alunos: {
     label: "Alunos",
-    title: "Carteira demo do mentor",
-    description: "Distribuicao intencional para mostrar decisao, risco e oportunidade nos quadrantes.",
+    title: "Carteira do mentor",
+    description: "Distribuicao atual da carteira para leitura de decisao, risco e oportunidade.",
     items: [
-      { title: "3 alunos para renovar", meta: "Quadrante superior direito", detail: "Base forte para continuidade e ampliacao de contrato" },
-      { title: "2 alunos com aderencia alta", meta: "Quadrante superior esquerdo", detail: "Engajamento bom, mas progresso ainda abaixo do ideal" },
-      { title: "5 alunos entre watch e resgate", meta: "Quadrantes inferiores", detail: "Espaco claro para acao consultiva e narrativa de recuperacao" }
+      { title: "Renovacoes prioritarias", meta: "Quadrante superior direito", detail: "Base forte para continuidade e ampliacao de contrato." },
+      { title: "Aderencia alta", meta: "Quadrante superior esquerdo", detail: "Engajamento bom, com progresso ainda abaixo do ideal." },
+      { title: "Watch e resgate", meta: "Quadrantes inferiores", detail: "Espaco claro para acao consultiva e narrativa de recuperacao." }
     ]
   },
   usuario: {
     label: "Usuario",
     title: "Contexto do mentor",
-    description: "Resumo do recorte comercial usado nesta demonstracao.",
+    description: "Resumo do acesso autenticado e do recorte operacional associado a ele.",
     items: [
-      { title: "Login isolado", meta: "mentor@swaif.local", detail: "A carga demo aparece somente neste acesso autenticado" },
-      { title: "Narrativa pronta para demo", meta: "Centro, Radar e Matriz", detail: "Leitura coerente entre operacao, evolucao e decisao" },
-      { title: "Escopo protegido", meta: "Admin preservado", detail: "Nenhum dado demo foi gravado no CRUD administrativo" }
+      { title: "Acesso autenticado", meta: "Conta do mentor", detail: "A carteira apresentada respeita o contexto do acesso atual." },
+      { title: "Visoes integradas", meta: "Centro, Radar e Matriz", detail: "Leitura coerente entre operacao, evolucao e decisao." },
+      { title: "Escopo protegido", meta: "Admin preservado", detail: "As superficies administrativas seguem separadas do fluxo do mentor." }
     ]
   }
 } as const;
@@ -70,10 +71,10 @@ export function MentorShell({ activeView, eyebrow, title, description, actions, 
       <div className={panel ? "mentor-shell__layout mentor-shell__layout--with-rail" : "mentor-shell__layout"}>
         <aside className="mentor-sidebar">
           <div className="mentor-sidebar__brand">
-            <img src="/branding/acelerador-icon.png" alt="" aria-hidden="true" />
+            <img src={env.brandingIconUrl} alt="" aria-hidden="true" />
             <div>
               <p>Mentor</p>
-              <strong>Acelerador Medico</strong>
+              <strong>{env.clientName}</strong>
             </div>
           </div>
 
@@ -110,7 +111,7 @@ export function MentorShell({ activeView, eyebrow, title, description, actions, 
           <div className="mentor-sidebar__spotlight">
             <span className="mentor-sidebar__label">Leitura da carteira</span>
             <strong>Visao executiva com foco em renovacao, resgate e crescimento da carteira.</strong>
-            <p>Carga demo exclusiva do mentor para apresentar a narrativa completa de acompanhamento.</p>
+            <p>Leitura operacional voltada a acompanhamento, priorizacao e sustentacao da carteira.</p>
           </div>
         </aside>
 

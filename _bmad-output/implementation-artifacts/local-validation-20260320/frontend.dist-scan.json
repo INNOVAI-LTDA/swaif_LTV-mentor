@@ -1,0 +1,7 @@
+{
+  "index_has_base_path_assets": true,
+  "runtime_api_url_present": true,
+  "runtime_localhost_reference_count": 0,
+  "runtime_loopback_reference_count": 0,
+  "notes": "Loopback API URL is expected for this local validation story because the frontend was built against the local pilot backend."
+}

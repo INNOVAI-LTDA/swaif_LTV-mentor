@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, NavLink, useLocation, useSearchParams } from "react-router-dom";
 import "../admin-shell.css";
+import { env } from "../../../shared/config/env";
 
 type AdminShellProps = {
   eyebrow: string;
@@ -39,10 +40,10 @@ export function AdminShell({ eyebrow, title, description, actions, metrics = [],
       <div className="admin-shell__layout">
         <aside className="admin-sidebar">
           <div className="admin-sidebar__brand">
-            <img src="/branding/acelerador-icon.png" alt="" aria-hidden="true" />
+            <img src={env.brandingIconUrl} alt="" aria-hidden="true" />
             <div>
               <p>Admin</p>
-              <strong>Acelerador Medico</strong>
+              <strong>{env.clientName}</strong>
             </div>
           </div>
 
@@ -79,7 +80,7 @@ export function AdminShell({ eyebrow, title, description, actions, metrics = [],
           <div className="admin-sidebar__spotlight">
             <span className="admin-sidebar__label">Funcao da etapa</span>
             <strong>Operacionalizar o Admin em blocos pequenos, com contexto real e validacao funcional por entrega.</strong>
-            <p>Bloco atual: carga inicial de indicadores por aluno, conectando o cadastro administrativo as visoes reais sem abrir novas superficies.</p>
+            <p>O foco atual e manter cadastro, governanca e leitura operacional alinhados com a entrega ativa.</p>
           </div>
         </aside>
 

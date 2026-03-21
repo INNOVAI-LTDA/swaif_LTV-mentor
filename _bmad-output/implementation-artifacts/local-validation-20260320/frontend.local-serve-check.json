@@ -1,0 +1,14 @@
+[
+  {
+    "url": "http://127.0.0.1:4173/cliente/",
+    "status": 200,
+    "content_type": "text/html",
+    "body_excerpt": "<!doctype html>\n<html lang=\"pt-BR\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>MVP Mentoria Frontend</title>\n    <script type=\"module\" crossorigin src=\"/cliente/assets/index-Bc2_fdAo.js\"></script>\n    <link rel=\"stylesheet\" crossorigin href=\"/cliente/assets/index-CE9qAWwC.css\">\n  </head>\n  <body>\n    <div id=\"root\">"
+  },
+  {
+    "url": "http://127.0.0.1:4173/cliente/assets/index-Bc2_fdAo.js",
+    "status": 200,
+    "content_type": "text/javascript",
+    "body_excerpt": "function Lf(e,t){for(var n=0;n<t.length;n++){const r=t[n];if(typeof r!=\"string\"&&!Array.isArray(r)){for(const l in r)if(l!==\"default\"&&!(l in e)){const i=Object.getOwnPropertyDescriptor(r,l);i&&Object.defineProperty(e,l,i.get?i:{enumerable:!0,get:()=>r[l]})}}}return Object.freeze(Object.defineProperty(e,Symbol.toStringTag,{value:\"Module\"}))}(function(){const t=document.createElement(\"link\").relLis"
+  }
+]

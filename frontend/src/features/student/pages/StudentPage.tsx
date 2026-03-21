@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useAuth } from "../../../app/providers/AuthProvider";
 import { useCommandCenterStudentDetail, useCommandCenterTimeline } from "../../../domain/hooks/useCommandCenter";
 import { useStudentRadar } from "../../../domain/hooks/useRadar";
 import type { StudentMetric, TimelineItem } from "../../../domain/models";
@@ -28,11 +27,6 @@ const TAB_HELP: Record<HelpView, { title: string; body: string }> = {
 
 const DEFAULT_STUDENT_ID = "std_1";
 
-const STUDENT_PREVIEW_BY_EMAIL: Record<string, string> = {
-  "aline.rocha@swaif.demo": "std_1",
-  "aluno@aceleradormedico.demo": "std_1"
-};
-
 const STATUS_CLASSNAME: Record<TimelineItem["status"], string> = {
   green: "is-green",
   yellow: "is-yellow",
@@ -47,12 +41,8 @@ function average(values: number[]) {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
-function resolveStudentId(email: string | null | undefined) {
-  if (!email) {
-    return DEFAULT_STUDENT_ID;
-  }
-
-  return STUDENT_PREVIEW_BY_EMAIL[email.trim().toLowerCase()] ?? DEFAULT_STUDENT_ID;
+function resolveStudentId() {
+  return DEFAULT_STUDENT_ID;
 }
 
 function resolveView(value: string | null): StudentView {
@@ -150,11 +140,10 @@ function IndicatorBars({ metrics }: { metrics: StudentMetric[] }) {
 }
 
 export function StudentPage() {
-  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const [openHelp, setOpenHelp] = useState<HelpView | null>(null);
   const activeView = resolveView(searchParams.get("view"));
-  const studentId = resolveStudentId(user?.email);
+  const studentId = resolveStudentId();
   const detailResource = useCommandCenterStudentDetail(studentId);
   const timelineResource = useCommandCenterTimeline(studentId);
   const radarResource = useStudentRadar(studentId);
@@ -281,8 +270,8 @@ export function StudentPage() {
                       <h2>{selectedStudent?.name ?? "Carregando jornada"}</h2>
                     </div>
                     <div className="student-identity-chip">
-                      <span>Perfil autenticado</span>
-                      <strong>{user?.email ?? "preview-aluno"}</strong>
+                      <span>Acesso protegido</span>
+                      <strong>sessao validada</strong>
                     </div>
                   </div>
 

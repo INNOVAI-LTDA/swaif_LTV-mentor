@@ -1,0 +1,88 @@
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+async function importEnvModule() {
+  vi.resetModules();
+  return import("./env");
+}
+
+async function importEnvContractModule() {
+  vi.resetModules();
+  return import("./envContract");
+}
+
+describe("shared env config", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.stubEnv("VITE_DEPLOY_TARGET", "local");
+    vi.resetModules();
+  });
+
+  it("normaliza o base path para a raiz ou subpaths com barra final", async () => {
+    const { normalizeBasePath } = await importEnvContractModule();
+
+    expect(normalizeBasePath(undefined)).toBe("/");
+    expect(normalizeBasePath("/")).toBe("/");
+    expect(normalizeBasePath("cliente")).toBe("/cliente/");
+    expect(normalizeBasePath("/cliente/app/")).toBe("/cliente/app/");
+  });
+
+  it("mantem fallback localhost quando o helper permite ambiente local", async () => {
+    const { normalizeApiBaseUrl } = await importEnvContractModule();
+
+    expect(normalizeApiBaseUrl("", "local")).toBe("http://127.0.0.1:8000");
+  });
+
+  it("falha quando o helper recebe build client-safe sem api definida", async () => {
+    const { normalizeApiBaseUrl } = await importEnvContractModule();
+
+    expect(() => normalizeApiBaseUrl("", "client")).toThrow("VITE_API_BASE_URL is required for client deploys.");
+  });
+
+  it("valida deploy target e exige URL absoluta para builds de cliente", async () => {
+    const { normalizeApiBaseUrl, normalizeDeployTarget } = await importEnvContractModule();
+
+    expect(normalizeDeployTarget("client")).toBe("client");
+    expect(() => normalizeDeployTarget(undefined)).toThrow("VITE_DEPLOY_TARGET is required");
+    expect(() => normalizeDeployTarget("preview")).toThrow("VITE_DEPLOY_TARGET must be either 'local' or 'client'.");
+    expect(() => normalizeApiBaseUrl("api.example.com", "client")).toThrow("VITE_API_BASE_URL must be an absolute http(s) URL.");
+    expect(() => normalizeApiBaseUrl("https://api.example.com?tenant=x", "client")).toThrow(
+      "VITE_API_BASE_URL must not include query strings or fragments."
+    );
+    expect(() => normalizeApiBaseUrl("https://user:pass@api.example.com", "client")).toThrow(
+      "VITE_API_BASE_URL must not include credentials."
+    );
+    expect(normalizeApiBaseUrl("https://api.example.com/base/", "client")).toBe("https://api.example.com/base");
+  });
+
+  it("bloqueia demo mode em deploy target client e mantem branding/base path", async () => {
+    vi.stubEnv("VITE_DEPLOY_TARGET", "client");
+    vi.stubEnv("VITE_API_BASE_URL", "https://api.example.com/");
+    vi.stubEnv("VITE_APP_BASE_PATH", "/cliente");
+    vi.stubEnv("VITE_ENABLE_DEMO_MODE", "true");
+    vi.stubEnv("VITE_ENABLE_INTERNAL_MENTOR_DEMO", "true");
+
+    const { env } = await importEnvModule();
+
+    expect(env.demoModeEnabled).toBe(false);
+    expect(env.internalMentorDemoEnabled).toBe(false);
+    expect(env.deployTarget).toBe("client");
+    expect(env.apiBaseUrl).toBe("https://api.example.com");
+    expect(env.brandingLogoUrl).toBe("/cliente/branding/app-logo.png");
+    expect(env.routerBasePath).toBe("/cliente");
+  });
+
+  it("mantem a superficie interna de mentor apenas em deploy local explicito", async () => {
+    vi.stubEnv("VITE_DEPLOY_TARGET", "local");
+    vi.stubEnv("VITE_ENABLE_INTERNAL_MENTOR_DEMO", "true");
+
+    const { env } = await importEnvModule();
+
+    expect(env.internalMentorDemoEnabled).toBe(true);
+  });
+
+  it("falha ao carregar o runtime sem VITE_DEPLOY_TARGET explicito", async () => {
+    vi.unstubAllEnvs();
+
+    await expect(importEnvModule()).rejects.toThrow("VITE_DEPLOY_TARGET is required");
+  });
+});

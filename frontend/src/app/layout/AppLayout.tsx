@@ -1,5 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
+import { env } from "../../shared/config/env";
+import { isKnownUserRole } from "../../shared/auth/roleRouting";
 
 function getRoleLabel(role: string | undefined): string {
   switch (role) {
@@ -17,6 +19,9 @@ function getRoleLabel(role: string | undefined): string {
 export function AppLayout() {
   const location = useLocation();
   const { isAuthenticated, isPreviewSession, user, logout } = useAuth();
+  const role = user?.role;
+  const hasKnownRole = isKnownUserRole(role);
+  const canUseInternalMentorWorkspace = role === "mentor" && env.internalMentorDemoEnabled;
 
   if (location.pathname === "/login") {
     return (
@@ -31,22 +36,26 @@ export function AppLayout() {
       <header className="app-topbar">
         <nav className="app-topbar__inner">
           <Link className="app-brand" to="/login">
-            <img src="/branding/acelerador-icon.png" alt="" aria-hidden="true" />
+            <img src={env.brandingIconUrl} alt="" aria-hidden="true" />
             <span>
-              <strong>Acelerador Médico</strong>
-              <small>MVP de validação visual</small>
+              <strong>{env.clientName}</strong>
+              <small>{env.appName}</small>
             </span>
           </Link>
-          <Link to="/">Início</Link>
+          <Link to="/">{env.appTagline}</Link>
           <Link to="/login">Login</Link>
-          <Link to="/app">Hub</Link>
-          <Link to="/app/admin">Admin</Link>
-          <Link to="/app/centro-comando">Centro</Link>
-          <Link to="/app/radar">Radar</Link>
-          <Link to="/app/aluno">Aluno</Link>
-          <Link to="/app/matriz-renovacao">Matriz</Link>
+          {isAuthenticated && hasKnownRole && role === "admin" ? <Link to="/app/admin">Admin</Link> : null}
+          {isAuthenticated && hasKnownRole && role === "aluno" ? <Link to="/app/aluno">Aluno</Link> : null}
+          {isAuthenticated && canUseInternalMentorWorkspace ? (
+            <>
+              <Link to="/app/hub-interno">Hub interno</Link>
+              <Link to="/app/centro-comando">Centro</Link>
+              <Link to="/app/radar">Radar</Link>
+              <Link to="/app/matriz-renovacao">Matriz</Link>
+            </>
+          ) : null}
           <span className="app-session-indicator">
-            {isAuthenticated ? `${isPreviewSession ? "Preview" : "Sessão"}: ${getRoleLabel(user?.role)}` : "Sessão: anônima"}
+            {isAuthenticated ? `${isPreviewSession ? "Sessao interna" : "Sessao"}: ${getRoleLabel(user?.role)}` : "Sessao: anonima"}
           </span>
           {isAuthenticated && (
             <button className="app-logout-button" type="button" onClick={logout}>

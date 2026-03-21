@@ -1,0 +1,38 @@
+{
+    "version":  1,
+    "items":  [
+                  {
+                      "id":  "plr_1",
+                      "protocol_id":  "prt_1",
+                      "name":  "Clareza de Direcao",
+                      "code":  "clareza-direcao",
+                      "order_index":  1,
+                      "metadata":  {
+                                       "axis_sub":  "Foco e Priorizacao"
+                                   },
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "plr_2",
+                      "protocol_id":  "prt_1",
+                      "name":  "Disciplina de Execucao",
+                      "code":  "disciplina-execucao",
+                      "order_index":  2,
+                      "metadata":  {
+                                       "axis_sub":  "Rotina e Consistencia"
+                                   },
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "plr_3",
+                      "protocol_id":  "prt_1",
+                      "name":  "Decisao de Crescimento",
+                      "code":  "decisao-crescimento",
+                      "order_index":  3,
+                      "metadata":  {
+                                       "axis_sub":  "Renovacao e LTV"
+                                   },
+                      "is_active":  true
+                  }
+              ]
+}

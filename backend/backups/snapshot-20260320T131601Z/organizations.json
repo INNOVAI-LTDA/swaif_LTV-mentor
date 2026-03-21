@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "org_1",
+      "name": "Mentoria Escala com Clareza 180",
+      "slug": "mentoria-escala-clareza-180",
+      "mentor_id": "mtr_1",
+      "is_active": true
+    },
+    {
+      "id": "org_2",
+      "name": "Mentoria Acelerador Medico",
+      "slug": "mentoria_acelerador_medico",
+      "code": "MAM",
+      "client_id": "cli_1",
+      "mentor_id": null,
+      "description": null,
+      "delivery_model": "live",
+      "status": "active",
+      "is_active": true,
+      "created_at": "2026-03-15T06:45:48.612001Z",
+      "updated_at": "2026-03-15T06:45:48.612001Z"
+    }
+  ]
+}

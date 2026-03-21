@@ -1,0 +1,9 @@
+{
+  "index_has_accmed_assets": true,
+  "runtime_api_url_present": true,
+  "runtime_base_path_present": true,
+  "runtime_client_name_present": false,
+  "runtime_app_name_present": true,
+  "runtime_localhost_reference_count": 0,
+  "notes": "Loopback API URL is expected for the local baseline. Branding and base path reflect the current local parameterization."
+}

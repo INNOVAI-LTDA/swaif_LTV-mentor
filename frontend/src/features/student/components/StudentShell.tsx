@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import "../student-shell.css";
+import { env } from "../../../shared/config/env";
 
 type StudentShellProps = {
   eyebrow: string;
@@ -40,7 +41,7 @@ const SUPPORT_PANELS: Record<
     description: "Lista dos programas e modulos em que voce esta ativo dentro da sua jornada atual.",
     items: [
       {
-        title: "Acelerador Medico Premium",
+        title: "Programa principal",
         meta: "Programa principal",
         detail: "Trilha central da sua evolucao, com checkpoints e acompanhamento recorrente."
       },
@@ -135,10 +136,10 @@ export function StudentShell({ eyebrow, title, description, actions, metrics = [
       <div className={panel ? "student-shell__layout student-shell__layout--with-rail" : "student-shell__layout"}>
         <aside className="student-sidebar">
           <div className="student-sidebar__brand">
-            <img src="/branding/acelerador-icon.png" alt="" aria-hidden="true" />
+            <img src={env.brandingIconUrl} alt="" aria-hidden="true" />
             <div>
               <p>Aluno</p>
-              <strong>Acelerador Medico</strong>
+              <strong>{env.clientName}</strong>
             </div>
           </div>
 

@@ -1,0 +1,83 @@
+{
+    "version":  1,
+    "items":  [
+                  {
+                      "id":  "met_1",
+                      "protocol_id":  "prt_1",
+                      "pillar_id":  "plr_1",
+                      "name":  "Definicao de Meta Semanal",
+                      "code":  "definicao-meta-semanal",
+                      "direction":  "higher_better",
+                      "unit":  "%",
+                      "metadata":  {
+                                       "optimal":  "\u003e= 80"
+                                   },
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "met_2",
+                      "protocol_id":  "prt_1",
+                      "pillar_id":  "plr_1",
+                      "name":  "Taxa de Prioridades Concluidas",
+                      "code":  "taxa-prioridades-concluidas",
+                      "direction":  "higher_better",
+                      "unit":  "%",
+                      "metadata":  {
+                                       "optimal":  "\u003e= 75"
+                                   },
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "met_3",
+                      "protocol_id":  "prt_1",
+                      "pillar_id":  "plr_2",
+                      "name":  "Ritmo de Entregas",
+                      "code":  "ritmo-entregas",
+                      "direction":  "higher_better",
+                      "unit":  "%",
+                      "metadata":  {
+                                       "optimal":  "\u003e= 70"
+                                   },
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "met_4",
+                      "protocol_id":  "prt_1",
+                      "pillar_id":  "plr_2",
+                      "name":  "Atraso Medio de Entregas",
+                      "code":  "atraso-medio-entregas",
+                      "direction":  "lower_better",
+                      "unit":  "dias",
+                      "metadata":  {
+                                       "optimal":  "\u003c= 2"
+                                   },
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "met_5",
+                      "protocol_id":  "prt_1",
+                      "pillar_id":  "plr_3",
+                      "name":  "Conversao em Resultado",
+                      "code":  "conversao-resultado",
+                      "direction":  "higher_better",
+                      "unit":  "%",
+                      "metadata":  {
+                                       "optimal":  "\u003e= 65"
+                                   },
+                      "is_active":  true
+                  },
+                  {
+                      "id":  "met_6",
+                      "protocol_id":  "prt_1",
+                      "pillar_id":  "plr_3",
+                      "name":  "Previsibilidade de Renovacao",
+                      "code":  "previsibilidade-renovacao",
+                      "direction":  "target_range",
+                      "unit":  "pts",
+                      "metadata":  {
+                                       "optimal":  "faixa 70-85"
+                                   },
+                      "is_active":  true
+                  }
+              ]
+}

@@ -3,17 +3,17 @@ import { useAsyncResource } from "./useAsyncResource";
 import { getAdminClientDetail, listAdminClients } from "../services/adminClientService";
 import type { AdminClientDto } from "../../contracts/adminClient";
 
-export function useAdminClients() {
+export function useAdminClients(enabled = true) {
   const loader = useCallback(() => listAdminClients(), []);
   return useAsyncResource<AdminClientDto[]>(loader, [loader], {
-    enabled: true,
+    enabled,
     initialData: [],
     isEmpty: (data) => data.length === 0,
     resourceName: "lista de clientes"
   });
 }
 
-export function useAdminClientDetail(clientId: string | null) {
+export function useAdminClientDetail(clientId: string | null, enabled = true) {
   const loader = useCallback(() => {
     if (!clientId) {
       return Promise.resolve(null);
@@ -22,7 +22,7 @@ export function useAdminClientDetail(clientId: string | null) {
   }, [clientId]);
 
   return useAsyncResource<AdminClientDto | null>(loader, [loader], {
-    enabled: Boolean(clientId),
+    enabled: enabled && Boolean(clientId),
     initialData: null,
     isEmpty: (data) => data === null,
     resourceName: "detalhe do cliente"

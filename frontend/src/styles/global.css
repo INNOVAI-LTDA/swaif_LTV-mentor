@@ -159,7 +159,7 @@ input {
 .login-shell__backdrop {
   background:
     linear-gradient(90deg, rgba(9, 9, 9, 0.985) 0%, rgba(9, 9, 9, 0.82) 42%, rgba(9, 9, 9, 0.965) 100%),
-    url("/branding/acelerador-login-hero.png") center/cover no-repeat;
+    var(--login-hero-url, none) center/cover no-repeat;
   transform: scale(1.03);
   filter: brightness(0.54) saturate(0.58) contrast(0.9);
 }

@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "cli_1",
+      "name": "Grupo Acelerador Medico",
+      "brand_name": "Grupo Acelerador Medico",
+      "cnpj": "11222333000144",
+      "slug": "grupo-acelerador-medico",
+      "status": "active",
+      "is_active": true,
+      "timezone": "America/Sao_Paulo",
+      "currency": "BRL",
+      "notes": null,
+      "created_at": "2026-03-15T05:25:51.063897Z",
+      "updated_at": "2026-03-15T05:25:51.063897Z"
+    },
+    {
+      "id": "cli_2",
+      "name": "Clinica Horizonte",
+      "brand_name": "Clinica Horizonte",
+      "cnpj": "12345678000199",
+      "slug": "clinica-horizonte",
+      "status": "active",
+      "is_active": true,
+      "timezone": "America/Sao_Paulo",
+      "currency": "BRL",
+      "notes": null,
+      "created_at": "2026-03-15T07:59:02.358611Z",
+      "updated_at": "2026-03-15T07:59:02.358611Z"
+    }
+  ]
+}

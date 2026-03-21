@@ -1,0 +1,23 @@
+{
+  "health_status": 200,
+  "admin_login_status": 200,
+  "me_status": 200,
+  "me_payload": {
+    "id": "usr_admin",
+    "email": "admin@swaif.local",
+    "role": "admin"
+  },
+  "mentor_login_status": 200,
+  "unauthorized_status": 401,
+  "forbidden_status": 403,
+  "runtime_summary": {
+    "app_env": "local",
+    "cors_origins": [
+      "http://127.0.0.1:4173"
+    ],
+    "mentor_demo_routes_enabled": true,
+    "mentor_demo_policy_source": "explicit-local-enable",
+    "storage_root": "C:\\Users\\dmene\\Projetos\\innovai\\repos\\swaif_LTV-mentoria\\backend\\data",
+    "backup_dir": "backups"
+  }
+}
