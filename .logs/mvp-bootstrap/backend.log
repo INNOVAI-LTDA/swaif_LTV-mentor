@@ -6,3 +6,27 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 INFO:     127.0.0.1:61501 - "GET /health HTTP/1.1" 200 OK
 INFO:     127.0.0.1:61509 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57222 - "OPTIONS /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62135 - "OPTIONS /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57222 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57222 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57222 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62135 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62135 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62135 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58203 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58203 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:62060 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:54106 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:53091 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:63697 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63697 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63697 - "OPTIONS /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63697 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63697 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52697 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52697 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63697 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49994 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49994 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63697 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found

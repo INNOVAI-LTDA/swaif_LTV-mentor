@@ -18,3 +18,11 @@
 [2m02:37:06[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/app/providers/AuthProvider.tsx[22m
 [2m02:37:06[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/app/providers/AuthProvider.tsx[22m Could not Fast Refresh ("useAuth" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
 [2m02:37:06[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/app/providers/AuthProvider.tsx[22m
+[2m03:04:22[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/shared/config/env.ts[22m
+[2m03:04:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/main.tsx[22m
+[2m03:45:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/app/routes.tsx, /src/app/providers/AuthProvider.tsx, /src/app/layout/AppLayout.tsx, /src/pages/AccessDeniedPage.tsx, /src/pages/LoginPage.tsx[22m
+[2m03:45:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/app/routes.tsx[22m
+[2m03:45:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/app/layout/AppLayout.tsx[22m
+[2m03:45:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/AccessDeniedPage.tsx[22m
+[2m03:45:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/app/routes.tsx[22m
+[2m03:48:52[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/app/routes.tsx[22m
