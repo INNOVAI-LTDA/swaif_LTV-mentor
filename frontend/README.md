@@ -39,6 +39,9 @@ npm run test
 
 Copie `.env.example` para `.env` e ajuste:
 
+- Para clientes ja parametrizados no repo, prefira o template especifico correspondente, por exemplo `.env.client.accmed.example`.
+- O template generico continua sendo o fallback para novos clientes.
+
 - `VITE_API_BASE_URL`
 - `VITE_HTTP_TIMEOUT_MS`
 - `VITE_APP_BASE_PATH`
@@ -61,10 +64,11 @@ Copie `.env.example` para `.env` e ajuste:
 - `VITE_APP_TAGLINE`: mensagem curta usada nas superficies de entrada e navegacao.
 - `VITE_SHELL_SUBTITLE`: subtitulo reservado para shells e comunicacao institucional da interface.
 - `VITE_BRANDING_ICON_PATH`, `VITE_BRANDING_LOGO_PATH`, `VITE_BRANDING_LOGIN_HERO_PATH`: caminhos publicos dos ativos de branding.
+- `VITE_THEME_*`: tokens opcionais de cor para aplicar o branding do cliente sem editar CSS base.
 - `VITE_ENABLE_DEMO_MODE`: liga o modo demo interno que reexibe o login preview. O padrao operacional deve ser `false`.
-- `VITE_ENABLE_INTERNAL_MENTOR_DEMO`: reexibe a superficie interna de mentor baseada nas rotas `mentor-demo`. Deve permanecer `false` fora de validacao local controlada.
+- `VITE_ENABLE_INTERNAL_MENTOR_DEMO`: flag de compatibilidade para validacao interna ligada ao legado das rotas `mentor-demo`. Ela nao bloqueia mais o workspace publicado de mentor nesta entrega.
 - Em builds de cliente, `VITE_ENABLE_DEMO_MODE` e ignorado para evitar exposicao acidental do fluxo preview.
-- Em builds de cliente, `VITE_ENABLE_INTERNAL_MENTOR_DEMO` tambem e ignorado para evitar dependencia acidental da superficie interna de mentor.
+- Em builds de cliente, `VITE_ENABLE_INTERNAL_MENTOR_DEMO` deixa de ser um gate funcional para a navegacao publicada de mentor.
 
 ### Deploy sob subpath
 
@@ -87,6 +91,24 @@ Build client-safe:
 VITE_DEPLOY_TARGET=client VITE_API_BASE_URL=https://api.example.com npm run build
 ```
 
+Template cliente AccMed:
+
+```bash
+cp .env.client.accmed.example .env
+npm run build
+```
+
+Bootstrap local por `client_code`:
+
+```bash
+scripts\mvp_bootstrap.bat --client-code accmed
+```
+
+Esse fluxo procura automaticamente:
+
+- `frontend/.env.client.accmed` ou `frontend/.env.client.accmed.example`
+- `backend/.env.client.accmed` ou `backend/.env.client.accmed.example`
+
 Backend correspondente:
 
 ```bash
@@ -107,7 +129,7 @@ Exemplos invalidos que devem falhar:
 - Em ambiente de cliente, mantenha `VITE_ENABLE_DEMO_MODE=false`.
 - Em ambiente de cliente, mantenha `VITE_ENABLE_INTERNAL_MENTOR_DEMO=false`.
 - Com demo mode desligado, a tela de login nao deve expor credenciais ou atalhos preview ao cliente final.
-- Com a superficie interna de mentor desligada, o caminho publicado deixa de depender das rotas `mentor-demo`; os fluxos de mentor ficam restritos a validacao local controlada.
+- Com `VITE_ENABLE_INTERNAL_MENTOR_DEMO=false`, o login de mentor continua funcional no workspace publicado. A flag fica restrita a compatibilidade com validacoes internas e nao deve negar o acesso normal do mentor.
 
 ### Recuperacao de sessao
 
@@ -134,4 +156,4 @@ Exemplos invalidos que devem falhar:
 - A persistencia do backend ainda e baseada em arquivos JSON locais. Trate a release atual como operacao de servidor unico ate que a estrategia de banco de dados seja definida.
 - Antes de qualquer staging remoto, execute um snapshot local com `py -m app.operations.storage_maintenance backup` e valide um restore com `py -m app.operations.storage_maintenance restore <snapshot_dir>`.
 - O backend agora registra no startup o resumo operacional de `app_env`, `cors_origins`, `mentor_demo_routes`, `storage_root` e `backup_dir`. Capture esse log como evidencia antes do deploy remoto.
-- As rotas `mentor-demo` agora ficam isoladas da superficie publicada por `VITE_ENABLE_INTERNAL_MENTOR_DEMO=false`. Se voce reativar esse caminho para validacao local, trate-o como uso interno e nao como superficie cliente.
+- O workspace de mentor agora faz parte da superficie publicada. Mantenha `VITE_ENABLE_INTERNAL_MENTOR_DEMO=false` como padrao operacional e trate qualquer dependencia restante do legado `mentor-demo` apenas como compatibilidade tecnica, nao como bloqueio funcional do mentor.

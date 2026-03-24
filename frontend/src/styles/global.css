@@ -225,12 +225,20 @@ input {
 }
 
 .login-panel__eyebrow {
-  margin: 0 0 4px;
+  margin: 0;
   color: var(--color-accent-primary);
-  font-size: 11px;
+  font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   font-weight: 700;
+}
+
+.login-panel__client {
+  margin: 6px 0 0;
+  color: var(--color-text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .login-panel__title {
@@ -317,7 +325,7 @@ input {
 }
 
 .login-form {
-  margin-top: 18px;
+  margin-top: 28px;
   display: grid;
   gap: 14px;
 }

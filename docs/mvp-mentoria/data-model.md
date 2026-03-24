@@ -1,5 +1,7 @@
 # MVP Mentoria - modelo de dados inicial
 
+> Canonical platform note: the long-term backend source of truth is now documented in `docs/architecture/canonical-data-architecture.md`. This file remains useful as a legacy MVP data-model reference, but `organization`, `protocol`, `enrollment`, `mentor`, and `student` should be interpreted through the canonical mapping defined there.
+
 ## Objetivo
 Definir modelos iniciais para backend FastAPI com persistencia simples em JSON, alinhados aos contratos inferidos das 3 visualizacoes:
 - Centro de Comando

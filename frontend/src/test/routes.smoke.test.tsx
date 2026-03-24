@@ -145,24 +145,22 @@ describe("app routes", () => {
     expect(await screen.findByRole("heading", { name: "Centro Institucional" })).toBeInTheDocument();
   });
 
-  it("bloqueia rotas de mentor quando a superficie interna esta desligada", async () => {
+  it("permite que mentor autenticado acesse a matriz mesmo com a flag interna desligada", async () => {
     authState.accessToken = "token";
     authState.isAuthenticated = true;
     authState.user = { id: "usr_mentor", email: "mentor@cliente.test", role: "mentor" };
 
     renderRoute(["/app/matriz-renovacao"]);
 
-    expect(await screen.findByRole("heading", { name: "Acesso negado" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Matriz" })).not.toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Matriz" })).toBeInTheDocument();
   });
 
-  it("permite rotas de mentor apenas quando a superficie interna esta habilitada", async () => {
+  it("redireciona /app para a home publicada do mentor", async () => {
     authState.accessToken = "token";
     authState.isAuthenticated = true;
     authState.user = { id: "usr_mentor", email: "mentor@cliente.test", role: "mentor" };
-    envState.internalMentorDemoEnabled = true;
 
-    renderRoute(["/app/matriz-renovacao"]);
+    renderRoute(["/app"]);
 
     expect(await screen.findByRole("heading", { name: "Matriz" })).toBeInTheDocument();
   });

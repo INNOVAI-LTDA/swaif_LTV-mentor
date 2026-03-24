@@ -21,7 +21,7 @@ export function AppLayout() {
   const { isAuthenticated, isPreviewSession, user, logout } = useAuth();
   const role = user?.role;
   const hasKnownRole = isKnownUserRole(role);
-  const canUseInternalMentorWorkspace = role === "mentor" && env.internalMentorDemoEnabled;
+  const canUsePublishedMentorWorkspace = role === "mentor";
 
   if (location.pathname === "/login") {
     return (
@@ -46,7 +46,7 @@ export function AppLayout() {
           <Link to="/login">Login</Link>
           {isAuthenticated && hasKnownRole && role === "admin" ? <Link to="/app/admin">Admin</Link> : null}
           {isAuthenticated && hasKnownRole && role === "aluno" ? <Link to="/app/aluno">Aluno</Link> : null}
-          {isAuthenticated && canUseInternalMentorWorkspace ? (
+          {isAuthenticated && canUsePublishedMentorWorkspace ? (
             <>
               <Link to="/app/hub-interno">Hub interno</Link>
               <Link to="/app/centro-comando">Centro</Link>

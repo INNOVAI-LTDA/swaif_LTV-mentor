@@ -60,6 +60,7 @@ describe("shared env config", () => {
     vi.stubEnv("VITE_APP_BASE_PATH", "/cliente");
     vi.stubEnv("VITE_ENABLE_DEMO_MODE", "true");
     vi.stubEnv("VITE_ENABLE_INTERNAL_MENTOR_DEMO", "true");
+    vi.stubEnv("VITE_THEME_ACCENT_PRIMARY", "#123456");
 
     const { env } = await importEnvModule();
 
@@ -69,6 +70,7 @@ describe("shared env config", () => {
     expect(env.apiBaseUrl).toBe("https://api.example.com");
     expect(env.brandingLogoUrl).toBe("/cliente/branding/app-logo.png");
     expect(env.routerBasePath).toBe("/cliente");
+    expect(env.themeColors.accentPrimary).toBe("#123456");
   });
 
   it("mantem a superficie interna de mentor apenas em deploy local explicito", async () => {

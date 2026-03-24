@@ -1,7 +1,7 @@
-2026-03-21 00:38:10,609 INFO swaif.runtime backend_runtime_configured app_env=local cors_origins=http://127.0.0.1:4173 mentor_demo_routes=True mentor_demo_policy=explicit-local-enable storage_root=C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\backups
-INFO:     Started server process [3604]
+2026-03-23 22:50:01,651 INFO swaif.runtime backend_runtime_configured app_env=local cors_origins=http://127.0.0.1:4173 mentor_demo_routes=True mentor_demo_policy=explicit-local-enable storage_root=C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\backups
+INFO:     Started server process [4584]
 INFO:     Waiting for application startup.
-2026-03-21 00:38:10,969 INFO swaif.runtime backend_startup_complete app_env=local cors_origins=http://127.0.0.1:4173 mentor_demo_routes=True mentor_demo_policy=explicit-local-enable storage_root=C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\backups
-2026-03-21 00:38:10,970 WARNING swaif.runtime mentor_demo_routes_enabled=true; keep this restricted to local/demo validation environments.
+2026-03-23 22:50:02,137 INFO swaif.runtime backend_startup_complete app_env=local cors_origins=http://127.0.0.1:4173 mentor_demo_routes=True mentor_demo_policy=explicit-local-enable storage_root=C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\backups
+2026-03-23 22:50:02,138 WARNING swaif.runtime mentor_demo_routes_enabled=true; keep this restricted to local/demo validation environments.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)

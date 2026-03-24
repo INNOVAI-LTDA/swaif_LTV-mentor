@@ -52,7 +52,7 @@ Fill these values before deploying:
 - Backend persistence is still JSON-file based on local disk
 - Deployment is single-server only
 - Backup and restore must be validated before client go-live
-- The published frontend path now keeps mentor-demo isolated by default; any mentor-demo usage is local/internal only
+- The published frontend path now includes the mentor workspace by default; any remaining `mentor-demo` naming is treated as technical legacy, not as a published-access gate
 
 ## JSON Pilot Operating Model
 
@@ -230,8 +230,8 @@ Use the published frontend against the real staging backend URL. Record pass or 
    Expected: client branding loads and no demo credentials are exposed.
 2. Authenticate as admin and open `/cliente/app/admin`.
    Expected: admin shell loads, protected requests succeed, logout returns to login.
-3. Confirm the published frontend does not expose the internal mentor workspace unless an explicit local-only validation window was approved.
-   Expected: login does not offer the mentor surface and direct access to `/cliente/app/matriz-renovacao` or related mentor routes resolves to controlled denial in the published posture.
+3. Authenticate as mentor and open `/cliente/app/matriz-renovacao`, `/cliente/app/hub-interno`, `/cliente/app/centro-comando`, and `/cliente/app/radar`.
+   Expected: the published mentor workspace loads successfully and no `403` is triggered merely because `VITE_ENABLE_INTERNAL_MENTOR_DEMO=false`.
 4. If aluno is in scope, authenticate and open `/cliente/app/aluno`.
    Expected: student shell loads and student flow is usable.
 5. Trigger unauthorized behavior with an expired or invalid token.

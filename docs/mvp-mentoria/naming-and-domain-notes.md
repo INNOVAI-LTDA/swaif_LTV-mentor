@@ -1,5 +1,7 @@
 # Naming e notas de dominio (MVP mentoria)
 
+> Canonical platform note: for backend architecture and migration planning, use `docs/architecture/canonical-data-architecture.md` as the source of truth. This document remains the mentoria-specific vocabulary guide layered on top of the canonical platform model.
+
 ## 1) Visualizacoes centrais e papeis (assinatura do produto)
 - Centro de Comando: operacao diaria por excecao, com foco em risco, progresso de ciclo e gatilhos de renovacao.
 - Radar de Transformacao: comparacao de baseline/atual/projecao por eixo do metodo.

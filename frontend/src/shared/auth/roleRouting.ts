@@ -1,5 +1,3 @@
-import { env } from "../config/env";
-
 export type KnownUserRole = "admin" | "mentor" | "aluno";
 
 export function isKnownUserRole(role: string | null | undefined): role is KnownUserRole {
@@ -11,7 +9,7 @@ export function getDefaultRouteForRole(role: KnownUserRole): string {
     case "admin":
       return "/app/admin";
     case "mentor":
-      return env.internalMentorDemoEnabled ? "/app/matriz-renovacao" : "/app/acesso-negado";
+      return "/app/matriz-renovacao";
     case "aluno":
       return "/app/aluno";
   }
@@ -22,7 +20,7 @@ export function getRoleHomeLabel(role: KnownUserRole): string {
     case "admin":
       return "Ir para a area administrativa";
     case "mentor":
-      return env.internalMentorDemoEnabled ? "Ir para a matriz de renovacao" : "Encerrar sessao";
+      return "Ir para a matriz de renovacao";
     case "aluno":
       return "Ir para a area do aluno";
   }

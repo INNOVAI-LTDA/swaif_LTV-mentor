@@ -26,7 +26,7 @@ Documentar os fluxos de navegacao por tipo de usuario no frontend atual, com foc
 | Radar | `frontend/src/features/radar/pages/RadarPage.tsx` |
 | Matriz de renovacao | `frontend/src/features/matrix/pages/MatrixPage.tsx` |
 | Shell comum | `frontend/src/app/layout/AppLayout.tsx` |
-| Pagina nao encontrada | `frontend/src/pages/NotFoundPage.tsx` |
+| Pagina nao encontrada | `frontend/src/pages/NotFoundPage.tsxfrontend/src/pages/NotFoundPage.tsx` |
 
 ## 1. Usuario anonimo
 

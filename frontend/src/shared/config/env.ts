@@ -36,6 +36,20 @@ const shellSubtitle = parseText(import.meta.env.VITE_SHELL_SUBTITLE, "Operacao, 
 const brandingIconPath = parseText(import.meta.env.VITE_BRANDING_ICON_PATH, "branding/app-icon.png");
 const brandingLogoPath = parseText(import.meta.env.VITE_BRANDING_LOGO_PATH, "branding/app-logo.png");
 const brandingLoginHeroPath = parseText(import.meta.env.VITE_BRANDING_LOGIN_HERO_PATH, "branding/login-hero.png");
+const themeColors = {
+  bgPrimary: parseText(import.meta.env.VITE_THEME_BG_PRIMARY, "#090909"),
+  bgSecondary: parseText(import.meta.env.VITE_THEME_BG_SECONDARY, "#121212"),
+  surfacePrimary: parseText(import.meta.env.VITE_THEME_SURFACE_PRIMARY, "#1a1a1a"),
+  surfaceSecondary: parseText(import.meta.env.VITE_THEME_SURFACE_SECONDARY, "#242424"),
+  borderDefault: parseText(import.meta.env.VITE_THEME_BORDER_DEFAULT, "#333333"),
+  textPrimary: parseText(import.meta.env.VITE_THEME_TEXT_PRIMARY, "#ffffff"),
+  textSecondary: parseText(import.meta.env.VITE_THEME_TEXT_SECONDARY, "#bfbfbf"),
+  accentPrimary: parseText(import.meta.env.VITE_THEME_ACCENT_PRIMARY, "#fab800"),
+  accentSecondary: parseText(import.meta.env.VITE_THEME_ACCENT_SECONDARY, "#ffbd00"),
+  success: parseText(import.meta.env.VITE_THEME_SUCCESS, "#39b56a"),
+  warning: parseText(import.meta.env.VITE_THEME_WARNING, "#d9a100"),
+  danger: parseText(import.meta.env.VITE_THEME_DANGER, "#d64545")
+};
 
 export const env = {
   deployTarget,
@@ -52,5 +66,6 @@ export const env = {
   shellSubtitle,
   brandingIconUrl: buildPublicAssetUrl(brandingIconPath),
   brandingLogoUrl: buildPublicAssetUrl(brandingLogoPath),
-  brandingLoginHeroUrl: buildPublicAssetUrl(brandingLoginHeroPath)
+  brandingLoginHeroUrl: buildPublicAssetUrl(brandingLoginHeroPath),
+  themeColors
 };

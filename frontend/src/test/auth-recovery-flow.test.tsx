@@ -126,12 +126,11 @@ describe("auth recovery flow", () => {
       </AuthProvider>
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /Decisao e acompanhamento Mentor/i }));
-    fireEvent.change(screen.getByLabelText("Usuario"), { target: { value: "mentor@cliente.test" } });
+    fireEvent.change(screen.getByLabelText("Usuário"), { target: { value: "mentor@cliente.test" } });
     fireEvent.change(screen.getByLabelText("Senha"), { target: { value: "senha-mentor-segura" } });
-    fireEvent.click(screen.getByRole("button", { name: "Entrar como Mentor" }));
+    fireEvent.click(screen.getByRole("button", { name: "Entrar" }));
 
-    expect(await screen.findByText("Sessao pendente de validacao")).toBeInTheDocument();
+    expect(await screen.findByText("Sessão pendente de validação")).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Matriz" })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Tentar novamente" }));

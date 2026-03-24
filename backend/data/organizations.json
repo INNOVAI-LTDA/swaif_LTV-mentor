@@ -14,7 +14,7 @@
       "slug": "mentoria_acelerador_medico",
       "code": "MAM",
       "client_id": "cli_1",
-      "mentor_id": null,
+      "mentor_id": "mtr_2",
       "description": null,
       "delivery_model": "live",
       "status": "active",

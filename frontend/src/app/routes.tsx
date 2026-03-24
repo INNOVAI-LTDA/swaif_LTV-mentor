@@ -57,7 +57,7 @@ function RequireAdmin() {
   return <Outlet />;
 }
 
-function RequireInternalMentorWorkspace() {
+function RequireMentorWorkspace() {
   const { authReady, isAuthenticated, user } = useAuth();
 
   if (!authReady) {
@@ -66,10 +66,6 @@ function RequireInternalMentorWorkspace() {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
-  }
-
-  if (!env.internalMentorDemoEnabled) {
-    return <Navigate to="/app/acesso-negado" replace />;
   }
 
   if (!user || user.role !== "mentor") {
@@ -111,7 +107,7 @@ export const appRoutes: RouteObject[] = [
           { index: true, element: <RoleHomeRedirect /> },
           { path: "acesso-negado", element: <AccessDeniedPage /> },
           {
-            element: <RequireInternalMentorWorkspace />,
+            element: <RequireMentorWorkspace />,
             children: [
               { path: "hub-interno", element: <HubPage /> },
               { path: "centro-comando", element: <CommandCenterPage /> },

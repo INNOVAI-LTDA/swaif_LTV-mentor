@@ -20,6 +20,7 @@ from urllib.request import urlopen
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 BACKEND_DIR = ROOT_DIR / "backend"
+FRONTEND_DIR = ROOT_DIR / "frontend"
 LOG_DIR = ROOT_DIR / ".logs" / "mvp-bootstrap"
 
 IGNORED_DISCOVERY_DIRS = {
@@ -402,6 +403,49 @@ def build_env(base: dict[str, str], extra: dict[str, str]) -> dict[str, str]:
     return env
 
 
+def parse_env_file(env_file: Path) -> dict[str, str]:
+    try:
+        lines = env_file.read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        raise RuntimeError(f"Nao foi possivel ler arquivo de ambiente: {env_file}") from exc
+
+    values: dict[str, str] = {}
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        values[key.strip()] = value.strip()
+    return values
+
+
+def resolve_client_env_file(service_dir: Path, client_code: str, explicit_file: str) -> Path | None:
+    if explicit_file:
+        candidate = Path(explicit_file).expanduser()
+        if not candidate.is_absolute():
+            candidate = ROOT_DIR / candidate
+        resolved = candidate.resolve()
+        if not resolved.exists():
+            raise RuntimeError(f"Arquivo de ambiente nao encontrado: {resolved}")
+        return resolved
+
+    if not client_code:
+        return None
+
+    candidates = [
+        service_dir / f".env.client.{client_code}",
+        service_dir / f".env.client.{client_code}.example",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+
+    raise RuntimeError(
+        f"Nao foi encontrado env para client_code='{client_code}' em {service_dir}. "
+        f"Esperado: {candidates[0].name} ou {candidates[1].name}"
+    )
+
+
 def start_service(
     label: str,
     command: str,
@@ -459,6 +503,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--backend-cmd", default=os.getenv("BACKEND_CMD", "").strip())
     parser.add_argument("--frontend-cmd", default=os.getenv("FRONTEND_CMD", "").strip())
     parser.add_argument(
+        "--client-code",
+        default=os.getenv("CLIENT_CODE", "").strip(),
+        help="Codigo do cliente para carregar arquivos .env.client.<codigo>[.example] de frontend e backend.",
+    )
+    parser.add_argument(
+        "--frontend-env-file",
+        default=os.getenv("FRONTEND_ENV_FILE", "").strip(),
+        help="Arquivo de ambiente explicito para o frontend.",
+    )
+    parser.add_argument(
+        "--backend-env-file",
+        default=os.getenv("BACKEND_ENV_FILE", "").strip(),
+        help="Arquivo de ambiente explicito para o backend.",
+    )
+    parser.add_argument(
         "--frontend-dir",
         default=os.getenv("FRONTEND_DIR", "").strip(),
         help="Diretorio do frontend com package.json e script dev (ou FRONTEND_DIR).",
@@ -477,6 +536,9 @@ def validate_args(args: argparse.Namespace) -> None:
     for label, port in (("backend", args.backend_port), ("frontend", args.frontend_port)):
         if port < 1 or port > 65535:
             raise RuntimeError(f"Porta invalida para {label}: {port}")
+
+    if args.client_code and not args.client_code.replace("-", "").replace("_", "").isalnum():
+        raise RuntimeError("client_code invalido. Use apenas letras, numeros, hifen ou underscore.")
 
 
 def print_ports(args: argparse.Namespace) -> int:
@@ -516,6 +578,21 @@ def main() -> int:
             frontend_dir, dev_script = resolved_frontend
             frontend_cmd = args.frontend_cmd or detect_frontend_command(args.frontend_port, dev_script)
 
+    backend_env_file = resolve_client_env_file(BACKEND_DIR, args.client_code, args.backend_env_file)
+    frontend_env_root = frontend_dir if frontend_dir is not None else FRONTEND_DIR
+    frontend_env_file = resolve_client_env_file(frontend_env_root, args.client_code, args.frontend_env_file) if start_frontend else None
+    backend_env_overrides = parse_env_file(backend_env_file) if backend_env_file else {}
+    frontend_env_overrides = parse_env_file(frontend_env_file) if frontend_env_file else {}
+
+    if args.client_code:
+        backend_env_overrides.setdefault("CLIENT_CODE", args.client_code)
+        frontend_env_overrides.setdefault("CLIENT_CODE", args.client_code)
+
+    if backend_env_file:
+        print_info(f"Env backend carregado: {backend_env_file}")
+    if frontend_env_file:
+        print_info(f"Env frontend carregado: {frontend_env_file}")
+
     targets: list[tuple[str, int]] = []
     if start_backend:
         targets.append(("backend", args.backend_port))
@@ -528,7 +605,13 @@ def main() -> int:
     frontend_process: subprocess.Popen[str] | None = None
     try:
         if start_backend:
-            backend_env = build_env(os.environ, {"PYTHONPATH": os.getenv("PYTHONPATH", ".vendor")})
+            backend_env = build_env(
+                os.environ,
+                {
+                    **backend_env_overrides,
+                    "PYTHONPATH": os.getenv("PYTHONPATH", ".vendor"),
+                },
+            )
             backend_log = LOG_DIR / "backend.log"
             backend_process = start_service(
                 "backend",
@@ -551,11 +634,15 @@ def main() -> int:
             print_info(f"Log backend: {LOG_DIR / 'backend.log'}")
 
         if start_frontend:
+            effective_api_base_url = frontend_env_overrides.get("VITE_API_BASE_URL")
+            if not effective_api_base_url and start_backend:
+                effective_api_base_url = f"http://{args.backend_host}:{args.backend_port}"
             frontend_env = build_env(
                 os.environ,
                 {
-                    "API_BASE_URL": f"http://{args.backend_host}:{args.backend_port}",
-                    "VITE_API_BASE_URL": f"http://{args.backend_host}:{args.backend_port}",
+                    **frontend_env_overrides,
+                    "API_BASE_URL": effective_api_base_url or f"http://{args.backend_host}:{args.backend_port}",
+                    "VITE_API_BASE_URL": effective_api_base_url or f"http://{args.backend_host}:{args.backend_port}",
                 },
             )
             frontend_log = LOG_DIR / "frontend.log"
