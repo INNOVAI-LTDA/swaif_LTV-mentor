@@ -17,9 +17,9 @@ const FILTER_OPTIONS: Array<{ value: MatrixFilter; label: string }> = [
 ];
 
 const URGENCY_LABEL: Record<Urgency, string> = {
-  normal: "Estável",
-  watch: "Atenção",
-  critical: "Crítico",
+  normal: "Estavel",
+  watch: "Atencao",
+  critical: "Critico",
   rescue: "Resgate"
 };
 
@@ -83,22 +83,19 @@ export function MatrixPage() {
   return (
     <MentorShell
       activeView="matrix"
-      eyebrow="Mentor | Matriz de Decisão"
-      title="Renovações, resgates e prioridades da carteira"
-      description="Organize os alunos por progresso e engajamento para decidir onde renovar, onde recuperar valor e onde ajustar o plano de mentoria."
       actions={
         <>
           <button type="button" onClick={() => void resource.refresh()}>
             Atualizar leitura
           </button>
-          <Link to="/app">Visão geral</Link>
+          <Link to="/app">Visao geral</Link>
         </>
       }
       metrics={[
         { label: "Pipeline LTV total", value: formatCurrencyBRL(kpis.totalLTV), tone: "accent" },
-        { label: "Renovações críticas D-45", value: String(kpis.criticalRenewals), tone: "warning" },
+        { label: "Renovacoes criticas D-45", value: String(kpis.criticalRenewals), tone: "warning" },
         { label: "Alertas de resgate", value: String(kpis.rescueCount) },
-        { label: "Engajamento médio", value: formatPercentKpi(kpis.avgEngagement), tone: "success" }
+        { label: "Engajamento medio", value: formatPercentKpi(kpis.avgEngagement), tone: "success" }
       ]}
     >
       <section className="mx-page">
@@ -136,14 +133,14 @@ export function MatrixPage() {
               <article className="mx-opportunity">
                 <span>Oportunidade em contratos D-45</span>
                 <strong>{formatCurrencyBRL(d45Ltv)}</strong>
-                <p>Soma dos alunos em janela de renovação nos próximos 45 dias.</p>
+                <p>Soma dos alunos em janela de renovacao nos proximos 45 dias.</p>
               </article>
             </div>
 
             <aside className="mx-side">
               <section className="mx-panel">
                 <header>
-                  <h2>Painel de ação rápida</h2>
+                  <h2>Painel de acao rapida</h2>
                   <p>{sortedItems.length} alunos no filtro atual</p>
                 </header>
 
@@ -157,7 +154,7 @@ export function MatrixPage() {
                       >
                         <div>
                           <strong>{item.name}</strong>
-                          <span>{item.programName || "Programa não informado"}</span>
+                          <span>{item.programName || "Programa nao informado"}</span>
                         </div>
                         <div>
                           <small>D-{item.daysLeft}</small>
@@ -173,8 +170,8 @@ export function MatrixPage() {
 
               <section className="mx-panel">
                 <header>
-                  <h2>Contexto de renovação</h2>
-                  <p>{selected ? selected.name : "Sem seleção"}</p>
+                  <h2>Contexto de renovacao</h2>
+                  <p>{selected ? selected.name : "Sem selecao"}</p>
                 </header>
 
                 {!selected && <p className="mx-state-inline">Selecione um aluno para abrir os detalhes.</p>}
@@ -201,13 +198,13 @@ export function MatrixPage() {
                     </div>
 
                     <article className="mx-detail-card">
-                      <h3>Motivo de renovação</h3>
+                      <h3>Motivo de renovacao</h3>
                       <p>{selected.renewalReason || "Sem motivo registrado."}</p>
                     </article>
 
                     <article className="mx-detail-card mx-detail-card--accent">
-                      <h3>Ação sugerida</h3>
-                      <p>{selected.suggestion || "Sem sugestão registrada."}</p>
+                      <h3>Acao sugerida</h3>
+                      <p>{selected.suggestion || "Sem sugestao registrada."}</p>
                     </article>
 
                     <article className="mx-detail-card">

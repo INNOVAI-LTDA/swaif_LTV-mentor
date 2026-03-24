@@ -5,9 +5,9 @@ import { env } from "../../../shared/config/env";
 
 type MentorShellProps = {
   activeView: "matrix" | "command-center" | "radar";
-  eyebrow: string;
-  title: string;
-  description: string;
+  eyebrow?: string;
+  title?: string;
+  description?: string;
   actions?: ReactNode;
   metrics?: Array<{ label: string; value: string; tone?: "neutral" | "accent" | "success" | "warning" }>;
   children: ReactNode;
@@ -64,6 +64,7 @@ export function MentorShell({ activeView, eyebrow, title, description, actions, 
   const searchPanel = searchParams.get("panel");
   const panelKey = isSupportPanel(searchPanel) ? searchPanel : null;
   const panel = panelKey ? SUPPORT_PANELS[panelKey] : null;
+  const hasHeaderCopy = Boolean(eyebrow || title || description);
 
   return (
     <section className="mentor-shell">
@@ -116,14 +117,20 @@ export function MentorShell({ activeView, eyebrow, title, description, actions, 
         </aside>
 
         <div className="mentor-main">
-          <header className="mentor-header">
-            <div>
-              <p className="mentor-header__eyebrow">{eyebrow}</p>
-              <h1>{title}</h1>
-              <p>{description}</p>
-            </div>
-            {actions && <div className="mentor-header__actions">{actions}</div>}
-          </header>
+          {(hasHeaderCopy || actions) && (
+            <header className="mentor-header">
+              {hasHeaderCopy ? (
+                <div>
+                  {eyebrow ? <p className="mentor-header__eyebrow">{eyebrow}</p> : null}
+                  {title ? <h1>{title}</h1> : null}
+                  {description ? <p>{description}</p> : null}
+                </div>
+              ) : (
+                <div />
+              )}
+              {actions && <div className="mentor-header__actions">{actions}</div>}
+            </header>
+          )}
 
           {metrics.length > 0 && (
             <section className="mentor-metrics">

@@ -30,3 +30,64 @@ INFO:     127.0.0.1:63697 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 4
 INFO:     127.0.0.1:49994 - "GET /me HTTP/1.1" 200 OK
 INFO:     127.0.0.1:49994 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
 INFO:     127.0.0.1:63697 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54662 - "OPTIONS /mentor/centro-comando/alunos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60984 - "OPTIONS /mentor/centro-comando/alunos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60984 - "GET /mentor/centro-comando/alunos HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54662 - "GET /mentor/centro-comando/alunos HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54662 - "GET /mentor/centro-comando/alunos HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60984 - "GET /mentor/centro-comando/alunos HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60984 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54662 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54662 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60984 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49265 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49265 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49265 - "OPTIONS /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49265 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49265 - "OPTIONS /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49265 - "OPTIONS /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49725 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49265 - "GET /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49725 - "GET /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49265 - "GET /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49725 - "GET /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49725 - "OPTIONS /admin/clientes/cli_1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49725 - "GET /admin/clientes/cli_1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63072 - "OPTIONS /admin/clientes/cli_1/produtos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63072 - "GET /admin/clientes/cli_1/produtos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63072 - "OPTIONS /admin/produtos/org_2/mentores HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60962 - "OPTIONS /admin/produtos/org_2/pilares HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60962 - "GET /admin/produtos/org_2/mentores HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63072 - "GET /admin/produtos/org_2/pilares HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52050 - "OPTIONS /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60478 - "OPTIONS /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60478 - "OPTIONS /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52050 - "OPTIONS /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52050 - "GET /admin/clientes HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52050 - "GET /admin/clientes HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:55745 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55745 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55745 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55745 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63198 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63499 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63499 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63198 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63198 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63499 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52822 - "OPTIONS /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58024 - "OPTIONS /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58024 - "GET /me HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:58024 - "GET /me HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:50479 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50479 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50479 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50479 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51972 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51972 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50479 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54925 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54925 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54925 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49629 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49629 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
