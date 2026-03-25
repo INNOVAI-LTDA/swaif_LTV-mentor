@@ -27,7 +27,7 @@ Para desenvolvimento local, use `VITE_DEPLOY_TARGET=local`. Nesse alvo, o fronte
 npm run build
 ```
 
-Todo build agora exige `VITE_DEPLOY_TARGET`. Em builds `client`, `VITE_API_BASE_URL` passa a ser obrigatorio e precisa ser uma URL absoluta `http(s)` sem credenciais, query strings ou fragments.
+Todo build agora exige `VITE_DEPLOY_TARGET`. Em builds `client`, `VITE_CLIENT_CODE` e `VITE_API_BASE_URL` passam a ser obrigatorios. `VITE_API_BASE_URL` precisa ser uma URL absoluta `http(s)` sem credenciais, query strings ou fragments.
 
 ## Testes
 
@@ -46,6 +46,7 @@ Copie `.env.example` para `.env` e ajuste:
 - `VITE_HTTP_TIMEOUT_MS`
 - `VITE_APP_BASE_PATH`
 - `VITE_DEPLOY_TARGET`
+- `VITE_CLIENT_CODE`
 - `VITE_CLIENT_NAME`
 - `VITE_APP_NAME`
 - `VITE_APP_TAGLINE`
@@ -55,6 +56,7 @@ Copie `.env.example` para `.env` e ajuste:
 ### Contrato de ambiente
 
 - `VITE_DEPLOY_TARGET`: define a intencao do build. Use `local` para desenvolvimento e `client` para build publicado.
+- `VITE_CLIENT_CODE`: identificador explicito do cliente ativo. Obrigatorio para builds `client` e deve corresponder ao `CLIENT_CODE` do backend no mesmo deploy.
 - `VITE_API_BASE_URL`: URL base explicita da API. Obrigatoria para builds de cliente.
 - `VITE_API_BASE_URL` deve ser uma origem/caminho absoluto `http(s)` sem credenciais, query strings ou fragments.
 - `VITE_HTTP_TIMEOUT_MS`: timeout do cliente HTTP em milissegundos.
@@ -88,7 +90,7 @@ VITE_DEPLOY_TARGET=local npm run build
 Build client-safe:
 
 ```bash
-VITE_DEPLOY_TARGET=client VITE_API_BASE_URL=https://api.example.com npm run build
+VITE_DEPLOY_TARGET=client VITE_CLIENT_CODE=accmed VITE_API_BASE_URL=https://api.example.com npm run build
 ```
 
 Template cliente AccMed:
@@ -109,19 +111,27 @@ Esse fluxo procura automaticamente:
 - `frontend/.env.client.accmed` ou `frontend/.env.client.accmed.example`
 - `backend/.env.client.accmed` ou `backend/.env.client.accmed.example`
 
+Contrato operacional do bootstrap:
+
+- `--client-code` precisa ser o mesmo valor para backend e frontend.
+- O frontend precisa receber `VITE_CLIENT_CODE=<client_code>`.
+- O backend precisa receber `CLIENT_CODE=<client_code>`.
+
 Backend correspondente:
 
 ```bash
-APP_ENV=production CORS_ALLOW_ORIGINS=https://cliente.example.com py -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+APP_ENV=production CLIENT_CODE=accmed CORS_ALLOW_ORIGINS=https://cliente.example.com py -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 Exemplos invalidos que devem falhar:
 
 - `npm run build` sem `VITE_DEPLOY_TARGET`
+- `VITE_DEPLOY_TARGET=client` sem `VITE_CLIENT_CODE`
 - `VITE_DEPLOY_TARGET=client` sem `VITE_API_BASE_URL`
 - `VITE_DEPLOY_TARGET=client VITE_API_BASE_URL=api.example.com`
 - `VITE_DEPLOY_TARGET=client VITE_API_BASE_URL=https://api.example.com?tenant=x`
 - `APP_ENV=production CORS_ALLOW_ORIGINS=https://cliente.example.com/app`
+- `APP_ENV=production` sem `CLIENT_CODE`
 
 ### Demo mode
 

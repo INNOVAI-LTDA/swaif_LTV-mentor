@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
 from app.config.runtime import (
+    get_client_code,
     get_storage_backup_dir,
     mentor_demo_routes_enabled,
     resolve_mentor_demo_route_policy,
@@ -63,9 +64,53 @@ def test_get_storage_backup_dir_accepts_explicit_env(monkeypatch, tmp_path) -> N
     assert get_storage_backup_dir() == backup_dir
 
 
+def test_get_client_code_required_in_production_like_env(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.delenv("CLIENT_CODE", raising=False)
+
+    try:
+        get_client_code()
+    except RuntimeError as error:
+        assert str(error) == "CLIENT_CODE is required."
+    else:
+        raise AssertionError("Expected CLIENT_CODE to be required in production-like environments.")
+
+
+def test_get_client_code_validates_characters(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("CLIENT_CODE", "cliente x")
+
+    try:
+        get_client_code()
+    except RuntimeError as error:
+        assert str(error) == "CLIENT_CODE must contain only letters, numbers, hyphen, or underscore."
+    else:
+        raise AssertionError("Expected invalid CLIENT_CODE to fail validation.")
+
+
+def test_get_client_code_required_in_local_env(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "local")
+    monkeypatch.delenv("CLIENT_CODE", raising=False)
+
+    try:
+        get_client_code()
+    except RuntimeError as error:
+        assert str(error) == "CLIENT_CODE is required."
+    else:
+        raise AssertionError("Expected CLIENT_CODE to be required in local environments.")
+
+
+def test_get_client_code_returns_valid_value(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("CLIENT_CODE", "accmed-client")
+
+    assert get_client_code() == "accmed-client"
+
+
 def test_create_app_disables_mentor_demo_routes_when_configured(monkeypatch) -> None:
     monkeypatch.setenv("APP_ENV", "production")
     monkeypatch.setenv("CORS_ALLOW_ORIGINS", "https://cliente.example.com")
+    monkeypatch.setenv("CLIENT_CODE", "test-client")
     monkeypatch.setenv("ENABLE_MENTOR_DEMO_ROUTES", "false")
     monkeypatch.delenv("ALLOW_REMOTE_MENTOR_DEMO_ROUTES", raising=False)
 
@@ -78,6 +123,7 @@ def test_create_app_disables_mentor_demo_routes_when_configured(monkeypatch) -> 
 
 def test_create_app_keeps_mentor_demo_routes_in_local(monkeypatch) -> None:
     monkeypatch.setenv("APP_ENV", "local")
+    monkeypatch.setenv("CLIENT_CODE", "test-local")
     monkeypatch.delenv("ENABLE_MENTOR_DEMO_ROUTES", raising=False)
     monkeypatch.delenv("ALLOW_REMOTE_MENTOR_DEMO_ROUTES", raising=False)
     monkeypatch.delenv("CORS_ALLOW_ORIGINS", raising=False)
@@ -93,6 +139,7 @@ def test_create_app_keeps_mentor_demo_routes_in_local(monkeypatch) -> None:
 def test_create_app_exposes_runtime_policy_summary_for_remote_approval(monkeypatch) -> None:
     monkeypatch.setenv("APP_ENV", "production")
     monkeypatch.setenv("CORS_ALLOW_ORIGINS", "https://cliente.example.com")
+    monkeypatch.setenv("CLIENT_CODE", "test-client")
     monkeypatch.setenv("ENABLE_MENTOR_DEMO_ROUTES", "true")
     monkeypatch.setenv("ALLOW_REMOTE_MENTOR_DEMO_ROUTES", "true")
 

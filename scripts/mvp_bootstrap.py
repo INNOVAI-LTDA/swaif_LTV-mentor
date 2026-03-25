@@ -419,6 +419,18 @@ def parse_env_file(env_file: Path) -> dict[str, str]:
     return values
 
 
+def apply_client_code_contract(
+    backend_env_overrides: dict[str, str],
+    frontend_env_overrides: dict[str, str],
+    client_code: str,
+) -> None:
+    if not client_code:
+        return
+    backend_env_overrides.setdefault("CLIENT_CODE", client_code)
+    frontend_env_overrides.setdefault("CLIENT_CODE", client_code)
+    frontend_env_overrides.setdefault("VITE_CLIENT_CODE", client_code)
+
+
 def resolve_client_env_file(service_dir: Path, client_code: str, explicit_file: str) -> Path | None:
     if explicit_file:
         candidate = Path(explicit_file).expanduser()
@@ -584,9 +596,7 @@ def main() -> int:
     backend_env_overrides = parse_env_file(backend_env_file) if backend_env_file else {}
     frontend_env_overrides = parse_env_file(frontend_env_file) if frontend_env_file else {}
 
-    if args.client_code:
-        backend_env_overrides.setdefault("CLIENT_CODE", args.client_code)
-        frontend_env_overrides.setdefault("CLIENT_CODE", args.client_code)
+    apply_client_code_contract(backend_env_overrides, frontend_env_overrides, args.client_code)
 
     if backend_env_file:
         print_info(f"Env backend carregado: {backend_env_file}")

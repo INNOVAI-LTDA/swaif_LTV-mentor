@@ -19,6 +19,7 @@ from app.api.routes.health import router as health_router
 from app.api.routes.mentor_demo import router as mentor_demo_router
 from app.config.runtime import (
     get_app_env,
+    get_client_code,
     get_storage_backup_dir,
     resolve_mentor_demo_route_policy,
     resolve_cors_origins,
@@ -53,6 +54,7 @@ def create_app() -> FastAPI:
     configure_runtime_logging()
     app = FastAPI(title="SWAIF Mentoria API", version="0.1.0")
     app_env = get_app_env()
+    client_code = get_client_code(app_env)
     cors_origins = resolve_cors_origins()
     allow_all_origins = "*" in cors_origins
     mentor_demo_policy = resolve_mentor_demo_route_policy(app_env)
@@ -60,6 +62,7 @@ def create_app() -> FastAPI:
 
     app.state.runtime_summary = {
         "app_env": app_env,
+        "client_code": client_code,
         "cors_origins": cors_origins,
         "mentor_demo_routes_enabled": mentor_demo_enabled,
         "mentor_demo_policy_source": mentor_demo_policy.policy_source,
@@ -68,8 +71,9 @@ def create_app() -> FastAPI:
     }
 
     logger.info(
-        "backend_runtime_configured app_env=%s cors_origins=%s mentor_demo_routes=%s mentor_demo_policy=%s storage_root=%s backup_dir=%s",
+        "backend_runtime_configured app_env=%s client_code=%s cors_origins=%s mentor_demo_routes=%s mentor_demo_policy=%s storage_root=%s backup_dir=%s",
         app.state.runtime_summary["app_env"],
+        app.state.runtime_summary["client_code"],
         ",".join(app.state.runtime_summary["cors_origins"]),
         app.state.runtime_summary["mentor_demo_routes_enabled"],
         app.state.runtime_summary["mentor_demo_policy_source"],
@@ -120,8 +124,9 @@ def bootstrap_user_storage() -> None:
 
     summary = app.state.runtime_summary
     logger.info(
-        "backend_startup_complete app_env=%s cors_origins=%s mentor_demo_routes=%s mentor_demo_policy=%s storage_root=%s backup_dir=%s",
+        "backend_startup_complete app_env=%s client_code=%s cors_origins=%s mentor_demo_routes=%s mentor_demo_policy=%s storage_root=%s backup_dir=%s",
         summary["app_env"],
+        summary["client_code"],
         ",".join(summary["cors_origins"]),
         summary["mentor_demo_routes_enabled"],
         summary["mentor_demo_policy_source"],

@@ -107,3 +107,22 @@ def resolve_cors_origins() -> list[str]:
     if is_production_like_environment(app_env):
         raise RuntimeError("CORS_ALLOW_ORIGINS is required when APP_ENV is production-like.")
     return LOCAL_CORS_ORIGINS
+
+
+def _normalize_client_code(raw: str) -> str:
+    trimmed = raw.strip()
+    if not trimmed:
+        raise RuntimeError("CLIENT_CODE is required.")
+    if not all(char.isalnum() or char in {"-", "_"} for char in trimmed):
+        raise RuntimeError("CLIENT_CODE must contain only letters, numbers, hyphen, or underscore.")
+    return trimmed
+
+
+def get_client_code(app_env: str | None = None) -> str:
+    """
+    Returns the configured client code for the current runtime.
+    CLIENT_CODE is required in all startup modes.
+    """
+    _ = app_env
+    raw_client_code = os.getenv("CLIENT_CODE", "")
+    return _normalize_client_code(raw_client_code)

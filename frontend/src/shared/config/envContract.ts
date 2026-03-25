@@ -49,3 +49,21 @@ export function normalizeApiBaseUrl(raw: string | undefined, deployTarget: Deplo
 
   return `${parsed.origin}${parsed.pathname}`.replace(/\/+$/, "");
 }
+
+function isValidClientCode(candidate: string): boolean {
+  return /^[A-Za-z0-9_-]+$/.test(candidate);
+}
+
+export function normalizeClientCode(raw: string | undefined, deployTarget: DeployTarget): string | null {
+  const candidate = (raw || "").trim();
+  if (!candidate) {
+    if (deployTarget === "client") {
+      throw new Error("VITE_CLIENT_CODE is required for client deploys.");
+    }
+    return null;
+  }
+  if (!isValidClientCode(candidate)) {
+    throw new Error("VITE_CLIENT_CODE must contain only letters, numbers, hyphen, or underscore.");
+  }
+  return candidate;
+}

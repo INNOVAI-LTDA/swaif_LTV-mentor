@@ -1,4 +1,4 @@
-import { normalizeApiBaseUrl, normalizeBasePath, normalizeDeployTarget } from "./envContract";
+import { normalizeApiBaseUrl, normalizeBasePath, normalizeClientCode, normalizeDeployTarget } from "./envContract";
 
 function parseTimeout(value: string | undefined, fallback: number): number {
   const parsed = Number(value);
@@ -29,6 +29,7 @@ const deployTarget = normalizeDeployTarget(import.meta.env.VITE_DEPLOY_TARGET);
 const isLocalDeployTarget = deployTarget === "local";
 const demoModeEnabled = isLocalDeployTarget && parseBoolean(import.meta.env.VITE_ENABLE_DEMO_MODE);
 const internalMentorDemoEnabled = isLocalDeployTarget && parseBoolean(import.meta.env.VITE_ENABLE_INTERNAL_MENTOR_DEMO);
+const clientCode = normalizeClientCode(import.meta.env.VITE_CLIENT_CODE, deployTarget);
 const clientName = parseText(import.meta.env.VITE_CLIENT_NAME, "Cliente");
 const appName = parseText(import.meta.env.VITE_APP_NAME, "Plataforma de Mentoria");
 const appTagline = parseText(import.meta.env.VITE_APP_TAGLINE, "Acompanhamento com visao operacional");
@@ -60,6 +61,7 @@ export const env = {
   httpTimeoutMs: parseTimeout(import.meta.env.VITE_HTTP_TIMEOUT_MS, 15000),
   demoModeEnabled,
   internalMentorDemoEnabled,
+  clientCode,
   clientName,
   appName,
   appTagline,

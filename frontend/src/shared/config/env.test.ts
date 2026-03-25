@@ -39,7 +39,7 @@ describe("shared env config", () => {
   });
 
   it("valida deploy target e exige URL absoluta para builds de cliente", async () => {
-    const { normalizeApiBaseUrl, normalizeDeployTarget } = await importEnvContractModule();
+    const { normalizeApiBaseUrl, normalizeDeployTarget, normalizeClientCode } = await importEnvContractModule();
 
     expect(normalizeDeployTarget("client")).toBe("client");
     expect(() => normalizeDeployTarget(undefined)).toThrow("VITE_DEPLOY_TARGET is required");
@@ -52,6 +52,11 @@ describe("shared env config", () => {
       "VITE_API_BASE_URL must not include credentials."
     );
     expect(normalizeApiBaseUrl("https://api.example.com/base/", "client")).toBe("https://api.example.com/base");
+    expect(() => normalizeClientCode("", "client")).toThrow("VITE_CLIENT_CODE is required for client deploys.");
+    expect(() => normalizeClientCode("cliente x", "client")).toThrow(
+      "VITE_CLIENT_CODE must contain only letters, numbers, hyphen, or underscore."
+    );
+    expect(normalizeClientCode("accmed-client", "client")).toBe("accmed-client");
   });
 
   it("bloqueia demo mode em deploy target client e mantem branding/base path", async () => {
@@ -61,6 +66,7 @@ describe("shared env config", () => {
     vi.stubEnv("VITE_ENABLE_DEMO_MODE", "true");
     vi.stubEnv("VITE_ENABLE_INTERNAL_MENTOR_DEMO", "true");
     vi.stubEnv("VITE_THEME_ACCENT_PRIMARY", "#123456");
+    vi.stubEnv("VITE_CLIENT_CODE", "cliente-123");
 
     const { env } = await importEnvModule();
 
@@ -80,6 +86,15 @@ describe("shared env config", () => {
     const { env } = await importEnvModule();
 
     expect(env.internalMentorDemoEnabled).toBe(true);
+  });
+
+  it("permite clientCode opcional em deploy local mas valida quando presente", async () => {
+    vi.stubEnv("VITE_DEPLOY_TARGET", "local");
+    vi.stubEnv("VITE_CLIENT_CODE", "cliente_01");
+
+    const { env } = await importEnvModule();
+
+    expect(env.clientCode).toBe("cliente_01");
   });
 
   it("falha ao carregar o runtime sem VITE_DEPLOY_TARGET explicito", async () => {
