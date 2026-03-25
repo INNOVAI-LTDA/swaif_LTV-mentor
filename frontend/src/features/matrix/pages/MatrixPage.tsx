@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import type { MatrixFilter } from "../../../contracts/matrix";
 import { useRenewalMatrix } from "../../../domain/hooks/useMatrix";
 import type { MatrixItem, Urgency } from "../../../domain/models";
@@ -17,9 +16,9 @@ const FILTER_OPTIONS: Array<{ value: MatrixFilter; label: string }> = [
 ];
 
 const URGENCY_LABEL: Record<Urgency, string> = {
-  normal: "Estavel",
-  watch: "Atencao",
-  critical: "Critico",
+  normal: "Estável",
+  watch: "Atenção",
+  critical: "Crítico",
   rescue: "Resgate"
 };
 
@@ -83,19 +82,11 @@ export function MatrixPage() {
   return (
     <MentorShell
       activeView="matrix"
-      actions={
-        <>
-          <button type="button" onClick={() => void resource.refresh()}>
-            Atualizar leitura
-          </button>
-          <Link to="/app">Visao geral</Link>
-        </>
-      }
       metrics={[
         { label: "Pipeline LTV total", value: formatCurrencyBRL(kpis.totalLTV), tone: "accent" },
-        { label: "Renovacoes criticas D-45", value: String(kpis.criticalRenewals), tone: "warning" },
+        { label: "Renovações críticas D-45", value: String(kpis.criticalRenewals), tone: "warning" },
         { label: "Alertas de resgate", value: String(kpis.rescueCount) },
-        { label: "Engajamento medio", value: formatPercentKpi(kpis.avgEngagement), tone: "success" }
+        { label: "Engajamento médio", value: formatPercentKpi(kpis.avgEngagement), tone: "success" }
       ]}
     >
       <section className="mx-page">
@@ -133,14 +124,14 @@ export function MatrixPage() {
               <article className="mx-opportunity">
                 <span>Oportunidade em contratos D-45</span>
                 <strong>{formatCurrencyBRL(d45Ltv)}</strong>
-                <p>Soma dos alunos em janela de renovacao nos proximos 45 dias.</p>
+                <p>Soma dos alunos em janela de renovação nos próximos 45 dias.</p>
               </article>
             </div>
 
             <aside className="mx-side">
               <section className="mx-panel">
                 <header>
-                  <h2>Painel de acao rapida</h2>
+                  <h2>Painel de ação rápida</h2>
                   <p>{sortedItems.length} alunos no filtro atual</p>
                 </header>
 
@@ -154,7 +145,7 @@ export function MatrixPage() {
                       >
                         <div>
                           <strong>{item.name}</strong>
-                          <span>{item.programName || "Programa nao informado"}</span>
+                          <span>{item.programName || "Programa não informado"}</span>
                         </div>
                         <div>
                           <small>D-{item.daysLeft}</small>
@@ -170,8 +161,8 @@ export function MatrixPage() {
 
               <section className="mx-panel">
                 <header>
-                  <h2>Contexto de renovacao</h2>
-                  <p>{selected ? selected.name : "Sem selecao"}</p>
+                  <h2>Contexto de renovação</h2>
+                  <p>{selected ? selected.name : "Sem seleção"}</p>
                 </header>
 
                 {!selected && <p className="mx-state-inline">Selecione um aluno para abrir os detalhes.</p>}
@@ -198,13 +189,13 @@ export function MatrixPage() {
                     </div>
 
                     <article className="mx-detail-card">
-                      <h3>Motivo de renovacao</h3>
+                      <h3>Motivo de renovação</h3>
                       <p>{selected.renewalReason || "Sem motivo registrado."}</p>
                     </article>
 
                     <article className="mx-detail-card mx-detail-card--accent">
-                      <h3>Acao sugerida</h3>
-                      <p>{selected.suggestion || "Sem sugestao registrada."}</p>
+                      <h3>Ação sugerida</h3>
+                      <p>{selected.suggestion || "Sem sugestão registrada."}</p>
                     </article>
 
                     <article className="mx-detail-card">

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { deriveCommandCenterTopKpis } from "../../../domain/adapters/commandCenterAdapter";
 import {
   useCommandCenterStudentDetail,
@@ -46,10 +45,6 @@ export function CommandCenterPage() {
 
   const kpis = useMemo(() => deriveCommandCenterTopKpis(studentsResource.data), [studentsResource.data]);
 
-  async function refreshAll() {
-    await Promise.all([studentsResource.refresh(), detailResource.refresh(), timelineResource.refresh()]);
-  }
-
   const detail = detailResource.data;
   const anomalies = timelineResource.data?.anomalies ?? [];
   const timelineItems = timelineResource.data?.timeline ?? [];
@@ -57,17 +52,6 @@ export function CommandCenterPage() {
   return (
     <MentorShell
       activeView="command-center"
-      eyebrow="Mentor | Centro de Comando"
-      title="Operação por exceção para agir antes da janela fechar"
-      description="Acompanhe risco, progresso e sinais de bloqueio para intervir com rapidez, clareza e contexto operacional."
-      actions={
-        <>
-          <button type="button" onClick={() => void refreshAll()}>
-            Atualizar leitura
-          </button>
-          <Link to="/app/matriz-renovacao">Abrir matriz</Link>
-        </>
-      }
       metrics={[
         { label: "Alunos ativos", value: String(kpis.active), tone: "accent" },
         { label: "Alertas de resgate", value: String(kpis.alerts), tone: "warning" },

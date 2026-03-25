@@ -1,0 +1,15 @@
+
+> swaif-ltv-mentoria-frontend@0.1.0 dev
+> vite
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m837[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5173[22m/[39m
+[2m00:05:50[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/radar/pages/RadarPage.tsx[22m
+[2m00:06:03[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/command-center/pages/CommandCenterPage.tsx[22m
+[2m00:15:29[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/radar/pages/RadarPage.tsx[22m
+[2m00:15:49[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/command-center/pages/CommandCenterPage.tsx[22m
+[2m00:22:53[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/app/layout/AppLayout.tsx[22m
+[2m00:25:35[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/matrix/pages/MatrixPage.tsx[22m
+[2m00:25:52[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/matrix/pages/MatrixPage.tsx[22m

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { simulateRadar } from "../../../domain/adapters/radarAdapter";
 import { useCommandCenterStudents } from "../../../domain/hooks/useCommandCenter";
 import { useStudentRadar } from "../../../domain/hooks/useRadar";
@@ -66,17 +65,6 @@ export function RadarPage() {
   return (
     <MentorShell
       activeView="radar"
-      eyebrow="Mentor | Radar de Evolução"
-      title="Evolução por pilares para sustentar renovação e valor percebido"
-      description="Simule o próximo ciclo, compare baseline, estado atual e projeção, e transforme leitura analítica em narrativa clara para o mentorado."
-      actions={
-        <>
-          <button type="button" onClick={() => void Promise.all([studentsResource.refresh(), radarResource.refresh()])}>
-            Atualizar leitura
-          </button>
-          <Link to="/app/centro-comando">Abrir centro</Link>
-        </>
-      }
       metrics={[
         { label: "Eixos ativos", value: String(simulation.axisScores.length), tone: "accent" },
         { label: "Média baseline", value: avgBaseline.toFixed(1) },

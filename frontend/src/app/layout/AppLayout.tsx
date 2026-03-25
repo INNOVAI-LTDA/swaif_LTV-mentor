@@ -42,20 +42,8 @@ export function AppLayout() {
               <small>{env.appName}</small>
             </span>
           </Link>
-          <Link to="/">{env.appTagline}</Link>
-          <Link to="/login">Login</Link>
-          {isAuthenticated && hasKnownRole && role === "admin" ? <Link to="/app/admin">Admin</Link> : null}
-          {isAuthenticated && hasKnownRole && role === "aluno" ? <Link to="/app/aluno">Aluno</Link> : null}
-          {isAuthenticated && canUsePublishedMentorWorkspace ? (
-            <>
-              <Link to="/app/hub-interno">Hub interno</Link>
-              <Link to="/app/centro-comando">Centro</Link>
-              <Link to="/app/radar">Radar</Link>
-              <Link to="/app/matriz-renovacao">Matriz</Link>
-            </>
-          ) : null}
           <span className="app-session-indicator">
-            {isAuthenticated ? `${isPreviewSession ? "Sessao interna" : "Sessao"}: ${getRoleLabel(user?.role)}` : "Sessao: anonima"}
+            {isAuthenticated ? `${isPreviewSession ? "Sessão interna" : "Sessão"}: ${getRoleLabel(user?.role)}` : "Sessão: anônima"}
           </span>
           {isAuthenticated && (
             <button className="app-logout-button" type="button" onClick={logout}>
