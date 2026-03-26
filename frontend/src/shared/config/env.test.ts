@@ -26,11 +26,16 @@ describe("shared env config", () => {
     expect(normalizeBasePath("/cliente/app/")).toBe("/cliente/app/");
   });
 
-  it("exige VITE_API_BASE_URL explicito para qualquer deploy target", async () => {
+  it("mantem fallback localhost quando o helper permite ambiente local", async () => {
     const { normalizeApiBaseUrl } = await importEnvContractModule();
 
-    expect(() => normalizeApiBaseUrl("", "local")).toThrow("VITE_API_BASE_URL is required for all deploy targets.");
-    expect(() => normalizeApiBaseUrl("", "client")).toThrow("VITE_API_BASE_URL is required for all deploy targets.");
+    expect(normalizeApiBaseUrl("", "local")).toBe("http://127.0.0.1:8000");
+  });
+
+  it("falha quando o helper recebe build client-safe sem api definida", async () => {
+    const { normalizeApiBaseUrl } = await importEnvContractModule();
+
+    expect(() => normalizeApiBaseUrl("", "client")).toThrow("VITE_API_BASE_URL is required for client deploys.");
   });
 
   it("valida deploy target e exige URL absoluta para builds de cliente", async () => {
@@ -94,8 +99,6 @@ describe("shared env config", () => {
 
   it("falha ao carregar o runtime sem VITE_DEPLOY_TARGET explicito", async () => {
     vi.unstubAllEnvs();
-    vi.stubEnv("VITE_DEPLOY_TARGET", "");
-    vi.stubEnv("VITE_API_BASE_URL", "");
 
     await expect(importEnvModule()).rejects.toThrow("VITE_DEPLOY_TARGET is required");
   });

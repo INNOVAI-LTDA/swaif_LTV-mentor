@@ -27,7 +27,7 @@ Track objective evidence for the client-launch rollout without losing the origin
 - Current local baseline values: `http://127.0.0.1:4173` + `/accmed/` + `http://127.0.0.1:8000` with `CLIENT_NAME=Acelerador Médico (AccMed)` and `APP_NAME=Gamma`
 - Current persistence posture: `single-server JSON pilot recommended only for initial controlled client usage under explicit operating constraints`
 - Current mentor data posture: `mentor workspace is now published by default; any remaining mentor-demo naming is treated as technical legacy rather than a published-access gate`
-- Current operator-safety posture: `local backup/restore utility available with a shared storage I/O lock in a writable temp location keyed to the JSON store set; backend startup now logs mentor-demo policy source explicitly and remote mentor-demo enablement requires a second approval flag; CORS_ALLOW_ORIGINS cannot include "*" in production-like environments; canonical host is www.<client-domain> and apex must redirect to www; restore remains best-effort across multiple JSON files and remote go-live still requires rehearsal evidence`
+- Current operator-safety posture: `local backup/restore utility available with a shared storage I/O lock in a writable temp location keyed to the JSON store set; backend startup now logs mentor-demo policy source explicitly and remote mentor-demo enablement requires a second approval flag; restore remains best-effort across multiple JSON files and remote go-live still requires rehearsal evidence`
 
 ## Status Model
 

@@ -13,8 +13,3 @@
 [2m00:22:53[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/app/layout/AppLayout.tsx[22m
 [2m00:25:35[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/matrix/pages/MatrixPage.tsx[22m
 [2m00:25:52[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/matrix/pages/MatrixPage.tsx[22m
-[2m01:08:19[22m [36m[1m[vite][22m[39m [32msrc/shared/config/envContract.ts changed, restarting server...[39m
-[2m01:08:20[22m [36m[1m[vite][22m[39m server restarted.
-[2m01:08:30[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/shared/config/env.ts[22m
-[2m01:08:43[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
-[2m01:08:43[22m [36m[1m[vite][22m[39m server restarted.
