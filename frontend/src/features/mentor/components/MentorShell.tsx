@@ -108,12 +108,6 @@ export function MentorShell({ activeView, eyebrow, title, description, actions, 
               ))}
             </div>
           </div>
-
-          <div className="mentor-sidebar__spotlight">
-            <span className="mentor-sidebar__label">Leitura da carteira</span>
-            <strong>Visao executiva com foco em renovacao, resgate e crescimento da carteira.</strong>
-            <p>Leitura operacional voltada a acompanhamento, priorizacao e sustentacao da carteira.</p>
-          </div>
         </aside>
 
         <div className="mentor-main">

@@ -100,6 +100,7 @@ export const appRoutes: RouteObject[] = [
     children: [
       { index: true, element: <Navigate to="/login" replace /> },
       { path: "login", element: <LoginPage /> },
+      { path: "dashboard", element: <Navigate to="/app" replace /> },
       {
         path: "app",
         element: <RequireAuth />,

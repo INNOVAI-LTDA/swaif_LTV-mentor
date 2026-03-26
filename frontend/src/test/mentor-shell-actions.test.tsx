@@ -102,7 +102,7 @@ describe("Mentor shell header actions removal", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole("heading", { name: "Evolução por pilares para sustentar renovação e valor percebido" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Pilares de transformação/i })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Atualizar leitura" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Abrir centro" })).toBeNull();
   });
@@ -116,7 +116,7 @@ describe("Mentor shell header actions removal", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole("heading", { name: "Operação por exceção para agir antes da janela fechar" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Alunos monitorados/i })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Atualizar leitura" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Abrir matriz" })).toBeNull();
   });

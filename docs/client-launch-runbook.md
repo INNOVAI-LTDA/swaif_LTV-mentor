@@ -32,7 +32,7 @@ Fill these values before deploying:
 | Frontend base path | `/cliente/` | yes |
 | Backend API URL | `https://api.cliente.example.com` | yes |
 | Backend APP_ENV | `production` | yes |
-| Backend CORS_ALLOW_ORIGINS | `https://cliente.example.com` | yes |
+| Backend CORS_ALLOW_ORIGINS | `https://cliente.example.com` (no `"*"` allowed in production-like) | yes |
 | Client display name | `Nome do Cliente` | yes |
 | Product name | `Nome do Produto` | yes |
 | Branding asset paths | `/branding/logo.png` | yes |

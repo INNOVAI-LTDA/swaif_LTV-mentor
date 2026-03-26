@@ -38,6 +38,18 @@ def test_resolve_cors_origins_accepts_comma_separated_origins(monkeypatch) -> No
     assert resolve_cors_origins() == ["https://cliente.example.com", "https://app.example.com"]
 
 
+def test_resolve_cors_origins_rejects_wildcard_in_production_like_env(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("CORS_ALLOW_ORIGINS", "https://cliente.example.com, *")
+
+    try:
+        resolve_cors_origins()
+    except RuntimeError as error:
+        assert str(error) == 'CORS_ALLOW_ORIGINS must not include "*" when APP_ENV is production-like.'
+    else:
+        raise AssertionError("Expected wildcard CORS to fail in production-like environment.")
+
+
 def test_resolve_cors_origins_rejects_entries_with_paths_or_query_strings(monkeypatch) -> None:
     monkeypatch.setenv("APP_ENV", "production")
     monkeypatch.setenv("CORS_ALLOW_ORIGINS", "https://cliente.example.com/app?demo=true")

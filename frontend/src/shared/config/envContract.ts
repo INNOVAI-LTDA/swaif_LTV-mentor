@@ -22,10 +22,7 @@ export function normalizeBasePath(raw: string | undefined): string {
 export function normalizeApiBaseUrl(raw: string | undefined, deployTarget: DeployTarget): string {
   const candidate = (raw || "").trim();
   if (!candidate) {
-    if (deployTarget === "local") {
-      return "http://127.0.0.1:8000";
-    }
-    throw new Error("VITE_API_BASE_URL is required for client deploys.");
+    throw new Error("VITE_API_BASE_URL is required for all deploy targets.");
   }
 
   let parsed: URL;

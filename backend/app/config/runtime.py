@@ -103,6 +103,8 @@ def resolve_cors_origins() -> list[str]:
     cors_env = os.getenv("CORS_ALLOW_ORIGINS", "")
     cors_origins = [normalize_cors_origin(origin) for origin in cors_env.split(",") if origin.strip()]
     if cors_origins:
+        if "*" in cors_origins and is_production_like_environment(app_env):
+            raise RuntimeError('CORS_ALLOW_ORIGINS must not include "*" when APP_ENV is production-like.')
         return cors_origins
     if is_production_like_environment(app_env):
         raise RuntimeError("CORS_ALLOW_ORIGINS is required when APP_ENV is production-like.")
