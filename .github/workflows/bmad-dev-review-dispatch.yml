@@ -1,0 +1,22 @@
+name: BMAD Dev Review Dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: dev, review, or fix
+        required: true
+      story_ref:
+        description: Story or batch reference
+        required: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show dispatch contract
+        run: |
+          echo "Mode: ${{ github.event.inputs.mode }}"
+          echo "Story ref: ${{ github.event.inputs.story_ref }}"
+          echo "This workflow is a safe stub. Wire it to your own notifications or CI later."

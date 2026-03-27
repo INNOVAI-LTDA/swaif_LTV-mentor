@@ -22,6 +22,8 @@ Use this parameter set for the current local dry-run baseline:
 
 This is the current local baseline only. Replace the origin, backend URL, and any final branded assets when moving to the first real hosted environment.
 
+For the current Vercel Batch B contract, treat this `/accmed/` value as local-only evidence. The hosted Vercel root-path contract uses `VITE_APP_BASE_PATH=/`.
+
 ## Required Inputs
 
 Fill these values before deploying:
@@ -29,7 +31,7 @@ Fill these values before deploying:
 | Input | Example | Required |
 | ----- | ------- | -------- |
 | Frontend origin | `https://cliente.example.com` | yes |
-| Frontend base path | `/cliente/` | yes |
+| Frontend base path | `/` | yes |
 | Backend API URL | `https://api.cliente.example.com` | yes |
 | Backend APP_ENV | `production` | yes |
 | Backend CORS_ALLOW_ORIGINS | `https://cliente.example.com` | yes |
@@ -37,6 +39,14 @@ Fill these values before deploying:
 | Product name | `Nome do Produto` | yes |
 | Branding asset paths | `/branding/logo.png` | yes |
 | Deploy operator | `preencher` | yes |
+
+## Custom Domain + Canonical Host
+
+- Current Batch D production-domain assumption: `https://www.aceleradormedico.com.br` is canonical.
+- Apex redirect policy: `https://aceleradormedico.com.br` permanently redirects to the `www` host, preserving path and query string.
+- This redirect behavior is versioned in `frontend/vercel.json`; domain attachment, DNS, and TLS remain Vercel/dashboard responsibilities.
+- Trailing slash policy is explicit: `trailingSlash=false` with no extra app-route slash normalization beyond the platform default.
+- If the final production app domain differs from `aceleradormedico.com.br`, update `frontend/vercel.json` before the release candidate is promoted.
 
 ## Preconditions
 
@@ -104,6 +114,7 @@ py -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 
 ```bash
 VITE_DEPLOY_TARGET=client ^
+VITE_CLIENT_CODE=accmed ^
 VITE_API_BASE_URL=http://127.0.0.1:8000 ^
 VITE_APP_BASE_PATH=/accmed/ ^
 VITE_CLIENT_NAME=Acelerador Médico (AccMed) ^
@@ -147,8 +158,9 @@ Use the target client values, not local placeholders:
 
 ```bash
 VITE_DEPLOY_TARGET=client ^
+VITE_CLIENT_CODE=<client_code> ^
 VITE_API_BASE_URL=https://api.cliente.example.com ^
-VITE_APP_BASE_PATH=/cliente/ ^
+VITE_APP_BASE_PATH=/ ^
 VITE_CLIENT_NAME=Nome do Cliente ^
 VITE_APP_NAME=Nome do Produto ^
 VITE_APP_TAGLINE=Mensagem curta ^
@@ -191,21 +203,30 @@ Do not use that posture for normal client-facing staging or go-live. The backend
 ### 1. Publish frontend artifact
 
 - Copy the generated frontend build to the target host path.
-- Confirm the host serves the app under the configured base path.
+- Confirm the host serves the app under the configured base path. For the current Vercel Batch B contract, that base path is `/`.
 - Record the artifact location and timestamp in the release tracker.
 
 ### 2. Validate SPA rewrite
 
 - Open the published app on the final origin and base path.
 - Directly refresh these URLs in the browser:
-  - `/cliente/login`
-  - `/cliente/app/admin`
-  - `/cliente/app/matriz-renovacao`
-  - `/cliente/app/aluno`
+  - `/`
+  - `/login`
+  - `/dashboard`
+  - `/app/admin`
+  - `/app/matriz-renovacao`
+  - `/app/aluno`
 - Expected result: each refresh returns the SPA shell instead of a host `404`.
 - Evidence: screenshot or deploy log showing successful refreshes.
 
-### 3. Validate base path and static assets
+### 3. Validate canonical host and redirects
+
+- Visit `https://aceleradormedico.com.br/` and confirm it lands on `https://www.aceleradormedico.com.br/`.
+- Visit `https://aceleradormedico.com.br/login?next=%2Fapp%2Fadmin` and confirm path and query string are preserved on the canonical host.
+- Confirm there is no redirect loop and the final URL remains on `www`.
+- Evidence: browser address bar capture plus network entry showing a permanent redirect.
+
+### 4. Validate base path and static assets
 
 - Open browser devtools on the published app.
 - Confirm branding assets load from the published base path instead of `/`.
@@ -213,7 +234,7 @@ Do not use that posture for normal client-facing staging or go-live. The backend
 - Confirm `document.title` and shell identity show the configured client branding.
 - Evidence: screenshot plus network panel capture.
 
-### 4. Validate backend origin and CORS
+### 5. Validate backend origin and CORS
 
 - Confirm the backend starts with explicit `APP_ENV` and `CORS_ALLOW_ORIGINS`.
 - Confirm startup logs record the deploy posture and that `mentor_demo_routes=false` plus `mentor_demo_policy=explicit-disable` or `production-default-disabled`.
@@ -222,17 +243,17 @@ Do not use that posture for normal client-facing staging or go-live. The backend
 - Confirm the browser origin exactly matches the configured `CORS_ALLOW_ORIGINS`.
 - Evidence: backend startup log plus browser network capture.
 
-### 5. Validate integrated smoke against the target backend URL
+### 6. Validate integrated smoke against the target backend URL
 
 Use the published frontend against the real staging backend URL. Record pass or fail for each step:
 
-1. Open `/cliente/login`.
+1. Open `/login`.
    Expected: client branding loads and no demo credentials are exposed.
-2. Authenticate as admin and open `/cliente/app/admin`.
+2. Authenticate as admin and open `/app/admin`.
    Expected: admin shell loads, protected requests succeed, logout returns to login.
-3. Authenticate as mentor and open `/cliente/app/matriz-renovacao`, `/cliente/app/hub-interno`, `/cliente/app/centro-comando`, and `/cliente/app/radar`.
+3. Authenticate as mentor and open `/app/matriz-renovacao`, `/app/hub-interno`, `/app/centro-comando`, and `/app/radar`.
    Expected: the published mentor workspace loads successfully and no `403` is triggered merely because `VITE_ENABLE_INTERNAL_MENTOR_DEMO=false`.
-4. If aluno is in scope, authenticate and open `/cliente/app/aluno`.
+4. If aluno is in scope, authenticate and open `/app/aluno`.
    Expected: student shell loads and student flow is usable.
 5. Trigger unauthorized behavior with an expired or invalid token.
    Expected: session is cleared or access is denied according to the current guard policy.
@@ -241,7 +262,7 @@ Use the published frontend against the real staging backend URL. Record pass or 
 7. Reload a deep protected route after successful authentication.
    Expected: SPA rewrite plus guarded routing continue to work.
 
-### 6. Record evidence and blockers
+### 7. Record evidence and blockers
 
 - Update `docs/production-release-tracker.md` with the evidence location for each completed step.
 - If any step fails, mark the corresponding gate as `blocked` and record the blocker before continuing.

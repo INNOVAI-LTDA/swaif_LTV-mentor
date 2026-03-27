@@ -1,4 +1,5 @@
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
@@ -7,6 +8,8 @@ from urllib.parse import urlparse
 LOCAL_CORS_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:4173",
+    "http://127.0.0.1:4173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
@@ -103,10 +106,27 @@ def resolve_cors_origins() -> list[str]:
     cors_env = os.getenv("CORS_ALLOW_ORIGINS", "")
     cors_origins = [normalize_cors_origin(origin) for origin in cors_env.split(",") if origin.strip()]
     if cors_origins:
+        if is_production_like_environment(app_env) and "*" in cors_origins:
+            raise RuntimeError("CORS_ALLOW_ORIGINS must not include '*' when APP_ENV is production-like.")
         return cors_origins
     if is_production_like_environment(app_env):
         raise RuntimeError("CORS_ALLOW_ORIGINS is required when APP_ENV is production-like.")
     return LOCAL_CORS_ORIGINS
+
+
+def get_cors_allow_origin_regex() -> str | None:
+    """
+    Optional regex to allow dynamic preview origins (e.g., Vercel previews).
+    Validated at startup to fail fast on invalid patterns.
+    """
+    raw = os.getenv("CORS_ALLOW_ORIGIN_REGEX", "").strip()
+    if not raw:
+        return None
+    try:
+        re.compile(raw)
+    except re.error as exc:
+        raise RuntimeError("CORS_ALLOW_ORIGIN_REGEX must be a valid regex pattern.") from exc
+    return raw
 
 
 def _normalize_client_code(raw: str) -> str:

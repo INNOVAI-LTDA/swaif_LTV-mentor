@@ -30,6 +30,11 @@ Este documento deixa de ser apenas uma checklist estatica e passa a ser o workfl
 | Responsavel operacional | `dmene` |
 | Responsavel tecnico | `dmene` |
 
+Nota operacional atual:
+
+- O valor `/accmed/` acima continua sendo a baseline local registrada nesta checklist.
+- Para o deploy Vercel preparado no Batch A, o contrato hospedado atual e `VITE_APP_BASE_PATH=/`.
+
 ## Status permitidos
 
 - `pending`: ainda nao iniciado
@@ -45,7 +50,7 @@ Preencher o status de cada bloco no tracker e repetir abaixo o link ou local da 
 | Bloco | Owner | Status | Evidencia principal | Bloqueador atual | Data |
 | ---- | ----- | ------ | ------------------- | ---------------- | ---- |
 | 1. Autenticacao e seguranca de acesso | `dmene` | `done` | `EV-002, EV-005, EV-010` | `nenhum` | `2026-03-20` |
-| 2. Roteamento e hospedagem | `dmene` | `in_progress` | `EV-010, EV-011` | `Ainda falta validar refresh profundo e navegacao protegida no host real` | `2026-03-20` |
+| 2. Roteamento e hospedagem | `dmene` | `in_progress` | `EV-010, EV-011` | `Rewrite versionada; falta validar refresh profundo e navegacao protegida no host real` | `2026-03-20` |
 | 3. Configuracao de ambiente e integracao com API | `dmene` | `in_progress` | `EV-010, EV-011` | `O pacote local existe, mas browser-origin, CORS real e ausencia de localhost no ambiente remoto ainda nao foram validados` | `2026-03-20` |
 | 4. Branding e conteudo do cliente | `dmene` | `in_progress` | `EV-005, EV-010, EV-011` | `Os valores baseline atuais foram fixados, mas a revisao final dos ativos publicados ainda falta` | `2026-03-20` |
 | 5. Limpeza de comportamentos de demo | `dmene` | `in_progress` | `EV-005, EV-011` | `O scan amplo ainda encontra referencias internas em docs, testes e codigo gated; a superficie publicada agora isola mentor-demo, mas a decisao final sobre produto mentor continua pendente` | `2026-03-20` |
@@ -109,7 +114,7 @@ Leitura local atual do bloco:
 - [ ] Eliminar dependencias de caminhos absolutos fixos que assumem deploy em `/`.
 - [ ] Ajustar links internos para respeitar o base path configurado.
 - [ ] Ajustar carregamento de assets de branding para nao depender de `/branding/...` fixo.
-- [ ] Confirmar regra de rewrite do host para SPA em refresh direto de rota.
+- [ ] Confirmar no host a regra de rewrite para SPA em refresh direto de rota (rewrite ja versionada em `frontend/vercel.json`).
 - [ ] Validar acesso direto por URL em `login`, `admin`, `centro`, `radar`, `aluno` e `matriz`.
 
 ### Evidencias minimas do bloco
@@ -122,11 +127,14 @@ Leitura local atual do bloco:
 
 | Verificacao | Resultado | Evidencia | Observacao |
 | ---------- | --------- | --------- | ---------- |
-| Host publica o app no origin correto | `pendente` | `preencher` | `Apenas serve local em /cliente/ foi validado em EV-010` |
-| Base path configurado igual no build e no host | `parcial` | `EV-011` | `Build local e serve local confirmaram /accmed/; falta o host real` |
-| Refresh em rota profunda reescreve para `index.html` | `pendente` | `preencher` | `Ainda nao executado no host remoto` |
+| Host publica o app no origin correto | `pendente` | `preencher` | `Contrato Vercel atual usa /; falta validar no host real` |
+| Base path configurado igual no build e no host | `parcial` | `EV-011` | `Build local validou /; falta validacao no host real` |
+| Refresh em rota profunda reescreve para `index.html` | `pendente` | `preencher` | `Rewrite esta versionada; falta validar no host remoto` |
 | Assets de branding carregam no base path publicado | `parcial` | `EV-011` | `Assets servidos localmente sob /accmed/assets/; falta o host remoto` |
 | Navegacao protegida funciona sob o host real | `pendente` | `preencher` | `Falta browser real em staging` |
+| Dominio customizado responde com TLS valido | `pendente` | `preencher` | `Falta conectar e validar o dominio final no host remoto` |
+| Apex redireciona para `www` sem loop e preserva path/query | `pendente` | `preencher` | `Politica canonica ainda precisa ser validada no host remoto` |
+| Politica de trailing slash fica estavel no host real | `pendente` | `preencher` | `Falta validar `/login` e `/login/` no dominio canonico` |
 
 ## Bloco 3 - Configuracao de ambiente e integracao com API
 
@@ -134,10 +142,10 @@ Leitura local atual do bloco:
 
 | Owner | Status | Evidencia | Bloqueador | Aprovado por |
 | ---- | ------ | --------- | ---------- | ------------ |
-| `dmene` | `in_progress` | `EV-010` | `Falta validar CORS real, browser-origin e bundle publicado fora do loopback local` | `dmene` |
+| `dmene` | `in_progress` | `EV-010` | `Contrato VITE_API_BASE_URL ja exige valor em client; falta validar CORS real, browser-origin e bundle publicado fora do loopback local` | `dmene` |
 
-- [ ] Tornar `VITE_API_BASE_URL` obrigatorio para ambiente nao local.
-- [ ] Remover fallback silencioso para `http://127.0.0.1:8000` em build de cliente.
+- [ ] Confirmar `VITE_API_BASE_URL` obrigatorio em ambiente hospedado (ja aplicado no contrato de build `client`).
+- [ ] Evitar fallback silencioso para `http://127.0.0.1:8000` em build de cliente (permitido apenas em `local`).
 - [ ] Documentar todos os env vars necessarios para deploy.
 - [ ] Criar arquivo de exemplo de ambiente voltado ao cliente ou homologacao.
 - [ ] Validar timeouts HTTP para rede real do cliente.
@@ -283,6 +291,7 @@ Resultado local atual:
 
 - [ ] README revisado por quem fara o deploy.
 - [ ] Time consegue subir o frontend em homologacao sem depender de conhecimento tacito.
+- [ ] Contrato Vercel atual (`frontend` como root e `VITE_APP_BASE_PATH=/`) esta claro e nao conflita com exemplos locais em subpath.
 
 ## Registro de staging integrado
 
@@ -291,6 +300,8 @@ Resultado local atual:
 | Frontend buildado com `VITE_DEPLOY_TARGET=client` | `pendente` | `preencher` | `nenhum` |
 | Frontend publicado no host alvo | `pendente` | `preencher` | `nenhum` |
 | Backend iniciado com `APP_ENV` e `CORS_ALLOW_ORIGINS` explicitos | `pendente` | `preencher` | `nenhum` |
+| Dominio customizado publicado com host canonico `www` | `pendente` | `preencher` | `nenhum` |
+| Apex redireciona para `www` no host publicado | `pendente` | `preencher` | `nenhum` |
 | Rewrite de SPA validado em refresh profundo | `pendente` | `preencher` | `nenhum` |
 | Base path validado no host real | `pendente` | `preencher` | `nenhum` |
 | Login admin integrado validado | `pendente` | `preencher` | `nenhum` |
@@ -298,6 +309,7 @@ Resultado local atual:
 | Fluxo aluno validado ou dispensado formalmente | `pendente` | `preencher` | `nenhum` |
 | Logout, expiracao e `403` validados | `pendente` | `preencher` | `nenhum` |
 | Nenhuma request aponta para localhost | `pendente` | `preencher` | `nenhum` |
+| Headers basicos de seguranca presentes no deploy | `pendente` | `preencher` | `nenhum` |
 
 ## Busca de residuos antes do deploy
 

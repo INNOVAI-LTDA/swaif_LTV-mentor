@@ -149,6 +149,20 @@ def test_create_app_exposes_runtime_policy_summary_for_remote_approval(monkeypat
     assert app.state.runtime_summary["mentor_demo_policy_source"] == "explicit-remote-approval"
 
 
+def test_create_app_configures_allow_origin_regex_when_present(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("CORS_ALLOW_ORIGINS", "https://cliente.example.com")
+    monkeypatch.setenv("CORS_ALLOW_ORIGIN_REGEX", r"^https://.*\\.vercel\\.app$")
+    monkeypatch.setenv("CLIENT_CODE", "test-client")
+
+    app = create_app()
+
+    cors_middleware = next(
+        mw for mw in app.user_middleware if mw.cls.__name__ == "CORSMiddleware"
+    )
+    assert cors_middleware.kwargs["allow_origin_regex"] == r"^https://.*\\.vercel\\.app$"
+
+
 def test_resolve_storage_root_requires_common_filesystem_root(monkeypatch, tmp_path) -> None:
     monkeypatch.setenv("USER_STORE_PATH", str(tmp_path / "users.json"))
     monkeypatch.setenv("CLIENT_STORE_PATH", str(tmp_path / "clients.json"))

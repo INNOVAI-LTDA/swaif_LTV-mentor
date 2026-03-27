@@ -1,0 +1,22 @@
+name: BMAD Story Dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: GitHub issue number for the story request
+        required: true
+      planning_root:
+        description: Planning artifacts root
+        required: true
+        default: _bmad-output/planning-artifacts
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate expected files
+        run: |
+          test -d "${{ github.event.inputs.planning_root }}"
+          test -f "_bmad-output/project-context.md"

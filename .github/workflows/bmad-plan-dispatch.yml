@@ -1,0 +1,26 @@
+name: BMAD Plan Dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: GitHub issue number for the planning request
+        required: true
+      requirements_path:
+        description: Repo path to requirements file
+        required: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate inputs and files
+        run: |
+          test -n "${{ github.event.inputs.issue_number }}"
+          test -f "${{ github.event.inputs.requirements_path }}"
+          test -f "_bmad-output/project-context.md" || echo "project-context missing - add manually or generate later"
+      - name: Explain intended next action
+        run: |
+          echo "This starter workflow only validates inputs."
+          echo "Use Codex cloud to read the issue and run the BMAD planning path."

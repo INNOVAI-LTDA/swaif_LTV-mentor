@@ -195,4 +195,16 @@ describe("app routes", () => {
     expect(await screen.findByRole("heading", { name: "Entrar na nova experiencia" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Radar" })).not.toBeInTheDocument();
   });
+
+  it("redireciona /dashboard para a superficie protegida com basename default", async () => {
+    renderRoute(["/dashboard"]);
+
+    expect(await screen.findByRole("heading", { name: "Entrar na nova experiencia" })).toBeInTheDocument();
+  });
+
+  it("redireciona /dashboard para a superficie protegida respeitando basename", async () => {
+    renderRoute(["/cliente/dashboard"], "/cliente");
+
+    expect(await screen.findByRole("heading", { name: "Entrar na nova experiencia" })).toBeInTheDocument();
+  });
 });

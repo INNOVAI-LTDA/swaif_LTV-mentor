@@ -20,6 +20,7 @@ from app.api.routes.mentor_demo import router as mentor_demo_router
 from app.config.runtime import (
     get_app_env,
     get_client_code,
+    get_cors_allow_origin_regex,
     get_storage_backup_dir,
     resolve_mentor_demo_route_policy,
     resolve_cors_origins,
@@ -56,6 +57,7 @@ def create_app() -> FastAPI:
     app_env = get_app_env()
     client_code = get_client_code(app_env)
     cors_origins = resolve_cors_origins()
+    cors_origin_regex = get_cors_allow_origin_regex()
     allow_all_origins = "*" in cors_origins
     mentor_demo_policy = resolve_mentor_demo_route_policy(app_env)
     mentor_demo_enabled = mentor_demo_policy.enabled
@@ -87,6 +89,7 @@ def create_app() -> FastAPI:
         allow_credentials=not allow_all_origins,
         allow_methods=["*"],
         allow_headers=["*"],
+        allow_origin_regex=cors_origin_regex,
     )
     app.add_exception_handler(StarletteHTTPException, http_exception_handler)
     app.add_exception_handler(RequestValidationError, request_validation_exception_handler)

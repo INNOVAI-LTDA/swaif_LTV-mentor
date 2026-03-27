@@ -72,12 +72,22 @@ Copie `.env.example` para `.env` e ajuste:
 - Em builds de cliente, `VITE_ENABLE_DEMO_MODE` e ignorado para evitar exposicao acidental do fluxo preview.
 - Em builds de cliente, `VITE_ENABLE_INTERNAL_MENTOR_DEMO` deixa de ser um gate funcional para a navegacao publicada de mentor.
 
+### Contrato atual para Vercel (Batch B)
+
+- O deploy atual preparado para Vercel usa raiz do dominio: `VITE_APP_BASE_PATH=/`.
+- Configure a `Root Directory` do projeto Vercel como `frontend`.
+- Use os exemplos versionados para separar ambientes:
+  - `frontend/.env.preview.example` (Vercel Preview)
+  - `frontend/.env.production.example` (Vercel Production)
+- O app continua suportando subpath, mas isso nao e o padrao operacional do deploy Vercel atual.
+
 ### Deploy sob subpath
 
 - O router usa `basename` configuravel por `VITE_APP_BASE_PATH`.
 - Os assets de branding tambem passam a respeitar esse base path.
 - Se o frontend for publicado em um subdiretorio, configure o mesmo valor no ambiente e nas regras do host.
 - O backend publicado precisa do par `APP_ENV` + `CORS_ALLOW_ORIGINS` alinhado com a origem real do frontend.
+- Para o deploy Vercel atual, use `/` a menos que um batch posterior justifique subpath explicitamente.
 
 ### Fluxos seguros de build
 
@@ -90,10 +100,12 @@ VITE_DEPLOY_TARGET=local npm run build
 Build client-safe:
 
 ```bash
-VITE_DEPLOY_TARGET=client VITE_CLIENT_CODE=accmed VITE_API_BASE_URL=https://api.example.com npm run build
+VITE_DEPLOY_TARGET=client VITE_CLIENT_CODE=accmed VITE_API_BASE_URL=https://api.example.com VITE_APP_BASE_PATH=/ npm run build
 ```
 
 Template cliente AccMed:
+
+Use este template apenas para validacao/bootstrap local. Para deploy hospedado no Vercel, siga o contrato atual em `DEPLOY.md` com `VITE_APP_BASE_PATH=/` e envs explicitos no host.
 
 ```bash
 cp .env.client.accmed.example .env
@@ -160,6 +172,7 @@ Exemplos invalidos que devem falhar:
 - Gate operacional da release: `docs/mvp-mentoria/frontend-deployment-readiness-checklist.md`
 - Runbook operacional: `docs/client-launch-runbook.md`
 - Tracker de release: `docs/production-release-tracker.md`
+- Contrato operacional Vercel deste batch: `DEPLOY.md`
 
 ### Postura atual de piloto
 

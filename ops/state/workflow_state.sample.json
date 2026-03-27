@@ -1,0 +1,20 @@
+{
+  "workflow": "plan_solution",
+  "current_batch": "A",
+  "batches": {
+    "A": {
+      "route": "locked",
+      "map": "locked",
+      "story": "locked",
+      "dev": "locked",
+      "review": "locked"
+    },
+    "B": {
+      "route": "locked",
+      "map": "locked",
+      "story": "locked",
+      "dev": "locked",
+      "review": "locked"
+    }
+  }
+}
