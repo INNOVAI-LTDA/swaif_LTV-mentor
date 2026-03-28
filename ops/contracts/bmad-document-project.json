@@ -1,0 +1,32 @@
+{
+  "command": "bmad-document-project",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "brownfield_anchor",
+      "description": "Existing project files or docs that ground the current-state analysis."
+    }
+  ],
+  "output_artifact_types": [
+    "current-state"
+  ],
+  "materialized_artifact_types": [
+    "current-state"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-create-story",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "current-state",
+      "path_hint": "docs/mvp-mentoria/batch-<letter>-<topic>-current-state.md"
+    }
+  ]
+}

@@ -161,6 +161,7 @@ def test_create_app_configures_allow_origin_regex_when_present(monkeypatch) -> N
         mw for mw in app.user_middleware if mw.cls.__name__ == "CORSMiddleware"
     )
     assert cors_middleware.kwargs["allow_origin_regex"] == r"^https://.*\\.vercel\\.app$"
+    assert app.state.runtime_summary["cors_origin_regex"] == r"^https://.*\\.vercel\\.app$"
 
 
 def test_resolve_storage_root_requires_common_filesystem_root(monkeypatch, tmp_path) -> None:

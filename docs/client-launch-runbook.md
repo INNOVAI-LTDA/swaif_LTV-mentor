@@ -30,11 +30,11 @@ Fill these values before deploying:
 
 | Input | Example | Required |
 | ----- | ------- | -------- |
-| Frontend origin | `https://cliente.example.com` | yes |
+| Frontend origin | `https://www.innovai-solutions.com.br` | yes |
 | Frontend base path | `/` | yes |
-| Backend API URL | `https://api.cliente.example.com` | yes |
+| Backend API URL | `https://api.example.com` | yes |
 | Backend APP_ENV | `production` | yes |
-| Backend CORS_ALLOW_ORIGINS | `https://cliente.example.com` | yes |
+| Backend CORS_ALLOW_ORIGINS | `https://www.innovai-solutions.com.br` | yes |
 | Client display name | `Nome do Cliente` | yes |
 | Product name | `Nome do Produto` | yes |
 | Branding asset paths | `/branding/logo.png` | yes |
@@ -42,11 +42,12 @@ Fill these values before deploying:
 
 ## Custom Domain + Canonical Host
 
-- Current Batch D production-domain assumption: `https://www.aceleradormedico.com.br` is canonical.
-- Apex redirect policy: `https://aceleradormedico.com.br` permanently redirects to the `www` host, preserving path and query string.
+- Current Batch D production-domain contract: `https://www.innovai-solutions.com.br` is canonical.
+- Apex redirect policy: `https://innovai-solutions.com.br` permanently redirects to the `www` host, preserving path and query string.
 - This redirect behavior is versioned in `frontend/vercel.json`; domain attachment, DNS, and TLS remain Vercel/dashboard responsibilities.
+- `docs/branding/design-system-acelerador-medico.md` is a client-site branding reference only; it does not define the production deploy host.
 - Trailing slash policy is explicit: `trailingSlash=false` with no extra app-route slash normalization beyond the platform default.
-- If the final production app domain differs from `aceleradormedico.com.br`, update `frontend/vercel.json` before the release candidate is promoted.
+- If the final production app domain differs from `innovai-solutions.com.br`, update `frontend/vercel.json` before the release candidate is promoted.
 
 ## Preconditions
 
@@ -159,7 +160,7 @@ Use the target client values, not local placeholders:
 ```bash
 VITE_DEPLOY_TARGET=client ^
 VITE_CLIENT_CODE=<client_code> ^
-VITE_API_BASE_URL=https://api.cliente.example.com ^
+VITE_API_BASE_URL=https://api.example.com ^
 VITE_APP_BASE_PATH=/ ^
 VITE_CLIENT_NAME=Nome do Cliente ^
 VITE_APP_NAME=Nome do Produto ^
@@ -178,18 +179,31 @@ Start the backend with explicit deploy intent and the published frontend origin:
 
 ```bash
 APP_ENV=production ^
-CORS_ALLOW_ORIGINS=https://cliente.example.com ^
+CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br ^
 ENABLE_MENTOR_DEMO_ROUTES=false ^
 ALLOW_REMOTE_MENTOR_DEMO_ROUTES=false ^
 STORAGE_BACKUP_DIR=backups ^
 py -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-If a remote environment ever needs mentor-demo routes for an approved internal validation window, the runtime contract is explicit:
+For a normal Vercel Preview posture with dynamic `*.vercel.app` origins, keep mentor-demo disabled and add the regex explicitly:
 
 ```bash
 APP_ENV=production ^
-CORS_ALLOW_ORIGINS=https://cliente.example.com ^
+CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br ^
+CORS_ALLOW_ORIGIN_REGEX=^https://.*\\.vercel\\.app$ ^
+ENABLE_MENTOR_DEMO_ROUTES=false ^
+ALLOW_REMOTE_MENTOR_DEMO_ROUTES=false ^
+STORAGE_BACKUP_DIR=backups ^
+py -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+If a remote environment ever needs mentor-demo routes for an approved internal validation window, keep that as a separate exceptional posture:
+
+```bash
+APP_ENV=production ^
+CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br ^
+CORS_ALLOW_ORIGIN_REGEX=^https://.*\\.vercel\\.app$ ^
 ENABLE_MENTOR_DEMO_ROUTES=true ^
 ALLOW_REMOTE_MENTOR_DEMO_ROUTES=true ^
 STORAGE_BACKUP_DIR=backups ^
@@ -221,26 +235,31 @@ Do not use that posture for normal client-facing staging or go-live. The backend
 
 ### 3. Validate canonical host and redirects
 
-- Visit `https://aceleradormedico.com.br/` and confirm it lands on `https://www.aceleradormedico.com.br/`.
-- Visit `https://aceleradormedico.com.br/login?next=%2Fapp%2Fadmin` and confirm path and query string are preserved on the canonical host.
+- Visit `https://innovai-solutions.com.br/` and confirm it lands on `https://www.innovai-solutions.com.br/`.
+- Visit `https://innovai-solutions.com.br/login?next=%2Fapp%2Fadmin` and confirm path and query string are preserved on the canonical host.
 - Confirm there is no redirect loop and the final URL remains on `www`.
 - Evidence: browser address bar capture plus network entry showing a permanent redirect.
 
-### 4. Validate base path and static assets
+### 4. Validate base path, static assets, and CSP report-only posture
 
 - Open browser devtools on the published app.
 - Confirm branding assets load from the published base path instead of `/`.
 - Confirm navigation does not drop the configured base path.
 - Confirm `document.title` and shell identity show the configured client branding.
+- Confirm the HTML response includes `Content-Security-Policy-Report-Only`.
+- Confirm there are no CSP console violations on `/`, `/login`, `/dashboard`, `/app/admin`, `/app/matriz-renovacao`, and `/app/aluno`.
+- Confirm the hub page continues loading its Google Fonts dependency unless that dependency was intentionally removed as part of the rollout.
 - Evidence: screenshot plus network panel capture.
 
 ### 5. Validate backend origin and CORS
 
 - Confirm the backend starts with explicit `APP_ENV` and `CORS_ALLOW_ORIGINS`.
+- For Preview deploys with dynamic `*.vercel.app` origins, confirm `CORS_ALLOW_ORIGIN_REGEX` is also set instead of expanding to wildcard `*`.
 - Confirm startup logs record the deploy posture and that `mentor_demo_routes=false` plus `mentor_demo_policy=explicit-disable` or `production-default-disabled`.
 - From the published frontend origin, authenticate and observe browser network traffic.
 - Confirm no request targets `127.0.0.1` or `localhost`.
-- Confirm the browser origin exactly matches the configured `CORS_ALLOW_ORIGINS`.
+- Confirm the browser origin is covered either by the explicit `CORS_ALLOW_ORIGINS` list or by `CORS_ALLOW_ORIGIN_REGEX` for Preview.
+- Confirm CSP report-only does not log blocked `connect-src` violations for the intended backend origin.
 - Evidence: backend startup log plus browser network capture.
 
 ### 6. Validate integrated smoke against the target backend URL
@@ -262,7 +281,13 @@ Use the published frontend against the real staging backend URL. Record pass or 
 7. Reload a deep protected route after successful authentication.
    Expected: SPA rewrite plus guarded routing continue to work.
 
-### 7. Record evidence and blockers
+### 7. Validate HSTS gate remains closed until live HTTPS is proven stable
+
+- Confirm `Strict-Transport-Security` is absent unless the custom domain is already attached, TLS is healthy, and the apex-to-`www` redirect has been verified on the live host.
+- Do not add or approve `preload` during this rollout.
+- If operators later decide to enable HSTS after live verification, treat that as a deliberate follow-up check with its own evidence.
+
+### 8. Record evidence and blockers
 
 - Update `docs/production-release-tracker.md` with the evidence location for each completed step.
 - If any step fails, mark the corresponding gate as `blocked` and record the blocker before continuing.

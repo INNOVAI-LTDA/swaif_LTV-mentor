@@ -1,0 +1,13 @@
+{
+  "workflow": "story_loop",
+  "current_batch": "D",
+  "batches": {
+    "D": {
+      "route": "done",
+      "map": "done",
+      "story": "done",
+      "dev": "done",
+      "review": "locked"
+    }
+  }
+}

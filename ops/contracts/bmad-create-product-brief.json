@@ -1,0 +1,32 @@
+{
+  "command": "bmad-create-product-brief",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "discovery_input",
+      "description": "Requirements or discovery notes for a new initiative."
+    }
+  ],
+  "output_artifact_types": [
+    "product-brief"
+  ],
+  "materialized_artifact_types": [
+    "product-brief"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-create-prd",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "product-brief",
+      "path_hint": "_bmad-output/planning-artifacts/<scope>-product-brief.md"
+    }
+  ]
+}

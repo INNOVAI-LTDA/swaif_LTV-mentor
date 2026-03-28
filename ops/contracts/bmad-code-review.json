@@ -1,0 +1,32 @@
+{
+  "command": "bmad-code-review",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "story",
+      "description": "The story artifact under review."
+    }
+  ],
+  "output_artifact_types": [
+    "review-report"
+  ],
+  "materialized_artifact_types": [
+    "review-report"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-dev-story",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "review-report",
+      "path_hint": "_bmad-output/operator-artifacts/<story-slug>-review-report.md"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "command": "bmad-quick-spec",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "small-change-input",
+      "description": "A bounded low-risk change request."
+    }
+  ],
+  "output_artifact_types": [
+    "quick-spec"
+  ],
+  "materialized_artifact_types": [
+    "quick-spec"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-quick-dev",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "quick-spec",
+      "path_hint": "_bmad-output/operator-artifacts/<scope>-quick-spec.md"
+    }
+  ]
+}

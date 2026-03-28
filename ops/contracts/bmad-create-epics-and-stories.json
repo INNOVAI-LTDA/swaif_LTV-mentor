@@ -1,0 +1,32 @@
+{
+  "command": "bmad-create-epics-and-stories",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "planning_anchor",
+      "description": "PRD, architecture, or scoped brownfield analysis that needs decomposition."
+    }
+  ],
+  "output_artifact_types": [
+    "epics-and-stories"
+  ],
+  "materialized_artifact_types": [
+    "epics-and-stories"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-check-implementation-readiness",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "epics-and-stories",
+      "path_hint": "_bmad-output/planning-artifacts/<scope>-epics-and-stories.md"
+    }
+  ]
+}

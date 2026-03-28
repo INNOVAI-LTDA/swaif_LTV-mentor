@@ -1,0 +1,32 @@
+{
+  "command": "bmad-generate-project-context",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "project_anchor",
+      "description": "Existing project files or scoped brownfield documentation."
+    }
+  ],
+  "output_artifact_types": [
+    "project-context"
+  ],
+  "materialized_artifact_types": [
+    "project-context"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-create-architecture",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "project-context",
+      "path_hint": "_bmad-output/project-context.md"
+    }
+  ]
+}

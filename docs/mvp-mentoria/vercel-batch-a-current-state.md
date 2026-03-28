@@ -1,6 +1,6 @@
 # Batch A (Vercel) - Current State Snapshot (Targeted)
 
-Date: 2026-03-26
+Date: 2026-03-27
 Scope: Document only the current repo state relevant to Batch A:
 
 - lock `frontend/` as the Vercel project root
@@ -13,15 +13,15 @@ This is intentionally narrow and does not attempt to document the full project.
 
 Yes, by structure:
 
-- Repo root does **not** contain a `package.json`.
+- Repo root does not contain a `package.json`.
 - `frontend/package.json` exists and contains the Vite/React build pipeline:
   - `build`: `tsc --noEmit && vite build`
   - `test`: `vitest run`
-- Therefore, a Vercel project configured at the repo root would have no obvious Node build entrypoint unless the Vercel project root directory is explicitly set to `frontend/`.
+- A Vercel project configured at repo root would still need `frontend/` set as Root Directory to find the frontend build entrypoint.
 
 Implication for Batch A:
 
-- “Lock frontend as the Vercel project root” is aligned with the current repo layout. Treat `frontend/` as the deployable unit.
+- `frontend/` is the real deployable unit and that contract is already the intended hosted posture.
 
 ## 2) Current Vite base-path behavior
 
@@ -29,16 +29,16 @@ Implication for Batch A:
 
 `frontend/vite.config.ts` resolves:
 
-- `env = loadEnv(mode, process.cwd(), "")` (reads `VITE_*` from the `frontend/` working directory)
+- `env = loadEnv(mode, process.cwd(), "")`
 - `appBasePath = normalizeBasePath(env.VITE_APP_BASE_PATH)`
 - Vite `base` is set to `appBasePath`
 
 `normalizeBasePath()` in `frontend/src/shared/config/envContract.ts`:
 
 - missing/empty or `/` -> `/`
-- any other value -> `/<trimmed>/` (forces leading + trailing slash)
+- any other value -> `/<trimmed>/`
 
-So today, if `VITE_APP_BASE_PATH` is **unset**, the build base is `/`.
+So, for the current hosted contract, `VITE_APP_BASE_PATH=/` produces a root-path build.
 
 ### Runtime routing base (`src/shared/config/env.ts` + `src/app/routes.tsx`)
 
@@ -51,40 +51,34 @@ So today, if `VITE_APP_BASE_PATH` is **unset**, the build base is `/`.
 
 - `createBrowserRouter(..., { basename: env.routerBasePath })`
 
-So the runtime router basename is:
-
-- `/` when `VITE_APP_BASE_PATH=/`
-- `/<subpath>` when `VITE_APP_BASE_PATH=/<subpath>/`
-
-Static public asset URLs for branding are also base-path-aware:
-
-- `buildPublicAssetUrl()` prefixes with `env.appBasePath`
+Static public asset URLs for branding are also base-path-aware through `buildPublicAssetUrl()`.
 
 ## 3) Is a subpath deployment currently assumed?
 
-Code: subpath deployment is supported and first-class (router basename + asset URL helper).
+Code: subpath deployment is still supported and first-class.
 
-Docs/runbooks: the current operational baseline is explicitly subpath-oriented:
+Operational contract:
 
-- `docs/mvp-mentoria/frontend-deployment-readiness-checklist.md` lists `Base path alvo` as `/accmed/` for the local baseline.
-- `docs/client-launch-runbook.md` uses `/accmed/` as “Current Local Baseline” and uses `/cliente/` as the example “Required Inputs”.
+- The hosted Vercel contract is now explicit root-path deploy: `VITE_APP_BASE_PATH=/`.
+- Local validation docs still retain `/accmed/` as a local-only baseline in some places, but that is no longer the hosted deploy assumption.
 
 Implication for Batch A:
 
-- Changing deployment to domain root (`/`) is supported by the code, but is a shift from the current documentation baseline that has been validating under `/accmed/`.
+- Root-path deployment is now the active hosted contract.
+- Subpath examples should be treated as local-only or legacy validation context unless a later batch reintroduces them explicitly.
 
 ## 4) Does `vercel.json` already exist?
 
-No:
+Yes:
 
-- `vercel.json` does not exist at repo root.
-- `frontend/vercel.json` does not exist.
+- Repo root does not carry its own `vercel.json`.
+- `frontend/vercel.json` exists and version-controls the current Vercel deploy behavior for the frontend project root.
 
 ## 5) Does `DEPLOY.md` exist?
 
-No `DEPLOY.md` is present.
+Yes. `DEPLOY.md` now exists and serves as the versioned operator contract for the current Vercel deployment posture.
 
-Existing deployment-adjacent docs currently serving as operator guidance:
+Other deployment-adjacent docs still serving as operator guidance:
 
 - `docs/mvp-mentoria/frontend-deployment-readiness-checklist.md`
 - `docs/client-launch-runbook.md`
@@ -92,49 +86,43 @@ Existing deployment-adjacent docs currently serving as operator guidance:
 
 ## 6) Exact files likely affected by Batch A
 
-Batch A changes (direct artifacts):
+Batch A artifacts already in repo:
 
-- `frontend/vercel.json` (new)
+- `frontend/vercel.json`
+- `DEPLOY.md`
 
-Batch A changes (configuration outside git):
+Batch A configuration outside git:
 
 - Vercel Project setting: Root Directory = `frontend/`
 - Vercel Environment Variable: `VITE_APP_BASE_PATH=/`
 
-Files that may need follow-up edits in later batches (not part of Batch A itself, but tightly coupled):
+Files that still carry related local-only or follow-up deployment context:
 
-- `docs/client-launch-runbook.md` (currently assumes `/accmed/` baseline and `/cliente/` example)
-- `docs/mvp-mentoria/frontend-deployment-readiness-checklist.md` (currently records evidence around `/accmed/`)
+- `docs/client-launch-runbook.md`
+- `docs/mvp-mentoria/frontend-deployment-readiness-checklist.md`
 
 ## 7) Exact validation steps needed for Batch A
 
-This repo’s frontend build currently hard-requires `VITE_DEPLOY_TARGET` (see `frontend/src/shared/config/envContract.ts` and `frontend/vite.config.ts`).
+This repo's frontend build currently hard-requires `VITE_DEPLOY_TARGET`.
 
 ### Local validation (fastest)
 
 From `frontend/`:
 
 1. Build with explicit root base path:
-
    - `VITE_DEPLOY_TARGET=local VITE_APP_BASE_PATH=/ npm run build`
-
-   Expected:
-   - build succeeds
-   - produced asset paths assume `/` as base (not `/accmed/` or `/cliente/`)
-
 2. Run tests:
-
    - `npm run test`
+3. Optional sanity check:
+   - `VITE_DEPLOY_TARGET=local VITE_APP_BASE_PATH=/ npm run preview`
 
-   Expected:
-   - env/base-path contract tests remain green (`frontend/src/shared/config/env.test.ts`)
-   - route smoke tests that exercise basename remain green (`frontend/src/test/routes.smoke.test.tsx`)
+Expected:
 
-Optional sanity check:
+- build succeeds
+- asset paths assume `/` as base
+- env/base-path tests remain green
 
-- `VITE_DEPLOY_TARGET=local VITE_APP_BASE_PATH=/ npm run preview`
-
-### Client-safe build validation (to match hosted posture)
+### Client-safe build validation (hosted posture)
 
 From `frontend/`:
 
@@ -142,22 +130,21 @@ From `frontend/`:
 
 Expected:
 
-- build succeeds (client deploy target requires `VITE_API_BASE_URL` and `VITE_CLIENT_CODE`)
+- build succeeds with explicit client envs
 
 ### Vercel validation (Batch A acceptance)
 
 In Vercel project settings:
 
 1. Set Root Directory to `frontend/`.
-2. Ensure build command is `npm run build` (defaults are fine if Vercel detects a Vite project).
-3. Set environment variable `VITE_APP_BASE_PATH=/` for the relevant environment(s).
+2. Ensure build command is `npm run build`.
+3. Set `VITE_APP_BASE_PATH=/` for the relevant environment(s).
 
 Expected:
 
-- Vercel build runs in `frontend/` and does not fail due to missing root `package.json`.
-- Built app is served from domain root (`/`), not a subpath.
+- Vercel build runs in `frontend/`
+- the app is served from domain root (`/`)
 
 Notes:
 
-- Deep-link SPA refresh behavior and Preview vs Production env separation are intentionally deferred to later batches (Batch B+). Batch A’s validation is focused on root directory and base-path invariants only.
-
+- Deep-link SPA refresh behavior and Preview vs Production env separation were handled in later batches. This Batch A snapshot should now be read only as the root-directory and base-path foundation already implemented in repo.

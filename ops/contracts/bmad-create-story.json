@@ -1,0 +1,32 @@
+{
+  "command": "bmad-create-story",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "planning_anchor",
+      "description": "A current-state, planning, or requirements artifact that defines one bounded story."
+    }
+  ],
+  "output_artifact_types": [
+    "story"
+  ],
+  "materialized_artifact_types": [
+    "story"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-dev-story",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "story",
+      "path_hint": "_bmad-output/implementation-artifacts/<story-file>.md"
+    }
+  ]
+}

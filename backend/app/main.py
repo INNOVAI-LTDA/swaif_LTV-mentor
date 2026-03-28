@@ -66,6 +66,7 @@ def create_app() -> FastAPI:
         "app_env": app_env,
         "client_code": client_code,
         "cors_origins": cors_origins,
+        "cors_origin_regex": cors_origin_regex,
         "mentor_demo_routes_enabled": mentor_demo_enabled,
         "mentor_demo_policy_source": mentor_demo_policy.policy_source,
         "storage_root": str(resolve_storage_root()),
@@ -73,10 +74,11 @@ def create_app() -> FastAPI:
     }
 
     logger.info(
-        "backend_runtime_configured app_env=%s client_code=%s cors_origins=%s mentor_demo_routes=%s mentor_demo_policy=%s storage_root=%s backup_dir=%s",
+        "backend_runtime_configured app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_demo_routes=%s mentor_demo_policy=%s storage_root=%s backup_dir=%s",
         app.state.runtime_summary["app_env"],
         app.state.runtime_summary["client_code"],
         ",".join(app.state.runtime_summary["cors_origins"]),
+        app.state.runtime_summary["cors_origin_regex"] or "none",
         app.state.runtime_summary["mentor_demo_routes_enabled"],
         app.state.runtime_summary["mentor_demo_policy_source"],
         app.state.runtime_summary["storage_root"],
@@ -127,10 +129,11 @@ def bootstrap_user_storage() -> None:
 
     summary = app.state.runtime_summary
     logger.info(
-        "backend_startup_complete app_env=%s client_code=%s cors_origins=%s mentor_demo_routes=%s mentor_demo_policy=%s storage_root=%s backup_dir=%s",
+        "backend_startup_complete app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_demo_routes=%s mentor_demo_policy=%s storage_root=%s backup_dir=%s",
         summary["app_env"],
         summary["client_code"],
         ",".join(summary["cors_origins"]),
+        summary["cors_origin_regex"] or "none",
         summary["mentor_demo_routes_enabled"],
         summary["mentor_demo_policy_source"],
         summary["storage_root"],

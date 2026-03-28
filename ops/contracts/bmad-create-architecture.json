@@ -1,0 +1,32 @@
+{
+  "command": "bmad-create-architecture",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "solution_anchor",
+      "description": "Requirements, current-state docs, or product brief that define the solution boundary."
+    }
+  ],
+  "output_artifact_types": [
+    "architecture"
+  ],
+  "materialized_artifact_types": [
+    "architecture"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-create-epics-and-stories",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "architecture",
+      "path_hint": "_bmad-output/planning-artifacts/<scope>-architecture.md"
+    }
+  ]
+}

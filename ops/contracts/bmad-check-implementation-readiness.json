@@ -1,0 +1,32 @@
+{
+  "command": "bmad-check-implementation-readiness",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "planning_bundle",
+      "description": "PRD, architecture, and epics/stories artifacts to validate before sprint execution."
+    }
+  ],
+  "output_artifact_types": [
+    "readiness-report"
+  ],
+  "materialized_artifact_types": [
+    "readiness-report"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-sprint-planning",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "readiness-report",
+      "path_hint": "_bmad-output/planning-artifacts/<scope>-implementation-readiness.md"
+    }
+  ]
+}

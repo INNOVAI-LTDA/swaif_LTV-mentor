@@ -1,0 +1,32 @@
+{
+  "command": "bmad-create-prd",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "requirements_input",
+      "description": "Discovery notes, product brief, or integration anchor."
+    }
+  ],
+  "output_artifact_types": [
+    "prd"
+  ],
+  "materialized_artifact_types": [
+    "prd"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-create-architecture",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "prd",
+      "path_hint": "_bmad-output/planning-artifacts/<scope>-prd.md"
+    }
+  ]
+}

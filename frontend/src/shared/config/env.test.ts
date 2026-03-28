@@ -97,9 +97,14 @@ describe("shared env config", () => {
     expect(env.clientCode).toBe("cliente_01");
   });
 
-  it("falha ao carregar o runtime sem VITE_DEPLOY_TARGET explicito", async () => {
+  it("carrega o runtime com a baseline local quando nao ha stub explicito", async () => {
     vi.unstubAllEnvs();
 
-    await expect(importEnvModule()).rejects.toThrow("VITE_DEPLOY_TARGET is required");
+    const { env } = await importEnvModule();
+
+    expect(env.deployTarget).toBe("local");
+    expect(env.isLocalDeployTarget).toBe(true);
+    expect(env.clientCode).toBe("local");
+    expect(env.apiBaseUrl).toBe("http://127.0.0.1:8000");
   });
 });

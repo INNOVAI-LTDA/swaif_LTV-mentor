@@ -1,0 +1,32 @@
+{
+  "command": "bmad-quick-dev",
+  "prompt_profile": "contracted",
+  "required_inputs": [
+    {
+      "role": "quick-spec",
+      "description": "A small bounded quick spec or equivalent directly scoped change request."
+    }
+  ],
+  "output_artifact_types": [
+    "quick-implementation-report"
+  ],
+  "materialized_artifact_types": [
+    "quick-implementation-report"
+  ],
+  "required_response_fields": [
+    "status",
+    "summary",
+    "decisions",
+    "risks",
+    "input_artifacts",
+    "output_artifacts",
+    "approval_required"
+  ],
+  "default_next_command": "bmad-code-review",
+  "artifact_path_guidance": [
+    {
+      "artifact_type": "quick-implementation-report",
+      "path_hint": "_bmad-output/operator-artifacts/<scope>-quick-dev-report.md"
+    }
+  ]
+}

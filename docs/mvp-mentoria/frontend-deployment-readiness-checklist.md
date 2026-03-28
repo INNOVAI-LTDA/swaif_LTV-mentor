@@ -67,8 +67,15 @@ O frontend so pode ser considerado pronto para deploy quando:
 - [x] rotas protegidas exigirem autenticacao e papel compativel
 - [x] configuracao de API e base path estiverem externalizadas
 - [ ] branding e copy estiverem alinhados ao cliente alvo
-- [x] build e testes estiverem verdes
+- [x] build estiver verde
+- [ ] suite de testes estiver verde
+- [ ] `Content-Security-Policy-Report-Only` estiver presente na resposta HTML e sem violacoes nas rotas hospedadas validadas
+- [ ] `Strict-Transport-Security` permanecer ausente ate o gate de HTTPS estavel no dominio customizado ser encerrado
 - [ ] validacao manual do fluxo principal estiver aprovada
+
+Nota de gate atual:
+
+- Enquanto `npm run test` permanecer vermelho, o frontend nao deve ser apresentado como pronto para deploy.
 
 ## Bloco 1 - Autenticacao e seguranca de acesso
 
@@ -254,7 +261,7 @@ Resultado local atual:
 
 | Owner | Status | Evidencia | Bloqueador | Aprovado por |
 | ---- | ------ | --------- | ---------- | ------------ |
-| `dmene` | `in_progress` | `EV-001, EV-002, EV-003, EV-010` | `Falta smoke integrado hospedado e revisao visual em browser` | `dmene` |
+| `dmene` | `in_progress` | `EV-001, EV-002, EV-003, EV-010` | `Falta smoke integrado hospedado, revisao visual em browser e o gate de npm run test ainda esta vermelho` | `dmene` |
 
 - [ ] Executar `npm run build`.
 - [ ] Executar `npm run test`.
@@ -268,7 +275,7 @@ Resultado local atual:
 ### Evidencias minimas do bloco
 
 - [x] Build verde anexado ao registro da entrega.
-- [x] Suite de testes verde anexada ao registro da entrega.
+- [ ] Suite de testes verde anexada ao registro da entrega.
 - [ ] Checklist manual de navegacao preenchido.
 
 ## Bloco 8 - Documentacao de deploy
@@ -310,6 +317,9 @@ Resultado local atual:
 | Logout, expiracao e `403` validados | `pendente` | `preencher` | `nenhum` |
 | Nenhuma request aponta para localhost | `pendente` | `preencher` | `nenhum` |
 | Headers basicos de seguranca presentes no deploy | `pendente` | `preencher` | `nenhum` |
+| `Content-Security-Policy-Report-Only` presente na resposta HTML | `pendente` | `preencher` | `nenhum` |
+| Nenhuma violacao de CSP aparece no console das rotas hospedadas validadas | `pendente` | `preencher` | `nenhum` |
+| `Strict-Transport-Security` permanece ausente ate HTTPS estavel no dominio customizado ser validado | `pendente` | `preencher` | `nenhum` |
 
 ## Busca de residuos antes do deploy
 
