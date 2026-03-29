@@ -100,7 +100,7 @@ VITE_DEPLOY_TARGET=local npm run build
 Build client-safe:
 
 ```bash
-VITE_DEPLOY_TARGET=client VITE_CLIENT_CODE=accmed VITE_API_BASE_URL=https://api.example.com VITE_APP_BASE_PATH=/ npm run build
+VITE_DEPLOY_TARGET=client VITE_CLIENT_CODE=accmed VITE_API_BASE_URL=https://api-accmed.innovai-solutions.com.br VITE_APP_BASE_PATH=/ npm run build
 ```
 
 Template cliente AccMed:
@@ -132,7 +132,7 @@ Contrato operacional do bootstrap:
 Backend correspondente:
 
 ```bash
-APP_ENV=production CLIENT_CODE=accmed CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br py -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+APP_ENV=production CLIENT_CODE=accmed CORS_ALLOW_ORIGINS=https://accmed.innovai-solutions.com.br py -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 Exemplos invalidos que devem falhar:
@@ -140,9 +140,9 @@ Exemplos invalidos que devem falhar:
 - `npm run build` sem `VITE_DEPLOY_TARGET`
 - `VITE_DEPLOY_TARGET=client` sem `VITE_CLIENT_CODE`
 - `VITE_DEPLOY_TARGET=client` sem `VITE_API_BASE_URL`
-- `VITE_DEPLOY_TARGET=client VITE_API_BASE_URL=api.example.com`
-- `VITE_DEPLOY_TARGET=client VITE_API_BASE_URL=https://api.example.com?tenant=x`
-- `APP_ENV=production CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br/app`
+- `VITE_DEPLOY_TARGET=client VITE_API_BASE_URL=api-accmed.innovai-solutions.com.br`
+- `VITE_DEPLOY_TARGET=client VITE_API_BASE_URL=https://api-accmed.innovai-solutions.com.br?tenant=x`
+- `APP_ENV=production CORS_ALLOW_ORIGINS=https://accmed.innovai-solutions.com.br/app`
 - `APP_ENV=production` sem `CLIENT_CODE`
 
 ### Demo mode
@@ -163,9 +163,9 @@ Exemplos invalidos que devem falhar:
 ### Pareamento com backend
 
 - Em deploys reais, configure `APP_ENV` com um valor nao local no backend.
-- Para o contrato atual do Vercel, defina `CORS_ALLOW_ORIGINS` com `https://www.innovai-solutions.com.br`, sem depender dos defaults localhost.
+- Para o contrato atual do Vercel, defina `CORS_ALLOW_ORIGINS` com `https://accmed.innovai-solutions.com.br`, sem depender dos defaults localhost.
 - Se o backend precisar aceitar URLs dinamicas de Preview no Vercel, mantenha as origins estaveis em `CORS_ALLOW_ORIGINS` e complemente com `CORS_ALLOW_ORIGIN_REGEX`; nao trate correspondencia exata como a unica postura valida.
-- `CORS_ALLOW_ORIGINS` deve conter apenas origins puras, como `https://www.innovai-solutions.com.br`, sem credenciais, caminhos, query strings ou fragments.
+- `CORS_ALLOW_ORIGINS` deve conter apenas origins puras, como `https://accmed.innovai-solutions.com.br`, sem credenciais, caminhos, query strings ou fragments.
 - Nao considere o deploy concluido se apenas as variaveis do frontend estiverem configuradas.
 
 ### Artefatos de release

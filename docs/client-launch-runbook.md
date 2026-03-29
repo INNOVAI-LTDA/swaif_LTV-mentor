@@ -30,11 +30,14 @@ Fill these values before deploying:
 
 | Input | Example | Required |
 | ----- | ------- | -------- |
-| Frontend origin | `https://www.innovai-solutions.com.br` | yes |
+| Frontend origin | `https://accmed.innovai-solutions.com.br` | yes |
 | Frontend base path | `/` | yes |
-| Backend API URL | `https://api.example.com` | yes |
+| Backend API URL | `https://api-accmed.innovai-solutions.com.br` | yes |
 | Backend APP_ENV | `production` | yes |
-| Backend CORS_ALLOW_ORIGINS | `https://www.innovai-solutions.com.br` | yes |
+| Backend CLIENT_CODE | `accmed` | yes |
+| Backend CORS_ALLOW_ORIGINS | `https://accmed.innovai-solutions.com.br` | yes |
+| Backend APP_AUTH_SECRET | `preencher` | yes |
+| Backend volume mount path | `/app/data` | yes |
 | Client display name | `Nome do Cliente` | yes |
 | Product name | `Nome do Produto` | yes |
 | Branding asset paths | `/branding/logo.png` | yes |
@@ -42,12 +45,11 @@ Fill these values before deploying:
 
 ## Custom Domain + Canonical Host
 
-- Current Batch D production-domain contract: `https://www.innovai-solutions.com.br` is canonical.
-- Apex redirect policy: `https://innovai-solutions.com.br` permanently redirects to the `www` host, preserving path and query string.
-- This redirect behavior is versioned in `frontend/vercel.json`; domain attachment, DNS, and TLS remain Vercel/dashboard responsibilities.
+- Current Batch D production-domain contract: `https://accmed.innovai-solutions.com.br` is the chosen production app host.
+- No app-host redirect is versioned for the AccMed deployment; domain attachment, DNS, and TLS remain Vercel/dashboard responsibilities.
 - `docs/branding/design-system-acelerador-medico.md` is a client-site branding reference only; it does not define the production deploy host.
 - Trailing slash policy is explicit: `trailingSlash=false` with no extra app-route slash normalization beyond the platform default.
-- If the final production app domain differs from `innovai-solutions.com.br`, update `frontend/vercel.json` before the release candidate is promoted.
+- If the final production app domain differs from `accmed.innovai-solutions.com.br`, update `frontend/vercel.json` before the release candidate is promoted.
 
 ## Preconditions
 
@@ -160,7 +162,7 @@ Use the target client values, not local placeholders:
 ```bash
 VITE_DEPLOY_TARGET=client ^
 VITE_CLIENT_CODE=<client_code> ^
-VITE_API_BASE_URL=https://api.example.com ^
+VITE_API_BASE_URL=https://api-accmed.innovai-solutions.com.br ^
 VITE_APP_BASE_PATH=/ ^
 VITE_CLIENT_NAME=Nome do Cliente ^
 VITE_APP_NAME=Nome do Produto ^
@@ -179,10 +181,12 @@ Start the backend with explicit deploy intent and the published frontend origin:
 
 ```bash
 APP_ENV=production ^
-CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br ^
+CLIENT_CODE=accmed ^
+CORS_ALLOW_ORIGINS=https://accmed.innovai-solutions.com.br ^
 ENABLE_MENTOR_DEMO_ROUTES=false ^
 ALLOW_REMOTE_MENTOR_DEMO_ROUTES=false ^
-STORAGE_BACKUP_DIR=backups ^
+APP_AUTH_SECRET=<strong-random-secret> ^
+STORAGE_BACKUP_DIR=/app/data/backups ^
 py -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
@@ -190,11 +194,13 @@ For a normal Vercel Preview posture with dynamic `*.vercel.app` origins, keep me
 
 ```bash
 APP_ENV=production ^
-CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br ^
+CLIENT_CODE=accmed ^
+CORS_ALLOW_ORIGINS=https://accmed.innovai-solutions.com.br ^
 CORS_ALLOW_ORIGIN_REGEX=^https://.*\\.vercel\\.app$ ^
 ENABLE_MENTOR_DEMO_ROUTES=false ^
 ALLOW_REMOTE_MENTOR_DEMO_ROUTES=false ^
-STORAGE_BACKUP_DIR=backups ^
+APP_AUTH_SECRET=<strong-random-secret> ^
+STORAGE_BACKUP_DIR=/app/data/backups ^
 py -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
@@ -202,15 +208,30 @@ If a remote environment ever needs mentor-demo routes for an approved internal v
 
 ```bash
 APP_ENV=production ^
-CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br ^
+CLIENT_CODE=accmed ^
+CORS_ALLOW_ORIGINS=https://accmed.innovai-solutions.com.br ^
 CORS_ALLOW_ORIGIN_REGEX=^https://.*\\.vercel\\.app$ ^
 ENABLE_MENTOR_DEMO_ROUTES=true ^
 ALLOW_REMOTE_MENTOR_DEMO_ROUTES=true ^
-STORAGE_BACKUP_DIR=backups ^
+APP_AUTH_SECRET=<strong-random-secret> ^
+STORAGE_BACKUP_DIR=/app/data/backups ^
 py -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
 Do not use that posture for normal client-facing staging or go-live. The backend now fails fast if `ENABLE_MENTOR_DEMO_ROUTES=true` is set in a production-like environment without the matching approval flag.
+
+### Railway backend contract
+
+- Railway service root directory: `backend`
+- Versioned Railway config file: `backend/railway.json`
+- Configure the Railway service config-file path as `/backend/railway.json`; the config file does not follow the service root automatically in this monorepo posture.
+- Versioned dependency manifest: `backend/requirements.txt`
+- Railway volume mount path: `/app/data`
+- Keep the individual `*_STORE_PATH` env vars unset unless you intentionally move the JSON files away from the default layout.
+- Set `STORAGE_BACKUP_DIR=/app/data/backups` so backups live on the same mounted volume.
+- The published backend must answer `GET /health` before the frontend login flow is tested.
+- The versioned Railway start contract uses:
+  - `python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 
 ## Staging Validation Procedure
 
@@ -233,18 +254,18 @@ Do not use that posture for normal client-facing staging or go-live. The backend
 - Expected result: each refresh returns the SPA shell instead of a host `404`.
 - Evidence: screenshot or deploy log showing successful refreshes.
 
-### 3. Validate canonical host and redirects
+### 3. Validate production app host and TLS
 
-- Visit `https://innovai-solutions.com.br/` and confirm it lands on `https://www.innovai-solutions.com.br/`.
-- Visit `https://innovai-solutions.com.br/login?next=%2Fapp%2Fadmin` and confirm path and query string are preserved on the canonical host.
-- Confirm there is no redirect loop and the final URL remains on `www`.
-- Evidence: browser address bar capture plus network entry showing a permanent redirect.
+- Visit `https://accmed.innovai-solutions.com.br/` and confirm the published app loads on the chosen host.
+- Visit `https://accmed.innovai-solutions.com.br/login?next=%2Fapp%2Fadmin` and confirm path and query string remain intact on the same host.
+- Confirm there is no unexpected host redirect or redirect loop.
+- Evidence: browser address bar capture plus network or TLS evidence for the published host.
 
 ### 4. Validate base path, static assets, and CSP report-only posture
 
 - Open browser devtools on the published app.
-- Confirm branding assets load from the published base path instead of `/`.
-- Confirm navigation does not drop the configured base path.
+- Confirm branding assets load from the published base path `/`.
+- Confirm navigation keeps routes rooted at `/`.
 - Confirm `document.title` and shell identity show the configured client branding.
 - Confirm the HTML response includes `Content-Security-Policy-Report-Only`.
 - Confirm there are no CSP console violations on `/`, `/login`, `/dashboard`, `/app/admin`, `/app/matriz-renovacao`, and `/app/aluno`.
@@ -283,7 +304,7 @@ Use the published frontend against the real staging backend URL. Record pass or 
 
 ### 7. Validate HSTS gate remains closed until live HTTPS is proven stable
 
-- Confirm `Strict-Transport-Security` is absent unless the custom domain is already attached, TLS is healthy, and the apex-to-`www` redirect has been verified on the live host.
+- Confirm `Strict-Transport-Security` is absent unless the custom domain is already attached and TLS is healthy on `https://accmed.innovai-solutions.com.br`.
 - Do not add or approve `preload` during this rollout.
 - If operators later decide to enable HSTS after live verification, treat that as a deliberate follow-up check with its own evidence.
 

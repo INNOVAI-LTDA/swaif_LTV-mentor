@@ -60,8 +60,8 @@ There is no special-casing for Vercel Preview or Production in code. Deployment 
 
 ### Operator Examples (Current Intended Contract)
 
-- Production: `APP_ENV=production CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br`
-- Preview: `APP_ENV=production CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br CORS_ALLOW_ORIGIN_REGEX=^https://.*\\.vercel\\.app$`
+- Production: `APP_ENV=production CORS_ALLOW_ORIGINS=https://accmed.innovai-solutions.com.br`
+- Preview: `APP_ENV=production CORS_ALLOW_ORIGINS=https://accmed.innovai-solutions.com.br CORS_ALLOW_ORIGIN_REGEX=^https://.*\\.vercel\\.app$`
 - Local: defaults allow `http://localhost:5173`, `http://127.0.0.1:5173`, `http://localhost:4173`, `http://127.0.0.1:4173`, `http://localhost:3000`, `http://127.0.0.1:3000`
 
 Warning: Wildcard `*` is rejected in production-like environments; keep `CORS_ALLOW_ORIGINS` explicit and use `CORS_ALLOW_ORIGIN_REGEX` for preview patterns instead.
@@ -93,7 +93,7 @@ Manual (preflight sanity check against a running backend):
 
 1. Start backend with explicit env:
    - Local-like: `APP_ENV=local CLIENT_CODE=<client> CORS_ALLOW_ORIGINS=http://127.0.0.1:4173 ...`
-   - Production-like: `APP_ENV=production CLIENT_CODE=<client> CORS_ALLOW_ORIGINS=https://www.innovai-solutions.com.br ...`
+   - Production-like: `APP_ENV=production CLIENT_CODE=<client> CORS_ALLOW_ORIGINS=https://accmed.innovai-solutions.com.br ...`
 2. Send a preflight request with an `Origin` header matching your frontend origin and confirm the response includes:
    - `access-control-allow-origin: <exact origin>` (or `*` only if configured)
    - `access-control-allow-methods` and `access-control-allow-headers` allowing the SPA’s requests

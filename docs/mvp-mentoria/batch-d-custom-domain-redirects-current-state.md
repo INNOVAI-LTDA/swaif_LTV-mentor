@@ -4,80 +4,88 @@ Scope: document only what is true in the repo today that impacts Batch D (custom
 
 ## Custom Domain Connection (Current)
 
-There is no versioned artifact in this repo that proves a custom domain is already connected in Vercel (domain attachment and DNS are Vercel/DNS-side configuration).
+There is no versioned artifact in this repo that proves `accmed.innovai-solutions.com.br` is already connected in Vercel (domain attachment, DNS, and TLS are Vercel/DNS-side configuration).
 
 What is versioned today:
 
 - `frontend/vercel.json` exists and is the only committed Vercel config file.
 - No root `vercel.json` exists at repo root (Vercel Root Directory is expected to be `frontend` per `DEPLOY.md`).
+- `DEPLOY.md` and `docs/client-launch-runbook.md` treat `https://accmed.innovai-solutions.com.br` as the intended production app host.
 
-Implication: whether a custom domain is connected must currently be verified in the Vercel dashboard and in DNS, not in Git.
+Implication: whether the AccMed app subdomain is connected must currently be verified in the Vercel dashboard and in DNS, not in Git.
 
 ## Canonical Host Policy (Current)
 
-No canonical-host policy is versioned in `frontend/vercel.json` today (no redirects that enforce `www` or apex as canonical).
+The current app-host contract is explicit as `https://accmed.innovai-solutions.com.br`.
 
-Implication: if a custom domain is added, `www` canonicalization is not currently guaranteed by repo-config. Any canonicalization would be ad hoc (Vercel dashboard rules) until Batch D versions it.
+No host-level redirect is versioned for the app because the chosen AccMed contract uses a single production hostname.
+
+Implication: the root domain `innovai-solutions.com.br` is not part of the AccMed app-host contract or app smoke tests.
 
 ## Redirect Rules (Current)
 
-`frontend/vercel.json` currently contains only the SPA rewrite:
+`frontend/vercel.json` contains no host-level redirects for the AccMed deployment.
 
-- `rewrites: [{ "source": "/(.*)", "destination": "/index.html" }]`
+What remains versioned:
 
-There are no committed host-level redirects (no `redirects` in `frontend/vercel.json`, no `_redirects` file, no other proxy config in repo).
+- SPA rewrite: `rewrites: [{ "source": "/(.*)", "destination": "/index.html" }]`
+- Security headers and CSP report-only headers from Batches E/F
 
 ## Trailing Slash Behavior (Current)
 
-There is no trailing-slash policy committed (no `trailingSlash` field in `frontend/vercel.json`).
+Trailing slash behavior is standardized in repo: `frontend/vercel.json` sets `trailingSlash=false`.
 
-Implication: trailing slash behavior is currently whatever the hosting platform defaults to, and it is not standardized/locked by this repo yet.
+Implication: the published app should remain rooted at `/` with no extra slash-normalization rules added in app config.
 
 ## `DEPLOY.md` Status (Current)
 
-`DEPLOY.md` exists and documents the Vercel settings for Batch B:
+`DEPLOY.md` exists and documents the current frontend Vercel settings:
 
 - Root Directory: `frontend`
 - Framework Preset: Vite
 - Build Command: `npm run build`
 - Output Directory: `dist`
 
-`DEPLOY.md` also contains a hosted smoke list focused on SPA refresh/deep-links, but it does not yet include any custom-domain canonicalization or redirect verification.
+`DEPLOY.md` also contains hosted smoke checks for:
+
+- the chosen production app host `https://accmed.innovai-solutions.com.br`
+- valid TLS on the published app host
+- no unexpected host redirects or redirect loops
+- SPA refresh on the route set
+- baseline security headers and CSP report-only posture
+- HSTS still absent until the HTTPS gate is explicitly closed
 
 ## Files Likely Affected By Batch D
 
 - `frontend/vercel.json`
-  - add canonical-host redirects (www or apex)
-  - standardize redirect behavior (and ensure it does not conflict with SPA rewrite)
-  - optionally standardize trailing slash policy if desired
+  - keep the single-host contract explicit and preserve SPA rewrite / headers
 - `DEPLOY.md`
-  - add Batch D hosted smoke checklist: canonical host, redirects, trailing slash expectations
+  - keep the AccMed subdomain contract and hosted smoke checklist aligned
 - `docs/client-launch-runbook.md`
-  - ensure operator procedure includes the new hosted-domain and redirect checks (if this runbook is used as operator source of truth)
+  - keep operator procedure aligned to the chosen app host and backend pair
 - `docs/mvp-mentoria/frontend-deployment-readiness-checklist.md`
-  - if this remains a release gate, add explicit pass/fail items for domain + redirects + smoke refresh routes
+  - if this remains a release gate, keep domain/TLS/host-validation items aligned with the single-host contract
 
-## Validation Steps Needed For Batch D (Not Yet Versioned)
+## Validation Steps Needed For Batch D (Current Contract)
 
 DNS / Vercel:
 
-1. Confirm the custom domain is added to the Vercel project (Production) and has a valid TLS certificate.
+1. Confirm `accmed.innovai-solutions.com.br` is added to the Vercel project (Production) and has a valid TLS certificate.
 2. Confirm Preview behavior expectations (Preview URLs usually remain `*.vercel.app`; custom preview domains are optional).
 
-Hosted redirect + canonicalization (after Batch D versions rules):
+Hosted app-host validation:
 
-1. Verify canonical host:
-   - `https://yourdomain.com/` redirects to `https://www.yourdomain.com/` (or the reverse), consistently.
-2. Verify status codes:
-   - redirects are stable (no loops) and use a permanent code (`301` or `308`) where appropriate.
-3. Verify path preservation:
-   - canonicalization preserves the full path/query (example: `/login?next=%2Fapp%2Fadmin` remains intact).
-4. Verify trailing slash posture (if standardized):
-   - `/login` and `/login/` behave as intended (either one redirects to the other, or both work without ambiguity).
+1. Verify the chosen app host loads directly:
+   - `https://accmed.innovai-solutions.com.br/`
+2. Verify path preservation on the same host:
+   - `https://accmed.innovai-solutions.com.br/login?next=%2Fapp%2Fadmin`
+3. Verify no unexpected host redirect or loop occurs.
+4. Verify trailing slash posture:
+   - `/login` and `/login/` behave consistently with `trailingSlash=false`.
 
-Hosted SPA smoke (must remain valid after redirects):
+Hosted SPA smoke (must remain valid after host validation):
 
-1. Hard-refresh these routes on the final canonical host:
+1. Hard-refresh these routes on the final app host:
    - `/`
    - `/login`
    - `/dashboard`
@@ -85,4 +93,3 @@ Hosted SPA smoke (must remain valid after redirects):
    - `/app/matriz-renovacao`
    - `/app/aluno`
 2. Confirm each refresh returns the SPA shell (no host `404`) and the app loads.
-

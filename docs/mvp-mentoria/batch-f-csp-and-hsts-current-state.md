@@ -61,8 +61,8 @@ Current implication:
 
 Current versioned host contract:
 
-- [vercel.json](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/frontend/vercel.json) redirects apex `innovai-solutions.com.br` to canonical `https://www.innovai-solutions.com.br`
-- [DEPLOY.md](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/DEPLOY.md) treats `https://www.innovai-solutions.com.br` as the production custom domain
+- [vercel.json](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/frontend/vercel.json) does not version a host redirect for the app; the current contract uses the single production app host `https://accmed.innovai-solutions.com.br`
+- [DEPLOY.md](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/DEPLOY.md) treats `https://accmed.innovai-solutions.com.br` as the production custom domain for the AccMed app
 
 Current operational status is not yet proven from repo evidence:
 
@@ -124,7 +124,7 @@ Local/build sanity:
 
 1. From `frontend/`, run:
    - `npm run test`
-   - `VITE_DEPLOY_TARGET=client VITE_CLIENT_CODE=accmed VITE_API_BASE_URL=https://api.example.com VITE_APP_BASE_PATH=/ npm run build`
+   - `VITE_DEPLOY_TARGET=client VITE_CLIENT_CODE=accmed VITE_API_BASE_URL=https://api-accmed.innovai-solutions.com.br VITE_APP_BASE_PATH=/ npm run build`
 2. Confirm no new build or route-smoke regressions appear.
 
 Preview validation before Production:
@@ -152,9 +152,8 @@ Preview validation before Production:
 HSTS go-live validation:
 
 1. Do not enable HSTS until:
-   - `www.innovai-solutions.com.br` is attached and serving valid TLS
-   - apex-to-`www` redirect is stable
-   - operators have validated the canonical host on the live deployment
+   - `accmed.innovai-solutions.com.br` is attached and serving valid TLS
+   - operators have validated the chosen app host on the live deployment
 2. After those checks pass, confirm `Strict-Transport-Security` is present only on the live HTTPS custom domain response
 3. Validate the final HSTS value carefully before any preload-style posture; this repo does not yet show evidence that such a posture is safe
 

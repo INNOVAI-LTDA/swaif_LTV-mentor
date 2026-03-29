@@ -24,16 +24,16 @@ Purpose: keep the SPA deploy rooted at `frontend/`, publish it at `/`, and versi
 
 ## Custom Domain Contract (Batch D)
 - Custom domain attachment and DNS remain Vercel/dashboard work; they are not created from Git.
-- The current production-domain contract is explicit: apex `https://innovai-solutions.com.br` redirects to canonical `https://www.innovai-solutions.com.br`.
+- The current production app host is explicit: `https://accmed.innovai-solutions.com.br`.
 - `docs/branding/design-system-acelerador-medico.md` is a client-site branding reference only; it is not the deploy-host source of truth.
-- Canonical host redirect is versioned in `frontend/vercel.json`.
+- No app-host redirect is versioned in `frontend/vercel.json`; the current AccMed contract uses a single production hostname.
 - Trailing slash policy is explicit: `trailingSlash=false` with no extra application-route slash redirects.
-- If the final production app host changes from `innovai-solutions.com.br`, update `frontend/vercel.json` before deploy.
+- If the final production app host changes from `accmed.innovai-solutions.com.br`, update `frontend/vercel.json` before deploy.
 
 ## Hosted Smoke Checklist
 Run on both:
 - Vercel Preview URL for the PR
-- Production custom domain `https://www.innovai-solutions.com.br`
+- Production custom domain `https://accmed.innovai-solutions.com.br`
 
 Checks:
 - Home page loads.
@@ -41,8 +41,8 @@ Checks:
 - API base URL points to the intended backend; no requests target `127.0.0.1` or `localhost`.
 - Nested route refresh works for `/`, `/login`, `/dashboard`, `/app/admin`, `/app/matriz-renovacao`, and `/app/aluno`.
 - Login/auth flow works and protected navigation behaves as expected.
-- Custom domain works with valid TLS and correct host in the address bar.
-- Apex to www redirect works from `https://innovai-solutions.com.br` to `https://www.innovai-solutions.com.br`, preserving path and query string.
+- Custom domain works with valid TLS and the address bar stays on `https://accmed.innovai-solutions.com.br`.
+- No unexpected host redirect or redirect loop occurs on the published app host.
 - Baseline security headers exist on the HTML response:
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy: strict-origin-when-cross-origin`
@@ -64,27 +64,26 @@ Checks:
   - `frame-ancestors 'none'`
   - `upgrade-insecure-requests`
 - Current justified allowances are limited to:
-  - `connect-src 'self' https:` so the hosted SPA can reach the intended HTTPS backend while the exact production backend host remains operator-supplied
+  - `connect-src 'self' https:` so the hosted SPA can reach `https://api-accmed.innovai-solutions.com.br` and Preview backends while CSP remains report-only
   - `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com` because the frontend currently imports Google Fonts and sets runtime CSS variables on `document.documentElement.style`
   - `font-src 'self' https://fonts.gstatic.com data:`
   - `img-src 'self' data:`
 - Do not promote this to enforcing `Content-Security-Policy` until Preview validation shows no real violations on the active route set.
 - `Strict-Transport-Security` remains disabled in repo for now.
 - Enable HSTS only after all of the following are true on the live deployment:
-  - `https://www.innovai-solutions.com.br` serves valid TLS
-  - `https://innovai-solutions.com.br` redirects cleanly to the canonical `www` host
-  - operators have validated the canonical host behavior on the live domain
+  - `https://accmed.innovai-solutions.com.br` serves valid TLS
+  - operators have validated the chosen app host behavior on the live domain
 - Do not add `preload` in this batch.
 
 ## Minimal Validation (local)
 Run from `frontend/`:
 - `npm run test`
 - `VITE_DEPLOY_TARGET=local VITE_APP_BASE_PATH=/ npm run build`
-- `VITE_DEPLOY_TARGET=client VITE_CLIENT_CODE=accmed VITE_API_BASE_URL=https://api.example.com VITE_APP_BASE_PATH=/ npm run build`
+- `VITE_DEPLOY_TARGET=client VITE_CLIENT_CODE=accmed VITE_API_BASE_URL=https://api-accmed.innovai-solutions.com.br VITE_APP_BASE_PATH=/ npm run build`
 
 ## Validation After Production Deploy
-- Confirm Vercel lists `www.innovai-solutions.com.br` as the assigned production domain and TLS is healthy.
-- Visit `https://innovai-solutions.com.br/login?next=%2Fapp%2Fadmin` and confirm it lands on `https://www.innovai-solutions.com.br/login?next=%2Fapp%2Fadmin` without a redirect loop.
+- Confirm Vercel lists `accmed.innovai-solutions.com.br` as the assigned production domain and TLS is healthy.
+- Visit `https://accmed.innovai-solutions.com.br/login?next=%2Fapp%2Fadmin` and confirm it stays on `https://accmed.innovai-solutions.com.br/login?next=%2Fapp%2Fadmin` without a redirect loop.
 - Hard-refresh the smoke routes on the canonical host and confirm the SPA rewrite still serves `index.html`.
 - Confirm `Content-Security-Policy-Report-Only` is present on the HTML response and no route in the smoke set logs CSP violations in the browser console.
 - Confirm `Strict-Transport-Security` is still absent unless the custom-domain HTTPS gate above has been explicitly completed and approved.
