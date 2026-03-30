@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "crud_action": "U",
+      "id": "usr_admin",
+      "email": "admin@innovai-solutions.com.br",
+      "password_hash": "pbkdf2_sha256$120000$995aec7f671f138c353051db20c02bf1$f375427db2c9d649451d06e2e155f32004bd70807c40741660f4e62eb9d22a0f",
+      "role": "admin",
+      "is_active": true
+    },
+    {
+      "crud_action": "U",
+      "id": "usr_mentor",
+      "email": "mentor@accmed.com.br",
+      "password_hash": "pbkdf2_sha256$120000$9ebe08cd8661e07d95bee4be617058b0$348ad153b79dfacd198a560929d39957190b06cfeb61d3d6d96f6beadc4fff60",
+      "role": "mentor",
+      "is_active": true
+    }
+  ]
+}

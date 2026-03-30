@@ -1,0 +1,83 @@
+{
+  "timestamp_utc": "2026-03-30T04:10:27.132596+00:00",
+  "command": "bmad-create-epics-and-stories",
+  "prompt_profile": "contracted",
+  "execution_mode": "execute",
+  "contract": "bmad-create-epics-and-stories",
+  "response_capture_path": "_bmad-output/operator-events/messages/20260330T040334372243Z-bmad-create-epics-and-stories.md",
+  "input_artifacts": [
+    {
+      "path": "_bmad-output/planning-artifacts/data-ingestion-admin-architecture.md",
+      "role": "planning_anchor_architecture"
+    },
+    {
+      "path": "_bmad-output/project-context.md",
+      "role": "project_context"
+    },
+    {
+      "path": "docs/mvp-mentoria/batch-g-data-ingestion-admin-current-state.md",
+      "role": "current_state_anchor"
+    },
+    {
+      "path": "docs/discovery/data-ingestion-admin-brief.md",
+      "role": "discovery_brief"
+    }
+  ],
+  "status": "completed_with_approval_required",
+  "summary": "Created `_bmad-output/planning-artifacts/data-ingestion-admin-epics-and-stories.md` with a constrained decomposition of the approved data-ingestion-admin scope into 3 user-value epics and 12 implementation-sized stories. The artifact keeps the MVP limited to indicator batch ingestion, carries a full FR/NFR inventory plus FR coverage map, and includes operational readiness work for rollback, runbook, and regression coverage. A narrow validation pass confirmed the file materialized and no template placeholders remained.",
+  "decisions": [
+    {
+      "title": "Epic shape",
+      "decision": "Organized the work into 3 user-value epics: safe preview intake, controlled apply with backup/audit, and execution recovery/operational readiness.",
+      "rationale": "This follows the BMAD rule to avoid technical-layer epics while still matching the approved architecture sequence."
+    },
+    {
+      "title": "Scope boundary",
+      "decision": "Kept all stories inside the approved MVP boundary for student indicator initial-load batches only.",
+      "rationale": "The architecture and project context explicitly reject generic repository-wide JSON ingestion during stabilization."
+    },
+    {
+      "title": "Primary source model",
+      "decision": "Treated uploaded structured JSON as the official input source across preview/apply stories.",
+      "rationale": "That is the architecture-approved source model and best fits the existing frontend/backend transport conventions."
+    },
+    {
+      "title": "Operational safety model",
+      "decision": "Made preview-before-apply, revalidation, snapshot-before-write, all-or-nothing apply, and separate audit persistence first-class story outcomes.",
+      "rationale": "These are the key safety requirements that distinguish this feature from the existing single-student indicator load flow."
+    },
+    {
+      "title": "Recovery and readiness placement",
+      "decision": "Grouped execution detail lookup, rollback, runbook, and regression coverage into the final epic.",
+      "rationale": "This keeps earlier epics independently valuable while reserving the stabilization and support concerns for a dedicated closing slice."
+    },
+    {
+      "title": "UX input handling",
+      "decision": "Recorded that no standalone UX design specification was provided and derived only minimal UX constraints from the brief and architecture.",
+      "rationale": "The provided inputs did not include a separate UX artifact, so no additional UX-driven story set was invented."
+    }
+  ],
+  "risks": [
+    {
+      "risk": "The BMAD workflow normally expects explicit interactive approval at requirements and epic checkpoints.",
+      "mitigation": "The artifact is marked as completed with approval required; review the 3-epic structure and story boundaries before implementation starts."
+    },
+    {
+      "risk": "Implementation could drift back toward generic JSON ingestion if teams ignore the approved write-target boundary.",
+      "mitigation": "The artifact repeats the approved targets and ties them directly to Epic 2 acceptance criteria."
+    },
+    {
+      "risk": "Rollback posture may expand if stakeholders later require a primary UI rollback action rather than operator-assisted recovery.",
+      "mitigation": "The stories keep rollback in backend/service and operational flow first, which can be expanded later without widening MVP scope now."
+    }
+  ],
+  "approval_required": true,
+  "next_command": "bmad-check-implementation-readiness",
+  "output_artifacts": [
+    {
+      "artifact_type": "epics-and-stories",
+      "path": "_bmad-output/planning-artifacts/data-ingestion-admin-epics-and-stories.md",
+      "title": null
+    }
+  ]
+}

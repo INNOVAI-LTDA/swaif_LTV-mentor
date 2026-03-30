@@ -13,9 +13,11 @@ from ops.bmad_operator import (
     execute_command,
     extract_structured_response,
     format_event_summary,
+    format_workflow_progress,
     infer_next_command,
     load_command_contract,
     materialize_output_artifacts,
+    normalize_contracted_response,
     summarize_artifact_statuses,
     validate_command_response,
     write_event_log,
@@ -109,6 +111,17 @@ def test_execute_command_runs_local_shell_caller_hello_world():
 
     assert completed.returncode == 0
     assert completed.stdout.strip() == "hello world"
+
+
+def test_execute_command_replaces_invalid_bytes_in_output():
+    completed = execute_command(
+        [sys.executable, "-c", "import sys; sys.stdout.buffer.write(b'hello\\x9dworld')"],
+        capture_output=True,
+    )
+
+    assert completed.returncode == 0
+    assert "hello" in completed.stdout
+    assert "world" in completed.stdout
 
 
 def test_collect_planning_artifacts_finds_batch_current_state_docs(tmp_path: Path):
@@ -217,6 +230,53 @@ Here is the final response.
     assert logged["output_artifacts"][0]["path"] == "_bmad-output/implementation-artifacts/4-6a-batch-f-csp-baseline.md"
 
 
+def test_normalize_contracted_response_uses_repair_payload_when_initial_summary_is_invalid(tmp_path: Path):
+    make_contract(tmp_path)
+    contract = load_command_contract("bmad-create-story", tmp_path / "contracts")
+    assert contract is not None
+
+    context_file = tmp_path / "docs" / "mvp-mentoria" / "batch-f-csp-and-hsts-current-state.md"
+    context_file.parent.mkdir(parents=True)
+    context_file.write_text("# Batch F", encoding="utf-8")
+
+    invalid_response = """
+```json
+{
+  "status": "completed",
+  "summary": "",
+  "decisions": ["Constrain scope to CSP only."],
+  "risks": ["HSTS remains deferred."],
+  "input_artifacts": [{"path": "docs/mvp-mentoria/batch-f-csp-and-hsts-current-state.md", "role": "planning_anchor"}],
+  "output_artifacts": [],
+  "approval_required": false
+}
+```
+"""
+    repaired_response = """
+```json
+{
+  "status": "completed",
+  "summary": "Created a constrained Batch F story.",
+  "decisions": ["Constrain scope to CSP only."],
+  "risks": ["HSTS remains deferred."],
+  "input_artifacts": [{"path": "docs/mvp-mentoria/batch-f-csp-and-hsts-current-state.md", "role": "planning_anchor"}],
+  "output_artifacts": [],
+  "approval_required": false
+}
+```
+"""
+
+    normalized = normalize_contracted_response(
+        invalid_response,
+        contract,
+        [context_file],
+        repair_response_text=repaired_response,
+    )
+
+    assert normalized["summary"] == "Created a constrained Batch F story."
+    assert normalized["approval_required"] is False
+
+
 def test_infer_next_command_falls_back_to_contract_default(tmp_path: Path):
     make_contract(tmp_path)
     contract = load_command_contract("bmad-create-story", tmp_path / "contracts")
@@ -250,3 +310,16 @@ def test_format_event_summary_prefers_structured_event_log_fields():
     assert "approval_gate  : yes" in summary
     assert "next_command   : bmad-dev-story" in summary
     assert "- review-report: _bmad-output/operator-artifacts/4-6a-review-report.md" in summary
+
+
+def test_format_workflow_progress_renders_task_list_and_percentage():
+    progress = format_workflow_progress(
+        ["bmad-document-project", "bmad-create-story", "bmad-dev-story"],
+        current_index=1,
+        completed_steps=1,
+    )
+
+    assert "progress       : 33% (1/3 completed)" in progress
+    assert "- [x] bmad-document-project" in progress
+    assert "- [>] bmad-create-story" in progress
+    assert "- [ ] bmad-dev-story" in progress

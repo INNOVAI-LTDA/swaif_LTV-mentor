@@ -1,0 +1,113 @@
+{
+  "timestamp_utc": "2026-03-30T04:05:12.027591+00:00",
+  "command": "bmad-create-architecture",
+  "prompt_profile": "contracted",
+  "execution_mode": "execute",
+  "contract": "bmad-create-architecture",
+  "response_capture_path": "_bmad-output/operator-events/messages/20260330T035616186979Z-bmad-create-architecture.md",
+  "input_artifacts": [
+    {
+      "path": "_bmad-output/project-context.md",
+      "role": "project_context"
+    },
+    {
+      "path": "docs/mvp-mentoria/batch-g-data-ingestion-admin-current-state.md",
+      "role": "current_state_anchor"
+    },
+    {
+      "path": "docs/discovery/data-ingestion-admin-brief.md",
+      "role": "solution_anchor"
+    },
+    {
+      "path": "docs/architecture/platform_architecture_operational_model.md",
+      "role": "platform_architecture_constraint"
+    },
+    {
+      "path": "docs/mvp-mentoria/frontend-integration-architecture.md",
+      "role": "frontend_architecture_constraint"
+    },
+    {
+      "path": "docs/mvp-mentoria/contracts-freeze-v1.md",
+      "role": "contract_constraint"
+    },
+    {
+      "path": "docs/mvp-mentoria/frontend-deployment-readiness-checklist.md",
+      "role": "frontend_operational_constraint"
+    }
+  ],
+  "status": "completed_with_approval_required",
+  "summary": "Created a brownfield architecture artifact for admin data ingestion at `_bmad-output/planning-artifacts/data-ingestion-admin-architecture.md`. The architecture deliberately constrains the MVP to batch indicator ingestion only, reuses the existing admin/auth/service/repository patterns, defines a backend `dry_run/apply` contract, keeps `replace_for_enrollment` semantics for existing indicator data, requires snapshot-before-apply, and introduces a dedicated execution audit store. Approval is still required on the main scope choices before implementation widens beyond this boundary.",
+  "decisions": [
+    {
+      "title": "MVP scope boundary",
+      "decision": "Limit the MVP to indicator ingestion for existing student enrollments, not generic writes across all JSON stores.",
+      "rationale": "This matches the current brownfield seed pattern and avoids broad architectural movement during stabilization."
+    },
+    {
+      "title": "Approved JSON targets",
+      "decision": "Allow writes only to `backend/data/measurements.json`, `backend/data/checkpoints.json`, and a new `backend/data/admin_ingestion_executions.json` audit store.",
+      "rationale": "The project context explicitly requires approved targets to be listed and forbids generic repository-wide writes."
+    },
+    {
+      "title": "Official source model",
+      "decision": "Use an admin-uploaded structured JSON file as the official MVP source.",
+      "rationale": "It satisfies the brief preference for a deterministic, validatable file and avoids exposing server paths in the UI."
+    },
+    {
+      "title": "API model",
+      "decision": "Introduce a dedicated admin ingestion endpoint family around `POST /admin/ingestoes/indicadores`, with `mode=dry_run|apply` and optional rollback endpoint reservation.",
+      "rationale": "This adds the new operation without breaking the existing `POST /admin/alunos/{student_id}/indicadores/carga-inicial` contract."
+    },
+    {
+      "title": "Persistence semantics",
+      "decision": "Preserve existing `replace_for_enrollment(...)` behavior for persisted measurements and checkpoints.",
+      "rationale": "Current repo behavior already replaces the enrollment slice; the architecture avoids introducing merge/history semantics in the same initiative."
+    },
+    {
+      "title": "Admin UI placement",
+      "decision": "Add `Ingestao de Dados` as a new panel inside the existing `AdminPage`, using `/app/admin?panel=ingestao-dados` rather than a new top-level route.",
+      "rationale": "This is the smallest safe frontend extension and preserves existing admin shell and routing conventions."
+    },
+    {
+      "title": "Operational safety",
+      "decision": "Require server-side validation for both dry-run and apply, snapshot-before-apply via existing storage maintenance, storage I/O locking, and audit execution recording.",
+      "rationale": "These are the core safety requirements from the brief and current project context."
+    },
+    {
+      "title": "Rollback posture",
+      "decision": "Keep rollback operator-assisted first, backed by recorded snapshot references and audit updates, rather than making it a primary UI action in the MVP.",
+      "rationale": "This avoids exposing sensitive path details and keeps rollback within the existing backend operational boundary."
+    }
+  ],
+  "risks": [
+    {
+      "risk": "The brief is broader than the MVP architecture boundary.",
+      "mitigation": "The artifact explicitly narrows scope to indicator ingestion and marks broader generic JSON ingestion as deferred."
+    },
+    {
+      "risk": "Uploaded-file ingestion introduces a new multipart contract and audit store not present today.",
+      "mitigation": "The architecture keeps the change localized to existing admin, schema, service, and storage layers."
+    },
+    {
+      "risk": "Preserving `replace_for_enrollment` may not satisfy future versioning/history expectations.",
+      "mitigation": "The artifact calls this out as an explicit approval point before implementation."
+    },
+    {
+      "risk": "Current snapshot tooling backs up all registered stores, not only affected stores.",
+      "mitigation": "The architecture accepts global snapshots for MVP to reuse existing tooling and avoid parallel backup logic."
+    },
+    {
+      "risk": "Rollback requirements could expand if a user-facing rollback action is later required.",
+      "mitigation": "The architecture reserves a rollback endpoint path but keeps initial delivery operator-assisted."
+    }
+  ],
+  "approval_required": true,
+  "next_command": "bmad-create-epics-and-stories",
+  "output_artifacts": [
+    {
+      "artifact_type": "architecture",
+      "path": "_bmad-output/planning-artifacts/data-ingestion-admin-architecture.md",
+      "title": null
+    }
+  ]
+}

@@ -21,6 +21,20 @@
       "is_active": true,
       "created_at": "2026-03-15T06:45:48.612001Z",
       "updated_at": "2026-03-15T06:45:48.612001Z"
+    },
+    {
+      "id": "org_3",
+      "name": "Master Acelerador Medico",
+      "slug": "mst_accmed",
+      "code": "MASTERMIND",
+      "client_id": "cli_1",
+      "mentor_id": null,
+      "description": null,
+      "delivery_model": "live",
+      "status": "active",
+      "is_active": true,
+      "created_at": "2026-03-30T15:24:22.045833Z",
+      "updated_at": "2026-03-30T15:24:22.045833Z"
     }
   ]
 }

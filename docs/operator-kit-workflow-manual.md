@@ -6,6 +6,7 @@ Use this together with:
 
 - [README.md](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/README.md)
 - [docs/operator-kit-bmad-workflows.md](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/docs/operator-kit-bmad-workflows.md)
+- [docs/operator-kit-v3/index.md](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/docs/operator-kit-v3/index.md)
 - [_bmad-output/project-context.md](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/_bmad-output/project-context.md)
 
 ## Common Input Rules
@@ -21,8 +22,14 @@ Recommended default:
 
 ```powershell
 PROFILE=contracted
-APPROVAL=stop
+APPROVAL=questionnaire
 EXECUTE=1
+```
+
+Preferred V3 entrypoint:
+
+```powershell
+make bmad-run WORKFLOW=<workflow-type> CONTEXT="<context-file>" EXECUTE=1 PROFILE=contracted
 ```
 
 ## Common Output Rules
@@ -66,7 +73,7 @@ Output format:
 One-line workflow:
 
 ```powershell
-make bmad-flow-agile CONTEXT="_bmad-output/implementation-artifacts/4-6a-batch-f-csp-report-only-and-hsts-gating.md" EXECUTE=1 PROFILE=contracted APPROVAL=stop
+make bmad-run WORKFLOW=agile CONTEXT="_bmad-output/implementation-artifacts/4-6a-batch-f-csp-report-only-and-hsts-gating.md" EXECUTE=1 PROFILE=contracted APPROVAL=stop
 ```
 
 Manual sequence:
@@ -96,7 +103,7 @@ Output format:
 One-line workflow:
 
 ```powershell
-make bmad-flow-batching CONTEXT="docs/mvp-mentoria/batch-f-csp-and-hsts-current-state.md" EXECUTE=1 PROFILE=contracted APPROVAL=stop
+make bmad-run WORKFLOW=batching CONTEXT="docs/mvp-mentoria/batch-f-csp-and-hsts-current-state.md" EXECUTE=1 PROFILE=contracted APPROVAL=stop
 ```
 
 Manual sequence:
@@ -130,7 +137,7 @@ Output format:
 One-line workflow:
 
 ```powershell
-make bmad-flow-greenfield CONTEXT="docs/discovery/new-product-requirements.md" EXECUTE=1 APPROVAL=stop
+make bmad-run WORKFLOW=greenfield CONTEXT="docs/discovery/new-product-requirements.md" EXECUTE=1 APPROVAL=stop
 ```
 
 Manual sequence:
@@ -164,7 +171,7 @@ Output format:
 One-line workflow:
 
 ```powershell
-make bmad-flow-brownfield CONTEXT="docs/mvp-mentoria/batch-f-csp-and-hsts-current-state.md" EXECUTE=1 PROFILE=contracted APPROVAL=stop
+make bmad-run WORKFLOW=brownfield CONTEXT="docs/mvp-mentoria/batch-f-csp-and-hsts-current-state.md" EXECUTE=1 PROFILE=contracted APPROVAL=stop
 ```
 
 Manual sequence:
@@ -197,7 +204,7 @@ Output format:
 One-line workflow:
 
 ```powershell
-make bmad-flow-build-from-pieces CONTEXT="docs/discovery/integration-anchor.md" EXECUTE=1 APPROVAL=stop
+make bmad-run WORKFLOW=build-from-pieces CONTEXT="docs/discovery/integration-anchor.md" EXECUTE=1 APPROVAL=stop
 ```
 
 Manual sequence:
@@ -230,7 +237,7 @@ Output format:
 One-line workflow:
 
 ```powershell
-make bmad-flow-quick CONTEXT="docs/discovery/small-change.md" EXECUTE=1 APPROVAL=stop
+make bmad-run WORKFLOW=quick CONTEXT="docs/discovery/small-change.md" EXECUTE=1 APPROVAL=stop
 ```
 
 Manual sequence:
@@ -259,7 +266,7 @@ Output format:
 One-line workflow:
 
 ```powershell
-make bmad-flow-correct-course CONTEXT="_bmad-output/operator-artifacts/4-6a-review-report.md" EXECUTE=1 PROFILE=contracted APPROVAL=stop
+make bmad-run WORKFLOW=correct-course CONTEXT="_bmad-output/operator-artifacts/4-6a-review-report.md" EXECUTE=1 PROFILE=contracted APPROVAL=stop
 ```
 
 Manual sequence:
@@ -291,10 +298,42 @@ make bmad-code-review CONTEXT="_bmad-output/implementation-artifacts/4-6a-batch-
 
 Workflow sets now accept:
 
+- `APPROVAL=questionnaire`
+  Presents an in-terminal approval questionnaire and continues immediately if you approve.
+
 - `APPROVAL=stop`
-  Stops after a contracted step reports `approval_required=true`.
+  Persists the workflow session and exits after a contracted step reports `approval_required=true`.
 
 - `APPROVAL=continue`
   Continues chaining even when the step asked for an approval gate.
 
-Use `APPROVAL=stop` as the default for senior-operator supervision.
+Use `APPROVAL=questionnaire` as the default for interactive supervision.
+Use `APPROVAL=stop` when you explicitly want to pause and review outside the terminal.
+
+## Workflow Sessions And Resume
+
+Every executed workflow stores a session JSON under `_bmad-output/operator-workflows/`.
+
+The terminal prints:
+
+- `session_id`
+- `session_path`
+- current progress
+
+To resume an interrupted or pending-approval workflow:
+
+```powershell
+make bmad-resume RESUME="<session-id-or-json-path>" EXECUTE=1 PROFILE=contracted
+```
+
+The same resume path also works through the unified entrypoint:
+
+```powershell
+make bmad-run RESUME="<session-id-or-json-path>" EXECUTE=1 PROFILE=contracted
+```
+
+If the workflow predates session persistence, bootstrap a session from the last event log first:
+
+```powershell
+make bmad-sessionize WORKFLOW=<workflow-type> RESUME_EVENT="_bmad-output/operator-events/<event-file>.json" PROFILE=contracted
+```

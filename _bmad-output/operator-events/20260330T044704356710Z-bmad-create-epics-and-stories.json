@@ -1,0 +1,73 @@
+{
+  "timestamp_utc": "2026-03-30T04:47:04.356710+00:00",
+  "command": "bmad-create-epics-and-stories",
+  "prompt_profile": "contracted",
+  "execution_mode": "execute",
+  "contract": "bmad-create-epics-and-stories",
+  "response_capture_path": "_bmad-output/operator-events/messages/20260330T043938489980Z-bmad-create-epics-and-stories.md",
+  "input_artifacts": [
+    {
+      "path": "_bmad-output/planning-artifacts/batch-g-data-ingestion-admin-architecture.md",
+      "role": "planning_anchor"
+    },
+    {
+      "path": "_bmad-output/project-context.md",
+      "role": "project_rules"
+    },
+    {
+      "path": "docs/mvp-mentoria/batch-g-data-ingestion-admin-current-state.md",
+      "role": "brownfield_current_state"
+    },
+    {
+      "path": "docs/discovery/data-ingestion-admin-brief.md",
+      "role": "discovery_brief"
+    },
+    {
+      "path": "docs/architecture/platform_architecture_operational_model.md",
+      "role": "platform_architecture"
+    },
+    {
+      "path": "docs/mvp-mentoria/frontend-integration-architecture.md",
+      "role": "frontend_architecture"
+    },
+    {
+      "path": "docs/mvp-mentoria/contracts-freeze-v1.md",
+      "role": "frozen_contracts"
+    },
+    {
+      "path": "docs/mvp-mentoria/frontend-deployment-readiness-checklist.md",
+      "role": "deployment_constraints"
+    },
+    {
+      "path": "docs/admin-crud-spec.md",
+      "role": "admin_domain_spec"
+    },
+    {
+      "path": "docs/admin-crud-implementation-plan.md",
+      "role": "implementation_sequence_reference"
+    }
+  ],
+  "status": "completed",
+  "summary": "Materialized the Batch G epics-and-stories artifact with 3 user-value epics and 14 implementation-ready stories aligned to the approved preview/apply/audit architecture.",
+  "decisions": [
+    "Kept scope constrained to the Batch G brownfield architecture: one selected student enrollment at a time inside the existing admin surface.",
+    "Organized the work into three value-based epics: preview workflow, controlled apply, and execution follow-up/stabilization.",
+    "Preserved manual_assisted as the active MVP source mode and kept json_file explicitly out of current implementation scope.",
+    "Carried forward the approved backend shape: preview/apply under the existing admin student namespace, GET execution detail, and legacy endpoint compatibility during migration.",
+    "Kept rollback operator-assisted and documented rather than promoting a primary UI rollback action in Batch G."
+  ],
+  "risks": [
+    "The broader discovery brief mentions multiple possible ingestion origins, but this decomposition intentionally freezes Batch G to manual_assisted; widening that scope later will require a new planning decision.",
+    "Story 2.4 assumes the legacy carga-inicial endpoint can bridge to the new orchestration without breaking frozen contract expectations; that compatibility should be validated during readiness review.",
+    "Execution detail rendering in Story 3.1 is safe only if the final API payload continues to hide internal snapshot paths and other server-only metadata."
+  ],
+  "approval_required": false,
+  "next_command": "bmad-check-implementation-readiness",
+  "output_artifacts": [
+    {
+      "artifact_type": "epics-and-stories",
+      "path": "_bmad-output/planning-artifacts/batch-g-data-ingestion-admin-epics-and-stories.md",
+      "title": null
+    }
+  ]
+}

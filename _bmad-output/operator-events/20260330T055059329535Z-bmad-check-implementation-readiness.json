@@ -1,0 +1,116 @@
+{
+  "timestamp_utc": "2026-03-30T05:50:59.329535+00:00",
+  "command": "bmad-check-implementation-readiness",
+  "prompt_profile": "contracted",
+  "execution_mode": "execute",
+  "contract": "bmad-check-implementation-readiness",
+  "response_capture_path": "_bmad-output/operator-events/messages/20260330T054925222668Z-bmad-check-implementation-readiness-repair.md",
+  "input_artifacts": [
+    {
+      "path": "_bmad-output/planning-artifacts/batch-g-data-ingestion-admin-epics-and-stories.md",
+      "role": "epics-and-stories"
+    },
+    {
+      "path": "_bmad-output/planning-artifacts/batch-g-data-ingestion-admin-architecture.md",
+      "role": "architecture"
+    },
+    {
+      "path": "_bmad-output/project-context.md",
+      "role": "project-context"
+    },
+    {
+      "path": "docs/mvp-mentoria/batch-g-data-ingestion-admin-current-state.md",
+      "role": "current-state"
+    },
+    {
+      "path": "docs/discovery/data-ingestion-admin-brief.md",
+      "role": "de-facto-prd"
+    },
+    {
+      "path": "docs/architecture/platform_architecture_operational_model.md",
+      "role": "platform-architecture-constraint"
+    },
+    {
+      "path": "docs/mvp-mentoria/frontend-integration-architecture.md",
+      "role": "frontend-architecture-constraint"
+    },
+    {
+      "path": "docs/mvp-mentoria/contracts-freeze-v1.md",
+      "role": "frozen-contract-constraint"
+    },
+    {
+      "path": "docs/mvp-mentoria/frontend-deployment-readiness-checklist.md",
+      "role": "frontend-readiness-context"
+    },
+    {
+      "path": "docs/admin-crud-spec.md",
+      "role": "admin-domain-spec"
+    },
+    {
+      "path": "docs/admin-crud-implementation-plan.md",
+      "role": "admin-implementation-sequencing"
+    }
+  ],
+  "status": "needs-work",
+  "summary": "Scope `batch-g-data-ingestion-admin` is not implementation-ready yet. The planning bundle is close, but it still has blocking gaps in PRD formalization, legacy endpoint compatibility, and persistence-rule consistency. Readiness report: `_bmad-output/planning-artifacts/batch-g-data-ingestion-admin-implementation-readiness.md`. Findings: 3 critical, 2 major, 2 minor.",
+  "decisions": [
+    {
+      "decision": "Treat the operator-selected Batch G architecture and epics/stories artifacts as the authoritative planning bundle for this readiness review.",
+      "rationale": "The operator explicitly scoped validation to the batch-g artifacts, and adjacent non-Batch-G planning files were treated as neighboring iterations rather than active duplicates."
+    },
+    {
+      "decision": "Use docs/discovery/data-ingestion-admin-brief.md as the de facto PRD input for traceability validation.",
+      "rationale": "No formal PRD artifact exists for this scope under _bmad-output/planning-artifacts."
+    },
+    {
+      "decision": "Mark implementation readiness as needs-work rather than ready.",
+      "rationale": "Critical documentation and contract gaps remain unresolved, and they are likely to cause implementation divergence if sprint execution starts now."
+    }
+  ],
+  "risks": [
+    {
+      "severity": "critical",
+      "title": "No formal PRD artifact",
+      "details": "The planning bundle relies on the discovery brief plus later architecture decisions instead of a single frozen PRD source of truth."
+    },
+    {
+      "severity": "critical",
+      "title": "Legacy endpoint compatibility is underspecified",
+      "details": "The frozen v1 path /admin/alunos/{student_id}/indicadores/carga-inicial must remain compatible, but request mapping, response shape, error behavior, and migration window are not defined."
+    },
+    {
+      "severity": "critical",
+      "title": "Persistence semantics conflict across planning artifacts",
+      "details": "Batch G architecture preserves replace_enrollment semantics, while docs/admin-crud-spec.md says indicator ingestion should not delete historical measurements in the MVP."
+    },
+    {
+      "severity": "major",
+      "title": "Rollback outcome recording is not operationally specified",
+      "details": "The bundle requires rollback status recording after operator-assisted restore, but it does not define how that status is persisted."
+    },
+    {
+      "severity": "major",
+      "title": "Execution-detail frontend scope is inconsistent",
+      "details": "Architecture treats execution-detail UI as future enhancement, while Epic 3 Story 3.1 still implies current frontend rendering scope."
+    },
+    {
+      "severity": "minor",
+      "title": "Admin entry path can still be misinterpreted",
+      "details": "The feature is described as a new admin operation while also depending on selected-student context, which could lead to a second selection flow."
+    },
+    {
+      "severity": "minor",
+      "title": "Concurrency expectation is undocumented in acceptance criteria",
+      "details": "Architecture mentions a storage IO lock for apply, but the stories do not state the expected single-writer behavior."
+    }
+  ],
+  "approval_required": true,
+  "next_command": "bmad-sprint-planning",
+  "output_artifacts": [
+    {
+      "artifact_type": "readiness-report",
+      "path": "_bmad-output/planning-artifacts/batch-g-data-ingestion-admin-implementation-readiness.md",
+      "title": null
+    }
+  ]
+}

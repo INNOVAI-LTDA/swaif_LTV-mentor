@@ -33,6 +33,28 @@
         "axis_sub": "Renovacao e LTV"
       },
       "is_active": true
+    },
+    {
+      "id": "plr_4",
+      "protocol_id": "prt_2",
+      "name": "Gestão",
+      "code": "accmed_plr_gestao",
+      "order_index": 4,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true
+    },
+    {
+      "id": "plr_5",
+      "protocol_id": "prt_2",
+      "name": "Repertório",
+      "code": "accmed_plr_repertorio",
+      "order_index": 5,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true
     }
   ]
 }

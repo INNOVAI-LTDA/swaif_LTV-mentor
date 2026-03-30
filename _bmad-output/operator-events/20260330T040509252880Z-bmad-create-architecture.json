@@ -1,0 +1,105 @@
+{
+  "timestamp_utc": "2026-03-30T04:05:09.252880+00:00",
+  "command": "bmad-create-architecture",
+  "prompt_profile": "contracted",
+  "execution_mode": "execute",
+  "contract": "bmad-create-architecture",
+  "response_capture_path": "_bmad-output/operator-events/messages/20260330T035253928738Z-bmad-create-architecture.md",
+  "input_artifacts": [
+    {
+      "path": "docs/mvp-mentoria/batch-g-data-ingestion-admin-current-state.md",
+      "role": "current_state"
+    },
+    {
+      "path": "_bmad-output/project-context.md",
+      "role": "project_context"
+    },
+    {
+      "path": "docs/discovery/data-ingestion-admin-brief.md",
+      "role": "solution_anchor"
+    },
+    {
+      "path": "docs/architecture/platform_architecture_operational_model.md",
+      "role": "platform_architecture"
+    },
+    {
+      "path": "docs/mvp-mentoria/frontend-integration-architecture.md",
+      "role": "frontend_architecture"
+    },
+    {
+      "path": "docs/mvp-mentoria/contracts-freeze-v1.md",
+      "role": "contract_constraints"
+    },
+    {
+      "path": "docs/mvp-mentoria/frontend-deployment-readiness-checklist.md",
+      "role": "operational_constraints"
+    },
+    {
+      "path": "docs/admin-crud-spec.md",
+      "role": "admin_domain_reference"
+    },
+    {
+      "path": "docs/admin-crud-implementation-plan.md",
+      "role": "incremental_delivery_reference"
+    }
+  ],
+  "status": "completed",
+  "summary": "Created the Batch G admin data ingestion architecture artifact as a constrained brownfield extension of the existing student indicator load flow. The architecture keeps the feature inside the current admin surface, limits approved business writes to measurements and checkpoints, adds preview/apply orchestration, backup-before-apply, execution audit, and operator-assisted rollback.",
+  "decisions": [
+    {
+      "title": "Scope boundary",
+      "detail": "Batch G is limited to initial indicator ingestion for one selected student enrollment at a time; it does not create a generic repository-wide JSON importer."
+    },
+    {
+      "title": "Frontend placement",
+      "detail": "The feature lives inside the existing /app/admin surface as a dedicated panel keyed by panel=ingestao-dados, reusing AdminShell and current student context."
+    },
+    {
+      "title": "Backend contract",
+      "detail": "Preview and apply are split into explicit endpoints under the existing admin_students route namespace, while the old apply endpoint remains a compatibility bridge during migration."
+    },
+    {
+      "title": "Persistence and duplication",
+      "detail": "Approved business targets are measurements and checkpoints only, with duplication frozen to replace_enrollment to preserve current repository semantics."
+    },
+    {
+      "title": "Operational safeguards",
+      "detail": "Apply requires a successful preview execution, creates a snapshot before writing, persists execution audit records, and triggers restore on post-snapshot failure."
+    },
+    {
+      "title": "Source handling",
+      "detail": "The architecture records source metadata now but activates only manual_assisted in the MVP; json_file is reserved for a later approved expansion."
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Scope expectation mismatch",
+      "impact": "Stakeholders may expect a broader multi-entity ingestion feature because the brief is wider than the current brownfield seed.",
+      "mitigation": "The artifact explicitly narrows Batch G to indicator ingestion and flags broader entity ingestion as deferred work requiring a new architecture decision."
+    },
+    {
+      "risk": "Operational weight of snapshots",
+      "impact": "The existing snapshot utility captures the registered storage set, which may be heavier than a store-scoped backup.",
+      "mitigation": "Reuse the existing proven snapshot flow for safety in MVP, and revisit store-scoped backups only in a future approved optimization."
+    },
+    {
+      "risk": "Migration overlap with legacy endpoint",
+      "impact": "Keeping the current apply endpoint as a bridge can create temporary dual-path confusion if not documented.",
+      "mitigation": "Route the legacy endpoint through the new orchestration path and document the deprecation/migration sequence in implementation stories."
+    },
+    {
+      "risk": "Deferred file upload source",
+      "impact": "If the operator needs structured file ingestion immediately, the MVP architecture will not satisfy that operational need yet.",
+      "mitigation": "Treat json_file as the first follow-on expansion after Batch G approval rather than widening this stabilization batch."
+    }
+  ],
+  "approval_required": true,
+  "next_command": "bmad-create-epics-and-stories",
+  "output_artifacts": [
+    {
+      "artifact_type": "architecture",
+      "path": "_bmad-output/planning-artifacts/batch-g-data-ingestion-admin-architecture.md",
+      "title": null
+    }
+  ]
+}

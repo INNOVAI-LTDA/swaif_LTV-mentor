@@ -1,6 +1,6 @@
 .PHONY: \
 	bmad-smoke bmad-status \
-	bmad-route bmad-story bmad-dev bmad-review bmad-fix \
+	bmad-route bmad-story bmad-dev bmad-review bmad-fix bmad-run bmad-resume bmad-sessionize \
 	bmad-help bmad-brainstorming bmad-market-research bmad-domain-research bmad-technical-research \
 	bmad-create-product-brief bmad-create-prd bmad-create-ux-design bmad-create-architecture \
 	bmad-create-epics-and-stories bmad-check-implementation-readiness bmad-sprint-planning bmad-sprint-status \
@@ -14,8 +14,11 @@ RUN_MODE = $(if $(EXECUTE),--execute,--dry-run)
 RUN_PROMPT_PROFILE = $(if $(PROFILE),--prompt-profile $(PROFILE),)
 RUN_EVENT_ROOT = $(if $(EVENT_ROOT),--event-log-root $(EVENT_ROOT),)
 RUN_APPROVAL_MODE = $(if $(APPROVAL),--approval-mode $(APPROVAL),)
+RUN_SESSION_ROOT = $(if $(SESSION_ROOT),--session-root $(SESSION_ROOT),)
+RUN_RESUME_SESSION = $(if $(RESUME),--resume-session $(RESUME),)
+RUN_RESUME_EVENT = $(if $(RESUME_EVENT),--resume-event $(RESUME_EVENT),)
 RUN_COMMAND = python ops/run_bmad_command.py --command $(1) $(if $(CONTEXT),--context-file $(CONTEXT),) $(if $(OUTPUT),--output-last-message $(OUTPUT),) $(if $(INSTRUCTION),--instruction "$(INSTRUCTION)",) $(RUN_PROMPT_PROFILE) $(RUN_EVENT_ROOT) $(RUN_MODE)
-RUN_WORKFLOW = python ops/run_bmad_workflow.py --workflow $(1) $(if $(CONTEXT),--context-file $(CONTEXT),) $(if $(INSTRUCTION),--instruction "$(INSTRUCTION)",) $(RUN_PROMPT_PROFILE) $(RUN_EVENT_ROOT) $(RUN_APPROVAL_MODE) $(RUN_MODE)
+RUN_WORKFLOW = python ops/run_bmad_workflow.py --workflow $(1) $(RUN_RESUME_SESSION) $(RUN_RESUME_EVENT) $(if $(CONTEXT),--context-file $(CONTEXT),) $(if $(INSTRUCTION),--instruction "$(INSTRUCTION)",) $(RUN_PROMPT_PROFILE) $(RUN_EVENT_ROOT) $(RUN_SESSION_ROOT) $(RUN_APPROVAL_MODE) $(RUN_MODE)
 
 bmad-smoke:
 	bash ops/preflight_check.sh
@@ -38,6 +41,15 @@ bmad-review:
 
 bmad-fix:
 	python ops/run_bmad_phase.py --workflow $(WORKFLOW) --batch $(BATCH) --phase fix
+
+bmad-run:
+	python ops/run_bmad_workflow.py $(if $(WORKFLOW),--workflow $(WORKFLOW),) $(RUN_RESUME_SESSION) $(RUN_RESUME_EVENT) $(if $(CONTEXT),--context-file $(CONTEXT),) $(if $(INSTRUCTION),--instruction "$(INSTRUCTION)",) $(RUN_PROMPT_PROFILE) $(RUN_EVENT_ROOT) $(RUN_SESSION_ROOT) $(RUN_APPROVAL_MODE) $(RUN_MODE)
+
+bmad-resume:
+	python ops/run_bmad_workflow.py --resume-session $(RESUME) $(if $(INSTRUCTION),--instruction "$(INSTRUCTION)",) $(RUN_PROMPT_PROFILE) $(RUN_EVENT_ROOT) $(RUN_SESSION_ROOT) $(RUN_APPROVAL_MODE) $(RUN_MODE)
+
+bmad-sessionize:
+	python ops/run_bmad_workflow.py --workflow $(WORKFLOW) --resume-event $(RESUME_EVENT) $(if $(CONTEXT),--context-file $(CONTEXT),) $(if $(INSTRUCTION),--instruction "$(INSTRUCTION)",) $(RUN_PROMPT_PROFILE) $(RUN_EVENT_ROOT) $(RUN_SESSION_ROOT) $(RUN_APPROVAL_MODE) --dry-run
 
 bmad-help:
 	$(call RUN_COMMAND,bmad-help)

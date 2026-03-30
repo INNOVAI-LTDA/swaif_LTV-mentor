@@ -1,0 +1,92 @@
+{
+  "timestamp_utc": "2026-03-30T04:03:34.350141+00:00",
+  "command": "bmad-create-architecture",
+  "prompt_profile": "contracted",
+  "execution_mode": "execute",
+  "contract": "bmad-create-architecture",
+  "response_capture_path": "_bmad-output/operator-events/messages/20260330T035443239460Z-bmad-create-architecture.md",
+  "input_artifacts": [
+    {
+      "path": "_bmad-output/project-context.md",
+      "role": "project_context"
+    },
+    {
+      "path": "docs/mvp-mentoria/batch-g-data-ingestion-admin-current-state.md",
+      "role": "current_state_boundary"
+    },
+    {
+      "path": "docs/discovery/data-ingestion-admin-brief.md",
+      "role": "solution_anchor"
+    }
+  ],
+  "status": "completed",
+  "summary": "Created a brownfield architecture artifact for the admin data-ingestion MVP, constrained to student indicator initial-load batches, explicit preview/apply endpoints, full-store snapshot reuse, and a separate execution-audit store that survives rollback.",
+  "decisions": [
+    {
+      "title": "Scope Boundary",
+      "decision": "Constrain MVP ingestion to student indicator initial-load batches only.",
+      "details": "Approved domain write targets are measurements.json and checkpoints.json; execution audit is persisted separately in ingestion_executions.json outside the registered snapshot set. No generic repository-wide JSON writes are allowed."
+    },
+    {
+      "title": "Admin Entry",
+      "decision": "Keep the UI entry inside the existing /app/admin surface.",
+      "details": "Use a dedicated admin modal or focused panel launched from AdminPage instead of introducing a new top-level route."
+    },
+    {
+      "title": "Source Model",
+      "decision": "Use an uploaded structured JSON file as the official MVP source.",
+      "details": "Frontend reads the file and sends source metadata plus raw_payload as unknown; backend owns authoritative normalization and validation."
+    },
+    {
+      "title": "API Contract",
+      "decision": "Introduce explicit preview/apply endpoints plus execution detail and rollback endpoints.",
+      "details": "The architecture defines POST /admin/ingestao-dados/preview, POST /admin/ingestao-dados/apply, GET /admin/ingestao-dados/execucoes/{execution_id}, and POST /admin/ingestao-dados/execucoes/{execution_id}/rollback under the existing admin auth guard."
+    },
+    {
+      "title": "Validation and Apply Semantics",
+      "decision": "Preview and apply share the same validation pipeline, and apply is all-or-nothing for MVP.",
+      "details": "The backend validates schema version, batch uniqueness, active student enrollment, product ownership, metric ownership through metric -> protocol -> organization, and numeric/checkpoint rules before any write."
+    },
+    {
+      "title": "Persistence Rule",
+      "decision": "Preserve current replace-for-enrollment semantics.",
+      "details": "Each valid student load replaces measurements and checkpoints for that active enrollment; there is no merge or append mode in MVP."
+    },
+    {
+      "title": "Backup and Rollback",
+      "decision": "Reuse the existing full registered-store snapshot utilities for apply and rollback.",
+      "details": "Apply creates a backup snapshot before writes, rollback restores via existing storage_maintenance helpers, and UI only shows safe backup references rather than filesystem paths."
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Metric ownership may be under-validated if implementation only checks metric existence.",
+      "impact": "Indicators could be applied under the wrong product context.",
+      "mitigation": "Enforce product ownership through metric -> protocol -> organization during preview and apply."
+    },
+    {
+      "risk": "If the execution audit store is added to the registered store catalog, rollback could erase its own evidence.",
+      "impact": "Operational traceability would be lost after restore.",
+      "mitigation": "Keep ingestion_executions.json outside resolve_registered_store_paths()."
+    },
+    {
+      "risk": "Partial apply would interact badly with replace-for-enrollment persistence.",
+      "impact": "Mixed enrollment state would complicate rollback and support.",
+      "mitigation": "Keep MVP apply all-or-nothing after successful revalidation."
+    },
+    {
+      "risk": "Operational restore may be difficult without a clear runbook.",
+      "impact": "Backup and execution ids may exist but still be hard to use under pressure.",
+      "mitigation": "Add a dedicated operational runbook and return execution id plus backup reference in final reports."
+    }
+  ],
+  "approval_required": false,
+  "next_command": "bmad-create-epics-and-stories",
+  "output_artifacts": [
+    {
+      "artifact_type": "architecture",
+      "path": "_bmad-output/planning-artifacts/data-ingestion-admin-architecture.md",
+      "title": null
+    }
+  ]
+}

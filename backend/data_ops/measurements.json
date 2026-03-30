@@ -1,0 +1,545 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "mea_1",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_1",
+      "value_baseline": 72,
+      "value_current": 84,
+      "value_projected": 88,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_2",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_2",
+      "value_baseline": 68,
+      "value_current": 82,
+      "value_projected": 86,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_3",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_3",
+      "value_baseline": 70,
+      "value_current": 85,
+      "value_projected": 89,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_4",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_4",
+      "value_baseline": 3,
+      "value_current": 1.6,
+      "value_projected": 1.4,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_5",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_5",
+      "value_baseline": 58,
+      "value_current": 76,
+      "value_projected": 82,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_6",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_6",
+      "value_baseline": 78,
+      "value_current": 79,
+      "value_projected": 82,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_7",
+      "enrollment_id": "enr_2",
+      "metric_id": "met_1",
+      "value_baseline": 70,
+      "value_current": 81,
+      "value_projected": 85,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_8",
+      "enrollment_id": "enr_2",
+      "metric_id": "met_2",
+      "value_baseline": 67,
+      "value_current": 79,
+      "value_projected": 83,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_9",
+      "enrollment_id": "enr_2",
+      "metric_id": "met_3",
+      "value_baseline": 69,
+      "value_current": 80,
+      "value_projected": 84,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_10",
+      "enrollment_id": "enr_2",
+      "metric_id": "met_4",
+      "value_baseline": 3.2,
+      "value_current": 1.9,
+      "value_projected": 1.7,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_11",
+      "enrollment_id": "enr_2",
+      "metric_id": "met_5",
+      "value_baseline": 55,
+      "value_current": 73,
+      "value_projected": 78,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_12",
+      "enrollment_id": "enr_2",
+      "metric_id": "met_6",
+      "value_baseline": 76,
+      "value_current": 74,
+      "value_projected": 79,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_13",
+      "enrollment_id": "enr_3",
+      "metric_id": "met_1",
+      "value_baseline": 71,
+      "value_current": 66,
+      "value_projected": 70,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_14",
+      "enrollment_id": "enr_3",
+      "metric_id": "met_2",
+      "value_baseline": 69,
+      "value_current": 63,
+      "value_projected": 66,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_15",
+      "enrollment_id": "enr_3",
+      "metric_id": "met_3",
+      "value_baseline": 68,
+      "value_current": 61,
+      "value_projected": 64,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_16",
+      "enrollment_id": "enr_3",
+      "metric_id": "met_4",
+      "value_baseline": 2.8,
+      "value_current": 3.4,
+      "value_projected": 3,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_17",
+      "enrollment_id": "enr_3",
+      "metric_id": "met_5",
+      "value_baseline": 57,
+      "value_current": 52,
+      "value_projected": 55,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_18",
+      "enrollment_id": "enr_3",
+      "metric_id": "met_6",
+      "value_baseline": 77,
+      "value_current": 69,
+      "value_projected": 72,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_19",
+      "enrollment_id": "enr_4",
+      "metric_id": "met_1",
+      "value_baseline": 68,
+      "value_current": 64,
+      "value_projected": 66,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_20",
+      "enrollment_id": "enr_4",
+      "metric_id": "met_2",
+      "value_baseline": 66,
+      "value_current": 60,
+      "value_projected": 63,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_21",
+      "enrollment_id": "enr_4",
+      "metric_id": "met_3",
+      "value_baseline": 65,
+      "value_current": 59,
+      "value_projected": 62,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_22",
+      "enrollment_id": "enr_4",
+      "metric_id": "met_4",
+      "value_baseline": 2.6,
+      "value_current": 3.1,
+      "value_projected": 2.9,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_23",
+      "enrollment_id": "enr_4",
+      "metric_id": "met_5",
+      "value_baseline": 54,
+      "value_current": 50,
+      "value_projected": 53,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_24",
+      "enrollment_id": "enr_4",
+      "metric_id": "met_6",
+      "value_baseline": 75,
+      "value_current": 67,
+      "value_projected": 70,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_25",
+      "enrollment_id": "enr_5",
+      "metric_id": "met_1",
+      "value_baseline": 65,
+      "value_current": 58,
+      "value_projected": 64,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_26",
+      "enrollment_id": "enr_5",
+      "metric_id": "met_2",
+      "value_baseline": 63,
+      "value_current": 56,
+      "value_projected": 61,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_27",
+      "enrollment_id": "enr_5",
+      "metric_id": "met_3",
+      "value_baseline": 62,
+      "value_current": 54,
+      "value_projected": 60,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_28",
+      "enrollment_id": "enr_5",
+      "metric_id": "met_4",
+      "value_baseline": 3.1,
+      "value_current": 3.5,
+      "value_projected": 3,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_29",
+      "enrollment_id": "enr_5",
+      "metric_id": "met_5",
+      "value_baseline": 52,
+      "value_current": 49,
+      "value_projected": 58,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_30",
+      "enrollment_id": "enr_5",
+      "metric_id": "met_6",
+      "value_baseline": 74,
+      "value_current": 66,
+      "value_projected": 73,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_31",
+      "enrollment_id": "enr_6",
+      "metric_id": "met_1",
+      "value_baseline": 66,
+      "value_current": 60,
+      "value_projected": 67,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_32",
+      "enrollment_id": "enr_6",
+      "metric_id": "met_2",
+      "value_baseline": 64,
+      "value_current": 58,
+      "value_projected": 64,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_33",
+      "enrollment_id": "enr_6",
+      "metric_id": "met_3",
+      "value_baseline": 63,
+      "value_current": 57,
+      "value_projected": 63,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_34",
+      "enrollment_id": "enr_6",
+      "metric_id": "met_4",
+      "value_baseline": 3,
+      "value_current": 3.3,
+      "value_projected": 2.8,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_35",
+      "enrollment_id": "enr_6",
+      "metric_id": "met_5",
+      "value_baseline": 53,
+      "value_current": 50,
+      "value_projected": 59,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_36",
+      "enrollment_id": "enr_6",
+      "metric_id": "met_6",
+      "value_baseline": 74,
+      "value_current": 68,
+      "value_projected": 74,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_37",
+      "enrollment_id": "enr_7",
+      "metric_id": "met_1",
+      "value_baseline": 62,
+      "value_current": 45,
+      "value_projected": 50,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_38",
+      "enrollment_id": "enr_7",
+      "metric_id": "met_2",
+      "value_baseline": 60,
+      "value_current": 42,
+      "value_projected": 47,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_39",
+      "enrollment_id": "enr_7",
+      "metric_id": "met_3",
+      "value_baseline": 59,
+      "value_current": 40,
+      "value_projected": 46,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_40",
+      "enrollment_id": "enr_7",
+      "metric_id": "met_4",
+      "value_baseline": 3.4,
+      "value_current": 4.8,
+      "value_projected": 4.2,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_41",
+      "enrollment_id": "enr_7",
+      "metric_id": "met_5",
+      "value_baseline": 50,
+      "value_current": 38,
+      "value_projected": 44,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_42",
+      "enrollment_id": "enr_7",
+      "metric_id": "met_6",
+      "value_baseline": 73,
+      "value_current": 60,
+      "value_projected": 66,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_43",
+      "enrollment_id": "enr_8",
+      "metric_id": "met_1",
+      "value_baseline": 61,
+      "value_current": 43,
+      "value_projected": 48,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_44",
+      "enrollment_id": "enr_8",
+      "metric_id": "met_2",
+      "value_baseline": 58,
+      "value_current": 39,
+      "value_projected": 45,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_45",
+      "enrollment_id": "enr_8",
+      "metric_id": "met_3",
+      "value_baseline": 57,
+      "value_current": 37,
+      "value_projected": 43,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_46",
+      "enrollment_id": "enr_8",
+      "metric_id": "met_4",
+      "value_baseline": 3.5,
+      "value_current": 5.1,
+      "value_projected": 4.4,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_47",
+      "enrollment_id": "enr_8",
+      "metric_id": "met_5",
+      "value_baseline": 49,
+      "value_current": 35,
+      "value_projected": 41,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_48",
+      "enrollment_id": "enr_8",
+      "metric_id": "met_6",
+      "value_baseline": 72,
+      "value_current": 58,
+      "value_projected": 63,
+      "improving_trend": false
+    },
+    {
+      "id": "mea_49",
+      "enrollment_id": "enr_9",
+      "metric_id": "met_1",
+      "value_baseline": 70,
+      "value_current": 83,
+      "value_projected": 88,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_50",
+      "enrollment_id": "enr_9",
+      "metric_id": "met_2",
+      "value_baseline": 68,
+      "value_current": 81,
+      "value_projected": 86,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_51",
+      "enrollment_id": "enr_9",
+      "metric_id": "met_3",
+      "value_baseline": 69,
+      "value_current": 82,
+      "value_projected": 87,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_52",
+      "enrollment_id": "enr_9",
+      "metric_id": "met_4",
+      "value_baseline": 3,
+      "value_current": 1.8,
+      "value_projected": 1.6,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_53",
+      "enrollment_id": "enr_9",
+      "metric_id": "met_5",
+      "value_baseline": 57,
+      "value_current": 78,
+      "value_projected": 84,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_54",
+      "enrollment_id": "enr_9",
+      "metric_id": "met_6",
+      "value_baseline": 77,
+      "value_current": 79,
+      "value_projected": 84,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_55",
+      "enrollment_id": "enr_10",
+      "metric_id": "met_1",
+      "value_baseline": 69,
+      "value_current": 82,
+      "value_projected": 86,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_56",
+      "enrollment_id": "enr_10",
+      "metric_id": "met_2",
+      "value_baseline": 67,
+      "value_current": 80,
+      "value_projected": 85,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_57",
+      "enrollment_id": "enr_10",
+      "metric_id": "met_3",
+      "value_baseline": 68,
+      "value_current": 81,
+      "value_projected": 86,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_58",
+      "enrollment_id": "enr_10",
+      "metric_id": "met_4",
+      "value_baseline": 3.1,
+      "value_current": 1.9,
+      "value_projected": 1.7,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_59",
+      "enrollment_id": "enr_10",
+      "metric_id": "met_5",
+      "value_baseline": 56,
+      "value_current": 77,
+      "value_projected": 83,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_60",
+      "enrollment_id": "enr_10",
+      "metric_id": "met_6",
+      "value_baseline": 76,
+      "value_current": 78,
+      "value_projected": 83,
+      "improving_trend": true
+    }
+  ]
+}

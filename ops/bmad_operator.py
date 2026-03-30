@@ -167,6 +167,8 @@ def execute_command(
         list(command),
         input=input_text,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         cwd=str(cwd) if cwd else None,
         capture_output=capture_output,
         check=False,
@@ -289,6 +291,30 @@ def build_command_prompt(
     return "\n".join(lines)
 
 
+def build_contract_repair_prompt(
+    command_name: str,
+    contract: CommandContract,
+    response_text: str,
+    error_message: str,
+) -> str:
+    return "\n".join(
+        [
+            "Your previous contracted BMAD response did not satisfy the required output contract.",
+            "",
+            f"BMAD command/skill: `{command_name}`",
+            f"Contract: `{contract.command}`",
+            f"Validation error: {error_message}",
+            "",
+            "Return a corrected response only.",
+            "Return exactly one JSON object inside a ```json fenced block.",
+            f"Required top-level fields: {', '.join(contract.required_response_fields)}.",
+            "",
+            "Previous response to repair:",
+            response_text.strip() or "(empty response)",
+        ]
+    )
+
+
 def extract_structured_response(response_text: str) -> dict[str, Any]:
     stripped = response_text.strip()
     if not stripped:
@@ -387,6 +413,30 @@ def validate_command_response(
     return normalized_response
 
 
+def normalize_contracted_response(
+    response_text: str,
+    contract: CommandContract,
+    context_files: Sequence[Path],
+    *,
+    repair_response_text: str | None = None,
+) -> dict[str, Any]:
+    try:
+        structured_response = extract_structured_response(response_text)
+        return validate_command_response(structured_response, contract, context_files)
+    except Exception as initial_exc:
+        if repair_response_text is None:
+            raise
+
+        try:
+            repaired_structured_response = extract_structured_response(repair_response_text)
+            return validate_command_response(repaired_structured_response, contract, context_files)
+        except Exception as repair_exc:
+            raise ValueError(
+                "Contracted response could not be repaired. "
+                f"Initial validation error: {initial_exc}. Repair validation error: {repair_exc}."
+            ) from None
+
+
 def _resolve_repo_relative_path(path_value: str, repo_root: Path) -> Path:
     candidate = (repo_root / Path(path_value)).resolve()
     root_resolved = repo_root.resolve()
@@ -473,8 +523,23 @@ def execute_bmad_command(
     normalized_response = None
     materialized_paths: tuple[Path, ...] = ()
     if contract is not None and prompt_profile == "contracted":
-        structured_response = extract_structured_response(response_text)
-        normalized_response = validate_command_response(structured_response, contract, context_files)
+        repair_capture_path = None
+        repair_response_text = None
+        try:
+            normalized_response = normalize_contracted_response(response_text, contract, context_files)
+        except Exception as exc:
+            repair_prompt = build_contract_repair_prompt(command_name, contract, response_text, str(exc))
+            repair_capture_path = create_response_capture_path(f"{command_name}-repair")
+            repair_capture_path.parent.mkdir(parents=True, exist_ok=True)
+            run_codex_exec(codex_bin, repair_prompt, repair_capture_path, cwd=repo_root or Path.cwd())
+            repair_response_text = repair_capture_path.read_text(encoding="utf-8") if repair_capture_path.exists() else ""
+            normalized_response = normalize_contracted_response(
+                response_text,
+                contract,
+                context_files,
+                repair_response_text=repair_response_text,
+            )
+            capture_path = repair_capture_path
         materialized_paths = tuple(
             materialize_output_artifacts(normalized_response, contract, repo_root=repo_root or Path.cwd())
         )
@@ -585,5 +650,23 @@ def format_event_summary(event: dict[str, Any]) -> str:
     event_log_path = event.get("event_log_path")
     if isinstance(event_log_path, str) and event_log_path.strip():
         lines.append(f"event_log      : {event_log_path}")
+
+    return "\n".join(lines)
+
+
+def format_workflow_progress(commands: Sequence[str], current_index: int | None, completed_steps: int) -> str:
+    total_steps = len(commands)
+    safe_completed = max(0, min(completed_steps, total_steps))
+    percent = int((safe_completed / total_steps) * 100) if total_steps else 100
+
+    lines = [f"progress       : {percent}% ({safe_completed}/{total_steps} completed)"]
+    for index, command_name in enumerate(commands):
+        if index < safe_completed:
+            marker = "[x]"
+        elif current_index is not None and index == current_index:
+            marker = "[>]"
+        else:
+            marker = "[ ]"
+        lines.append(f"- {marker} {command_name}")
 
     return "\n".join(lines)

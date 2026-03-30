@@ -1,10 +1,10 @@
 ---
 project_name: 'swaif_LTV-mentoria'
 user_name: 'dmene'
-date: '2026-03-18'
+date: '2026-03-30'
 sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
-rule_count: 48
+rule_count: 56
 optimized_for_llm: true
 existing_patterns_found: 11
 ---
@@ -63,6 +63,8 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - `docs/mvp-mentoria/frontend-integration-architecture.md`
 - `docs/mvp-mentoria/contracts-freeze-v1.md`
 - `docs/mvp-mentoria/frontend-deployment-readiness-checklist.md`
+- `docs/mvp-mentoria/batch-g-data-ingestion-admin-current-state.md`
+- `docs/discovery/data-ingestion-admin-brief.md`
 
 ## Critical Implementation Rules
 
@@ -70,6 +72,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 - Treat frontend TypeScript `strict` mode as a hard constraint. Do not use `any` unless there is no practical alternative and the boundary is explicitly unknown.
 - Keep raw API payloads as `unknown` at the HTTP boundary, then normalize through adapters before domain or UI usage.
+- Keep raw ingestion payloads and file-derived data at the schema boundary until backend/frontend adapters normalize them; do not thread source-shaped records through components.
 - Do not put contract alias handling in React components. Alias normalization belongs in adapter code.
 - Reuse the existing `AppError` flow for frontend network and HTTP failures; do not introduce feature-specific error object shapes.
 - Centralize environment access in `src/shared/config/env.ts`. Feature code must not read `import.meta.env` directly.
@@ -84,9 +87,11 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Keep feature structure consistent: feature-specific pages/components/styles stay under `src/features/<feature>/`, while cross-cutting code stays under `src/shared/`, `src/domain/`, or `src/app/`.
 - Keep routing changes centralized in `src/app/routes.tsx`; do not scatter route definitions across features.
 - Preserve the existing shell pattern for role-specific areas (`AdminShell`, `MentorShell`, `StudentShell`) instead of duplicating frame/layout logic in pages.
+- Reuse the existing admin access boundary for operational features: frontend `RequireAdmin` and backend admin-role guards stay role-based and must not depend on a literal admin email.
 - In FastAPI, register HTTP endpoints through routers under `app/api/routes` and include them in `app/main.py`; do not place endpoint logic directly in the app entrypoint.
 - Keep request validation in schemas and HTTPException shaping in the shared API error utilities; route files should not handcraft inconsistent response shapes.
 - Preserve repository-backed persistence boundaries: FastAPI routes call services, services call repositories, and repositories own store-path/file handling.
+- For admin data ingestion work, treat the existing student indicator-load flow as the seed pattern and extend it through the same route/schema/service/repository layers before introducing a parallel architecture.
 - Treat preview/demo flows as framework exceptions that must remain isolated from production-safe auth and routing paths.
 
 ### Testing Rules
@@ -97,6 +102,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - When changing repository behavior, prefer integration tests that exercise the JSON-backed storage layer rather than mocking storage internals.
 - When changing service rules, add or update unit tests at the service layer instead of only covering the behavior indirectly through routes.
 - For frontend route or auth changes, update smoke-style route tests and any tests that rely on `AuthProvider`.
+- When evolving admin ingestion behavior, extend the existing indicator-load API/service/modal tests first; dry-run, backup, audit, and rollback behavior each need nearest-layer coverage.
 - Keep test fixtures isolated through temporary storage paths and environment setup rather than relying on shared local state.
 - Do not add new behavior without coverage at the nearest relevant layer.
 
@@ -119,6 +125,10 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Keep changes scoped to the nearest existing module or feature unless a documented architecture reason justifies a broader refactor.
 - When changing contracts or behavior that other layers depend on, update the associated docs and tests in the same change set.
 - Prefer incremental extension of existing routes, services, adapters, and repositories over parallel replacement paths.
+- Treat admin data ingestion as a brownfield expansion of a narrower existing capability, not as greenfield infrastructure and not as proof that the broader brief is already implemented.
+- For ingestion work, explicitly list the approved JSON targets and write paths in the relevant story or architecture artifact before implementation; do not widen scope to generic repository-wide writes.
+- Preserve the current replace-for-enrollment persistence semantics for initial indicator load unless an approved architecture decision explicitly introduces versioning, merge, or append behavior.
+- Route backup/snapshot, dry-run, audit, and rollback concerns through existing backend operations and service boundaries rather than UI-only confirmation or ad hoc scripts.
 - Treat `_bmad-output/project-context.md` and the key docs as coordination artifacts for future agents; keep them aligned with the codebase when major patterns change.
 
 ### Critical Don't-Miss Rules
@@ -131,6 +141,9 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Do not embed alias migration logic such as legacy patient/client naming directly into components; keep terminology normalization in adapters and documented mappings.
 - Do not add behavior that depends on mutable local JSON stores without matching tests for repository, service, or API effects.
 - Do not silently change contract expectations that the frontend architecture and frozen contract docs rely on.
+- Do not gate admin-only ingestion behavior by `admin@swaif.local`, and do not expose sensitive server paths or backup locations directly in the UI.
+- Do not treat a UI confirmation modal as the operational safeguard for ingestion: `dry-run` must not persist, and `apply` must create a backup/snapshot before writing.
+- Do not describe execution audit logs, conflict reports, backup-linked apply, or rollback support as existing capabilities unless the code and tests implement them explicitly.
 
 ---
 
@@ -150,4 +163,4 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Review it periodically for outdated or obvious rules.
 - Keep it aligned with architecture, contract, and deployment-hardening docs.
 
-Last Updated: 2026-03-18
+Last Updated: 2026-03-30

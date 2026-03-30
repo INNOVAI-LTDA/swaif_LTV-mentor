@@ -219,16 +219,26 @@ def main():
             if args.output_last_message
             else create_response_capture_path(model_info["command"])
         )
-        result = execute_bmad_command(
-            model_info["command"],
-            context_files=context_files,
-            prompt_text=exec_prompt,
-            prompt_profile=prompt_profile,
-            contract=contract,
-            codex_bin=args.codex_bin,
-            event_log_root=Path(args.event_log_root),
-            response_capture_path=response_capture_path,
-        )
+        try:
+            result = execute_bmad_command(
+                model_info["command"],
+                context_files=context_files,
+                prompt_text=exec_prompt,
+                prompt_profile=prompt_profile,
+                contract=contract,
+                codex_bin=args.codex_bin,
+                event_log_root=Path(args.event_log_root),
+                response_capture_path=response_capture_path,
+            )
+        except Exception as exc:
+            print("--- Phase Error ---")
+            print(f"workflow      : {args.workflow}")
+            print(f"batch         : {args.batch}")
+            print(f"phase         : {args.phase}")
+            print(f"command       : {model_info['command']}")
+            print(f"reason        : {exc}")
+            print("-------------------")
+            raise SystemExit(1) from None
         event_payload = load_event_log(result.event_log_path)
         event_payload["event_log_path"] = result.event_log_path.as_posix()
         print("--- Event Summary ---")

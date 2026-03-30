@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "crud_action": "U",
+      "id": "org_1",
+      "name": "Inovação em 5 passos",
+      "slug": "mtn_inova5",
+      "code": "MENTORIA INNOVA5",
+      "client_id": "cli_2",
+      "mentor_id": "mtr_1",
+      "description": null,
+      "delivery_model": "live",
+      "status": "active",
+      "is_active": true,
+      "created_at": "2026-03-15T06:45:48.612001Z",
+      "updated_at": "2026-03-30T10:45:00.063897Z"
+    },
+    {
+      "crud_action": "U",
+      "id": "org_2",
+      "name": "Mentoria Acelerador Medico",
+      "slug": "mnt_accmed",
+      "code": "MENTORIA ACMED",
+      "client_id": "cli_1",
+      "mentor_id": "mtr_2",
+      "description": null,
+      "delivery_model": "live",
+      "status": "active",
+      "is_active": true,
+      "created_at": "2026-03-15T06:45:48.612001Z",
+      "updated_at": "2026-03-15T06:45:48.612001Z"
+    },
+    {
+      "crud_action": "C",
+      "id": "org_3",
+      "name": "Master Acelerador Medico",
+      "slug": "mst_accmed",
+      "code": "MASTERMIND",
+      "client_id": "cli_1",
+      "mentor_id": "mtr_2",
+      "description": null,
+      "delivery_model": "live",
+      "status": "active",
+      "is_active": true,
+      "created_at": "2026-03-15T06:45:48.612001Z",
+      "updated_at": "2026-03-15T06:45:48.612001Z"
+    }
+  ]
+}

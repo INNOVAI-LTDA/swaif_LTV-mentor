@@ -1,0 +1,355 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "chk_1",
+      "enrollment_id": "enr_1",
+      "week": 4,
+      "status": "green",
+      "label": "Kickoff alinhado"
+    },
+    {
+      "id": "chk_2",
+      "enrollment_id": "enr_1",
+      "week": 8,
+      "status": "green",
+      "label": "Plano validado"
+    },
+    {
+      "id": "chk_3",
+      "enrollment_id": "enr_1",
+      "week": 12,
+      "status": "green",
+      "label": "Execucao consistente"
+    },
+    {
+      "id": "chk_4",
+      "enrollment_id": "enr_1",
+      "week": 16,
+      "status": "yellow",
+      "label": "Ajuste fino de foco"
+    },
+    {
+      "id": "chk_5",
+      "enrollment_id": "enr_1",
+      "week": 20,
+      "status": "green",
+      "label": "Escalada de resultado"
+    },
+    {
+      "id": "chk_6",
+      "enrollment_id": "enr_2",
+      "week": 4,
+      "status": "green",
+      "label": "Arranque forte"
+    },
+    {
+      "id": "chk_7",
+      "enrollment_id": "enr_2",
+      "week": 8,
+      "status": "green",
+      "label": "Entrega acima da meta"
+    },
+    {
+      "id": "chk_8",
+      "enrollment_id": "enr_2",
+      "week": 12,
+      "status": "green",
+      "label": "Consistencia mantida"
+    },
+    {
+      "id": "chk_9",
+      "enrollment_id": "enr_2",
+      "week": 16,
+      "status": "green",
+      "label": "Processo estavel"
+    },
+    {
+      "id": "chk_10",
+      "enrollment_id": "enr_2",
+      "week": 20,
+      "status": "yellow",
+      "label": "Refino de priorizacao"
+    },
+    {
+      "id": "chk_11",
+      "enrollment_id": "enr_3",
+      "week": 4,
+      "status": "green",
+      "label": "Inicio com aderencia"
+    },
+    {
+      "id": "chk_12",
+      "enrollment_id": "enr_3",
+      "week": 8,
+      "status": "yellow",
+      "label": "Queda sutil de ritmo"
+    },
+    {
+      "id": "chk_13",
+      "enrollment_id": "enr_3",
+      "week": 12,
+      "status": "yellow",
+      "label": "Atencao em entregas"
+    },
+    {
+      "id": "chk_14",
+      "enrollment_id": "enr_3",
+      "week": 16,
+      "status": "red",
+      "label": "Risco de estagnacao"
+    },
+    {
+      "id": "chk_15",
+      "enrollment_id": "enr_3",
+      "week": 20,
+      "status": "yellow",
+      "label": "Recuperacao parcial"
+    },
+    {
+      "id": "chk_16",
+      "enrollment_id": "enr_4",
+      "week": 4,
+      "status": "green",
+      "label": "Participacao regular"
+    },
+    {
+      "id": "chk_17",
+      "enrollment_id": "enr_4",
+      "week": 8,
+      "status": "yellow",
+      "label": "Execucao abaixo do esperado"
+    },
+    {
+      "id": "chk_18",
+      "enrollment_id": "enr_4",
+      "week": 12,
+      "status": "yellow",
+      "label": "Risco silencioso detectado"
+    },
+    {
+      "id": "chk_19",
+      "enrollment_id": "enr_4",
+      "week": 16,
+      "status": "red",
+      "label": "Perda de tracao"
+    },
+    {
+      "id": "chk_20",
+      "enrollment_id": "enr_4",
+      "week": 20,
+      "status": "yellow",
+      "label": "Plano de retomada"
+    },
+    {
+      "id": "chk_21",
+      "enrollment_id": "enr_5",
+      "week": 4,
+      "status": "green",
+      "label": "Potencial tecnico alto"
+    },
+    {
+      "id": "chk_22",
+      "enrollment_id": "enr_5",
+      "week": 8,
+      "status": "yellow",
+      "label": "Dispersao de foco"
+    },
+    {
+      "id": "chk_23",
+      "enrollment_id": "enr_5",
+      "week": 12,
+      "status": "green",
+      "label": "Ajuste de direcao"
+    },
+    {
+      "id": "chk_24",
+      "enrollment_id": "enr_5",
+      "week": 16,
+      "status": "yellow",
+      "label": "Baixa consistencia"
+    },
+    {
+      "id": "chk_25",
+      "enrollment_id": "enr_5",
+      "week": 20,
+      "status": "green",
+      "label": "Retomada parcial"
+    },
+    {
+      "id": "chk_26",
+      "enrollment_id": "enr_6",
+      "week": 4,
+      "status": "green",
+      "label": "Engajamento em encontros"
+    },
+    {
+      "id": "chk_27",
+      "enrollment_id": "enr_6",
+      "week": 8,
+      "status": "yellow",
+      "label": "Baixa conversao em entrega"
+    },
+    {
+      "id": "chk_28",
+      "enrollment_id": "enr_6",
+      "week": 12,
+      "status": "green",
+      "label": "Plano de aplicacao"
+    },
+    {
+      "id": "chk_29",
+      "enrollment_id": "enr_6",
+      "week": 16,
+      "status": "yellow",
+      "label": "Oscilacao de rotina"
+    },
+    {
+      "id": "chk_30",
+      "enrollment_id": "enr_6",
+      "week": 20,
+      "status": "green",
+      "label": "Reforco de cadencia"
+    },
+    {
+      "id": "chk_31",
+      "enrollment_id": "enr_7",
+      "week": 4,
+      "status": "yellow",
+      "label": "Sinal de atraso"
+    },
+    {
+      "id": "chk_32",
+      "enrollment_id": "enr_7",
+      "week": 8,
+      "status": "red",
+      "label": "Bloqueio de execucao"
+    },
+    {
+      "id": "chk_33",
+      "enrollment_id": "enr_7",
+      "week": 12,
+      "status": "red",
+      "label": "Queda de engajamento"
+    },
+    {
+      "id": "chk_34",
+      "enrollment_id": "enr_7",
+      "week": 16,
+      "status": "red",
+      "label": "Risco de abandono"
+    },
+    {
+      "id": "chk_35",
+      "enrollment_id": "enr_7",
+      "week": 20,
+      "status": "yellow",
+      "label": "Plano de resgate ativo"
+    },
+    {
+      "id": "chk_36",
+      "enrollment_id": "enr_8",
+      "week": 4,
+      "status": "yellow",
+      "label": "Inicio irregular"
+    },
+    {
+      "id": "chk_37",
+      "enrollment_id": "enr_8",
+      "week": 8,
+      "status": "red",
+      "label": "Ruptura de rotina"
+    },
+    {
+      "id": "chk_38",
+      "enrollment_id": "enr_8",
+      "week": 12,
+      "status": "red",
+      "label": "Desconexao com metodo"
+    },
+    {
+      "id": "chk_39",
+      "enrollment_id": "enr_8",
+      "week": 16,
+      "status": "red",
+      "label": "Risco maximo de churn"
+    },
+    {
+      "id": "chk_40",
+      "enrollment_id": "enr_8",
+      "week": 20,
+      "status": "yellow",
+      "label": "Acompanhamento intensivo"
+    },
+    {
+      "id": "chk_41",
+      "enrollment_id": "enr_9",
+      "week": 4,
+      "status": "green",
+      "label": "Ciclo com alta aderencia"
+    },
+    {
+      "id": "chk_42",
+      "enrollment_id": "enr_9",
+      "week": 8,
+      "status": "green",
+      "label": "Valor percebido em alta"
+    },
+    {
+      "id": "chk_43",
+      "enrollment_id": "enr_9",
+      "week": 12,
+      "status": "yellow",
+      "label": "Preparar proposta de continuidade"
+    },
+    {
+      "id": "chk_44",
+      "enrollment_id": "enr_9",
+      "week": 16,
+      "status": "green",
+      "label": "Resultados consolidados"
+    },
+    {
+      "id": "chk_45",
+      "enrollment_id": "enr_9",
+      "week": 20,
+      "status": "green",
+      "label": "Renovacao antecipada"
+    },
+    {
+      "id": "chk_46",
+      "enrollment_id": "enr_10",
+      "week": 4,
+      "status": "green",
+      "label": "Evolucao sustentada"
+    },
+    {
+      "id": "chk_47",
+      "enrollment_id": "enr_10",
+      "week": 8,
+      "status": "green",
+      "label": "Performance consistente"
+    },
+    {
+      "id": "chk_48",
+      "enrollment_id": "enr_10",
+      "week": 12,
+      "status": "yellow",
+      "label": "Desenhar extensao premium"
+    },
+    {
+      "id": "chk_49",
+      "enrollment_id": "enr_10",
+      "week": 16,
+      "status": "green",
+      "label": "Prontidao para continuidade"
+    },
+    {
+      "id": "chk_50",
+      "enrollment_id": "enr_10",
+      "week": 20,
+      "status": "green",
+      "label": "Plano de renovacao fechado"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ Use this document together with:
 
 - [README.md](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/README.md)
 - [docs/operator-kit-workflow-manual.md](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/docs/operator-kit-workflow-manual.md)
+- [docs/operator-kit-v3/index.md](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/docs/operator-kit-v3/index.md)
 - [_bmad-output/project-context.md](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/_bmad-output/project-context.md)
 - [ops/get_bmad_status.py](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/ops/get_bmad_status.py)
 - [ops/run_bmad_command.py](/c:/Users/dmene/Projetos/innovai/repos/swaif_LTV-mentoria/ops/run_bmad_command.py)
@@ -377,6 +378,12 @@ Available direct command targets:
 
 These are now state-aware workflow runners. They preview or execute an ordered BMAD sequence, consume event-log outputs, and can stop at approval gates.
 
+Preferred V3 entrypoint:
+
+```powershell
+make bmad-run WORKFLOW=<workflow-type> CONTEXT="<context-file>" EXECUTE=1 PROFILE=contracted
+```
+
 - `make bmad-flow-agile CONTEXT="<story-file>"`
 - `make bmad-flow-batching CONTEXT="<batch-anchor-file>"`
 - `make bmad-flow-greenfield CONTEXT="<requirements-file>"`
@@ -388,8 +395,16 @@ These are now state-aware workflow runners. They preview or execute an ordered B
 Useful workflow flags:
 
 - `PROFILE=contracted`
+- `APPROVAL=questionnaire`
 - `APPROVAL=stop`
 - `APPROVAL=continue`
+- `RESUME=<session-id-or-json-path>`
+
+Compatibility note:
+
+- `bmad-run WORKFLOW=brownfield ...` is the preferred V3 form
+- `bmad-flow-brownfield ...` remains valid and maps to the same workflow runner
+- `make bmad-resume RESUME=...` resumes a saved workflow session directly
 
 ## Suggested Decision Tree
 

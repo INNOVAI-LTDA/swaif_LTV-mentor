@@ -89,16 +89,23 @@ def main():
         if args.output_last_message
         else create_response_capture_path(args.command)
     )
-    result = execute_bmad_command(
-        args.command,
-        prompt_text=prompt,
-        context_files=context_files,
-        prompt_profile=prompt_profile,
-        contract=contract,
-        codex_bin=args.codex_bin,
-        event_log_root=Path(args.event_log_root),
-        response_capture_path=response_capture_path,
-    )
+    try:
+        result = execute_bmad_command(
+            args.command,
+            prompt_text=prompt,
+            context_files=context_files,
+            prompt_profile=prompt_profile,
+            contract=contract,
+            codex_bin=args.codex_bin,
+            event_log_root=Path(args.event_log_root),
+            response_capture_path=response_capture_path,
+        )
+    except Exception as exc:
+        print("--- Command Error ---")
+        print(f"command        : {args.command}")
+        print(f"reason         : {exc}")
+        print("---------------------")
+        raise SystemExit(1) from None
 
     event_payload = load_event_log(result.event_log_path)
     event_payload["event_log_path"] = result.event_log_path.as_posix()

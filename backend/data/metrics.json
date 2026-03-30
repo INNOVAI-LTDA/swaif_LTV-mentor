@@ -78,6 +78,143 @@
         "optimal": "faixa 70-85"
       },
       "is_active": true
+    },
+    {
+      "id": "met_7",
+      "protocol_id": "prt_2",
+      "pillar_id": "plr_2",
+      "name": "Faturamento",
+      "code": "mtr_faturamento",
+      "direction": "higher_better",
+      "unit": "R$",
+      "metadata": {
+        "+5 pts": "< R$100.000,00",
+        "+10 pts": "R$100.000,00 - R$500.000,00",
+        "+20 pts": "> R$500.000,00"
+      },
+      "is_active": true
+    },
+    {
+      "id": "met_8",
+      "protocol_id": "prt_2",
+      "pillar_id": "plr_3",
+      "name": "Engajamento",
+      "code": "mtr_engajamento",
+      "direction": "higher_better",
+      "unit": "",
+      "metadata": {
+        "+5 pts": "presenças > 4, feedback > 4",
+        "+10 pts": "vídeo > 4"
+      },
+      "is_active": true
+    },
+    {
+      "id": "met_9",
+      "protocol_id": "prt_2",
+      "pillar_id": "plr_3",
+      "name": "Gratidão",
+      "code": "mtr_gratidao",
+      "direction": "higher_better",
+      "unit": "pts",
+      "metadata": {
+        "+(1-4) pts": "respondeu",
+        "+0 pts": "não respondeu"
+      },
+      "is_active": true
+    },
+    {
+      "id": "met_10",
+      "protocol_id": "prt_2",
+      "pillar_id": "plr_3",
+      "name": "NED",
+      "code": "mtr_ned",
+      "direction": "higher_better",
+      "unit": "",
+      "metadata": {
+        "+1 pts": "< 8",
+        "+5 pts": ">= 8"
+      },
+      "is_active": true
+    },
+    {
+      "id": "met_11",
+      "protocol_id": "prt_2",
+      "pillar_id": "plr_4",
+      "name": "Reuniões Semanais?",
+      "code": "mtr_reunioes-semanais",
+      "direction": "higher_better",
+      "unit": "",
+      "metadata": {
+        "+2 pts": "Sim",
+        "+0 pts": "Não"
+      },
+      "is_active": true
+    },
+    {
+      "id": "met_12",
+      "protocol_id": "prt_2",
+      "pillar_id": "plr_4",
+      "name": "NPS",
+      "code": "mtr_nps",
+      "direction": "higher_better",
+      "unit": "",
+      "metadata": {
+        "+0 pts": "< 8",
+        "+2 pts": ">= 8"
+      },
+      "is_active": true
+    },
+    {
+      "id": "met_13",
+      "protocol_id": "prt_2",
+      "pillar_id": "plr_4",
+      "name": "Processos",
+      "code": "mtr_processos",
+      "direction": "higher_better",
+      "unit": "",
+      "metadata": {
+        "+5 pts": "Vendas, Operações, RH"
+      },
+      "is_active": true
+    },
+    {
+      "id": "met_14",
+      "protocol_id": "prt_2",
+      "pillar_id": "plr_4",
+      "name": "Ferramentas básicas",
+      "code": "mtr_ferramentas-basicas",
+      "direction": "higher_better",
+      "unit": "",
+      "metadata": {
+        "+5 pts": "Prontuário, CRM, Fluxo de"
+      },
+      "is_active": true
+    },
+    {
+      "id": "met_15",
+      "protocol_id": "prt_2",
+      "pillar_id": "plr_5",
+      "name": "N° de Serviços",
+      "code": "mtr_numero-servicos",
+      "direction": "higher_better",
+      "unit": "",
+      "metadata": {
+        "+2 pts": "Para cada serviço oferecido"
+      },
+      "is_active": true
+    },
+    {
+      "id": "met_16",
+      "protocol_id": "prt_2",
+      "pillar_id": "plr_5",
+      "name": "N° de Produtos Digitais",
+      "code": "mtr_numero-produtos-digitais",
+      "direction": "higher_better",
+      "unit": "",
+      "metadata": {
+        "+5 pts": "Para cada produto digital oferecido"
+      },
+      "is_active": true
     }
   ]
 }

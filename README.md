@@ -38,6 +38,7 @@ Core files:
 - `Makefile`: convenience commands
 - `docs/operator-kit-bmad-workflows.md`: BMAD-recommended workflow playbooks for the operator kit
 - `docs/operator-kit-workflow-manual.md`: step-by-step manual runs with input/output examples
+- `docs/operator-kit-v3/index.md`: V3 design pack for the next evolution of the operator kit
 
 ## Prerequisites
 
@@ -282,6 +283,9 @@ python ops/run_bmad_phase.py `
 - `make bmad-dev WORKFLOW=... BATCH=...`
 - `make bmad-review WORKFLOW=... BATCH=...`
 - `make bmad-fix WORKFLOW=... BATCH=...`
+- `make bmad-run WORKFLOW=...`
+- `make bmad-resume RESUME=...`
+- `make bmad-sessionize WORKFLOW=... RESUME_EVENT=...`
 
 Direct command targets also accept:
 
@@ -296,12 +300,46 @@ Example:
 make bmad-create-story CONTEXT="docs/mvp-mentoria/batch-f-csp-and-hsts-current-state.md" EXECUTE=1 PROFILE=contracted
 ```
 
-Workflow set targets are now state-aware orchestrators. They consume event-log outputs, switch context to produced artifacts when available, and honor approval gates with `APPROVAL=stop|continue`.
+Workflow set targets are now state-aware orchestrators. They consume event-log outputs, switch context to produced artifacts when available, persist workflow sessions under `_bmad-output/operator-workflows/`, and honor approval gates with `APPROVAL=questionnaire|stop|continue`.
+
+Preferred V3 entrypoint:
+
+```powershell
+make bmad-run WORKFLOW=brownfield CONTEXT="docs/mvp-mentoria/batch-f-csp-and-hsts-current-state.md" EXECUTE=1 PROFILE=contracted
+```
 
 Example:
 
 ```powershell
-make bmad-flow-brownfield CONTEXT="docs/mvp-mentoria/batch-f-csp-and-hsts-current-state.md" EXECUTE=1 PROFILE=contracted APPROVAL=stop
+make bmad-flow-brownfield CONTEXT="docs/mvp-mentoria/batch-f-csp-and-hsts-current-state.md" EXECUTE=1 PROFILE=contracted
+```
+
+The `bmad-flow-*` targets remain available as compatibility aliases for the named workflow presets.
+
+When a contracted step requests approval and you are in an interactive terminal, the workflow no longer needs to hard-stop by default. `APPROVAL=questionnaire` is now the default workflow behavior and presents an in-terminal approval questionnaire so you can decide whether to continue immediately.
+
+If a workflow is interrupted or you answer `no`, re-enter it with the saved session id or file path:
+
+```powershell
+make bmad-resume RESUME="<session-id-or-json-path>" EXECUTE=1 PROFILE=contracted
+```
+
+You can also resume through the unified entrypoint:
+
+```powershell
+make bmad-run RESUME="<session-id-or-json-path>" EXECUTE=1 PROFILE=contracted
+```
+
+If the workflow is older and does not have a session yet, bootstrap one from the last event log:
+
+```powershell
+make bmad-sessionize WORKFLOW=brownfield RESUME_EVENT="_bmad-output/operator-events/20260330T040509252880Z-bmad-create-architecture.json" PROFILE=contracted
+```
+
+That will print and persist a new `session_id` and `session_path`. After that, resume normally:
+
+```powershell
+make bmad-resume RESUME="<new-session-id-or-json-path>" EXECUTE=1 PROFILE=contracted
 ```
 
 ## Event Logs And Production-Line Mode
