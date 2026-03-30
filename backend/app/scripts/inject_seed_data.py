@@ -56,27 +56,44 @@ def process_entity(entity_name, repo_cls, path_func, base_dir=None):
             print(f"[{entity_name}] Skipping item with no 'crud_action': {item_id}")
             continue
         action = action.upper()
-        if action == "C":
-            if hasattr(repo, "create"):
-                filtered = {k: v for k, v in item.items() if k != "crud_action" and k in create_args}
-                repo.create(**filtered)
-                print(f"[{entity_name}] Created: {item_id}")
+        # Only allow create for clients; only allow update for others
+        if entity_name == "clients":
+            if action == "C":
+                if hasattr(repo, "create"):
+                    filtered = {k: v for k, v in item.items() if k != "crud_action" and k in create_args}
+                    repo.create(**filtered)
+                    print(f"[{entity_name}] Created: {item_id}")
+                else:
+                    print(f"[{entity_name}] Create not supported, skipping: {item_id}")
+            elif action == "U":
+                if hasattr(repo, "update"):
+                    repo.update(**{k: v for k, v in item.items() if k != "crud_action"})
+                    print(f"[{entity_name}] Updated: {item_id}")
+                else:
+                    print(f"[{entity_name}] Update not supported, skipping: {item_id}")
+            elif action == "D":
+                if hasattr(repo, "delete"):
+                    repo.delete(item_id)
+                    print(f"[{entity_name}] Deleted: {item_id}")
+                else:
+                    print(f"[{entity_name}] Delete not supported, skipping: {item_id}")
             else:
-                print(f"[{entity_name}] Create not supported, skipping: {item_id}")
-        elif action == "U":
-            if hasattr(repo, "update"):
-                repo.update(**{k: v for k, v in item.items() if k != "crud_action"})
-                print(f"[{entity_name}] Updated: {item_id}")
-            else:
-                print(f"[{entity_name}] Update not supported, skipping: {item_id}")
-        elif action == "D":
-            if hasattr(repo, "delete"):
-                repo.delete(item_id)
-                print(f"[{entity_name}] Deleted: {item_id}")
-            else:
-                print(f"[{entity_name}] Delete not supported, skipping: {item_id}")
+                print(f"[{entity_name}] Unknown action '{action}' for {item_id}")
         else:
-            print(f"[{entity_name}] Unknown action '{action}' for {item_id}")
+            if action == "U":
+                if hasattr(repo, "update"):
+                    repo.update(**{k: v for k, v in item.items() if k != "crud_action"})
+                    print(f"[{entity_name}] Updated: {item_id}")
+                else:
+                    print(f"[{entity_name}] Update not supported, skipping: {item_id}")
+            elif action == "D":
+                if hasattr(repo, "delete"):
+                    repo.delete(item_id)
+                    print(f"[{entity_name}] Deleted: {item_id}")
+                else:
+                    print(f"[{entity_name}] Delete not supported, skipping: {item_id}")
+            else:
+                print(f"[{entity_name}] Only update/delete supported, skipping create for {item_id}")
 
 def main():
     for entity_name, repo_cls, path_func in ENTITY_CONFIG:

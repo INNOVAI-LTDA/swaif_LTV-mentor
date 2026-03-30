@@ -16,6 +16,25 @@ def default_user_store_path() -> Path:
 
 
 class UserRepository:
+    def update(self, **kwargs) -> dict[str, Any]:
+        """
+        Update a user by id. Accepts any user fields as kwargs (must include 'id').
+        """
+        user_id = kwargs.get("id")
+        if not user_id:
+            raise ValueError("User id is required for update")
+        users = self.list_users()
+        updated = False
+        for user in users:
+            if str(user.get("id")) == str(user_id):
+                user.update({k: v for k, v in kwargs.items() if k != "id"})
+                updated = True
+                break
+        if not updated:
+            raise ValueError(f"User with id {user_id} not found")
+        # Write back to store
+        self._store.write({"version": 1, "items": users})
+        return user
     def __init__(self, file_path: str | Path | None = None) -> None:
         self._store = JsonRepository(file_path or default_user_store_path())
         self._bootstrap_seed_users()
