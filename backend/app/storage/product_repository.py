@@ -1,0 +1,2 @@
+from app.storage.protocol_repository import ProtocolRepository as ProductRepository
+from app.storage.protocol_repository import default_protocol_store_path as default_product_store_path

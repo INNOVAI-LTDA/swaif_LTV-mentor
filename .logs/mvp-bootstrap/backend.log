@@ -1,93 +1,66 @@
-2026-03-24 04:29:44,441 INFO swaif.runtime backend_runtime_configured app_env=local cors_origins=http://127.0.0.1:5173 mentor_demo_routes=False mentor_demo_policy=explicit-disable storage_root=C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\data backup_dir=backups
-INFO:     Started server process [17672]
-INFO:     Waiting for application startup.
-2026-03-24 04:29:44,591 INFO swaif.runtime backend_startup_complete app_env=local cors_origins=http://127.0.0.1:5173 mentor_demo_routes=False mentor_demo_policy=explicit-disable storage_root=C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\data backup_dir=backups
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:61501 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61509 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57222 - "OPTIONS /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62135 - "OPTIONS /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57222 - "GET /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57222 - "GET /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57222 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62135 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62135 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:62135 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:58203 - "OPTIONS /auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58203 - "POST /auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:62060 - "POST /auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:54106 - "POST /auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:53091 - "POST /auth/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:63697 - "OPTIONS /auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63697 - "POST /auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63697 - "OPTIONS /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63697 - "GET /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63697 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52697 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52697 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:63697 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:49994 - "GET /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49994 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:63697 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:54662 - "OPTIONS /mentor/centro-comando/alunos HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60984 - "OPTIONS /mentor/centro-comando/alunos HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60984 - "GET /mentor/centro-comando/alunos HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:54662 - "GET /mentor/centro-comando/alunos HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:54662 - "GET /mentor/centro-comando/alunos HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:60984 - "GET /mentor/centro-comando/alunos HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:60984 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54662 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54662 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:60984 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:49265 - "OPTIONS /auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49265 - "POST /auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49265 - "OPTIONS /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49265 - "GET /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49265 - "OPTIONS /admin/clientes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49265 - "OPTIONS /admin/clientes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49725 - "GET /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49265 - "GET /admin/clientes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49725 - "GET /admin/clientes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49265 - "GET /admin/clientes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49725 - "GET /admin/clientes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49725 - "OPTIONS /admin/clientes/cli_1 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49725 - "GET /admin/clientes/cli_1 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63072 - "OPTIONS /admin/clientes/cli_1/produtos HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63072 - "GET /admin/clientes/cli_1/produtos HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63072 - "OPTIONS /admin/produtos/org_2/mentores HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60962 - "OPTIONS /admin/produtos/org_2/pilares HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60962 - "GET /admin/produtos/org_2/mentores HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63072 - "GET /admin/produtos/org_2/pilares HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52050 - "OPTIONS /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60478 - "OPTIONS /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60478 - "OPTIONS /admin/clientes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52050 - "OPTIONS /admin/clientes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52050 - "GET /admin/clientes HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:52050 - "GET /admin/clientes HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:55745 - "OPTIONS /auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55745 - "POST /auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55745 - "GET /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55745 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63198 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63499 - "GET /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63499 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:63198 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:63198 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:63499 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:52822 - "OPTIONS /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58024 - "OPTIONS /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58024 - "GET /me HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:58024 - "GET /me HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:50479 - "OPTIONS /auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50479 - "POST /auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50479 - "GET /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50479 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51972 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51972 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:50479 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:54925 - "GET /me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54925 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:54925 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:49629 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49629 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 404 Not Found
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\__main__.py", line 4, in <module>
+    uvicorn.main()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\click\core.py", line 1485, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\click\core.py", line 1406, in main
+    rv = self.invoke(ctx)
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\click\core.py", line 1269, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\click\core.py", line 824, in invoke
+    return callback(*args, **kwargs)
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\main.py", line 433, in main
+    run(
+    ~~~^
+        app,
+        ^^^^
+    ...<47 lines>...
+        h11_max_incomplete_event_size=h11_max_incomplete_event_size,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\main.py", line 606, in run
+    server.run()
+    ~~~~~~~~~~^^
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\server.py", line 75, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\server.py", line 79, in serve
+    await self._serve(sockets)
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\server.py", line 86, in _serve
+    config.load()
+    ~~~~~~~~~~~^^
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\config.py", line 441, in load
+    self.loaded_app = import_from_string(self.app)
+                      ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "C:\Python313\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\app\main.py", line 113, in <module>
+    app = create_app()
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\app\main.py", line 57, in create_app
+    app_env = get_app_env()
+  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\app\config\runtime.py", line 29, in get_app_env
+    raise RuntimeError("APP_ENV is required. Use 'local' for local development or a production-like value for deployment.")
+RuntimeError: APP_ENV is required. Use 'local' for local development or a production-like value for deployment.

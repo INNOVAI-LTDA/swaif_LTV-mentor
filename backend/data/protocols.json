@@ -11,6 +11,28 @@
         "narrative": "demo-base"
       },
       "is_active": true
+    },
+    {
+      "id": "prt_2",
+      "organization_id": "org_2",
+      "name": "Mentoria Acelerador Médico",
+      "code": "mtn-accmed",
+      "metadata": {
+        "cycle_days": 365,
+        "narrative": "Protocolo focado em acelerar o crescimento de médicos empreendedores, com ênfase em captação, vendas, mentalidade, gestão e repertório, visando resultados tangíveis e desenvolvimento sustentável."
+      },
+      "is_active": true
+    },
+    {
+      "id": "prt_3",
+      "organization_id": "org_2",
+      "name": "Master Acelerador Médico",
+      "code": "mstr-accmed",
+      "metadata": {
+        "cycle_days": 365,
+        "narrative": "Mastermind avançado para médicos empreendedores, focado em estratégias de crescimento, inovação e liderança, com ênfase em resultados tangíveis e desenvolvimento sustentável."
+      },
+      "is_active": true
     }
   ]
 }

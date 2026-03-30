@@ -56,8 +56,8 @@ def process_entity(entity_name, repo_cls, path_func, base_dir=None):
             print(f"[{entity_name}] Skipping item with no 'crud_action': {item_id}")
             continue
         action = action.upper()
-        # Only allow create for clients; only allow update for others
-        if entity_name == "clients":
+        # Only allow create for clients and products; only allow update for others
+        if entity_name in ("clients", "products"):
             if action == "C":
                 if hasattr(repo, "create"):
                     filtered = {k: v for k, v in item.items() if k != "crud_action" and k in create_args}
