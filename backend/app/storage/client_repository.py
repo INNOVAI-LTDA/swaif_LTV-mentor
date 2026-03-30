@@ -25,6 +25,26 @@ def _now_iso() -> str:
 
 
 class ClientRepository:
+    def update(self, **kwargs) -> dict[str, Any]:
+        client_id = kwargs.get("id")
+        if not client_id:
+            raise ValueError("Client id is required for update")
+        items = self._read_items()
+        for idx, client in enumerate(items):
+            if str(client.get("id")) == client_id:
+                updated = {**client, **kwargs, "updated_at": _now_iso()}
+                items[idx] = updated
+                self._write_items(items)
+                return updated
+        raise ValueError(f"Client with id {client_id} not found")
+
+    def delete(self, client_id: str) -> bool:
+        items = self._read_items()
+        new_items = [client for client in items if str(client.get("id")) != client_id]
+        if len(new_items) == len(items):
+            return False
+        self._write_items(new_items)
+        return True
     def __init__(self, file_path: str | Path | None = None) -> None:
         self._store = JsonRepository(file_path or default_client_store_path())
         if not self._store.file_path.exists():

@@ -32,6 +32,27 @@ class MentorRepository:
         if not self._store.file_path.exists():
             self._store.write({"version": 1, "items": []})
 
+    def update(self, **kwargs) -> dict[str, Any]:
+        mentor_id = kwargs.get("id")
+        if not mentor_id:
+            raise ValueError("Mentor id is required for update")
+        items = self._read_items()
+        for idx, mentor in enumerate(items):
+            if str(mentor.get("id")) == mentor_id:
+                updated = {**mentor, **kwargs, "updated_at": _now_iso()}
+                items[idx] = updated
+                self._write_items(items)
+                return updated
+        raise ValueError(f"Mentor with id {mentor_id} not found")
+
+    def delete(self, mentor_id: str) -> bool:
+        items = self._read_items()
+        new_items = [mentor for mentor in items if str(mentor.get("id")) != mentor_id]
+        if len(new_items) == len(items):
+            return False
+        self._write_items(new_items)
+        return True
+
     def _read_items(self) -> list[dict[str, Any]]:
         payload = self._store.read()
         items = payload.get("items", [])

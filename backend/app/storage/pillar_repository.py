@@ -19,6 +19,26 @@ def _slugify(value: str) -> str:
 
 
 class PillarRepository:
+    def update(self, **kwargs) -> dict[str, Any]:
+        pillar_id = kwargs.get("id")
+        if not pillar_id:
+            raise ValueError("Pillar id is required for update")
+        items = self._read_items()
+        for idx, pillar in enumerate(items):
+            if str(pillar.get("id")) == pillar_id:
+                updated = {**pillar, **kwargs}
+                items[idx] = updated
+                self._write_items(items)
+                return updated
+        raise ValueError(f"Pillar with id {pillar_id} not found")
+
+    def delete(self, pillar_id: str) -> bool:
+        items = self._read_items()
+        new_items = [pillar for pillar in items if str(pillar.get("id")) != pillar_id]
+        if len(new_items) == len(items):
+            return False
+        self._write_items(new_items)
+        return True
     def __init__(self, file_path: str | Path | None = None) -> None:
         self._store = JsonRepository(file_path or default_pillar_store_path())
         if not self._store.file_path.exists():
@@ -48,7 +68,8 @@ class PillarRepository:
         final_code = _slugify(code or name)
         if any(str(item.get("protocol_id")) == protocol_id and str(item.get("code")) == final_code for item in items):
             raise ValueError("pillar code already exists in protocol")
-
+        if any(str(item.get("protocol_id")) == protocol_id and str(item.get("name")) == name for item in items):
+            raise ValueError("pillar name already exists in protocol")
         pillar = {
             "id": f"plr_{len(items) + 1}",
             "protocol_id": protocol_id,

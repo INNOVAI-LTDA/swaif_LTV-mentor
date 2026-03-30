@@ -62,30 +62,27 @@
     },
     {
       "id": "met_5",
-      "protocol_id": "prt_2",
-      "pillar_id": "plr_2",
-      "name": "Taxa de Conversão",
-      "code": "mtr_taxa-conversao",
+      "protocol_id": "prt_1",
+      "pillar_id": "plr_3",
+      "name": "Conversao em Resultado",
+      "code": "conversao-resultado",
       "direction": "higher_better",
       "unit": "%",
       "metadata": {
-        "+5 pts": "< 50%",
-        "+20 pts": "> 50%"
+        "optimal": ">= 65"
       },
       "is_active": true
     },
     {
       "id": "met_6",
-      "protocol_id": "prt_2",
-      "pillar_id": "plr_2",
-      "name": "Ticket médio",
-      "code": "mtr_ticket-medio",
-      "direction": "higher_better",
-      "unit": "R$",
+      "protocol_id": "prt_1",
+      "pillar_id": "plr_3",
+      "name": "Previsibilidade de Renovacao",
+      "code": "previsibilidade-renovacao",
+      "direction": "target_range",
+      "unit": "pts",
       "metadata": {
-        "+5 pts": "< R$10.000,00",
-        "+10 pts": "R$10.000,00 - R$20.000,00",
-        "+20 pts": "> R$20.000,00"
+        "optimal": "faixa 70-85"
       },
       "is_active": true
     },

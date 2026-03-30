@@ -3,16 +3,23 @@
   "items": [
     {
       "id": "org_1",
-      "name": "Mentoria Escala com Clareza 180",
-      "slug": "mentoria-escala-clareza-180",
+      "name": "Inovação em 5 passos",
+      "slug": "mtn_inova5",
       "mentor_id": "mtr_1",
-      "is_active": true
+      "is_active": true,
+      "code": "MENTORIA INNOVA5",
+      "client_id": "cli_2",
+      "description": null,
+      "delivery_model": "live",
+      "status": "active",
+      "created_at": "2026-03-15T06:45:48.612001Z",
+      "updated_at": "2026-03-30T19:27:09.588995Z"
     },
     {
       "id": "org_2",
       "name": "Mentoria Acelerador Medico",
-      "slug": "mentoria_acelerador_medico",
-      "code": "MAM",
+      "slug": "mnt_accmed",
+      "code": "MENTORIA ACMED",
       "client_id": "cli_1",
       "mentor_id": "mtr_2",
       "description": null,
@@ -20,7 +27,7 @@
       "status": "active",
       "is_active": true,
       "created_at": "2026-03-15T06:45:48.612001Z",
-      "updated_at": "2026-03-15T06:45:48.612001Z"
+      "updated_at": "2026-03-30T19:27:09.624968Z"
     },
     {
       "id": "org_3",

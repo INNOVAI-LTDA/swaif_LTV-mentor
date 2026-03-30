@@ -29,6 +29,28 @@ def _now_iso() -> str:
 
 
 class OrganizationRepository:
+
+    def update(self, **kwargs) -> dict[str, Any]:
+        organization_id = kwargs.get("id")
+        if not organization_id:
+            raise ValueError("Organization id is required for update")
+        items = self._read_items()
+        for idx, organization in enumerate(items):
+            if str(organization.get("id")) == organization_id:
+                updated = {**organization, **kwargs, "updated_at": _now_iso()}
+                items[idx] = updated
+                self._write_items(items)
+                return updated
+        raise ValueError(f"Organization with id {organization_id} not found")
+
+    def delete(self, organization_id: str) -> bool:
+        items = self._read_items()
+        new_items = [organization for organization in items if str(organization.get("id")) != organization_id]
+        if len(new_items) == len(items):
+            return False
+        self._write_items(new_items)
+        return True
+
     def __init__(self, file_path: str | Path | None = None) -> None:
         self._store = JsonRepository(file_path or default_organization_store_path())
         if not self._store.file_path.exists():
@@ -73,6 +95,8 @@ class OrganizationRepository:
             raise ValueError("organization slug already exists")
         if any(_same_scope(item) and str(item.get("code")) == candidate_code for item in items):
             raise ValueError("organization code already exists")
+        if any(_same_scope(item) and str(item.get("name")) == name for item in items):
+            raise ValueError("organization name already exists")
 
         now = _now_iso()
 

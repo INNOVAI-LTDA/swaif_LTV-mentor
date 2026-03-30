@@ -3,34 +3,34 @@
   "items": [
     {
       "id": "plr_1",
-      "protocol_id": "prt_1",
-      "name": "Clareza de Direcao",
-      "code": "clareza-direcao",
+      "protocol_id": "prt_2",
+      "name": "Captação",
+      "code": "accmed_plr_cap",
       "order_index": 1,
       "metadata": {
-        "axis_sub": "Foco e Priorizacao"
+        "axis_sub": ""
       },
       "is_active": true
     },
     {
       "id": "plr_2",
-      "protocol_id": "prt_1",
-      "name": "Disciplina de Execucao",
-      "code": "disciplina-execucao",
+      "protocol_id": "prt_2",
+      "name": "Vendas",
+      "code": "accmed_plr_vendas",
       "order_index": 2,
       "metadata": {
-        "axis_sub": "Rotina e Consistencia"
+        "axis_sub": ""
       },
       "is_active": true
     },
     {
       "id": "plr_3",
-      "protocol_id": "prt_1",
-      "name": "Decisao de Crescimento",
-      "code": "decisao-crescimento",
+      "protocol_id": "prt_2",
+      "name": "Mentalidade",
+      "code": "accmed_plr_mentalidade",
       "order_index": 3,
       "metadata": {
-        "axis_sub": "Renovacao e LTV"
+        "axis_sub": ""
       },
       "is_active": true
     },

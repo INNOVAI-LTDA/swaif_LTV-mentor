@@ -16,6 +16,24 @@ def default_user_store_path() -> Path:
 
 
 class UserRepository:
+    def create(self, *, id: str, email: str, password_hash: str, role: str, is_active: bool = True) -> dict[str, Any]:
+        users = self.list_users()
+        normalized_email = email.strip().lower()
+        if any(str(u.get("email", "")).strip().lower() == normalized_email for u in users):
+            raise ValueError("user email already exists")
+        if any(str(u.get("id")) == id for u in users):
+            raise ValueError("user id already exists")
+        user = {
+            "id": id,
+            "email": normalized_email,
+            "password_hash": password_hash,
+            "role": role,
+            "is_active": is_active,
+        }
+        users.append(user)
+        self._store.write({"version": 1, "items": users})
+        return user
+
     def update(self, **kwargs) -> dict[str, Any]:
         """
         Update a user by id. Accepts any user fields as kwargs (must include 'id').

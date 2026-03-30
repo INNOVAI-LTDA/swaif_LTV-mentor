@@ -19,6 +19,26 @@ def _slugify(value: str) -> str:
 
 
 class MetricRepository:
+    def update(self, **kwargs) -> dict[str, Any]:
+        metric_id = kwargs.get("id")
+        if not metric_id:
+            raise ValueError("Metric id is required for update")
+        items = self._read_items()
+        for idx, metric in enumerate(items):
+            if str(metric.get("id")) == metric_id:
+                updated = {**metric, **kwargs}
+                items[idx] = updated
+                self._write_items(items)
+                return updated
+        raise ValueError(f"Metric with id {metric_id} not found")
+
+    def delete(self, metric_id: str) -> bool:
+        items = self._read_items()
+        new_items = [metric for metric in items if str(metric.get("id")) != metric_id]
+        if len(new_items) == len(items):
+            return False
+        self._write_items(new_items)
+        return True
     def __init__(self, file_path: str | Path | None = None) -> None:
         self._store = JsonRepository(file_path or default_metric_store_path())
         if not self._store.file_path.exists():
@@ -57,7 +77,8 @@ class MetricRepository:
         final_code = _slugify(code or name)
         if any(str(item.get("pillar_id")) == pillar_id and str(item.get("code")) == final_code for item in items):
             raise ValueError("metric code already exists in pillar")
-
+        if any(str(item.get("pillar_id")) == pillar_id and str(item.get("name")) == name for item in items):
+            raise ValueError("metric name already exists in pillar")
         metric = {
             "id": f"met_{len(items) + 1}",
             "protocol_id": protocol_id,

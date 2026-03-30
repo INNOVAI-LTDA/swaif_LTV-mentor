@@ -61,8 +61,11 @@ def process_entity(entity_name, repo_cls, path_func, base_dir=None):
             if action == "C":
                 if hasattr(repo, "create"):
                     filtered = {k: v for k, v in item.items() if k != "crud_action" and k in create_args}
-                    repo.create(**filtered)
-                    print(f"[{entity_name}] Created: {item_id}")
+                    try:
+                        repo.create(**filtered)
+                        print(f"[{entity_name}] Created: {item_id}")
+                    except ValueError as e:
+                        print(f"[{entity_name}] Skipped duplicate: {item_id} ({e})")
                 else:
                     print(f"[{entity_name}] Create not supported, skipping: {item_id}")
             elif action == "U":

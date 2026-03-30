@@ -35,6 +35,26 @@ def _normalize_cpf(value: str | None) -> str | None:
 
 
 class StudentRepository:
+    def update(self, **kwargs) -> dict[str, Any]:
+        student_id = kwargs.get("id")
+        if not student_id:
+            raise ValueError("Student id is required for update")
+        items = self._read_items()
+        for idx, student in enumerate(items):
+            if str(student.get("id")) == student_id:
+                updated = {**student, **kwargs, "updated_at": _now_iso()}
+                items[idx] = updated
+                self._write_items(items)
+                return updated
+        raise ValueError(f"Student with id {student_id} not found")
+
+    def delete(self, student_id: str) -> bool:
+        items = self._read_items()
+        new_items = [student for student in items if str(student.get("id")) != student_id]
+        if len(new_items) == len(items):
+            return False
+        self._write_items(new_items)
+        return True
     def __init__(self, file_path: str | Path | None = None) -> None:
         self._store = JsonRepository(file_path or default_student_store_path())
         if not self._store.file_path.exists():
@@ -68,9 +88,9 @@ class StudentRepository:
             raise ValueError("student email already exists")
         if normalized_cpf and any(_normalize_cpf(str(item.get("cpf") or "")) == normalized_cpf for item in items):
             raise ValueError("student cpf already exists")
-
+        if any(str(item.get("full_name", "")).strip().lower() == full_name.strip().lower() for item in items):
+            raise ValueError("student full_name already exists")
         now = _now_iso()
-
         student = {
             "id": f"std_{len(items) + 1}",
             "full_name": full_name.strip(),

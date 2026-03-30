@@ -5,15 +5,15 @@
       "id": "cli_1",
       "name": "Grupo Acelerador Medico",
       "brand_name": "Grupo Acelerador Medico",
-      "cnpj": "11222333000144",
-      "slug": "grp_accmed",
+      "cnpj": "XXXXXXXXXXXXXX",
+      "slug": "cli_grpaccmed",
       "status": "active",
       "is_active": true,
       "timezone": "America/Sao_Paulo",
       "currency": "BRL",
       "notes": null,
       "created_at": "2026-03-15T05:25:51.063897Z",
-      "updated_at": "2026-03-15T05:25:51.063897Z"
+      "updated_at": "2026-03-30T19:27:08.911486Z"
     },
     {
       "id": "cli_2",
