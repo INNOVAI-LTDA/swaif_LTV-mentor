@@ -38,4 +38,10 @@ export type MatrixResponseDto = {
   filter: MatrixFilter;
   items: MatrixItemDto[];
   kpis: MatrixKpisDto;
+  context?: {
+    mentorName?: string;
+    mentorId?: string;
+    protocolName?: string;
+    protocolId?: string;
+  };
 };

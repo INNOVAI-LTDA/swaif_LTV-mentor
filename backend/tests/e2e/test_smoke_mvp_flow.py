@@ -16,6 +16,7 @@ def _configure_stores(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setenv("STUDENT_STORE_PATH", str(tmp_path / "students.json"))
     monkeypatch.setenv("ENROLLMENT_STORE_PATH", str(tmp_path / "enrollments.json"))
     monkeypatch.setenv("MEASUREMENT_STORE_PATH", str(tmp_path / "measurements.json"))
+    monkeypatch.setenv("MEASUREMENT_OVERALL_STORE_PATH", str(tmp_path / "measurement_overalls.json"))
     monkeypatch.setenv("CHECKPOINT_STORE_PATH", str(tmp_path / "checkpoints.json"))
 
 
@@ -71,8 +72,7 @@ def test_smoke_e2e_full_mvp_flow(monkeypatch, tmp_path: Path) -> None:
             "protocol_id": protocol_id,
             "name": "Consistencia",
             "code": "consistencia",
-            "order_index": 1,
-            "metadata": {"axis_sub": "Rotina"},
+            "order_index": 1
         },
         headers=headers,
     )

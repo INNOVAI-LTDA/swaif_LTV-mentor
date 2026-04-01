@@ -19,6 +19,7 @@ vi.mock("../shared/config/env", () => ({
     apiBaseUrl: "http://localhost:8000",
     httpTimeoutMs: 15000,
     demoModeEnabled: false,
+    internalMentorSurfaceEnabled: false,
     internalMentorDemoEnabled: false
   }
 }));
@@ -37,6 +38,52 @@ vi.mock("../domain/adapters/commandCenterAdapter", () => ({
 const refreshMock = vi.fn();
 
 vi.mock("../domain/hooks/useCommandCenter", () => ({
+  useCommandCenterStudentCollection: () => ({
+    data: {
+      items: [
+        {
+          id: "stu_1",
+          name: "Aluno 1",
+          initials: "A1",
+          programName: "Mentoria",
+          urgency: "normal",
+          risk: "low",
+          progress: 0.5,
+          engagement: 0.5,
+          ltv: 1000,
+          daysLeft: 30,
+          day: 20,
+          totalDays: 100,
+          d45: true,
+          hormoziScore: 7.2
+        }
+      ],
+      topItems: [
+        {
+          id: "stu_1",
+          name: "Aluno 1",
+          initials: "A1",
+          programName: "Mentoria",
+          urgency: "normal",
+          risk: "low",
+          progress: 0.5,
+          engagement: 0.5,
+          ltv: 1000,
+          daysLeft: 30,
+          day: 20,
+          totalDays: 100,
+          d45: true,
+          hormoziScore: 7.2
+        }
+      ],
+      bottomItems: [],
+      totalStudents: 1,
+      rankingMode: "full"
+    },
+    loading: false,
+    error: null,
+    refresh: refreshMock
+  }),
   useCommandCenterStudents: () => ({
     data: [
       {
@@ -45,10 +92,14 @@ vi.mock("../domain/hooks/useCommandCenter", () => ({
         initials: "A1",
         programName: "Mentoria",
         urgency: "normal",
+        risk: "low",
         progress: 0.5,
         engagement: 0.5,
         ltv: 1000,
         daysLeft: 30,
+        day: 20,
+        totalDays: 100,
+        d45: true,
         hormoziScore: 7.2
       }
     ],

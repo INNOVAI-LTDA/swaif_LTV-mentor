@@ -27,7 +27,7 @@ const { navigateMock, loginMock, loginPreviewMock, logoutMock, retrySessionValid
       brandingIconUrl: "/branding/app-icon.png",
       brandingLogoUrl: "/branding/app-logo.png",
       clientName: "AccMed",
-      internalMentorDemoEnabled: false
+      internalMentorSurfaceEnabled: false
     }
   }));
 
@@ -82,7 +82,7 @@ describe("login page deployment modes", () => {
     authState.sessionRecoveryPending = false;
     authState.user = null;
     authState.canUsePreviewLogin = false;
-    envState.internalMentorDemoEnabled = false;
+    envState.internalMentorSurfaceEnabled = false;
     navigateMock.mockReset();
     loginMock.mockReset();
     loginPreviewMock.mockReset();
@@ -107,7 +107,7 @@ describe("login page deployment modes", () => {
   });
 
   it("mantem apenas a entrada de credenciais mesmo quando a superficie interna local esta habilitada", () => {
-    envState.internalMentorDemoEnabled = true;
+    envState.internalMentorSurfaceEnabled = true;
 
     renderLoginPage();
 

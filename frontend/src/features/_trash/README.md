@@ -1,0 +1,1 @@
+This folder is a temporary holding area for deleted features. If you need to restore any files, check here before permanent removal.

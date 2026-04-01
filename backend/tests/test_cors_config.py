@@ -34,6 +34,18 @@ def test_local_defaults_include_vite_preview_port(monkeypatch) -> None:
     assert "http://127.0.0.1:4173" in origins
 
 
+def test_local_defaults_include_active_vite_dev_ports(monkeypatch) -> None:
+    monkeypatch.delenv("CORS_ALLOW_ORIGINS", raising=False)
+    monkeypatch.setenv("APP_ENV", "local")
+
+    origins = resolve_cors_origins()
+
+    assert "http://localhost:5175" in origins
+    assert "http://127.0.0.1:5175" in origins
+    assert "http://localhost:5176" in origins
+    assert "http://127.0.0.1:5176" in origins
+
+
 def test_resolve_cors_origins_requires_explicit_origins_in_production_like_env(monkeypatch) -> None:
     monkeypatch.delenv("CORS_ALLOW_ORIGINS", raising=False)
     monkeypatch.setenv("APP_ENV", "prod")

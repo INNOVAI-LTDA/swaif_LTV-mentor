@@ -1,9 +1,10 @@
 import type {
+  CommandCenterStudentListPayloadDto,
   CommandCenterStudentDetailDto,
   CommandCenterStudentListItemDto,
   CommandCenterTimelineAnomaliesDto
 } from "../../contracts/commandCenter";
-import type { StudentDetail, StudentListItem, TimelineAnomalies } from "../models";
+import type { CommandCenterStudentCollection, StudentDetail, StudentListItem, TimelineAnomalies } from "../models";
 import { coerceNumber, normalizePerson, normalizeProgramName, normalizeRisk, normalizeUrgency } from "./domainAdapter";
 
 export function adaptCommandCenterListItem(raw: CommandCenterStudentListItemDto): StudentListItem {
@@ -29,10 +30,73 @@ export function adaptCommandCenterListItem(raw: CommandCenterStudentListItemDto)
 }
 
 export function adaptCommandCenterListPayload(payload: unknown): StudentListItem[] {
-  if (!Array.isArray(payload)) {
+  if (Array.isArray(payload)) {
+    return payload.map((item) => adaptCommandCenterListItem(item as CommandCenterStudentListItemDto));
+  }
+  if (!payload || typeof payload !== "object") {
     return [];
   }
-  return payload.map((item) => adaptCommandCenterListItem(item as CommandCenterStudentListItemDto));
+  const dto = payload as CommandCenterStudentListPayloadDto;
+  if (!Array.isArray(dto.items)) {
+    return [];
+  }
+  return dto.items.map((item) => adaptCommandCenterListItem(item));
+}
+
+export function adaptCommandCenterCollection(payload: unknown): CommandCenterStudentCollection {
+  if (Array.isArray(payload)) {
+    const items = payload.map((item) => adaptCommandCenterListItem(item as CommandCenterStudentListItemDto));
+    return {
+      items,
+      topItems: items,
+      bottomItems: [],
+      totalStudents: items.length,
+      rankingMode: "full",
+      context: {
+        mentorName: "",
+        mentorId: "",
+        protocolName: "",
+        protocolId: ""
+      }
+    };
+  }
+
+  if (!payload || typeof payload !== "object") {
+    return {
+      items: [],
+      topItems: [],
+      bottomItems: [],
+      totalStudents: 0,
+      rankingMode: "full",
+      context: {
+        mentorName: "",
+        mentorId: "",
+        protocolName: "",
+        protocolId: ""
+      }
+    };
+  }
+
+  const dto = payload as CommandCenterStudentListPayloadDto;
+  const items = Array.isArray(dto.items) ? dto.items.map((item) => adaptCommandCenterListItem(item)) : [];
+  const topItems = Array.isArray(dto.topItems) ? dto.topItems.map((item) => adaptCommandCenterListItem(item)) : items;
+  const bottomItems = Array.isArray(dto.bottomItems)
+    ? dto.bottomItems.map((item) => adaptCommandCenterListItem(item))
+    : [];
+
+  return {
+    items,
+    topItems,
+    bottomItems,
+    totalStudents: coerceNumber(dto.totalStudents ?? items.length),
+    rankingMode: dto.rankingMode === "top_bottom" ? "top_bottom" : "full",
+    context: {
+      mentorName: String(dto.context?.mentorName ?? ""),
+      mentorId: String(dto.context?.mentorId ?? ""),
+      protocolName: String(dto.context?.protocolName ?? ""),
+      protocolId: String(dto.context?.protocolId ?? "")
+    }
+  };
 }
 
 export function adaptCommandCenterDetail(payload: unknown): StudentDetail | null {

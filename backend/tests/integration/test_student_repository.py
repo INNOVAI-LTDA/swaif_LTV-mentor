@@ -12,6 +12,20 @@ def test_student_repository_creates_student_with_cpf(tmp_path) -> None:
     assert repo.get_by_id("std_1") is not None
 
 
+def test_student_repository_creates_student_with_enrollment_dates(tmp_path) -> None:
+    repo = StudentRepository(tmp_path / "students.json")
+
+    created = repo.create(
+        full_name="Aluno Dois",
+        cpf="123.456.789-01",
+        start_enrollment_date="2025-01-15",
+        end_enrollment_date="2026-01-15",
+    )
+
+    assert created["start_enrollment_date"] == "2025-01-15"
+    assert created["end_enrollment_date"] == "2026-01-15"
+
+
 def test_student_repository_rejects_duplicate_cpf(tmp_path) -> None:
     repo = StudentRepository(tmp_path / "students.json")
     repo.create(full_name="Aluno Um", cpf="12345678900", email="aluno1@swaif.local")

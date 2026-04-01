@@ -80,6 +80,8 @@ class StudentRepository:
         cpf: str | None = None,
         phone: str | None = None,
         notes: str | None = None,
+        start_enrollment_date: str | None = None,
+        end_enrollment_date: str | None = None,
     ) -> dict[str, Any]:
         items = self._read_items()
         normalized_email = email.strip().lower() if email else None
@@ -99,6 +101,8 @@ class StudentRepository:
             "cpf": normalized_cpf,
             "phone": phone.strip() if phone else None,
             "notes": notes.strip() if notes else None,
+            "start_enrollment_date": start_enrollment_date.strip() if start_enrollment_date else None,
+            "end_enrollment_date": end_enrollment_date.strip() if end_enrollment_date else None,
             "status": "active",
             "is_active": True,
             "created_at": now,

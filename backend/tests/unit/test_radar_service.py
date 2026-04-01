@@ -34,8 +34,8 @@ class _FakeMetricRepository:
 class _FakePillarRepository:
     def __init__(self) -> None:
         self.items = {
-            "plr_1": {"id": "plr_1", "name": "Compromisso", "code": "compromisso", "order_index": 1, "metadata": {"axis_sub": "Sub 1"}},
-            "plr_2": {"id": "plr_2", "name": "Evolucao", "code": "evolucao", "order_index": 2, "metadata": {"axis_sub": "Sub 2"}},
+            "plr_1": {"id": "plr_1", "name": "Compromisso", "code": "compromisso", "order_index": 1},
+            "plr_2": {"id": "plr_2", "name": "Evolucao", "code": "evolucao", "order_index": 2},
         }
 
     def get_by_id(self, pillar_id: str):

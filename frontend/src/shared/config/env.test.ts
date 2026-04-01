@@ -64,14 +64,14 @@ describe("shared env config", () => {
     vi.stubEnv("VITE_API_BASE_URL", "https://api.example.com/");
     vi.stubEnv("VITE_APP_BASE_PATH", "/cliente");
     vi.stubEnv("VITE_ENABLE_DEMO_MODE", "true");
-    vi.stubEnv("VITE_ENABLE_INTERNAL_MENTOR_DEMO", "true");
+    vi.stubEnv("VITE_ENABLE_INTERNAL_MENTOR_SURFACE", "true");
     vi.stubEnv("VITE_THEME_ACCENT_PRIMARY", "#123456");
     vi.stubEnv("VITE_CLIENT_CODE", "cliente-123");
 
     const { env } = await importEnvModule();
 
     expect(env.demoModeEnabled).toBe(false);
-    expect(env.internalMentorDemoEnabled).toBe(false);
+    expect(env.internalMentorSurfaceEnabled).toBe(false);
     expect(env.deployTarget).toBe("client");
     expect(env.apiBaseUrl).toBe("https://api.example.com");
     expect(env.brandingLogoUrl).toBe("/cliente/branding/app-logo.png");
@@ -81,11 +81,11 @@ describe("shared env config", () => {
 
   it("mantem a superficie interna de mentor apenas em deploy local explicito", async () => {
     vi.stubEnv("VITE_DEPLOY_TARGET", "local");
-    vi.stubEnv("VITE_ENABLE_INTERNAL_MENTOR_DEMO", "true");
+    vi.stubEnv("VITE_ENABLE_INTERNAL_MENTOR_SURFACE", "true");
 
     const { env } = await importEnvModule();
 
-    expect(env.internalMentorDemoEnabled).toBe(true);
+    expect(env.internalMentorSurfaceEnabled).toBe(true);
   });
 
   it("permite clientCode opcional em deploy local mas valida quando presente", async () => {

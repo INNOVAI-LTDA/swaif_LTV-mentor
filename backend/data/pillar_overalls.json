@@ -1,0 +1,41 @@
+{
+    "version": 1,
+    "items": [
+        {
+            "id": "po_1",
+            "enrollment_id": "enr_1",
+            "pillar_id": "plr_1",
+            "value_baseline": 70,
+            "value_current": 80,
+            "value_projected": 85,
+            "improving_trend": true
+        },
+        {
+            "id": "po_2",
+            "enrollment_id": "enr_1",
+            "pillar_id": "plr_2",
+            "value_baseline": 65,
+            "value_current": 75,
+            "value_projected": 80,
+            "improving_trend": true
+        },
+        {
+            "id": "po_3",
+            "enrollment_id": "enr_2",
+            "pillar_id": "plr_1",
+            "value_baseline": 60,
+            "value_current": 70,
+            "value_projected": 75,
+            "improving_trend": true
+        },
+        {
+            "id": "po_4",
+            "enrollment_id": "enr_2",
+            "pillar_id": "plr_2",
+            "value_baseline": 55,
+            "value_current": 65,
+            "value_projected": 70,
+            "improving_trend": true
+        }
+    ]
+}

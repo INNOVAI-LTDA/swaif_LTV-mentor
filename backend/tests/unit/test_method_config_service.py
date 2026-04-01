@@ -78,7 +78,13 @@ class _FakeMetricRepository:
         code: str | None = None,
         direction: str = "higher_better",
         unit: str | None = None,
-        metadata: dict | None = None,
+        # metadata: dict | None = None,  # removed
+        scoring_rules=None,
+        score_type=None,
+        min_score=None,
+        max_score=None,
+        mcv_score=None,
+        max_basis_score=None,
     ) -> dict:
         self._seq += 1
         metric = {
@@ -89,8 +95,13 @@ class _FakeMetricRepository:
             "code": code or f"metric-{self._seq}",
             "direction": direction,
             "unit": unit,
-            "metadata": metadata or {},
             "is_active": True,
+            "scoring_rules": scoring_rules or [{"type": "static", "score": 1}],
+            "score_type": score_type or "static",
+            "min_score": min_score if min_score is not None else 0,
+            "max_score": max_score if max_score is not None else 1,
+            "mcv_score": mcv_score if mcv_score is not None else 1,
+            "max_basis_score": max_basis_score if max_basis_score is not None else 1,
         }
         self.items[metric["id"]] = metric
         return metric

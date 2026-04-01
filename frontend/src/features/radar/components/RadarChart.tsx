@@ -3,7 +3,6 @@ type RadarPoint = {
   baseline: number;
   current: number;
   projected: number;
-  active: number;
 };
 
 type RadarChartProps = {
@@ -54,12 +53,9 @@ export function RadarChart({ points, title }: RadarChartProps) {
   const baseline = points.map((axis) => axis.baseline);
   const current = points.map((axis) => axis.current);
   const projected = points.map((axis) => axis.projected);
-  const active = points.map((axis) => axis.active);
-
-  const baselinePath = polygonPath(baseline, 100, radius, center, center);
-  const currentPath = polygonPath(current, 100, radius, center, center);
-  const projectedPath = polygonPath(projected, 100, radius, center, center);
-  const activePath = polygonPath(active, 100, radius, center, center);
+  const baselinePath = polygonPath(baseline, 1, radius, center, center);
+  const currentPath = polygonPath(current, 1, radius, center, center);
+  const projectedPath = polygonPath(projected, 1, radius, center, center);
 
   return (
     <figure className="radar-chart">
@@ -70,7 +66,7 @@ export function RadarChart({ points, title }: RadarChartProps) {
             <stop offset="0%" stopColor="#7f8ea2" stopOpacity="0.24" />
             <stop offset="100%" stopColor="#7f8ea2" stopOpacity="0.04" />
           </linearGradient>
-          <linearGradient id="radarActive" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="radarCurrent" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#f7b955" stopOpacity="0.50" />
             <stop offset="100%" stopColor="#f78f47" stopOpacity="0.14" />
           </linearGradient>
@@ -118,9 +114,8 @@ export function RadarChart({ points, title }: RadarChartProps) {
         })}
 
         <path d={baselinePath} fill="url(#radarBaseline)" stroke="#9da9ba" strokeWidth={1.6} />
-        <path d={currentPath} fill="none" stroke="#7cc8f8" strokeWidth={2} strokeDasharray="4 4" />
         <path d={projectedPath} fill="none" stroke="#8df2c6" strokeWidth={1.8} strokeDasharray="8 6" />
-        <path d={activePath} fill="url(#radarActive)" stroke="#ffcb6b" strokeWidth={2.4} />
+        <path d={currentPath} fill="url(#radarCurrent)" stroke="#ffcb6b" strokeWidth={2.4} />
       </svg>
     </figure>
   );

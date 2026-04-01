@@ -10,10 +10,17 @@ import "../matrix.css";
 
 const FILTER_OPTIONS: Array<{ value: MatrixFilter; label: string }> = [
   { value: "all", label: "Todos" },
-  { value: "topRight", label: "Renovar" },
   { value: "critical", label: "D-45" },
-  { value: "rescue", label: "Resgate" }
 ];
+
+const DENSITY_OPTIONS = [
+  { value: 5, label: "5 por quadrante" },
+  { value: 10, label: "10 por quadrante" },
+  { value: 20, label: "20 por quadrante" },
+  { value: "all", label: "Todos" },
+] as const;
+
+type BubbleDensity = (typeof DENSITY_OPTIONS)[number]["value"];
 
 const URGENCY_LABEL: Record<Urgency, string> = {
   normal: "Estável",
@@ -47,26 +54,65 @@ function markerValue(value: string | number) {
 
 export function MatrixPage() {
   const [filter, setFilter] = useState<MatrixFilter>("all");
+  const [density, setDensity] = useState<BubbleDensity>(10);
   const resource = useRenewalMatrix(filter);
   const items = resource.data.items;
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  const visibleItems = useMemo(() => {
+    if (density === "all") {
+      return items;
+    }
+
+    const byQuadrant = {
+      topRight: [] as MatrixItem[],
+      topLeft: [] as MatrixItem[],
+      bottomRight: [] as MatrixItem[],
+      bottomLeft: [] as MatrixItem[],
+    };
+
+    for (const item of items) {
+      byQuadrant[item.quadrant].push(item);
+    }
+
+    return [
+      ...byQuadrant.topRight.slice(0, density),
+      ...byQuadrant.topLeft.slice(0, density),
+      ...byQuadrant.bottomRight.slice(0, density),
+      ...byQuadrant.bottomLeft.slice(0, density),
+    ];
+  }, [density, items]);
+
   useEffect(() => {
-    if (items.length === 0) {
+    if (selectedId && !visibleItems.some((item) => item.id === selectedId)) {
       setSelectedId(null);
-      return;
     }
-    if (!selectedId || !items.some((item) => item.id === selectedId)) {
-      setSelectedId(items[0].id);
+  }, [selectedId, visibleItems]);
+
+  useEffect(() => {
+    if (!selectedId) {
+      return undefined;
     }
-  }, [items, selectedId]);
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      if (target.closest(".mx-bubble") || target.closest(".mx-panel")) {
+        return;
+      }
+      setSelectedId(null);
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [selectedId]);
 
   const selected = useMemo(
-    () => items.find((item) => item.id === selectedId) ?? null,
-    [items, selectedId]
+    () => visibleItems.find((item) => item.id === selectedId) ?? null,
+    [selectedId, visibleItems]
   );
-
-  const sortedItems = useMemo(() => [...items].sort((a, b) => a.daysLeft - b.daysLeft), [items]);
 
   const d45Ltv = useMemo(
     () => items.filter((item) => item.daysLeft <= 45).reduce((sum, item) => sum + item.ltv, 0),
@@ -79,9 +125,15 @@ export function MatrixPage() {
     setSelectedId(item.id);
   }
 
+  const mentorLabel = resource.data.context.mentorName || "Mentor";
+  const protocolLabel = resource.data.context.protocolName || visibleItems[0]?.programName || undefined;
+
   return (
     <MentorShell
       activeView="matrix"
+      brandLabel={mentorLabel}
+      brandTitle={protocolLabel}
+      showSpotlight={false}
       metrics={[
         { label: "Pipeline LTV total", value: formatCurrencyBRL(kpis.totalLTV), tone: "accent" },
         { label: "Renovações críticas D-45", value: String(kpis.criticalRenewals), tone: "warning" },
@@ -103,6 +155,22 @@ export function MatrixPage() {
           ))}
         </section>
 
+        <section className="mx-density-row" aria-label="Quantidade de bolhas por quadrante">
+          <span>Bolhas por quadrante</span>
+          <div className="mx-density-row__actions">
+            {DENSITY_OPTIONS.map((option) => (
+              <button
+                key={String(option.value)}
+                type="button"
+                onClick={() => setDensity(option.value)}
+                className={density === option.value ? "is-active" : ""}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </section>
+
         {resource.loading && items.length === 0 && <p className="mx-state">Carregando matriz...</p>}
         {resource.error && items.length === 0 && (
           <div className="mx-state mx-state--error">
@@ -117,9 +185,9 @@ export function MatrixPage() {
         )}
 
         {items.length > 0 && (
-          <section className="mx-main-grid">
+          <section className={`mx-main-grid ${selected ? "" : "mx-main-grid--solo"}`.trim()}>
             <div>
-              <MatrixBoard items={items} selectedId={selectedId} onSelect={select} />
+              <MatrixBoard items={visibleItems} selectedId={selectedId} onSelect={select} />
 
               <article className="mx-opportunity">
                 <span>Oportunidade em contratos D-45</span>
@@ -128,46 +196,14 @@ export function MatrixPage() {
               </article>
             </div>
 
-            <aside className="mx-side">
-              <section className="mx-panel">
-                <header>
-                  <h2>Painel de ação rápida</h2>
-                  <p>{sortedItems.length} alunos no filtro atual</p>
-                </header>
+            {selected && (
+              <aside className="mx-side">
+                <section className="mx-panel">
+                  <header>
+                    <h2>Contexto de Renovação</h2>
+                    <p>{selected.name}</p>
+                  </header>
 
-                <ul className="mx-quick-list">
-                  {sortedItems.map((item) => (
-                    <li key={item.id}>
-                      <button
-                        type="button"
-                        className={item.id === selectedId ? "is-selected" : ""}
-                        onClick={() => setSelectedId(item.id)}
-                      >
-                        <div>
-                          <strong>{item.name}</strong>
-                          <span>{item.programName || "Programa não informado"}</span>
-                        </div>
-                        <div>
-                          <small>D-{item.daysLeft}</small>
-                          <span className={`mx-urgency mx-urgency--${item.urgency}`}>
-                            {URGENCY_LABEL[item.urgency]}
-                          </span>
-                        </div>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-
-              <section className="mx-panel">
-                <header>
-                  <h2>Contexto de renovação</h2>
-                  <p>{selected ? selected.name : "Sem seleção"}</p>
-                </header>
-
-                {!selected && <p className="mx-state-inline">Selecione um aluno para abrir os detalhes.</p>}
-
-                {selected && (
                   <div className="mx-detail">
                     <div className="mx-detail-kpis">
                       <article>
@@ -223,9 +259,9 @@ export function MatrixPage() {
                       )}
                     </article>
                   </div>
-                )}
-              </section>
-            </aside>
+                </section>
+              </aside>
+            )}
           </section>
         )}
       </section>

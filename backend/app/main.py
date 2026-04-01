@@ -16,13 +16,13 @@ from app.api.routes.admin_method_config import router as admin_method_config_rou
 from app.api.routes.admin_mentoria import router as admin_mentoria_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.health import router as health_router
-from app.api.routes.mentor_demo import router as mentor_demo_router
+from app.api.routes.mentor import router as mentor_router
 from app.config.runtime import (
     get_app_env,
     get_client_code,
     get_cors_allow_origin_regex,
     get_storage_backup_dir,
-    resolve_mentor_demo_route_policy,
+    resolve_mentor_route_policy,
     resolve_cors_origins,
 )
 from app.storage.checkpoint_repository import CheckpointRepository
@@ -59,28 +59,30 @@ def create_app() -> FastAPI:
     cors_origins = resolve_cors_origins()
     cors_origin_regex = get_cors_allow_origin_regex()
     allow_all_origins = "*" in cors_origins
-    mentor_demo_policy = resolve_mentor_demo_route_policy(app_env)
-    mentor_demo_enabled = mentor_demo_policy.enabled
+    mentor_route_policy = resolve_mentor_route_policy(app_env)
+    mentor_routes_enabled = mentor_route_policy.enabled
 
     app.state.runtime_summary = {
         "app_env": app_env,
         "client_code": client_code,
         "cors_origins": cors_origins,
         "cors_origin_regex": cors_origin_regex,
-        "mentor_demo_routes_enabled": mentor_demo_enabled,
-        "mentor_demo_policy_source": mentor_demo_policy.policy_source,
+        "mentor_routes_enabled": mentor_routes_enabled,
+        "mentor_route_policy_source": mentor_route_policy.policy_source,
+        "mentor_demo_routes_enabled": mentor_routes_enabled,
+        "mentor_demo_policy_source": mentor_route_policy.policy_source,
         "storage_root": str(resolve_storage_root()),
         "backup_dir": str(get_storage_backup_dir()),
     }
 
     logger.info(
-        "backend_runtime_configured app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_demo_routes=%s mentor_demo_policy=%s storage_root=%s backup_dir=%s",
+        "backend_runtime_configured app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_routes=%s mentor_route_policy=%s storage_root=%s backup_dir=%s",
         app.state.runtime_summary["app_env"],
         app.state.runtime_summary["client_code"],
         ",".join(app.state.runtime_summary["cors_origins"]),
         app.state.runtime_summary["cors_origin_regex"] or "none",
-        app.state.runtime_summary["mentor_demo_routes_enabled"],
-        app.state.runtime_summary["mentor_demo_policy_source"],
+        app.state.runtime_summary["mentor_routes_enabled"],
+        app.state.runtime_summary["mentor_route_policy_source"],
         app.state.runtime_summary["storage_root"],
         app.state.runtime_summary["backup_dir"],
     )
@@ -105,8 +107,8 @@ def create_app() -> FastAPI:
     app.include_router(admin_mentoria_router)
     app.include_router(admin_method_config_router)
     app.include_router(admin_students_router)
-    if mentor_demo_enabled:
-        app.include_router(mentor_demo_router)
+    if mentor_routes_enabled:
+        app.include_router(mentor_router)
     return app
 
 
@@ -129,17 +131,17 @@ def bootstrap_user_storage() -> None:
 
     summary = app.state.runtime_summary
     logger.info(
-        "backend_startup_complete app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_demo_routes=%s mentor_demo_policy=%s storage_root=%s backup_dir=%s",
+        "backend_startup_complete app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_routes=%s mentor_route_policy=%s storage_root=%s backup_dir=%s",
         summary["app_env"],
         summary["client_code"],
         ",".join(summary["cors_origins"]),
         summary["cors_origin_regex"] or "none",
-        summary["mentor_demo_routes_enabled"],
-        summary["mentor_demo_policy_source"],
+        summary["mentor_routes_enabled"],
+        summary["mentor_route_policy_source"],
         summary["storage_root"],
         summary["backup_dir"],
     )
-    if summary["mentor_demo_routes_enabled"]:
+    if summary["mentor_routes_enabled"]:
         logger.warning(
-            "mentor_demo_routes_enabled=true; keep this restricted to local/demo validation environments."
+            "mentor_routes_enabled=true; keep this restricted to local-only validation environments."
         )

@@ -52,13 +52,21 @@ class _FakeMetricRepository:
         if any(item["pillar_id"] == payload["pillar_id"] and item["code"] == final_code for item in self.items):
             raise ValueError("metric code already exists in pillar")
 
+        # Remove legacy metadata, add new fields if not present
         item = {
             "id": f"met_{len(self.items) + 1}",
             "code": final_code,
             "is_active": True,
-            "metadata": {},
             **payload,
         }
+        item.pop("metadata", None)
+        # Add required new fields with dummy values if missing
+        item.setdefault("scoring_rules", [{"type": "static", "score": 1}])
+        item.setdefault("score_type", "static")
+        item.setdefault("min_score", 0)
+        item.setdefault("max_score", 1)
+        item.setdefault("mcv_score", 1)
+        item.setdefault("max_basis_score", 1)
         self.items.append(item)
         return item
 

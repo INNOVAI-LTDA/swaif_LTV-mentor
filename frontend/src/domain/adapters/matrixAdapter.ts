@@ -4,6 +4,16 @@ import { coerceNumber, normalizePerson, normalizeProgramName, normalizeUrgency }
 
 const ALLOWED_FILTERS: MatrixFilter[] = ["all", "topRight", "critical", "rescue"];
 
+function normalizeMatrixScore(value: number) {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+  if (value > 1) {
+    return Math.max(0, Math.min(1, value / 100));
+  }
+  return Math.max(0, Math.min(1, value));
+}
+
 export function normalizeMatrixFilter(filter: string): MatrixFilter {
   if (ALLOWED_FILTERS.includes(filter as MatrixFilter)) {
     return filter as MatrixFilter;
@@ -21,13 +31,16 @@ export function matrixQuadrant(item: { progress: number; engagement: number; qua
     return item.quadrant;
   }
 
-  if (item.progress >= 0.6 && item.engagement >= 0.6) {
+  if (item.progress >= 0.7 && item.engagement >= 0.7) {
     return "topRight";
   }
-  if (item.progress < 0.6 && item.engagement >= 0.6) {
+  if (item.progress < 0.3 && item.engagement < 0.3) {
+    return "bottomLeft";
+  }
+  if (item.progress < 0.7 && item.engagement >= 0.7) {
     return "topLeft";
   }
-  if (item.progress >= 0.6 && item.engagement < 0.6) {
+  if (item.progress >= 0.7 && item.engagement < 0.7) {
     return "bottomRight";
   }
   return "bottomLeft";
@@ -42,8 +55,8 @@ export function adaptMatrixPayload(payload: unknown): MatrixPayload {
     items: items.map((item) => {
       const person = normalizePerson(item as unknown as Record<string, unknown>);
       const programName = normalizeProgramName(item as unknown as Record<string, unknown>);
-      const progress = coerceNumber(item.progress);
-      const engagement = coerceNumber(item.engagement);
+      const progress = normalizeMatrixScore(coerceNumber(item.progress));
+      const engagement = normalizeMatrixScore(coerceNumber(item.engagement));
       return {
         id: person.id,
         name: person.name,
@@ -58,15 +71,15 @@ export function adaptMatrixPayload(payload: unknown): MatrixPayload {
         suggestion: String(item.suggestion ?? ""),
         markers: Array.isArray(item.markers)
           ? item.markers.map((marker) => ({
-              label: String(marker.label ?? ""),
-              value: marker.value ?? "",
-              target: marker.target ?? "",
-              pct: coerceNumber(marker.pct),
-              improving:
-                marker.improving === undefined || marker.improving === null
-                  ? null
-                  : Boolean(marker.improving)
-            }))
+            label: String(marker.label ?? ""),
+            value: marker.value ?? "",
+            target: marker.target ?? "",
+            pct: coerceNumber(marker.pct),
+            improving:
+              marker.improving === undefined || marker.improving === null
+                ? null
+                : Boolean(marker.improving)
+          }))
           : [],
         quadrant: matrixQuadrant({
           progress,
@@ -80,6 +93,12 @@ export function adaptMatrixPayload(payload: unknown): MatrixPayload {
       criticalRenewals: coerceNumber(dto.kpis?.criticalRenewals),
       rescueCount: coerceNumber(dto.kpis?.rescueCount),
       avgEngagement: coerceNumber(dto.kpis?.avgEngagement)
+    },
+    context: {
+      mentorName: String(dto.context?.mentorName ?? ""),
+      mentorId: String(dto.context?.mentorId ?? ""),
+      protocolName: String(dto.context?.protocolName ?? ""),
+      protocolId: String(dto.context?.protocolId ?? "")
     }
   };
 }

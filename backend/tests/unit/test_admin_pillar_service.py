@@ -51,9 +51,9 @@ class _FakePillarRepository:
         item = {
             "id": f"plr_{len(self.items) + 1}",
             "is_active": True,
-            "metadata": {},
             **payload,
         }
+        item.pop("metadata", None)
         item["code"] = (payload.get("code") or payload["name"]).strip().lower().replace(" ", "-")
         self.items.append(item)
         return item

@@ -71,7 +71,12 @@ class MetricRepository:
         code: str | None = None,
         direction: str = "higher_better",
         unit: str | None = None,
-        metadata: dict | None = None,
+        scoring_rules: list[dict] | None = None,
+        score_type: str | None = None,
+        min_score: int | None = None,
+        max_score: int | None = None,
+        mcv_score: int | None = None,
+        max_basis_score: str | None = None,
     ) -> dict[str, Any]:
         items = self._read_items()
         final_code = _slugify(code or name)
@@ -87,7 +92,12 @@ class MetricRepository:
             "code": final_code,
             "direction": direction,
             "unit": unit,
-            "metadata": metadata or {},
+            "scoring_rules": scoring_rules or [],
+            "score_type": score_type,
+            "min_score": min_score,
+            "max_score": max_score,
+            "mcv_score": mcv_score,
+            "max_basis_score": max_basis_score,
             "is_active": True,
         }
         items.append(metric)

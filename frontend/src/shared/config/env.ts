@@ -28,7 +28,9 @@ const routerBasePath = appBasePath === "/" ? "/" : appBasePath.replace(/\/$/, ""
 const deployTarget = normalizeDeployTarget(import.meta.env.VITE_DEPLOY_TARGET);
 const isLocalDeployTarget = deployTarget === "local";
 const demoModeEnabled = isLocalDeployTarget && parseBoolean(import.meta.env.VITE_ENABLE_DEMO_MODE);
-const internalMentorDemoEnabled = isLocalDeployTarget && parseBoolean(import.meta.env.VITE_ENABLE_INTERNAL_MENTOR_DEMO);
+const internalMentorSurfaceEnabled =
+  isLocalDeployTarget &&
+  parseBoolean(import.meta.env.VITE_ENABLE_INTERNAL_MENTOR_SURFACE || import.meta.env.VITE_ENABLE_INTERNAL_MENTOR_DEMO);
 const clientCode = normalizeClientCode(import.meta.env.VITE_CLIENT_CODE, deployTarget);
 const clientName = parseText(import.meta.env.VITE_CLIENT_NAME, "Cliente");
 const appName = parseText(import.meta.env.VITE_APP_NAME, "Plataforma de Mentoria");
@@ -60,7 +62,8 @@ export const env = {
   apiBaseUrl: normalizeApiBaseUrl(import.meta.env.VITE_API_BASE_URL, deployTarget),
   httpTimeoutMs: parseTimeout(import.meta.env.VITE_HTTP_TIMEOUT_MS, 15000),
   demoModeEnabled,
-  internalMentorDemoEnabled,
+  internalMentorSurfaceEnabled,
+  internalMentorDemoEnabled: internalMentorSurfaceEnabled,
   clientCode,
   clientName,
   appName,

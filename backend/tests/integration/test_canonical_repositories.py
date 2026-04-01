@@ -90,7 +90,13 @@ def test_canonical_repositories_map_protocol_structure_into_product_pillars_and_
         name="NPS",
         code="nps",
         direction="higher_better",
-        unit="pts",
+        unit="%",
+        scoring_rules=[{"type": "static", "score": 1}],
+        score_type="static",
+        min_score=0,
+        max_score=1,
+        mcv_score=1,
+        max_basis_score=1,
     )
 
     product_pillars = CanonicalProductPillarRepository(protocol_repo, pillar_repo).list_records()

@@ -59,7 +59,17 @@ class _FakeEnrollmentRepository:
 
 class _FakeMetricRepository:
     def get_by_id(self, metric_id: str):
-        return {"id": metric_id, "name": "Metrica", "unit": "%", "metadata": {}}
+        return {
+            "id": metric_id,
+            "name": "Metrica",
+            "unit": "%",
+            "scoring_rules": [{"type": "static", "score": 1}],
+            "score_type": "static",
+            "min_score": 0,
+            "max_score": 1,
+            "mcv_score": 1,
+            "max_basis_score": 1,
+        }
 
 
 class _FakeMeasurementRepository:

@@ -19,7 +19,12 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+
 class EnrollmentRepository:
+    def delete_all(self) -> None:
+        """Remove all enrollments from the store."""
+        self._write_items([])
+
     def __init__(self, file_path: str | Path | None = None) -> None:
         self._store = JsonRepository(file_path or default_enrollment_store_path())
         if not self._store.file_path.exists():

@@ -1,53 +1,54 @@
+
 import type { ReactNode } from "react";
 import { Link, NavLink, useLocation, useSearchParams } from "react-router-dom";
 import "../mentor-shell.css";
 import { env } from "../../../shared/config/env";
+import { useMentorProducts } from "../hooks/useMentorProducts";
 
 type MentorShellProps = {
   activeView: "matrix" | "command-center" | "radar";
   eyebrow?: string;
   title?: string;
   description?: string;
+  brandLabel?: string;
+  brandTitle?: string;
   actions?: ReactNode;
   metrics?: Array<{ label: string; value: string; tone?: "neutral" | "accent" | "success" | "warning" }>;
+  showSpotlight?: boolean;
   children: ReactNode;
 };
 
 const MAIN_NAV = [
-  { key: "matrix", label: "Matriz de Decisao", to: "/app/matriz-renovacao" },
+  { key: "matrix", label: "Matriz de Decisão", to: "/app/matriz-renovacao" },
   { key: "command-center", label: "Centro de Comando", to: "/app/centro-comando" },
-  { key: "radar", label: "Radar de Evolucao", to: "/app/radar" }
+  { key: "radar", label: "Radar de Evolução", to: "/app/radar" }
 ] as const;
 
 const SUPPORT_PANELS = {
   produtos: {
     label: "Produtos",
-    title: "Portfolio acompanhado",
+    title: "Portfólio acompanhado",
     description: "Resumo dos programas e estruturas atualmente vinculados ao acompanhamento do mentor.",
-    items: [
-      { title: "Programa principal", meta: "Carteira ativa", detail: "Leitura executiva conectada a centro, radar e matriz." },
-      { title: "Mentor responsavel", meta: "Conta autenticada", detail: "Contexto operacional da carteira vinculada ao acesso atual." },
-      { title: "Pilares e metricas", meta: "Estrutura do metodo", detail: "Base usada para acompanhamento, evolucao e recorrencia." }
-    ]
+    items: []
   },
   alunos: {
     label: "Alunos",
     title: "Carteira do mentor",
-    description: "Distribuicao atual da carteira para leitura de decisao, risco e oportunidade.",
+    description: "Distribuição atual da carteira para leitura de decisão, risco e oportunidade.",
     items: [
-      { title: "Renovacoes prioritarias", meta: "Quadrante superior direito", detail: "Base forte para continuidade e ampliacao de contrato." },
-      { title: "Aderencia alta", meta: "Quadrante superior esquerdo", detail: "Engajamento bom, com progresso ainda abaixo do ideal." },
-      { title: "Watch e resgate", meta: "Quadrantes inferiores", detail: "Espaco claro para acao consultiva e narrativa de recuperacao." }
+      { title: "Renovações prioritárias", meta: "Quadrante superior direito", detail: "Base forte para continuidade e ampliação de contrato." },
+      { title: "Aderência alta", meta: "Quadrante superior esquerdo", detail: "Engajamento bom, com progresso ainda abaixo do ideal." },
+      { title: "Watch e resgate", meta: "Quadrantes inferiores", detail: "Espaço claro para ação consultiva e narrativa de recuperação." }
     ]
   },
   usuario: {
-    label: "Usuario",
+    label: "Usuário",
     title: "Contexto do mentor",
     description: "Resumo do acesso autenticado e do recorte operacional associado a ele.",
     items: [
       { title: "Acesso autenticado", meta: "Conta do mentor", detail: "A carteira apresentada respeita o contexto do acesso atual." },
-      { title: "Visoes integradas", meta: "Centro, Radar e Matriz", detail: "Leitura coerente entre operacao, evolucao e decisao." },
-      { title: "Escopo protegido", meta: "Admin preservado", detail: "As superficies administrativas seguem separadas do fluxo do mentor." }
+      { title: "Visões integradas", meta: "Centro, Radar e Matriz", detail: "Leitura coerente entre operação, evolução e decisão." },
+      { title: "Escopo protegido", meta: "Admin preservado", detail: "As superfícies administrativas seguem separadas do fluxo do mentor." }
     ]
   }
 } as const;
@@ -58,7 +59,47 @@ function isSupportPanel(value: string | null): value is SupportPanelKey {
   return value === "produtos" || value === "alunos" || value === "usuario";
 }
 
-export function MentorShell({ activeView, eyebrow, title, description, actions, metrics = [], children }: MentorShellProps) {
+function MentorProductsPanel({ label, title, description }: { label: string; title: string; description: string }) {
+  const { products, loading, error } = useMentorProducts();
+
+  return (
+    <>
+      <p className="mentor-rail__eyebrow">{label}</p>
+      <h2>{title}</h2>
+      <p className="mentor-rail__description">{description}</p>
+      {loading ? (
+        <div className="mentor-rail__list"><em>Carregando produtos...</em></div>
+      ) : error ? (
+        <div className="mentor-rail__list"><em style={{ color: "#c00" }}>{error}</em></div>
+      ) : products.length === 0 ? (
+        <div className="mentor-rail__list"><em>Nenhum produto encontrado.</em></div>
+      ) : (
+        <ul className="mentor-rail__list">
+          {products.map((product) => (
+            <li key={product.id}>
+              <strong>{product.name}</strong>
+              <span>{product.code}</span>
+              <small>{typeof product.metadata?.narrative === "string" ? product.metadata.narrative : ""}</small>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
+
+export function MentorShell({
+  activeView,
+  eyebrow,
+  title,
+  description,
+  brandLabel = "Mentor",
+  brandTitle = env.clientName,
+  actions,
+  metrics = [],
+  showSpotlight = true,
+  children,
+}: MentorShellProps) {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const searchPanel = searchParams.get("panel");
@@ -74,14 +115,14 @@ export function MentorShell({ activeView, eyebrow, title, description, actions, 
           <div className="mentor-sidebar__brand">
             <img src={env.brandingIconUrl} alt="" aria-hidden="true" />
             <div>
-              <p>Mentor</p>
-              <strong>{env.clientName}</strong>
+              <p>{brandLabel}</p>
+              <strong>{brandTitle}</strong>
             </div>
           </div>
 
           <div className="mentor-sidebar__block">
-            <span className="mentor-sidebar__label">Visoes principais</span>
-            <nav className="mentor-sidebar__nav" aria-label="Navegacao do mentor">
+            <span className="mentor-sidebar__label">Visões principais</span>
+            <nav className="mentor-sidebar__nav" aria-label="Navegação do mentor">
               {MAIN_NAV.map((item) => (
                 <NavLink
                   key={item.key}
@@ -95,7 +136,7 @@ export function MentorShell({ activeView, eyebrow, title, description, actions, 
           </div>
 
           <div className="mentor-sidebar__block">
-            <span className="mentor-sidebar__label">Areas de Apoio</span>
+            <span className="mentor-sidebar__label">Áreas de Apoio</span>
             <div className="mentor-sidebar__nav mentor-sidebar__nav--secondary">
               {(Object.keys(SUPPORT_PANELS) as SupportPanelKey[]).map((key) => (
                 <Link
@@ -109,11 +150,13 @@ export function MentorShell({ activeView, eyebrow, title, description, actions, 
             </div>
           </div>
 
-          <div className="mentor-sidebar__spotlight">
-            <span className="mentor-sidebar__label">Leitura da carteira</span>
-            <strong>Visao executiva com foco em renovacao, resgate e crescimento da carteira.</strong>
-            <p>Leitura operacional voltada a acompanhamento, priorizacao e sustentacao da carteira.</p>
-          </div>
+          {showSpotlight ? (
+            <div className="mentor-sidebar__spotlight">
+              <span className="mentor-sidebar__label">Leitura da carteira</span>
+              <strong>Visão executiva com foco em renovação, resgate e crescimento da carteira.</strong>
+              <p>Leitura operacional voltada a acompanhamento, priorização e sustentação da carteira.</p>
+            </div>
+          ) : null}
         </aside>
 
         <div className="mentor-main">
@@ -151,7 +194,9 @@ export function MentorShell({ activeView, eyebrow, title, description, actions, 
 
         <aside className={panel ? "mentor-rail is-open" : "mentor-rail"}>
           <div className={panel ? "mentor-rail__panel is-open" : "mentor-rail__panel"}>
-            {panel && (
+            {panelKey === "produtos" ? (
+              <MentorProductsPanel label={SUPPORT_PANELS.produtos.label} title={SUPPORT_PANELS.produtos.title} description={SUPPORT_PANELS.produtos.description} />
+            ) : panel ? (
               <>
                 <p className="mentor-rail__eyebrow">{panel.label}</p>
                 <h2>{panel.title}</h2>
@@ -166,7 +211,7 @@ export function MentorShell({ activeView, eyebrow, title, description, actions, 
                   ))}
                 </ul>
               </>
-            )}
+            ) : null}
           </div>
         </aside>
       </div>

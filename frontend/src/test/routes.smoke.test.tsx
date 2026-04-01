@@ -11,7 +11,7 @@ const { authState, envState } = vi.hoisted(() => ({
   },
   envState: {
     routerBasePath: "/",
-    internalMentorDemoEnabled: false
+    internalMentorSurfaceEnabled: false
   }
 }));
 
@@ -61,10 +61,6 @@ vi.mock("../pages/AccessDeniedPage", () => ({
   AccessDeniedPage: () => <h1>Acesso negado</h1>
 }));
 
-vi.mock("../features/hub/pages/HubPage", () => ({
-  HubPage: () => <h1>Hub</h1>
-}));
-
 vi.mock("../features/command-center/pages/CommandCenterPage", () => ({
   CommandCenterPage: () => <h1>Centro de comando</h1>
 }));
@@ -102,7 +98,7 @@ describe("app routes", () => {
     authState.accessToken = null;
     authState.isAuthenticated = false;
     authState.user = null;
-    envState.internalMentorDemoEnabled = false;
+    envState.internalMentorSurfaceEnabled = false;
   });
 
   it("renderiza a pagina de login", () => {

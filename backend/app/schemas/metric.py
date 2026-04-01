@@ -15,7 +15,12 @@ class MetricCreate(BaseModel):
     code: str | None = None
     direction: MetricDirection = "higher_better"
     unit: str | None = None
-    metadata: dict | None = None
+    scoring_rules: list[dict] | None = None
+    score_type: str | None = None
+    min_score: int | None = None
+    max_score: int | None = None
+    mcv_score: int | None = None
+    max_basis_score: str | None = None
 
 
 class AdminMetricCreate(BaseModel):
@@ -33,7 +38,12 @@ class MetricOut(BaseModel):
     code: str
     direction: MetricDirection
     unit: str | None = None
-    metadata: dict
+    scoring_rules: list[dict]
+    score_type: str
+    min_score: int
+    max_score: int
+    mcv_score: int
+    max_basis_score: str
     is_active: bool
 
 

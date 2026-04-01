@@ -14,4 +14,10 @@ export type RadarResponseDto = {
   avgBaseline: number;
   avgCurrent: number;
   avgProjected: number;
+  context?: {
+    mentorName?: string;
+    mentorId?: string;
+    protocolName?: string;
+    protocolId?: string;
+  };
 };

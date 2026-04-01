@@ -66,7 +66,12 @@ class MethodConfigService:
         code: str | None = None,
         direction: str = "higher_better",
         unit: str | None = None,
-        metadata: dict | None = None,
+        scoring_rules: list[dict] | None = None,
+        score_type: str | None = None,
+        min_score: int | None = None,
+        max_score: int | None = None,
+        mcv_score: int | None = None,
+        max_basis_score: str | None = None,
     ) -> dict[str, Any]:
         protocol = self._protocols.get_by_id(protocol_id)
         if not protocol:
@@ -86,7 +91,12 @@ class MethodConfigService:
             code=code,
             direction=direction,
             unit=unit,
-            metadata=metadata,
+            scoring_rules=scoring_rules,
+            score_type=score_type or "static",
+            min_score=min_score if min_score is not None else 0,
+            max_score=max_score if max_score is not None else 1,
+            mcv_score=mcv_score if mcv_score is not None else 1,
+            max_basis_score=max_basis_score or "1",
         )
 
     def get_protocol_structure(self, *, protocol_id: str) -> dict[str, Any]:

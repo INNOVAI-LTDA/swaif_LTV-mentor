@@ -1,5 +1,11 @@
 # AGENTS.md
 
+**Workspace Instructions File**
+
+This file is the authoritative workspace instructions for both AI agents and human contributors. It defines the rules, conventions, and guardrails for all code and documentation changes in this repository.
+
+**Principle:** Link, don’t embed — always reference detailed documentation rather than duplicating content. See the "See also" section below for direct links to key docs.
+
 ## Startup Rule
 
 Before making any code change, read these files first in this order:
@@ -9,6 +15,7 @@ Before making any code change, read these files first in this order:
 3. `docs/mvp-mentoria/frontend-integration-architecture.md`
 4. `docs/mvp-mentoria/contracts-freeze-v1.md`
 5. `docs/mvp-mentoria/frontend-deployment-readiness-checklist.md`
+
 
 If the task touches only one area, still read `project-context.md` first, then only the most relevant docs.
 
@@ -24,6 +31,7 @@ Your job is to:
 - avoid unrelated refactors
 - keep changes production-focused
 - favor high signal over broad exploration
+
 
 Do not redesign the system unless explicitly asked.
 
@@ -138,3 +146,14 @@ Do not behave as if this is a greenfield project.
 Do not regenerate architecture from scratch.
 Do not introduce new patterns unless the current task clearly requires them.
 Resume from the existing codebase and existing conventions.
+
+---
+
+## See also
+
+- [project-context.md](project-context.md)
+- [Platform Architecture & Operational Model](docs/architecture/platform_architecture_operational_model.md)
+- [Frontend Integration Architecture](docs/mvp-mentoria/frontend-integration-architecture.md)
+- [Contracts Freeze v1](docs/mvp-mentoria/contracts-freeze-v1.md)
+- [Frontend Deployment Readiness Checklist](docs/mvp-mentoria/frontend-deployment-readiness-checklist.md)
+- [README.md](README.md)

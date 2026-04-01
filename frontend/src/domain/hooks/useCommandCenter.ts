@@ -1,11 +1,12 @@
 import { useCallback } from "react";
 import { useAsyncResource } from "./useAsyncResource";
 import {
+  getCommandCenterStudentCollection,
   getCommandCenterStudentDetail,
   getCommandCenterTimelineAnomalies,
   listCommandCenterStudents
 } from "../services/commandCenterService";
-import type { StudentDetail, StudentListItem, TimelineAnomalies } from "../models";
+import type { CommandCenterStudentCollection, StudentDetail, StudentListItem, TimelineAnomalies } from "../models";
 
 export function useCommandCenterStudents() {
   const loader = useCallback(() => listCommandCenterStudents(), []);
@@ -14,6 +15,28 @@ export function useCommandCenterStudents() {
     initialData: [],
     isEmpty: (data) => data.length === 0,
     resourceName: "lista do centro de comando"
+  });
+}
+
+export function useCommandCenterStudentCollection() {
+  const loader = useCallback(() => getCommandCenterStudentCollection(), []);
+  return useAsyncResource<CommandCenterStudentCollection>(loader, [loader], {
+    enabled: true,
+    initialData: {
+      items: [],
+      topItems: [],
+      bottomItems: [],
+      totalStudents: 0,
+      rankingMode: "full",
+      context: {
+        mentorName: "",
+        mentorId: "",
+        protocolName: "",
+        protocolId: ""
+      }
+    },
+    isEmpty: (data) => data.items.length === 0,
+    resourceName: "ranking do centro de comando"
   });
 }
 

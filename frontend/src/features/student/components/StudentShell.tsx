@@ -2,6 +2,9 @@ import type { ReactNode } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import "../student-shell.css";
 import { env } from "../../../shared/config/env";
+import { useStudentProducts } from "../hooks/useStudentProducts";
+import { useStudentMentors } from "../hooks/useStudentMentors";
+import { useStudentProfile } from "../hooks/useStudentProfile";
 
 type StudentShellProps = {
   eyebrow: string;
@@ -31,43 +34,18 @@ const MAIN_NAV: Array<{ key: MainViewKey; label: string; to: string }> = [
   { key: "jornada", label: "Sua Jornada", to: "/app/aluno" }
 ];
 
-const SUPPORT_PANELS: Record<
-  SupportPanelKey,
-  { label: string; title: string; description: string; items: SupportPanelItem[] }
-> = {
+const SUPPORT_PANELS: Record<SupportPanelKey, { label: string; title: string; description: string; items: SupportPanelItem[] }> = {
   produtos: {
     label: "Produtos",
     title: "Produtos vinculados a voce",
     description: "Lista dos programas e modulos em que voce esta ativo dentro da sua jornada atual.",
-    items: [
-      {
-        title: "Programa principal",
-        meta: "Programa principal",
-        detail: "Trilha central da sua evolucao, com checkpoints e acompanhamento recorrente."
-      },
-      {
-        title: "Sprint de Posicionamento",
-        meta: "Modulo complementar",
-        detail: "Apoio para clareza de proposta, narrativa e direcionamento comercial."
-      }
-    ]
+    items: []
   },
   mentores: {
     label: "Mentores",
     title: "Mentores vinculados a voce",
     description: "Profissionais que acompanham sua jornada e sustentam os proximos avancos do programa.",
-    items: [
-      {
-        title: "Mentor principal",
-        meta: "Ritual semanal",
-        detail: "Conduz seu acompanhamento principal, leitura do radar e ajustes de rota."
-      },
-      {
-        title: "Especialista de suporte",
-        meta: "Acompanhamento complementar",
-        detail: "Apoia duvidas pontuais, refinamentos de execucao e destravamento entre encontros."
-      }
-    ]
+    items: []
   },
   usuario: {
     label: "Minha Conta",
@@ -76,21 +54,16 @@ const SUPPORT_PANELS: Record<
     items: [
       {
         title: "Perfil",
-        meta: "Seus dados",
-        detail: "Consulte e ajuste suas informacoes pessoais quando essa area for liberada.",
+        meta: "Dados da sua conta",
+        detail: "Informacoes pessoais e de acesso.",
         section: "perfil",
-        cta: "Acessar perfil"
-      },
-      {
-        title: "Preferencias",
-        meta: "Seu jeito de acompanhar",
-        detail: "Defina preferencias de comunicacao, lembretes e rotina de acompanhamento.",
-        section: "preferencias",
-        cta: "Abrir preferencias"
+        cta: "Abrir"
       }
     ]
   }
 };
+
+
 
 function isSupportPanel(value: string | null): value is SupportPanelKey {
   return value === "produtos" || value === "mentores" || value === "usuario";
@@ -103,6 +76,11 @@ export function StudentShell({ eyebrow, title, description, actions, metrics = [
   const searchSection = searchParams.get("section");
   const searchView = searchParams.get("view");
   const panelKey = isSupportPanel(searchPanel) ? searchPanel : null;
+  // Fetch data for support panels
+  const { products, loading: loadingProducts, error: errorProducts } = useStudentProducts();
+  const { mentors, loading: loadingMentors, error: errorMentors } = useStudentMentors();
+  const { profile, loading: loadingProfile, error: errorProfile } = useStudentProfile();
+
   const panel = panelKey ? SUPPORT_PANELS[panelKey] : null;
   const activePanelKey = panelKey ?? "produtos";
   const activeView: MainViewKey =
@@ -174,9 +152,9 @@ export function StudentShell({ eyebrow, title, description, actions, metrics = [
           </div>
 
           <div className="student-sidebar__spotlight">
-            <span className="student-sidebar__label">Leitura da jornada</span>
-            <strong>Radar como leitura principal, com quatro visoes claras para acompanhar sua experiencia.</strong>
-            <p>Radar, Linha do Tempo, Indicadores e Sua Jornada aprofundam a leitura sem transformar a tela em operacao.</p>
+            <span className="student-sidebar__label">Jornada do aluno</span>
+            <strong>Visao integrada para acompanhar evolucao, indicadores e proximos passos.</strong>
+            <p>Leitura orientada para progresso continuo e acao taticamente priorizada.</p>
           </div>
         </aside>
 
@@ -187,7 +165,7 @@ export function StudentShell({ eyebrow, title, description, actions, metrics = [
               <h1>{title}</h1>
               <p>{description}</p>
             </div>
-            {actions && <div className="student-header__actions">{actions}</div>}
+            {actions ? <div className="student-header__actions">{actions}</div> : null}
           </header>
 
           {metrics.length > 0 && (
@@ -215,31 +193,70 @@ export function StudentShell({ eyebrow, title, description, actions, metrics = [
                 <h2>{panel.title}</h2>
                 <p className="student-rail__description">{panel.description}</p>
                 <ul className="student-rail__list">
-                  {panel.items.map((item) => {
-                    const isSelected = panelKey === "usuario" && searchSection === item.section;
-
-                    return (
-                      <li key={`${panelKey}-${item.title}`} className={isSelected ? "is-selected" : undefined}>
-                        {item.section ? (
-                          <Link
-                            to={{ pathname: location.pathname, search: buildSearch(activePanelKey, item.section) }}
-                            className="student-rail__action"
-                          >
-                            <strong>{item.title}</strong>
-                            <span>{item.meta}</span>
-                            <small>{item.detail}</small>
-                            <em>{item.cta}</em>
-                          </Link>
-                        ) : (
-                          <>
-                            <strong>{item.title}</strong>
-                            <span>{item.meta}</span>
-                            <small>{item.detail}</small>
-                          </>
-                        )}
-                      </li>
-                    );
-                  })}
+                  {panelKey === "produtos" && (
+                    loadingProducts ? (
+                      <li>Carregando produtos...</li>
+                    ) : errorProducts ? (
+                      <li>Erro: {errorProducts}</li>
+                    ) : products.length === 0 ? (
+                      <li>Nenhum produto encontrado.</li>
+                    ) : (
+                      products.map((product) => (
+                        <li key={product.id}>
+                          <strong>{product.name}</strong>
+                          <span>{product.code}</span>
+                          <small>Status: {product.status}</small>
+                        </li>
+                      ))
+                    )
+                  )}
+                  {panelKey === "mentores" && (
+                    loadingMentors ? (
+                      <li>Carregando mentores...</li>
+                    ) : errorMentors ? (
+                      <li>Erro: {errorMentors}</li>
+                    ) : mentors.length === 0 ? (
+                      <li>Nenhum mentor encontrado.</li>
+                    ) : (
+                      mentors.map((mentor) => (
+                        <li key={mentor.id}>
+                          <strong>{mentor.name}</strong>
+                          <span>{mentor.role}</span>
+                          {mentor.email && <small>{mentor.email}</small>}
+                        </li>
+                      ))
+                    )
+                  )}
+                  {panelKey === "usuario" && (
+                    loadingProfile ? (
+                      <li>Carregando perfil...</li>
+                    ) : errorProfile ? (
+                      <li>Erro: {errorProfile}</li>
+                    ) : !profile ? (
+                      <li>Perfil nao encontrado.</li>
+                    ) : (
+                      panel.items.map((item) => {
+                        const isSelected = searchSection === item.section;
+                        return (
+                          <li key={`${panelKey}-${item.title}`} className={isSelected ? "is-selected" : undefined}>
+                            {item.section ? (
+                              <Link
+                                to={{ pathname: location.pathname, search: buildSearch(activePanelKey, item.section) }}
+                                className="student-rail__action"
+                              >
+                                <strong>{item.title}</strong>
+                                <span>{item.meta}</span>
+                                <small>{item.detail}</small>
+                                <em>{item.cta}</em>
+                              </Link>
+                            ) : null}
+                            <strong>{profile.name}</strong>
+                            <span>{profile.email}</span>
+                          </li>
+                        );
+                      })
+                    )
+                  )}
                 </ul>
               </>
             )}

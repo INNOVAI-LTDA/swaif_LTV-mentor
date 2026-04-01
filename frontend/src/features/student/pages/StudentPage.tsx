@@ -156,8 +156,7 @@ export function StudentPage() {
     axisLabel: axis.axisLabel,
     baseline: axis.baseline,
     current: axis.current,
-    projected: axis.projected,
-    active: axis.current
+    projected: axis.projected
   }));
 
   const strongestAxis = useMemo(() => {
@@ -392,7 +391,7 @@ export function StudentPage() {
                 {!radarResource.loading && !radarResource.error && radarPoints.length === 0 && (
                   <p className="student-state">Sem dados de radar para este aluno.</p>
                 )}
-                {radarPoints.length > 0 && <RadarChart points={radarPoints} title="Baseline, atual e projecao do aluno" />}
+                {radarPoints.length > 0 && <RadarChart points={radarPoints} title="Base, real e meta do aluno" />}
               </article>
 
               <section className="student-grid student-grid--balanced">
@@ -406,7 +405,7 @@ export function StudentPage() {
                         : "Assim que os eixos forem carregados, esta secao vai destacar o ponto mais forte da sua leitura."}
                     </p>
                     <p>
-                      A media atual do radar esta em {avgCurrent.toFixed(1)}, com potencial projetado de {avgProjected.toFixed(1)}.
+                      A media real do radar esta em {(avgCurrent * 100).toFixed(1)}%, com meta media de {(avgProjected * 100).toFixed(1)}%.
                     </p>
                   </div>
                 </article>

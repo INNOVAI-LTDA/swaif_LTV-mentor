@@ -25,6 +25,8 @@ class StudentOut(BaseModel):
     cpf: str | None = None
     phone: str | None = None
     notes: str | None = None
+    start_enrollment_date: str | None = None
+    end_enrollment_date: str | None = None
     status: str
     is_active: bool
     created_at: str | None = None

@@ -27,7 +27,13 @@ export function adaptRadarPayload(payload: unknown): StudentRadar {
     }),
     avgBaseline: coerceNumber(dto.avgBaseline),
     avgCurrent: coerceNumber(dto.avgCurrent),
-    avgProjected: coerceNumber(dto.avgProjected)
+    avgProjected: coerceNumber(dto.avgProjected),
+    context: {
+      mentorName: String(dto.context?.mentorName ?? ""),
+      mentorId: String(dto.context?.mentorId ?? ""),
+      protocolName: String(dto.context?.protocolName ?? ""),
+      protocolId: String(dto.context?.protocolId ?? "")
+    }
   };
 }
 

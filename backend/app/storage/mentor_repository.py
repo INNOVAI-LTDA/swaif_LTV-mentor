@@ -117,6 +117,13 @@ class MentorRepository:
                 return mentor
         return None
 
+    def get_by_email(self, email: str) -> dict[str, Any] | None:
+        normalized_email = email.strip().lower()
+        for mentor in self._read_items():
+            if str(mentor.get("email") or "").strip().lower() == normalized_email:
+                return mentor
+        return None
+
     def set_organization(self, mentor_id: str, organization_id: str) -> dict[str, Any] | None:
         items = self._read_items()
         for idx, mentor in enumerate(items):

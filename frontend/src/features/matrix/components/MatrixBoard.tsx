@@ -10,22 +10,18 @@ type MatrixBoardProps = {
 const QUADRANT_META = {
   topRight: {
     title: "Renovar",
-    subtitle: "Alto progresso · Alto engajamento",
     className: "mx-quadrant--top-right"
   },
   topLeft: {
-    title: "Resgatar valor",
-    subtitle: "Baixo progresso · Alto engajamento",
+    title: "Ajustar plano",
     className: "mx-quadrant--top-left"
   },
   bottomRight: {
-    title: "Ajustar plano",
-    subtitle: "Alto progresso · Baixo engajamento",
+    title: "Resgatar valor",
     className: "mx-quadrant--bottom-right"
   },
   bottomLeft: {
     title: "Recuperação urgente",
-    subtitle: "Baixo progresso · Baixo engajamento",
     className: "mx-quadrant--bottom-left"
   }
 } as const;
@@ -37,9 +33,18 @@ const URGENCY_META: Record<Urgency, { className: string }> = {
   rescue: { className: "mx-bubble--rescue" }
 };
 
+function normalizeScore(value: number) {
+  const safe = Number.isFinite(value) ? value : 0;
+  if (safe > 1) {
+    return Math.max(0, Math.min(1, safe / 100));
+  }
+  return Math.max(0, Math.min(1, safe));
+}
+
 function clampPercent(value01: number) {
-  const safe = Number.isFinite(value01) ? value01 : 0;
-  return Math.max(0, Math.min(100, safe * 100));
+  const safe = normalizeScore(value01);
+  const padding = 0.08;
+  return (padding + safe * (1 - padding * 2)) * 100;
 }
 
 function bubbleSize(ltv: number, minLtv: number, maxLtv: number) {
@@ -75,7 +80,6 @@ export function MatrixBoard({ items, selectedId, onSelect }: MatrixBoardProps) {
         {Object.entries(QUADRANT_META).map(([quadrant, meta]) => (
           <section key={quadrant} className={`mx-quadrant ${meta.className}`}>
             <h3>{meta.title}</h3>
-            <p>{meta.subtitle}</p>
           </section>
         ))}
 

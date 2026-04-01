@@ -41,6 +41,20 @@ export type StudentDetail = StudentListItem & {
   checkpoints: StudentCheckpoint[];
 };
 
+export type CommandCenterStudentCollection = {
+  items: StudentListItem[];
+  topItems: StudentListItem[];
+  bottomItems: StudentListItem[];
+  totalStudents: number;
+  rankingMode: "full" | "top_bottom";
+  context: {
+    mentorName: string;
+    mentorId: string;
+    protocolName: string;
+    protocolId: string;
+  };
+};
+
 export type TimelineAnomaly = {
   marker: string;
   value: string;
@@ -84,6 +98,12 @@ export type StudentRadar = {
   avgBaseline: number;
   avgCurrent: number;
   avgProjected: number;
+  context: {
+    mentorName: string;
+    mentorId: string;
+    protocolName: string;
+    protocolId: string;
+  };
 };
 
 export type MatrixMarker = {
@@ -118,6 +138,12 @@ export type MatrixPayload = {
     criticalRenewals: number;
     rescueCount: number;
     avgEngagement: number;
+  };
+  context: {
+    mentorName: string;
+    mentorId: string;
+    protocolName: string;
+    protocolId: string;
   };
 };
 

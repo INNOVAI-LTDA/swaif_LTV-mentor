@@ -3,15 +3,24 @@ import { AppLayout } from "./layout/AppLayout";
 import { LoginPage } from "../pages/LoginPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { AccessDeniedPage } from "../pages/AccessDeniedPage";
-import { HubPage } from "../features/hub/pages/HubPage";
+
 import { CommandCenterPage } from "../features/command-center/pages/CommandCenterPage";
 import { RadarPage } from "../features/radar/pages/RadarPage";
 import { MatrixPage } from "../features/matrix/pages/MatrixPage";
 import { StudentPage } from "../features/student/pages/StudentPage";
 import { AdminPage } from "../features/admin/pages/AdminPage";
+
 import { useAuth } from "./providers/AuthProvider";
 import { getDefaultRouteForRole, isKnownUserRole } from "../shared/auth/roleRouting";
 import { env } from "../shared/config/env";
+
+// Entity List Components
+import { MeasurementsList } from "../features/measurements/components/MeasurementsList";
+import { ProtocolsList } from "../features/protocols/components/ProtocolsList";
+import { OrganizationsList } from "../features/organizations/components/OrganizationsList";
+import { EnrollmentsList } from "../features/enrollments/components/EnrollmentsList";
+import { UsersList } from "../features/users/components/UsersList";
+import { CheckpointsList } from "../features/checkpoints/components/CheckpointsList";
 
 function AuthLoadingFallback() {
   return (
@@ -110,10 +119,16 @@ export const appRoutes: RouteObject[] = [
           {
             element: <RequireMentorWorkspace />,
             children: [
-              { path: "hub-interno", element: <HubPage /> },
+
               { path: "centro-comando", element: <CommandCenterPage /> },
               { path: "radar", element: <RadarPage /> },
               { path: "matriz-renovacao", element: <MatrixPage /> }
+              , { path: "measurements", element: <MeasurementsList /> }
+              , { path: "protocols", element: <ProtocolsList /> }
+              , { path: "organizations", element: <OrganizationsList /> }
+              , { path: "enrollments", element: <EnrollmentsList /> }
+              , { path: "users", element: <UsersList /> }
+              , { path: "checkpoints", element: <CheckpointsList /> }
             ]
           },
           { path: "aluno", element: <StudentPage /> },

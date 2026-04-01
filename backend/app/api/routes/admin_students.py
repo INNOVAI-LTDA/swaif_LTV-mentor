@@ -28,6 +28,7 @@ from app.services.student_vinculo_service import ConsistencyError, EntityNotFoun
 from app.storage.checkpoint_repository import CheckpointRepository
 from app.storage.enrollment_repository import EnrollmentRepository
 from app.storage.measurement_repository import MeasurementRepository
+from app.storage.measurement_overall_repository import MeasurementOverallRepository
 from app.storage.metric_repository import MetricRepository
 from app.storage.mentor_repository import MentorRepository
 from app.storage.organization_repository import OrganizationRepository
@@ -55,6 +56,7 @@ def get_indicator_carga_service() -> IndicatorCargaService:
         measurements=MeasurementRepository(),
         checkpoints=CheckpointRepository(),
         pillars=PillarRepository(),
+        measurement_overalls=MeasurementOverallRepository(),
     )
 
 
@@ -346,7 +348,7 @@ def get_student_detail(
 def list_command_center_students(
     _: dict[str, Any] = Depends(require_admin_user),
     service: IndicatorCargaService = Depends(get_indicator_carga_service),
-) -> list[dict[str, Any]]:
+) -> dict[str, Any]:
     return service.list_command_center_students()
 
 

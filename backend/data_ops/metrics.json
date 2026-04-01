@@ -10,12 +10,35 @@
       "code": "mtr_consultas-mensais",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+5 pts": "< 15",
-        "+10 pts": "15-30",
-        "+20 pts": "> 30"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "operator": "lt",
+            "value": 15
+          }
+        },
+        {
+          "points": 10,
+          "condition": {
+            "operator": "and",
+            "min": 15,
+            "max": 30
+          }
+        },
+        {
+          "points": 20,
+          "condition": {
+            "operator": "gt",
+            "value": 30
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 5,
+      "max_score": 20,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "U",
@@ -26,11 +49,27 @@
       "code": "mtr_mqls",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+5 pts": "<= 30",
-        "+20 pts": "> 30"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "operator": "lte",
+            "value": 30
+          }
+        },
+        {
+          "points": 20,
+          "condition": {
+            "operator": "gt",
+            "value": 30
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 5,
+      "max_score": 20,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "U",
@@ -41,12 +80,35 @@
       "code": "mtr_leads",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+5 pts": "<= 100",
-        "+10 pts": "101-150",
-        "+20 pts": "> 150"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "operator": "lte",
+            "value": 100
+          }
+        },
+        {
+          "points": 10,
+          "condition": {
+            "operator": "and",
+            "min": 101,
+            "max": 150
+          }
+        },
+        {
+          "points": 20,
+          "condition": {
+            "operator": "gt",
+            "value": 150
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 5,
+      "max_score": 20,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "U",
@@ -57,12 +119,35 @@
       "code": "mtr_ofertas",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+5 pts": "<= 10",
-        "+10 pts": "11-20",
-        "+20 pts": "> 20"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "operator": "lte",
+            "value": 10
+          }
+        },
+        {
+          "points": 10,
+          "condition": {
+            "operator": "and",
+            "min": 11,
+            "max": 20
+          }
+        },
+        {
+          "points": 20,
+          "condition": {
+            "operator": "gt",
+            "value": 20
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 5,
+      "max_score": 20,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "U",
@@ -73,11 +158,29 @@
       "code": "mtr_taxa-conversao",
       "direction": "higher_better",
       "unit": "%",
-      "metadata": {
-        "+5 pts": "< 50%",
-        "+20 pts": "> 50%"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "operator": "lt",
+            "value": 50,
+            "unit": "%"
+          }
+        },
+        {
+          "points": 20,
+          "condition": {
+            "operator": "gte",
+            "value": 50,
+            "unit": "%"
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 5,
+      "max_score": 20,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "U",
@@ -88,12 +191,38 @@
       "code": "mtr_ticket-medio",
       "direction": "higher_better",
       "unit": "R$",
-      "metadata": {
-        "+5 pts": "< R$10.000,00",
-        "+10 pts": "R$10.000,00 - R$20.000,00",
-        "+20 pts": "> R$20.000,00"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "operator": "lt",
+            "value": 10000,
+            "unit": "R$"
+          }
+        },
+        {
+          "points": 10,
+          "condition": {
+            "operator": "and",
+            "min": 10000,
+            "max": 20000,
+            "unit": "R$"
+          }
+        },
+        {
+          "points": 20,
+          "condition": {
+            "operator": "gt",
+            "value": 20000,
+            "unit": "R$"
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 5,
+      "max_score": 20,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "C",
@@ -104,12 +233,38 @@
       "code": "mtr_faturamento",
       "direction": "higher_better",
       "unit": "R$",
-      "metadata": {
-        "+5 pts": "< R$100.000,00",
-        "+10 pts": "R$100.000,00 - R$500.000,00",
-        "+20 pts": "> R$500.000,00"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "operator": "lt",
+            "value": 100000,
+            "unit": "R$"
+          }
+        },
+        {
+          "points": 10,
+          "condition": {
+            "operator": "and",
+            "min": 100000,
+            "max": 500000,
+            "unit": "R$"
+          }
+        },
+        {
+          "points": 20,
+          "condition": {
+            "operator": "gt",
+            "value": 500000,
+            "unit": "R$"
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 5,
+      "max_score": 20,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "C",
@@ -120,11 +275,37 @@
       "code": "mtr_engajamento",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+5 pts": "presenças > 4, feedback > 4",
-        "+10 pts": "vídeo > 4"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "description": "presenças",
+            "operator": "gt",
+            "value": 4
+          }
+        },
+        {
+          "points": 5,
+          "condition": {
+            "description": "feedback",
+            "operator": "gt",
+            "value": 4
+          }
+        },
+        {
+          "points": 10,
+          "condition": {
+            "description": "vídeo",
+            "operator": "gt",
+            "value": 4
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 5,
+      "max_score": 10,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "C",
@@ -135,11 +316,30 @@
       "code": "mtr_gratidao",
       "direction": "higher_better",
       "unit": "pts",
-      "metadata": {
-        "+(1-4) pts": "respondeu",
-        "+0 pts": "não respondeu"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points_range": [
+            1,
+            4
+          ],
+          "condition": {
+            "operator": "eq",
+            "value": "respondeu"
+          }
+        },
+        {
+          "points": 0,
+          "condition": {
+            "operator": "eq",
+            "value": "não respondeu"
+          }
+        }
+      ],
+      "score_type": "range",
+      "min_score": 0,
+      "max_score": 4,
+      "is_active": true,
+      "max_score_basis": "MAX_RVALUE"
     },
     {
       "crud_action": "C",
@@ -150,11 +350,27 @@
       "code": "mtr_ned",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+1 pts": "< 8",
-        "+5 pts": ">= 8"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 1,
+          "condition": {
+            "operator": "lt",
+            "value": 8
+          }
+        },
+        {
+          "points": 5,
+          "condition": {
+            "operator": "gte",
+            "value": 8
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 1,
+      "max_score": 5,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "C",
@@ -165,11 +381,27 @@
       "code": "mtr_reunioes-semanais",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+2 pts": "Sim",
-        "+0 pts": "Não"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 2,
+          "condition": {
+            "operator": "eq",
+            "value": "Sim"
+          }
+        },
+        {
+          "points": 0,
+          "condition": {
+            "operator": "eq",
+            "value": "Não"
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 2,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "C",
@@ -180,11 +412,27 @@
       "code": "mtr_nps",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+0 pts": "< 8",
-        "+2 pts": ">= 8"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 0,
+          "condition": {
+            "operator": "lt",
+            "value": 8
+          }
+        },
+        {
+          "points": 2,
+          "condition": {
+            "operator": "gte",
+            "value": 8
+          }
+        }
+      ],
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 2,
+      "is_active": true,
+      "max_score_basis": "MAX_VALUE"
     },
     {
       "crud_action": "C",
@@ -195,10 +443,31 @@
       "code": "mtr_processos",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+5 pts": "Vendas, Operações, RH"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "description": "Vendas"
+          }
+        },
+        {
+          "points": 5,
+          "condition": {
+            "description": "Operações"
+          }
+        },
+        {
+          "points": 5,
+          "condition": {
+            "description": "RH"
+          }
+        }
+      ],
+      "score_type": "accumulative",
+      "min_score": 5,
+      "max_score": 15,
+      "is_active": true,
+      "max_score_basis": "MAX_OPT"
     },
     {
       "crud_action": "C",
@@ -209,10 +478,31 @@
       "code": "mtr_ferramentas-basicas",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+5 pts": "Prontuário, CRM, Fluxo de"
-      },
-      "is_active": true
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "description": "Prontuário"
+          }
+        },
+        {
+          "points": 5,
+          "condition": {
+            "description": "CRM"
+          }
+        },
+        {
+          "points": 5,
+          "condition": {
+            "description": "Fluxo de Caixa/DRE"
+          }
+        }
+      ],
+      "score_type": "accumulative",
+      "min_score": 5,
+      "max_score": 15,
+      "is_active": true,
+      "max_score_basis": "MAX_OPT"
     },
     {
       "crud_action": "C",
@@ -223,9 +513,18 @@
       "code": "mtr_numero-servicos",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+2 pts": "Para cada serviço oferecido"
-      },
+      "scoring_rules": [
+        {
+          "points": 2,
+          "condition": {
+            "description": "Para cada serviço oferecido"
+          }
+        }
+      ],
+      "score_type": "unrestricted_sum",
+      "min_score": 0,
+      "max_score": 10,
+      "max_score_basis": "MCV",
       "is_active": true
     },
     {
@@ -237,9 +536,18 @@
       "code": "mtr_numero-produtos-digitais",
       "direction": "higher_better",
       "unit": "",
-      "metadata": {
-        "+5 pts": "Para cada produto digital oferecido"
-      },
+      "scoring_rules": [
+        {
+          "points": 5,
+          "condition": {
+            "description": "Para cada produto digital oferecido"
+          }
+        }
+      ],
+      "score_type": "unrestricted_sum",
+      "min_score": 0,
+      "max_score": 10,
+      "max_score_basis": "MCV",
       "is_active": true
     }
   ]

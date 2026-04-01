@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { simulateRadar } from "../../../domain/adapters/radarAdapter";
 import { useCommandCenterStudents } from "../../../domain/hooks/useCommandCenter";
 import { useStudentRadar } from "../../../domain/hooks/useRadar";
 import { formatPercent01 } from "../../../shared/formatters/percent";
@@ -14,10 +13,17 @@ function average(values: number[]) {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
+function formatPercentPointDelta(value: number, fractionDigits = 1) {
+  const safe = Number.isFinite(value) ? value : 0;
+  return `${safe >= 0 ? "+" : ""}${(safe * 100).toLocaleString("pt-BR", {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits
+  })} pp`;
+}
+
 export function RadarPage() {
   const studentsResource = useCommandCenterStudents();
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
-  const [slider, setSlider] = useState(50);
 
   useEffect(() => {
     if (!selectedStudentId && studentsResource.data.length > 0) {
@@ -25,51 +31,48 @@ export function RadarPage() {
     }
   }, [selectedStudentId, studentsResource.data]);
 
-  useEffect(() => {
-    setSlider(50);
-  }, [selectedStudentId]);
-
   const radarResource = useStudentRadar(selectedStudentId);
-  const simulation = useMemo(() => simulateRadar(radarResource.data, slider), [radarResource.data, slider]);
 
-  const radarPoints = simulation.axisScores.map((axis) => ({
+  const radarPoints = radarResource.data.axisScores.map((axis) => ({
     axisLabel: axis.axisLabel,
     baseline: axis.baseline,
     current: axis.current,
-    projected: axis.projected,
-    active: axis.active
+    projected: axis.projected
   }));
 
-  const topGainAxis = useMemo(() => {
-    if (simulation.axisScores.length === 0) {
+  const topGapAxis = useMemo(() => {
+    if (radarResource.data.axisScores.length === 0) {
       return null;
     }
 
-    const sorted = [...simulation.axisScores].sort((a, b) => b.active - b.baseline - (a.active - a.baseline));
+    const sorted = [...radarResource.data.axisScores].sort((a, b) => b.projected - b.current - (a.projected - a.current));
     return sorted[0];
-  }, [simulation.axisScores]);
+  }, [radarResource.data.axisScores]);
 
-  const activeValues = simulation.axisScores.map((axis) => axis.active);
-  const baselineValues = simulation.axisScores.map((axis) => axis.baseline);
-  const currentValues = simulation.axisScores.map((axis) => axis.current);
-  const projectedValues = simulation.axisScores.map((axis) => axis.projected);
+  const baselineValues = radarResource.data.axisScores.map((axis) => axis.baseline);
+  const currentValues = radarResource.data.axisScores.map((axis) => axis.current);
+  const projectedValues = radarResource.data.axisScores.map((axis) => axis.projected);
 
   const avgBaseline = average(baselineValues);
   const avgCurrent = average(currentValues);
   const avgProjected = average(projectedValues);
-  const avgActive = average(activeValues);
-  const deltaActiveVsBaseline = avgActive - avgBaseline;
+  const deltaCurrentVsBaseline = avgCurrent - avgBaseline;
+  const gapGoalVsCurrent = avgProjected - avgCurrent;
 
   const selectedStudent = studentsResource.data.find((student) => student.id === selectedStudentId) ?? null;
+  const mentorLabel = radarResource.data.context?.mentorName || "Mentor";
+  const protocolLabel = radarResource.data.context?.protocolName || selectedStudent?.programName || undefined;
 
   return (
     <MentorShell
       activeView="radar"
+      brandLabel={mentorLabel}
+      brandTitle={protocolLabel}
       metrics={[
-        { label: "Eixos ativos", value: String(simulation.axisScores.length), tone: "accent" },
-        { label: "Média baseline", value: avgBaseline.toFixed(1) },
-        { label: "Média atual", value: avgCurrent.toFixed(1), tone: "success" },
-        { label: "Média projetada", value: avgProjected.toFixed(1), tone: "warning" }
+        { label: "Eixos ativos", value: String(radarResource.data.axisScores.length), tone: "accent" },
+        { label: "Média base", value: formatPercent01(avgBaseline, 1) },
+        { label: "Média real", value: formatPercent01(avgCurrent, 1), tone: "success" },
+        { label: "Média meta", value: formatPercent01(avgProjected, 1), tone: "warning" }
       ]}
     >
       <section className="radar-page">
@@ -89,21 +92,6 @@ export function RadarPage() {
               ))}
             </select>
           </label>
-
-          <div className="radar-slider-wrap">
-            <div className="radar-slider-header">
-              <span>Simulador de projeção</span>
-              <strong>{slider}%</strong>
-            </div>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={slider}
-              onChange={(event) => setSlider(Number(event.target.value))}
-              disabled={!selectedStudentId}
-            />
-          </div>
 
           <article className="radar-student-chip">
             <p>Aluno selecionado</p>
@@ -126,26 +114,23 @@ export function RadarPage() {
 
         <section className="radar-kpi-grid">
           <article>
-            <span>Média ativa simulada</span>
-            <strong>{avgActive.toFixed(1)}</strong>
+            <span>Média real</span>
+            <strong>{formatPercent01(avgCurrent, 1)}</strong>
           </article>
           <article>
-            <span>Delta ativo vs baseline</span>
-            <strong>
-              {deltaActiveVsBaseline >= 0 ? "+" : ""}
-              {deltaActiveVsBaseline.toFixed(1)} pts
-            </strong>
+            <span>Delta real vs base</span>
+            <strong>{formatPercentPointDelta(deltaCurrentVsBaseline, 1)}</strong>
           </article>
           <article>
-            <span>Aluno em foco</span>
-            <strong>{selectedStudent ? selectedStudent.initials : "--"}</strong>
+            <span>Gap meta x real</span>
+            <strong>{formatPercentPointDelta(gapGoalVsCurrent, 1)}</strong>
           </article>
         </section>
 
         <section className="radar-main-grid">
           <article className="radar-panel radar-panel--chart">
-            {radarResource.loading && simulation.axisScores.length === 0 && <p className="radar-state">Carregando radar...</p>}
-            {!radarResource.loading && radarResource.error && simulation.axisScores.length === 0 && (
+            {radarResource.loading && radarResource.data.axisScores.length === 0 && <p className="radar-state">Carregando radar...</p>}
+            {!radarResource.loading && radarResource.error && radarResource.data.axisScores.length === 0 && (
               <div className="radar-state radar-state--error">
                 <p>{radarResource.error}</p>
                 <button type="button" onClick={() => void radarResource.refresh()}>
@@ -153,40 +138,36 @@ export function RadarPage() {
                 </button>
               </div>
             )}
-            {!radarResource.loading && !radarResource.error && simulation.axisScores.length === 0 && (
+            {!radarResource.loading && !radarResource.error && radarResource.data.axisScores.length === 0 && (
               <p className="radar-state">Sem dados de radar para este aluno.</p>
             )}
 
-            {simulation.axisScores.length > 0 && (
-              <RadarChart points={radarPoints} title="Baseline, atual, projetado e ativo" />
+            {radarResource.data.axisScores.length > 0 && (
+              <RadarChart points={radarPoints} title="Base, real e meta do primeiro carregamento" />
             )}
           </article>
 
           <article className="radar-panel radar-panel--axis-list">
             <header>
               <h2>Pilares de transformação</h2>
-              <p>Deltas calculados pelo simulador</p>
+              <p>Leitura base, real e meta por pilar</p>
             </header>
 
-            {simulation.axisScores.length > 0 ? (
+            {radarResource.data.axisScores.length > 0 ? (
               <ul className="radar-axis-list">
-                {simulation.axisScores.map((axis) => {
-                  const delta = axis.active - axis.baseline;
+                {radarResource.data.axisScores.map((axis) => {
+                  const delta = axis.current - axis.baseline;
                   return (
                     <li key={axis.axisKey}>
                       <div className="radar-axis-top">
                         <strong>{axis.axisLabel}</strong>
-                        <span>
-                          {delta >= 0 ? "+" : ""}
-                          {delta.toFixed(1)} pts
-                        </span>
+                        <span>{formatPercentPointDelta(delta, 1)}</span>
                       </div>
                       {axis.axisSub && <p className="radar-axis-sub">{axis.axisSub}</p>}
                       <div className="radar-axis-values">
-                        <span>baseline {axis.baseline.toFixed(1)}</span>
-                        <span>atual {axis.current.toFixed(1)}</span>
-                        <span>projetado {axis.projected.toFixed(1)}</span>
-                        <span>ativo {axis.active.toFixed(1)}</span>
+                        <span>base {formatPercent01(axis.baseline, 1)}</span>
+                        <span>real {formatPercent01(axis.current, 1)}</span>
+                        <span>meta {formatPercent01(axis.projected, 1)}</span>
                       </div>
                     </li>
                   );
@@ -200,16 +181,15 @@ export function RadarPage() {
 
         <section className="radar-insight">
           <h2>Insight principal do ciclo</h2>
-          {!topGainAxis && <p>Selecione um aluno com dados de radar para gerar insight.</p>}
-          {topGainAxis && (
+          {!topGapAxis && <p>Selecione um aluno com dados de radar para gerar insight.</p>}
+          {topGapAxis && (
             <>
               <p>
-                O pilar com maior ganho simulado é <strong>{topGainAxis.axisLabel}</strong>, com delta de{" "}
-                <strong>{(topGainAxis.active - topGainAxis.baseline).toFixed(1)} pontos</strong>.
+                O pilar com maior distância até a meta é <strong>{topGapAxis.axisLabel}</strong>, com gap de{" "}
+                <strong>{formatPercentPointDelta(topGapAxis.projected - topGapAxis.current, 1)}</strong>.
               </p>
               <p>
-                Progresso de simulação: <strong>{formatPercent01(slider / 100)}</strong>. Mensagem do contrato:{" "}
-                <em>{topGainAxis.insight ?? "Sem insight textual para este eixo."}</em>
+                Mensagem do contrato: <em>{topGapAxis.insight ?? "Sem insight textual para este eixo."}</em>
               </p>
             </>
           )}

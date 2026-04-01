@@ -8,6 +8,10 @@ from urllib.parse import urlparse
 LOCAL_CORS_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5175",
+    "http://127.0.0.1:5175",
+    "http://localhost:5176",
+    "http://127.0.0.1:5176",
     "http://localhost:4173",
     "http://127.0.0.1:4173",
     "http://localhost:3000",
@@ -18,9 +22,12 @@ LOCAL_ENV_NAMES = {"local", "development", "dev", "test"}
 
 
 @dataclass(frozen=True)
-class MentorDemoRoutePolicy:
+class MentorRoutePolicy:
     enabled: bool
     policy_source: str
+
+
+MentorDemoRoutePolicy = MentorRoutePolicy
 
 
 def get_app_env() -> str:
@@ -51,32 +58,58 @@ def _get_optional_bool_env(env_name: str) -> bool | None:
     return _parse_optional_bool(configured, env_name=env_name)
 
 
-def resolve_mentor_demo_route_policy(app_env: str | None = None) -> MentorDemoRoutePolicy:
+def _get_optional_bool_env_alias(primary_env_name: str, legacy_env_name: str) -> bool | None:
+    primary_value = os.getenv(primary_env_name, "")
+    if primary_value.strip():
+        return _parse_optional_bool(primary_value, env_name=primary_env_name)
+
+    legacy_value = os.getenv(legacy_env_name, "")
+    if legacy_value.strip():
+        return _parse_optional_bool(legacy_value, env_name=legacy_env_name)
+
+    return None
+
+
+def resolve_mentor_route_policy(app_env: str | None = None) -> MentorRoutePolicy:
     normalized_env = app_env or get_app_env()
-    explicit_enablement = _get_optional_bool_env("ENABLE_MENTOR_DEMO_ROUTES")
-    remote_approval = _get_optional_bool_env("ALLOW_REMOTE_MENTOR_DEMO_ROUTES")
+    explicit_enablement = _get_optional_bool_env_alias(
+        "ENABLE_MENTOR_ROUTES",
+        "ENABLE_MENTOR_DEMO_ROUTES",
+    )
+    remote_approval = _get_optional_bool_env_alias(
+        "ALLOW_REMOTE_MENTOR_ROUTES",
+        "ALLOW_REMOTE_MENTOR_DEMO_ROUTES",
+    )
     production_like = is_production_like_environment(normalized_env)
 
     if explicit_enablement is None:
         if production_like:
-            return MentorDemoRoutePolicy(enabled=False, policy_source="production-default-disabled")
-        return MentorDemoRoutePolicy(enabled=True, policy_source="local-default-enabled")
+            return MentorRoutePolicy(enabled=False, policy_source="production-default-disabled")
+        return MentorRoutePolicy(enabled=True, policy_source="local-default-enabled")
 
     if explicit_enablement is False:
-        return MentorDemoRoutePolicy(enabled=False, policy_source="explicit-disable")
+        return MentorRoutePolicy(enabled=False, policy_source="explicit-disable")
 
     if production_like and remote_approval is not True:
         raise RuntimeError(
-            "ENABLE_MENTOR_DEMO_ROUTES=true requires ALLOW_REMOTE_MENTOR_DEMO_ROUTES=true when APP_ENV is production-like."
+            "ENABLE_MENTOR_ROUTES=true requires ALLOW_REMOTE_MENTOR_ROUTES=true when APP_ENV is production-like."
         )
 
     if production_like:
-        return MentorDemoRoutePolicy(enabled=True, policy_source="explicit-remote-approval")
-    return MentorDemoRoutePolicy(enabled=True, policy_source="explicit-local-enable")
+        return MentorRoutePolicy(enabled=True, policy_source="explicit-remote-approval")
+    return MentorRoutePolicy(enabled=True, policy_source="explicit-local-enable")
+
+
+def mentor_routes_enabled(app_env: str | None = None) -> bool:
+    return resolve_mentor_route_policy(app_env).enabled
 
 
 def mentor_demo_routes_enabled(app_env: str | None = None) -> bool:
-    return resolve_mentor_demo_route_policy(app_env).enabled
+    return mentor_routes_enabled(app_env)
+
+
+def resolve_mentor_demo_route_policy(app_env: str | None = None) -> MentorDemoRoutePolicy:
+    return resolve_mentor_route_policy(app_env)
 
 
 def get_storage_backup_dir() -> Path:

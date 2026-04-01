@@ -11,7 +11,7 @@ const { getMeMock, loginServiceMock, logoutServiceMock, envState } = vi.hoisted(
   logoutServiceMock: vi.fn(),
   envState: {
     routerBasePath: "/",
-    internalMentorDemoEnabled: true
+    internalMentorSurfaceEnabled: true
   }
 }));
 
@@ -30,7 +30,8 @@ vi.mock("../shared/config/env", () => ({
     apiBaseUrl: "http://127.0.0.1:8000",
     httpTimeoutMs: 15000,
     demoModeEnabled: false,
-    internalMentorDemoEnabled: envState.internalMentorDemoEnabled,
+    internalMentorSurfaceEnabled: envState.internalMentorSurfaceEnabled,
+    internalMentorDemoEnabled: envState.internalMentorSurfaceEnabled,
     clientName: "Cliente",
     appName: "Plataforma de Mentoria",
     appTagline: "Acompanhamento com visao operacional",
@@ -49,10 +50,6 @@ vi.mock("../app/layout/AppLayout", () => ({
       </main>
     </div>
   )
-}));
-
-vi.mock("../features/hub/pages/HubPage", () => ({
-  HubPage: () => <h1>Hub</h1>
 }));
 
 vi.mock("../features/command-center/pages/CommandCenterPage", () => ({
@@ -81,7 +78,7 @@ describe("auth recovery flow", () => {
     loginServiceMock.mockReset();
     getMeMock.mockReset();
     logoutServiceMock.mockReset();
-    envState.internalMentorDemoEnabled = true;
+    envState.internalMentorSurfaceEnabled = true;
     envState.routerBasePath = "/";
     vi.stubEnv("VITE_DEPLOY_TARGET", "local");
     loginServiceMock.mockImplementation(async () => {

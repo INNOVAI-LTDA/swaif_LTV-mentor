@@ -95,7 +95,12 @@ def create_metric(
             code=payload.code,
             direction=payload.direction,
             unit=payload.unit,
-            metadata=payload.metadata,
+            scoring_rules=payload.scoring_rules,
+            score_type=payload.score_type,
+            min_score=payload.min_score,
+            max_score=payload.max_score,
+            mcv_score=payload.mcv_score,
+            max_basis_score=payload.max_basis_score,
         )
     except EntityNotFoundError as exc:
         error_code, message = _map_method_not_found(exc)

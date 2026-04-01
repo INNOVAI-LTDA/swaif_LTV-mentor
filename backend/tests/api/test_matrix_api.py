@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 
 from fastapi.testclient import TestClient
 
@@ -17,6 +18,7 @@ def _configure_stores(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setenv("ENROLLMENT_STORE_PATH", str(tmp_path / "enrollments.json"))
     monkeypatch.setenv("MEASUREMENT_STORE_PATH", str(tmp_path / "measurements.json"))
     monkeypatch.setenv("CHECKPOINT_STORE_PATH", str(tmp_path / "checkpoints.json"))
+    monkeypatch.setenv("MEASUREMENT_OVERALL_STORE_PATH", str(tmp_path / "measurement_overalls.json"))
 
 
 def _login(client: TestClient, email: str, password: str) -> str:
@@ -108,13 +110,54 @@ def test_matrix_contract_kpis_and_filters(monkeypatch, tmp_path: Path) -> None:
     assert {"totalLTV", "criticalRenewals", "rescueCount", "avgEngagement"}.issubset(set(payload["kpis"].keys()))
 
     top_right = client.get("/admin/matriz-renovacao?filter=topRight", headers=headers).json()
-    assert len(top_right["items"]) == 2
+    assert len(top_right["items"]) == 1
     assert all(item["quadrant"] == "topRight" for item in top_right["items"])
 
     critical = client.get("/admin/matriz-renovacao?filter=critical", headers=headers).json()
-    assert len(critical["items"]) == 2
+    assert len(critical["items"]) == 1
     assert all(item["daysLeft"] <= 45 and item["quadrant"] == "topRight" for item in critical["items"])
 
     rescue = client.get("/admin/matriz-renovacao?filter=rescue", headers=headers).json()
     assert len(rescue["items"]) == 1
     assert rescue["items"][0]["urgency"] == "rescue"
+
+
+def test_matrix_uses_measurement_overall_decision_matrix(monkeypatch, tmp_path: Path) -> None:
+    _configure_stores(monkeypatch, tmp_path)
+    client = TestClient(app)
+    admin_token = _login(client, "admin@swaif.local", "admin123")
+    headers = {"Authorization": f"Bearer {admin_token}"}
+
+    _prepare_matrix_data(client, headers)
+
+    enrollments_payload = json.loads((tmp_path / "enrollments.json").read_text(encoding="utf-8"))
+    first_enrollment = enrollments_payload["items"][0]
+    enrollment_id = first_enrollment["id"]
+
+    overalls_payload = {
+        "version": 1,
+        "items": [
+            {
+                "enrollment_id": enrollment_id,
+                "protocol_id": "prt_test",
+                "metrics": [],
+                "pillars": [],
+                "decision_matrix": {
+                    "product_score": 0.71,
+                    "engagement_score": 0.69,
+                    "thresholds": {"prd_thr": 0.7, "eng_thr": 0.7},
+                },
+            }
+        ],
+    }
+    (tmp_path / "measurement_overalls.json").write_text(json.dumps(overalls_payload), encoding="utf-8")
+
+    response = client.get("/admin/matriz-renovacao?filter=all", headers=headers)
+    assert response.status_code == 200
+    payload = response.json()
+
+    by_id = {item["id"]: item for item in payload["items"]}
+    student_id = first_enrollment["student_id"]
+    assert by_id[student_id]["progress"] == 0.71
+    assert by_id[student_id]["engagement"] == 0.69
+    assert by_id[student_id]["quadrant"] == "bottomRight"

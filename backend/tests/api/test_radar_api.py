@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 
 from fastapi.testclient import TestClient
 
@@ -17,6 +18,7 @@ def _configure_stores(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setenv("ENROLLMENT_STORE_PATH", str(tmp_path / "enrollments.json"))
     monkeypatch.setenv("MEASUREMENT_STORE_PATH", str(tmp_path / "measurements.json"))
     monkeypatch.setenv("CHECKPOINT_STORE_PATH", str(tmp_path / "checkpoints.json"))
+    monkeypatch.setenv("MEASUREMENT_OVERALL_STORE_PATH", str(tmp_path / "measurement_overalls.json"))
 
 
 def _login(client: TestClient, email: str, password: str) -> str:
@@ -34,12 +36,12 @@ def _prepare_radar_data(client: TestClient, headers: dict[str, str]) -> str:
 
     pillar_a = client.post(
         "/admin/pilares",
-        json={"protocol_id": protocol_id, "name": "Compromisso", "code": "compromisso", "order_index": 1, "metadata": {"axis_sub": "Sub A"}},
+        json={"protocol_id": protocol_id, "name": "Compromisso", "code": "compromisso", "order_index": 1},
         headers=headers,
     ).json()
     pillar_b = client.post(
         "/admin/pilares",
-        json={"protocol_id": protocol_id, "name": "Evolucao", "code": "evolucao", "order_index": 2, "metadata": {"axis_sub": "Sub B"}},
+        json={"protocol_id": protocol_id, "name": "Evolucao", "code": "evolucao", "order_index": 2},
         headers=headers,
     ).json()
 
@@ -112,3 +114,55 @@ def test_radar_axis_scores_contract_and_averages(monkeypatch, tmp_path: Path) ->
     assert payload["avgBaseline"] == 45.0
     assert payload["avgCurrent"] == 65.0
     assert payload["avgProjected"] == 70.0
+
+
+def test_radar_uses_measurement_overalls_when_available(monkeypatch, tmp_path: Path) -> None:
+    _configure_stores(monkeypatch, tmp_path)
+    client = TestClient(app)
+    admin_token = _login(client, "admin@swaif.local", "admin123")
+    headers = {"Authorization": f"Bearer {admin_token}"}
+
+    student_id = _prepare_radar_data(client, headers)
+
+    enrollments_payload = json.loads((tmp_path / "enrollments.json").read_text(encoding="utf-8"))
+    enrollment_id = next(
+        item["id"]
+        for item in enrollments_payload.get("items", [])
+        if item.get("student_id") == student_id
+    )
+
+    overalls_payload = {
+        "version": 1,
+        "items": [
+            {
+                "enrollment_id": enrollment_id,
+                "protocol_id": "prt_test",
+                "metrics": [],
+                "pillars": [
+                    {
+                        "pillar_id": "plr_1",
+                        "metric_average": {"goal": 1.0, "base": 0.2, "real": 0.4},
+                    },
+                    {
+                        "pillar_id": "plr_2",
+                        "metric_average": {"goal": 1.0, "base": 0.6, "real": 0.8},
+                    },
+                ],
+                "decision_matrix": {
+                    "product_score": 0.6,
+                    "engagement_score": 0.7,
+                    "thresholds": {"prd_thr": 0.7, "eng_thr": 0.7},
+                },
+            }
+        ],
+    }
+    (tmp_path / "measurement_overalls.json").write_text(json.dumps(overalls_payload), encoding="utf-8")
+
+    response = client.get(f"/admin/radar/alunos/{student_id}", headers=headers)
+    assert response.status_code == 200
+    payload = response.json()
+
+    assert len(payload["axisScores"]) == 2
+    assert payload["avgBaseline"] == 0.4
+    assert payload["avgCurrent"] == 0.6
+    assert payload["avgProjected"] == 1.0

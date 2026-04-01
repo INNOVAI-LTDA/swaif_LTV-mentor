@@ -17,6 +17,20 @@ export type CommandCenterStudentListItemDto = {
   ltv: number;
 };
 
+export type CommandCenterStudentListPayloadDto = {
+  items: CommandCenterStudentListItemDto[];
+  topItems?: CommandCenterStudentListItemDto[];
+  bottomItems?: CommandCenterStudentListItemDto[];
+  totalStudents?: number;
+  rankingMode?: "full" | "top_bottom";
+  context?: {
+    mentorName?: string;
+    mentorId?: string;
+    protocolName?: string;
+    protocolId?: string;
+  };
+};
+
 export type CommandCenterMetricValueDto = {
   id: string;
   metricLabel: string;

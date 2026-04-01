@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { deriveCommandCenterTopKpis } from "../../../domain/adapters/commandCenterAdapter";
 import {
+  useCommandCenterStudentCollection,
   useCommandCenterStudentDetail,
-  useCommandCenterStudents,
   useCommandCenterTimeline
 } from "../../../domain/hooks/useCommandCenter";
 import type { StudentListItem, TimelineAnomaly } from "../../../domain/models";
@@ -22,28 +22,46 @@ const URGENCY_META: Record<
 };
 
 export function CommandCenterPage() {
-  const studentsResource = useCommandCenterStudents();
+  const studentsResource = useCommandCenterStudentCollection();
+  const [activeTab, setActiveTab] = useState<"top" | "bottom">("top");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const detailResource = useCommandCenterStudentDetail(selectedId);
   const timelineResource = useCommandCenterTimeline(selectedId);
   const [selectedAnomaly, setSelectedAnomaly] = useState<TimelineAnomaly | null>(null);
 
+  const allStudents = studentsResource.data.items;
+  const topStudents = studentsResource.data.topItems;
+  const bottomStudents = studentsResource.data.bottomItems;
+  const hasRankingTabs = studentsResource.data.rankingMode === "top_bottom";
+  const visibleStudents = hasRankingTabs ? (activeTab === "top" ? topStudents : bottomStudents) : allStudents;
+
   useEffect(() => {
-    if (studentsResource.data.length > 0 && !selectedId) {
-      setSelectedId(studentsResource.data[0].id);
+    if (visibleStudents.length > 0 && !selectedId) {
+      setSelectedId(visibleStudents[0].id);
     }
-  }, [studentsResource.data, selectedId]);
+  }, [visibleStudents, selectedId]);
+
+  useEffect(() => {
+    if (visibleStudents.length === 0) {
+      return;
+    }
+    if (!selectedId || !visibleStudents.some((student) => student.id === selectedId)) {
+      setSelectedId(visibleStudents[0].id);
+    }
+  }, [visibleStudents, selectedId]);
 
   useEffect(() => {
     setSelectedAnomaly(null);
   }, [selectedId]);
 
   const selectedStudent = useMemo(
-    () => studentsResource.data.find((student) => student.id === selectedId) ?? null,
-    [studentsResource.data, selectedId]
+    () => allStudents.find((student) => student.id === selectedId) ?? null,
+    [allStudents, selectedId]
   );
+  const mentorLabel = studentsResource.data.context?.mentorName || "Mentor";
+  const protocolLabel = studentsResource.data.context?.protocolName || selectedStudent?.programName || undefined;
 
-  const kpis = useMemo(() => deriveCommandCenterTopKpis(studentsResource.data), [studentsResource.data]);
+  const kpis = useMemo(() => deriveCommandCenterTopKpis(allStudents), [allStudents]);
 
   const detail = detailResource.data;
   const anomalies = timelineResource.data?.anomalies ?? [];
@@ -52,13 +70,15 @@ export function CommandCenterPage() {
   return (
     <MentorShell
       activeView="command-center"
+      brandLabel={mentorLabel}
+      brandTitle={protocolLabel}
       metrics={[
         { label: "Alunos ativos", value: String(kpis.active), tone: "accent" },
         { label: "Alertas de resgate", value: String(kpis.alerts), tone: "warning" },
         { label: "Renovações D-45", value: String(kpis.d45) },
         {
           label: "LTV monitorado",
-          value: formatCurrencyBRL(studentsResource.data.reduce((acc, item) => acc + item.ltv, 0)),
+          value: formatCurrencyBRL(allStudents.reduce((acc, item) => acc + item.ltv, 0)),
           tone: "success"
         }
       ]}
@@ -68,11 +88,34 @@ export function CommandCenterPage() {
           <article className="cc-panel cc-panel--list">
             <header className="cc-panel-header">
               <h2>Alunos monitorados</h2>
-              <p>{studentsResource.data.length} registros</p>
+              <p>{studentsResource.data.totalStudents} monitorados</p>
             </header>
 
-            {studentsResource.loading && studentsResource.data.length === 0 && <p>Carregando alunos...</p>}
-            {!studentsResource.loading && studentsResource.error && studentsResource.data.length === 0 && (
+            {hasRankingTabs && (
+              <div className="cc-tabs" role="tablist" aria-label="Ranking dos alunos monitorados">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === "top"}
+                  className={activeTab === "top" ? "cc-tab is-active" : "cc-tab"}
+                  onClick={() => setActiveTab("top")}
+                >
+                  Top 10
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === "bottom"}
+                  className={activeTab === "bottom" ? "cc-tab is-active" : "cc-tab"}
+                  onClick={() => setActiveTab("bottom")}
+                >
+                  Bottom 10
+                </button>
+              </div>
+            )}
+
+            {studentsResource.loading && allStudents.length === 0 && <p>Carregando alunos...</p>}
+            {!studentsResource.loading && studentsResource.error && allStudents.length === 0 && (
               <div className="cc-error-box">
                 <p>{studentsResource.error}</p>
                 <button type="button" onClick={() => void studentsResource.refresh()}>
@@ -80,13 +123,13 @@ export function CommandCenterPage() {
                 </button>
               </div>
             )}
-            {!studentsResource.loading && !studentsResource.error && studentsResource.data.length === 0 && (
+            {!studentsResource.loading && !studentsResource.error && allStudents.length === 0 && (
               <p>Nenhum aluno encontrado para o Centro de Comando.</p>
             )}
 
-            {studentsResource.data.length > 0 && (
+            {visibleStudents.length > 0 && (
               <ul className="cc-student-list">
-                {studentsResource.data.map((student) => {
+                {visibleStudents.map((student) => {
                   const urgency = URGENCY_META[student.urgency];
                   const progressWidth = `${Math.max(0, Math.min(100, student.progress * 100))}%`;
                   return (

@@ -45,13 +45,26 @@
 
 .cc-error-box button,
 .cc-timeline-list button,
-.cc-modal button {
+.cc-modal button,
+.cc-tab {
   border: 1px solid rgba(250, 184, 0, 0.24);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: #fff2cf;
   padding: 7px 10px;
   cursor: pointer;
+}
+
+.cc-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.cc-tab.is-active {
+  border-color: rgba(250, 184, 0, 0.48);
+  background: rgba(250, 184, 0, 0.12);
+  color: #ffe7a2;
 }
 
 .cc-student-list,
