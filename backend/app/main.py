@@ -69,6 +69,7 @@ def create_app() -> FastAPI:
         "cors_origin_regex": cors_origin_regex,
         "mentor_routes_enabled": mentor_routes_enabled,
         "mentor_route_policy_source": mentor_route_policy.policy_source,
+        # Legacy aliases kept for compatibility with older diagnostics consumers.
         "mentor_demo_routes_enabled": mentor_routes_enabled,
         "mentor_demo_policy_source": mentor_route_policy.policy_source,
         "storage_root": str(resolve_storage_root()),

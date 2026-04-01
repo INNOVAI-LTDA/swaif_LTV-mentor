@@ -76,28 +76,15 @@ def resolve_mentor_route_policy(app_env: str | None = None) -> MentorRoutePolicy
         "ENABLE_MENTOR_ROUTES",
         "ENABLE_MENTOR_DEMO_ROUTES",
     )
-    remote_approval = _get_optional_bool_env_alias(
-        "ALLOW_REMOTE_MENTOR_ROUTES",
-        "ALLOW_REMOTE_MENTOR_DEMO_ROUTES",
-    )
-    production_like = is_production_like_environment(normalized_env)
 
     if explicit_enablement is None:
-        if production_like:
-            return MentorRoutePolicy(enabled=False, policy_source="production-default-disabled")
-        return MentorRoutePolicy(enabled=True, policy_source="local-default-enabled")
+        return MentorRoutePolicy(enabled=True, policy_source="default-enabled")
 
     if explicit_enablement is False:
         return MentorRoutePolicy(enabled=False, policy_source="explicit-disable")
 
-    if production_like and remote_approval is not True:
-        raise RuntimeError(
-            "ENABLE_MENTOR_ROUTES=true requires ALLOW_REMOTE_MENTOR_ROUTES=true when APP_ENV is production-like."
-        )
-
-    if production_like:
-        return MentorRoutePolicy(enabled=True, policy_source="explicit-remote-approval")
-    return MentorRoutePolicy(enabled=True, policy_source="explicit-local-enable")
+    _ = normalized_env
+    return MentorRoutePolicy(enabled=True, policy_source="explicit-enable")
 
 
 def mentor_routes_enabled(app_env: str | None = None) -> bool:

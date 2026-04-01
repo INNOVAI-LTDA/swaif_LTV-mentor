@@ -17,11 +17,11 @@ def test_mentor_routes_enabled_by_default_in_local(monkeypatch) -> None:
     assert mentor_routes_enabled() is True
 
 
-def test_mentor_routes_disabled_by_default_in_production_like_env(monkeypatch) -> None:
+def test_mentor_routes_enabled_by_default_in_production_like_env(monkeypatch) -> None:
     monkeypatch.setenv("APP_ENV", "production")
     monkeypatch.delenv("ENABLE_MENTOR_ROUTES", raising=False)
 
-    assert mentor_routes_enabled() is False
+    assert mentor_routes_enabled() is True
 
 
 def test_mentor_routes_can_be_forced_on(monkeypatch) -> None:
@@ -31,30 +31,14 @@ def test_mentor_routes_can_be_forced_on(monkeypatch) -> None:
     assert mentor_routes_enabled() is True
 
 
-def test_production_like_mentor_enablement_requires_explicit_remote_approval(monkeypatch) -> None:
+def test_production_like_mentor_can_be_enabled_explicitly(monkeypatch) -> None:
     monkeypatch.setenv("APP_ENV", "production")
     monkeypatch.setenv("ENABLE_MENTOR_ROUTES", "true")
-    monkeypatch.delenv("ALLOW_REMOTE_MENTOR_ROUTES", raising=False)
-
-    try:
-        resolve_mentor_route_policy()
-    except RuntimeError as error:
-        assert str(error) == (
-            "ENABLE_MENTOR_ROUTES=true requires ALLOW_REMOTE_MENTOR_ROUTES=true when APP_ENV is production-like."
-        )
-    else:
-        raise AssertionError("Expected remote mentor enablement to require explicit approval.")
-
-
-def test_production_like_mentor_can_be_enabled_with_explicit_remote_approval(monkeypatch) -> None:
-    monkeypatch.setenv("APP_ENV", "production")
-    monkeypatch.setenv("ENABLE_MENTOR_ROUTES", "true")
-    monkeypatch.setenv("ALLOW_REMOTE_MENTOR_ROUTES", "true")
 
     policy = resolve_mentor_route_policy()
 
     assert policy.enabled is True
-    assert policy.policy_source == "explicit-remote-approval"
+    assert policy.policy_source == "explicit-enable"
 
 
 def test_get_storage_backup_dir_accepts_explicit_env(monkeypatch, tmp_path) -> None:
@@ -112,7 +96,6 @@ def test_create_app_disables_mentor_routes_when_configured(monkeypatch) -> None:
     monkeypatch.setenv("CORS_ALLOW_ORIGINS", "https://cliente.example.com")
     monkeypatch.setenv("CLIENT_CODE", "test-client")
     monkeypatch.setenv("ENABLE_MENTOR_ROUTES", "false")
-    monkeypatch.delenv("ALLOW_REMOTE_MENTOR_ROUTES", raising=False)
 
     app = create_app()
     client = TestClient(app)
@@ -125,7 +108,6 @@ def test_create_app_keeps_mentor_routes_in_local(monkeypatch) -> None:
     monkeypatch.setenv("APP_ENV", "local")
     monkeypatch.setenv("CLIENT_CODE", "test-local")
     monkeypatch.delenv("ENABLE_MENTOR_ROUTES", raising=False)
-    monkeypatch.delenv("ALLOW_REMOTE_MENTOR_ROUTES", raising=False)
     monkeypatch.delenv("CORS_ALLOW_ORIGINS", raising=False)
 
     app = create_app()
@@ -133,20 +115,31 @@ def test_create_app_keeps_mentor_routes_in_local(monkeypatch) -> None:
 
     response = client.get("/mentor/matriz-renovacao")
     assert response.status_code == 401
-    assert app.state.runtime_summary["mentor_route_policy_source"] == "local-default-enabled"
+    assert app.state.runtime_summary["mentor_route_policy_source"] == "default-enabled"
 
 
-def test_create_app_exposes_runtime_policy_summary_for_remote_approval(monkeypatch) -> None:
+def test_create_app_exposes_runtime_policy_summary_for_default_production_enablement(monkeypatch) -> None:
     monkeypatch.setenv("APP_ENV", "production")
     monkeypatch.setenv("CORS_ALLOW_ORIGINS", "https://cliente.example.com")
     monkeypatch.setenv("CLIENT_CODE", "test-client")
-    monkeypatch.setenv("ENABLE_MENTOR_ROUTES", "true")
-    monkeypatch.setenv("ALLOW_REMOTE_MENTOR_ROUTES", "true")
+    monkeypatch.delenv("ENABLE_MENTOR_ROUTES", raising=False)
 
     app = create_app()
 
     assert app.state.runtime_summary["mentor_routes_enabled"] is True
-    assert app.state.runtime_summary["mentor_route_policy_source"] == "explicit-remote-approval"
+    assert app.state.runtime_summary["mentor_route_policy_source"] == "default-enabled"
+
+
+def test_create_app_exposes_runtime_policy_summary_for_explicit_enablement(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("CORS_ALLOW_ORIGINS", "https://cliente.example.com")
+    monkeypatch.setenv("CLIENT_CODE", "test-client")
+    monkeypatch.setenv("ENABLE_MENTOR_ROUTES", "true")
+
+    app = create_app()
+
+    assert app.state.runtime_summary["mentor_routes_enabled"] is True
+    assert app.state.runtime_summary["mentor_route_policy_source"] == "explicit-enable"
 
 
 def test_create_app_configures_allow_origin_regex_when_present(monkeypatch) -> None:

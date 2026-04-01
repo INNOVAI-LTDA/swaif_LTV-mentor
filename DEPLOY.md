@@ -8,15 +8,39 @@ Purpose: keep the SPA deploy rooted at `frontend/`, publish it at `/`, and versi
 - Build Command: `npm run build`
 - Output Directory: `dist`
 
+## Railway Backend Settings
+- Root Directory: `backend`
+- Start Command: your standard FastAPI/Uvicorn entrypoint for `backend/app/main.py`
+- Mount the persistent volume at `/app/data`
+- Keep the JSON store-path overrides unset unless you intentionally want a non-default layout
+
+## Railway Required Environment Variables
+- `APP_ENV=production`
+- `CLIENT_CODE=accmed`
+- `CORS_ALLOW_ORIGINS=https://accmed.innovai-solutions.com.br`
+- `APP_AUTH_SECRET=<strong-random-secret>`
+- `STORAGE_BACKUP_DIR=/app/data/backups`
+
+Optional:
+- `CORS_ALLOW_ORIGIN_REGEX=^https://.*\.vercel\.app$` to allow Preview deployments
+- `ENABLE_MENTOR_ROUTES=true` only if you want to force the published mentor surface on explicitly; current runtime defaults to enabled
+
 ## Required Environment Variables (build time)
 - `VITE_DEPLOY_TARGET=client` (frontend contract requires this)
 - `VITE_APP_BASE_PATH=/` (root-path deploy)
 - `VITE_API_BASE_URL` = **absolute** `https://` URL (no credentials, no query/hash)
 - `VITE_CLIENT_CODE` = client identifier (letters/numbers/hyphen/underscore)
+- `VITE_CLIENT_NAME=Grupo Acelerador Médico`
+- `VITE_APP_NAME=Gamma`
+- `VITE_APP_TAGLINE=Acompanhamento com visão operacional`
+- `VITE_SHELL_SUBTITLE=Operação, acompanhamento e governança`
 - Do **not** place secrets in `VITE_*`; keep secrets in backend/env or Vercel project secrets.
 - Use the example files for environment scoping:
   - `frontend/.env.preview.example` for Vercel Preview values
   - `frontend/.env.production.example` for Vercel Production values
+- Keep hosted flags disabled:
+  - `VITE_ENABLE_DEMO_MODE=false`
+  - `VITE_ENABLE_INTERNAL_MENTOR_SURFACE=false`
 
 ## Notes on Base Path
 - Code supports subpaths, but the current hosted contract sets the production deploy to `/`.
@@ -39,6 +63,7 @@ Checks:
 - Home page loads.
 - Browser console has no `404` asset errors.
 - API base URL points to the intended backend; no requests target `127.0.0.1` or `localhost`.
+- Backend OpenAPI on the published API host contains `/mentor/matriz-renovacao`, `/mentor/radar`, and `/mentor/centro-comando`.
 - Nested route refresh works for `/`, `/login`, `/dashboard`, `/app/admin`, `/app/matriz-renovacao`, and `/app/aluno`.
 - Login/auth flow works and protected navigation behaves as expected.
 - Custom domain works with valid TLS and the address bar stays on `https://accmed.innovai-solutions.com.br`.
