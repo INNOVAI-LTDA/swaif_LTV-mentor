@@ -110,30 +110,30 @@ export function adaptCommandCenterDetail(payload: unknown): StudentDetail | null
     ...base,
     metricValues: Array.isArray(dto.metricValues)
       ? dto.metricValues.map((metric) => ({
-          id: String(metric.id ?? ""),
-          metricLabel: String(metric.metricLabel ?? ""),
-          valueCurrent: coerceNumber(metric.valueCurrent),
-          valueBaseline: coerceNumber(metric.valueBaseline),
-          valueProjected:
-            metric.valueProjected === undefined || metric.valueProjected === null
-              ? null
-              : coerceNumber(metric.valueProjected),
-          improvingTrend:
-            metric.improvingTrend === undefined || metric.improvingTrend === null
-              ? null
-              : Boolean(metric.improvingTrend),
-          unit: String(metric.unit ?? ""),
-          optimal: metric.optimal == null ? null : String(metric.optimal)
-        }))
+        id: String(metric.id ?? ""),
+        metricLabel: String(metric.metricLabel ?? ""),
+        valueCurrent: coerceNumber(metric.valueCurrent),
+        valueBaseline: coerceNumber(metric.valueBaseline),
+        valueProjected:
+          metric.valueProjected === undefined || metric.valueProjected === null
+            ? null
+            : coerceNumber(metric.valueProjected),
+        improvingTrend:
+          metric.improvingTrend === undefined || metric.improvingTrend === null
+            ? null
+            : Boolean(metric.improvingTrend),
+        unit: String(metric.unit ?? ""),
+        optimal: metric.optimal == null ? null : String(metric.optimal)
+      }))
       : [],
     checkpoints: Array.isArray(dto.checkpoints)
       ? dto.checkpoints.map((checkpoint) => ({
-          id: String(checkpoint.id ?? ""),
-          week: coerceNumber(checkpoint.week),
-          status:
-            checkpoint.status === "yellow" || checkpoint.status === "red" ? checkpoint.status : "green",
-          label: String(checkpoint.label ?? "")
-        }))
+        id: String(checkpoint.id ?? ""),
+        week: coerceNumber(checkpoint.week),
+        status:
+          checkpoint.status === "yellow" || checkpoint.status === "red" ? checkpoint.status : "green",
+        label: String(checkpoint.label ?? "")
+      }))
       : []
   };
 }
@@ -148,28 +148,28 @@ export function adaptTimelineAnomalies(payload: unknown): TimelineAnomalies | nu
     studentId: String(dto.studentId ?? ""),
     timeline: Array.isArray(dto.timeline)
       ? dto.timeline.map((entry) => ({
-          week: coerceNumber(entry.week),
-          label: String(entry.label ?? ""),
-          status: entry.status === "yellow" || entry.status === "red" ? entry.status : "green",
-          anomaly: entry.anomaly
-            ? {
-                marker: String(entry.anomaly.marker ?? ""),
-                value: String(entry.anomaly.value ?? ""),
-                ref: String(entry.anomaly.ref ?? ""),
-                cause: String(entry.anomaly.cause ?? ""),
-                action: String(entry.anomaly.action ?? "")
-              }
-            : null
-        }))
+        week: coerceNumber(entry.week),
+        label: String(entry.label ?? ""),
+        status: entry.status === "yellow" || entry.status === "red" ? entry.status : "green",
+        anomaly: entry.anomaly
+          ? {
+            marker: String(entry.anomaly.marker ?? ""),
+            value: String(entry.anomaly.value ?? ""),
+            ref: String(entry.anomaly.ref ?? ""),
+            cause: String(entry.anomaly.cause ?? ""),
+            action: String(entry.anomaly.action ?? "")
+          }
+          : null
+      }))
       : [],
     anomalies: Array.isArray(dto.anomalies)
       ? dto.anomalies.map((anomaly) => ({
-          marker: String(anomaly.marker ?? ""),
-          value: String(anomaly.value ?? ""),
-          ref: String(anomaly.ref ?? ""),
-          cause: String(anomaly.cause ?? ""),
-          action: String(anomaly.action ?? "")
-        }))
+        marker: String(anomaly.marker ?? ""),
+        value: String(anomaly.value ?? ""),
+        ref: String(anomaly.ref ?? ""),
+        cause: String(anomaly.cause ?? ""),
+        action: String(anomaly.action ?? "")
+      }))
       : [],
     summary: {
       anomalyCount: coerceNumber(dto.summary?.anomalyCount),

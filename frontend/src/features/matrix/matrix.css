@@ -17,7 +17,7 @@
   align-items: center;
 }
 
-.mx-density-row > span {
+.mx-density-row>span {
   color: #c9c9c9;
   font-size: 11px;
   font-weight: 700;
@@ -265,6 +265,7 @@
     opacity: 0;
     transform: translateX(18px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
