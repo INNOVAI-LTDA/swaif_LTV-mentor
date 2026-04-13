@@ -112,6 +112,7 @@ describe("CommandCenterPage", () => {
         expect(screen.getByRole("tab", { name: "Bottom 10" })).toBeInTheDocument();
         expect(screen.getByText("42 monitorados")).toBeInTheDocument();
         expect(screen.getAllByText("Top 1").length).toBeGreaterThan(0);
+        expect(screen.queryByText(/Hormozi/i)).not.toBeInTheDocument();
         expect(screen.queryByText("Bottom 1")).toBeNull();
 
         fireEvent.click(screen.getByRole("tab", { name: "Bottom 10" }));

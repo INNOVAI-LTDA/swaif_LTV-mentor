@@ -177,7 +177,6 @@ export function CommandCenterPage() {
                   <div className="cc-inline-metrics">
                     <span>Engajamento: {formatPercent01(selectedStudent.engagement)}</span>
                     <span>Progresso: {formatPercent01(selectedStudent.progress)}</span>
-                    <span>Hormozi: {selectedStudent.hormoziScore.toFixed(1)}</span>
                   </div>
                 </section>
 
