@@ -23,7 +23,8 @@ const URGENCY_META: Record<
 
 export function CommandCenterPage() {
   const studentsResource = useCommandCenterStudentCollection();
-  const [activeTab, setActiveTab] = useState<"top" | "bottom">("top");
+  const [activeTab, setActiveTab] = useState<"top" | "bottom" | "all">("top");
+  const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const detailResource = useCommandCenterStudentDetail(selectedId);
   const timelineResource = useCommandCenterTimeline(selectedId);
@@ -32,8 +33,29 @@ export function CommandCenterPage() {
   const allStudents = studentsResource.data.items;
   const topStudents = studentsResource.data.topItems;
   const bottomStudents = studentsResource.data.bottomItems;
+  const pageSize = 10;
   const hasRankingTabs = studentsResource.data.rankingMode === "top_bottom";
-  const visibleStudents = hasRankingTabs ? (activeTab === "top" ? topStudents : bottomStudents) : allStudents;
+  const totalPages = Math.max(1, Math.ceil(allStudents.length / pageSize));
+  const paginatedStudents = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return allStudents.slice(start, start + pageSize);
+  }, [allStudents, page]);
+  const visibleStudents = hasRankingTabs
+    ? activeTab === "top"
+      ? topStudents
+      : activeTab === "bottom"
+        ? bottomStudents
+        : paginatedStudents
+    : allStudents;
+
+  useEffect(() => {
+    if (activeTab !== "all") {
+      return;
+    }
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [activeTab, page, totalPages]);
 
   useEffect(() => {
     if (visibleStudents.length > 0 && !selectedId) {
@@ -53,6 +75,10 @@ export function CommandCenterPage() {
   useEffect(() => {
     setSelectedAnomaly(null);
   }, [selectedId]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab]);
 
   const selectedStudent = useMemo(
     () => allStudents.find((student) => student.id === selectedId) ?? null,
@@ -111,6 +137,15 @@ export function CommandCenterPage() {
                 >
                   Bottom 10
                 </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === "all"}
+                  className={activeTab === "all" ? "cc-tab is-active" : "cc-tab"}
+                  onClick={() => setActiveTab("all")}
+                >
+                  Todos (paginado)
+                </button>
               </div>
             )}
 
@@ -159,6 +194,23 @@ export function CommandCenterPage() {
                   );
                 })}
               </ul>
+            )}
+            {hasRankingTabs && activeTab === "all" && allStudents.length > pageSize && (
+              <div className="cc-pagination" aria-label="Paginação dos alunos monitorados">
+                <button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1}>
+                  Anterior
+                </button>
+                <span>
+                  Página {page} de {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                  disabled={page === totalPages}
+                >
+                  Próxima
+                </button>
+              </div>
             )}
           </article>
 

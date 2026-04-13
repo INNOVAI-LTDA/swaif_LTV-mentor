@@ -99,7 +99,7 @@ vi.mock("../domain/hooks/useCommandCenter", () => ({
 }));
 
 describe("CommandCenterPage", () => {
-    it("renders top and bottom 10 students using tabs", () => {
+    it("renders top, bottom and paginated students using tabs", () => {
         render(
             <MemoryRouter initialEntries={["/app/centro-comando"]}>
                 <Routes>
@@ -110,6 +110,7 @@ describe("CommandCenterPage", () => {
 
         expect(screen.getByRole("tab", { name: "Top 10" })).toBeInTheDocument();
         expect(screen.getByRole("tab", { name: "Bottom 10" })).toBeInTheDocument();
+        expect(screen.getByRole("tab", { name: "Todos (paginado)" })).toBeInTheDocument();
         expect(screen.getByText("42 monitorados")).toBeInTheDocument();
         expect(screen.getAllByText("Top 1").length).toBeGreaterThan(0);
         expect(screen.queryByText(/Hormozi/i)).not.toBeInTheDocument();
@@ -119,5 +120,23 @@ describe("CommandCenterPage", () => {
 
         expect(screen.getAllByText("Bottom 1").length).toBeGreaterThan(0);
         expect(screen.queryByText("Top 1")).toBeNull();
+
+        fireEvent.click(screen.getByRole("tab", { name: "Todos (paginado)" }));
+
+        expect(screen.getByText("Página 1 de 2")).toBeInTheDocument();
+        expect(screen.getAllByText("Top 1").length).toBeGreaterThan(0);
+        expect(screen.queryByText("Bottom 1")).toBeNull();
+
+        fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+
+        expect(screen.getByText("Página 2 de 2")).toBeInTheDocument();
+        expect(screen.getAllByText("Bottom 1").length).toBeGreaterThan(0);
+        expect(screen.queryByText("Top 1")).toBeNull();
+
+        fireEvent.click(screen.getByRole("tab", { name: "Top 10" }));
+        fireEvent.click(screen.getByRole("tab", { name: "Todos (paginado)" }));
+
+        expect(screen.getByText("Página 1 de 2")).toBeInTheDocument();
+        expect(screen.getAllByText("Top 1").length).toBeGreaterThan(0);
     });
 });
