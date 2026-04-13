@@ -144,9 +144,7 @@ input {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  background:
-    linear-gradient(115deg, rgba(9, 9, 9, 0.92) 12%, rgba(9, 9, 9, 0.7) 52%, rgba(9, 9, 9, 0.95) 100%),
-    #090909;
+  background: #000;
 }
 
 .login-shell__backdrop,

@@ -44,8 +44,6 @@ export function LoginPage() {
 
   return (
     <section className="login-shell">
-      <div className="login-shell__backdrop" />
-      <div className="login-shell__overlay" />
       <div className="login-grid">
         <aside className="login-hero">
           <img className="login-hero__logo" src={env.brandingLogoUrl} alt={env.clientName} />
