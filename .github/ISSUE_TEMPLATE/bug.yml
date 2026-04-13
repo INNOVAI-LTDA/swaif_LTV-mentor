@@ -1,0 +1,55 @@
+name: "Bug"
+description: "Reporte de falha ou comportamento inesperado na aplicação."
+labels: ["bug"]
+body:
+  - type: textarea
+    id: descricao
+    attributes:
+      label: "Descrição do Bug"
+      description: "Descreva o problema de forma clara e objetiva."
+    validations:
+      required: true
+  - type: textarea
+    id: passos
+    attributes:
+      label: "Passos para Reproduzir"
+      description: "Liste, em ordem, as ações necessárias para que o bug ocorra."
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: "Comportamento Esperado"
+      description: "O que deveria acontecer se o sistema estivesse funcionando corretamente."
+    validations:
+      required: true
+  - type: textarea
+    id: atual
+    attributes:
+      label: "Comportamento Atual"
+      description: "O que está acontecendo de fato."
+    validations:
+      required: true
+  - type: textarea
+    id: ambiente
+    attributes:
+      label: "Ambiente"
+      description: "Sistema operacional, navegador, versão da aplicação, dispositivo, etc."
+    validations:
+      required: true
+  - type: textarea
+    id: evidencias
+    attributes:
+      label: "Capturas de Tela / Logs"
+      description: "Anexe imagens, vídeos ou trechos de log que comprovem a falha."
+  - type: dropdown
+    id: severidade
+    attributes:
+      label: "Severidade/Prioridade"
+      options:
+        - "Baixa"
+        - "Média"
+        - "Alta"
+        - "Crítica"
+    validations:
+      required: true

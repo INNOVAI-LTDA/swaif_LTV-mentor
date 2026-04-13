@@ -1,0 +1,46 @@
+name: "Alteração do FrontEnd/LandingPages"
+description: "Ajustes em textos, cores, contrastes, imagens, elementos gráficos ou componentes de CTA em Landing Pages."
+labels: ["frontend", "landing-page", "conteudo"]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: "URL da Landing Page"
+      description: "Endereço completo da página que será alterada."
+    validations:
+      required: true
+  - type: textarea
+    id: elementos
+    attributes:
+      label: "Elementos a Serem Alterados"
+      description: "Especifique textos, cores, contrastes, imagens, gráficos ou CTAs (botões)."
+    validations:
+      required: true
+  - type: textarea
+    id: descricao
+    attributes:
+      label: "Descrição da Modificação"
+      description: "Detalhe o estado atual e o estado desejado para cada elemento."
+    validations:
+      required: true
+  - type: input
+    id: referencia
+    attributes:
+      label: "Referência Visual ou Exemplo"
+      description: "Links para mockups, prints ou exemplos de referência."
+  - type: dropdown
+    id: prioridade
+    attributes:
+      label: "Prioridade"
+      options:
+        - "Baixa"
+        - "Média"
+        - "Alta"
+        - "Urgente"
+    validations:
+      required: true
+  - type: textarea
+    id: observacoes
+    attributes:
+      label: "Observações Adicionais"
+      description: "Qualquer informação relevante para a equipe de implementação."

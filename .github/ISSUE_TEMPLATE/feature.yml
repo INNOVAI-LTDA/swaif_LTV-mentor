@@ -1,0 +1,45 @@
+name: "Nova Funcionalidade (Feature)"
+description: "Proposta de implementação de nova funcionalidade na aplicação."
+labels: ["feature", "enhancement"]
+body:
+  - type: textarea
+    id: descricao
+    attributes:
+      label: "Descrição da Funcionalidade"
+      description: "Explique detalhadamente o que a nova funcionalidade deve fazer."
+    validations:
+      required: true
+  - type: textarea
+    id: justificativa
+    attributes:
+      label: "Justificativa / Valor para o Cliente"
+      description: "Por que essa funcionalidade é necessária? Qual problema resolve ou qual benefício traz?"
+    validations:
+      required: true
+  - type: textarea
+    id: criterios
+    attributes:
+      label: "Critérios de Aceitação"
+      description: "Liste as condições que devem ser atendidas para considerar a funcionalidade concluída."
+    validations:
+      required: true
+  - type: input
+    id: referencia
+    attributes:
+      label: "Referências / Protótipos"
+      description: "Links para designs, fluxos, documentação ou exemplos de referência."
+  - type: dropdown
+    id: impacto
+    attributes:
+      label: "Impacto Estimado"
+      options:
+        - "Baixo"
+        - "Médio"
+        - "Alto"
+    validations:
+      required: true
+  - type: textarea
+    id: observacoes
+    attributes:
+      label: "Observações Adicionais"
+      description: "Detalhes complementares, dependências ou considerações técnicas."

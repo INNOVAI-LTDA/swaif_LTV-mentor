@@ -1,0 +1,46 @@
+name: "Alteração do FrontEnd/Páginas Comuns"
+description: "Solicitação de ajustes no código fonte de páginas comuns, conforme demanda do cliente, sem caráter de correção de bug."
+labels: ["frontend", "alteracao"]
+body:
+  - type: textarea
+    id: contexto
+    attributes:
+      label: "Contexto e Objetivo"
+      description: "Descreva brevemente o motivo da alteração e o que se espera alcançar."
+    validations:
+      required: true
+  - type: input
+    id: paginas
+    attributes:
+      label: "Páginas Afetadas"
+      description: "Liste as URLs ou caminhos das páginas que sofrerão alterações."
+    validations:
+      required: true
+  - type: textarea
+    id: descricao
+    attributes:
+      label: "Descrição Detalhada da Alteração"
+      description: "Especifique exatamente o que deve ser modificado no código ou na interface."
+    validations:
+      required: true
+  - type: input
+    id: referencia
+    attributes:
+      label: "Referência/Protótipo/Design"
+      description: "Cole links para Figma, imagens ou documentos de referência."
+  - type: dropdown
+    id: prioridade
+    attributes:
+      label: "Prioridade"
+      options:
+        - "Baixa"
+        - "Média"
+        - "Alta"
+        - "Urgente"
+    validations:
+      required: true
+  - type: textarea
+    id: observacoes
+    attributes:
+      label: "Observações Adicionais"
+      description: "Informações complementares que possam auxiliar no desenvolvimento."
