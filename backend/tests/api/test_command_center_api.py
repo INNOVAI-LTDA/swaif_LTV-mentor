@@ -273,3 +273,62 @@ def test_center_returns_top_and_bottom_10_when_over_20_students(monkeypatch, tmp
     assert len(returned_ids) == len(set(returned_ids))
     assert student_ids[21] in returned_ids
     assert student_ids[0] in returned_ids
+
+
+def test_center_counts_unique_students_when_student_has_multiple_active_enrollments_history(monkeypatch, tmp_path: Path) -> None:
+    _configure_stores(monkeypatch, tmp_path)
+    client = TestClient(app)
+    admin_token = _login(client, "admin@swaif.local", "admin123")
+    headers = {"Authorization": f"Bearer {admin_token}"}
+
+    org_response = client.post("/admin/mentorias", json={"name": "Mentoria Unica"}, headers=headers)
+    assert org_response.status_code == 201
+    organization_id = org_response.json()["id"]
+
+    student = client.post("/admin/alunos", json={"full_name": "Aluno Duplicado"}, headers=headers).json()
+    student_id = student["id"]
+
+    first_link = client.post(
+        f"/admin/alunos/{student_id}/vincular-mentoria",
+        json={
+            "organization_id": organization_id,
+            "progress_score": 0.2,
+            "engagement_score": 0.2,
+            "day": 10,
+            "total_days": 100,
+            "days_left": 90,
+        },
+        headers=headers,
+    )
+    assert first_link.status_code == 200
+
+    second_link = client.post(
+        f"/admin/alunos/{student_id}/vincular-mentoria",
+        json={
+            "organization_id": organization_id,
+            "progress_score": 0.7,
+            "engagement_score": 0.8,
+            "day": 70,
+            "total_days": 100,
+            "days_left": 30,
+        },
+        headers=headers,
+    )
+    assert second_link.status_code == 200
+
+    enrollments_payload = json.loads((tmp_path / "enrollments.json").read_text(encoding="utf-8"))
+    enrollments = enrollments_payload.get("items", [])
+    student_enrollments = [row for row in enrollments if str(row.get("student_id")) == student_id]
+    active_student_enrollments = [row for row in student_enrollments if bool(row.get("is_active", True))]
+
+    assert len(student_enrollments) == 2
+    assert len(active_student_enrollments) == 1
+    assert int(active_student_enrollments[0]["day"]) == 70
+
+    center_response = client.get("/admin/centro-comando/alunos", headers=headers)
+    assert center_response.status_code == 200
+    payload = center_response.json()
+    assert payload["totalStudents"] == 1
+    assert len(payload["items"]) == 1
+    assert payload["items"][0]["id"] == student_id
+    assert payload["items"][0]["day"] == 70

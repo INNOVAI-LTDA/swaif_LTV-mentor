@@ -42,6 +42,18 @@ class _FakeEnrollmentRepository:
     def list_by_organization(self, organization_id: str):
         return [item for item in self.items if item["organization_id"] == organization_id]
 
+    def list_by_student(self, student_id: str):
+        return [item for item in self.items if item["student_id"] == student_id]
+
+    def deactivate(self, enrollment_id: str, *, justification: str):
+        for item in self.items:
+            if item["id"] != enrollment_id:
+                continue
+            item["is_active"] = False
+            item["deactivated_reason"] = justification
+            return item
+        return None
+
 
 def test_student_create_and_link_to_mentoria() -> None:
     service = StudentVinculoService(
