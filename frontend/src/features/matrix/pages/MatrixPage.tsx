@@ -22,6 +22,35 @@ const DENSITY_OPTIONS = [
 
 type BubbleDensity = (typeof DENSITY_OPTIONS)[number]["value"];
 
+
+type MatrixQuadrant = MatrixItem["quadrant"];
+
+function normalizeMatrixAxisScore(value: number) {
+  const safe = Number.isFinite(value) ? value : 0;
+  if (safe > 1) {
+    return Math.max(0, Math.min(1, safe / 100));
+  }
+  return Math.max(0, Math.min(1, safe));
+}
+
+function resolveVisualQuadrant(item: Pick<MatrixItem, "progress" | "engagement">): MatrixQuadrant {
+  const progress = normalizeMatrixAxisScore(item.progress);
+  const engagement = normalizeMatrixAxisScore(item.engagement);
+  const isRight = progress >= 0.5;
+  const isTop = engagement >= 0.5;
+
+  if (isTop && isRight) {
+    return "topRight";
+  }
+  if (isTop) {
+    return "topLeft";
+  }
+  if (isRight) {
+    return "bottomRight";
+  }
+  return "bottomLeft";
+}
+
 const URGENCY_LABEL: Record<Urgency, string> = {
   normal: "Estável",
   watch: "Atenção",
@@ -72,7 +101,7 @@ export function MatrixPage() {
     };
 
     for (const item of items) {
-      byQuadrant[item.quadrant].push(item);
+      byQuadrant[resolveVisualQuadrant(item)].push(item);
     }
 
     return [
