@@ -55,6 +55,9 @@ class _FakeEnrollmentRepository:
             },
         ]
 
+    def list_by_mentor(self, mentor_id: str | None = None):
+        return self.list_enrollments()
+
     def get_active_by_student(self, student_id: str):
         for item in self.list_enrollments():
             if item["student_id"] == student_id:
@@ -76,9 +79,15 @@ class _FakeMetricRepository:
             "max_basis_score": 1,
         }
 
+    def list_metrics(self):
+        return [self.get_by_id("mtc_1")]
+
 
 class _FakeMeasurementRepository:
     def list_by_enrollment(self, enrollment_id: str):
+        return []
+
+    def list_measurements(self):
         return []
 
     def replace_for_enrollment(self, enrollment_id: str, rows: list[dict]):
@@ -103,9 +112,8 @@ def test_command_center_derivations_include_edge_cases() -> None:
         checkpoints=_FakeCheckpointRepository(),
     )
 
-    result = service.list_command_center_students()
-    items = result["items"]
-    by_id = {item["id"]: item for item in items}
+    payload = service.list_command_center_students()
+    by_id = {item["id"]: item for item in payload["items"]}
 
     first = by_id["std_1"]
     assert first["daysLeft"] == 45

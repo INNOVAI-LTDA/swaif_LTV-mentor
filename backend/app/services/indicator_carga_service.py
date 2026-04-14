@@ -499,7 +499,7 @@ class IndicatorCargaService:
         }
 
     def list_command_center_students(self, *, mentor_id: str | None = None) -> dict[str, Any]:
-        ranked_items: list[tuple[dict[str, Any], float]] = []
+        ranked_items_by_student: dict[str, tuple[dict[str, Any], float]] = {}
         protocol_ids_seen: list[str] = []
         students_by_id = self._students_by_id()
         organizations_by_id = self._organizations_by_id()
@@ -508,6 +508,9 @@ class IndicatorCargaService:
         for enrollment in deduped_enrollments:
             student = students_by_id.get(str(enrollment.get("student_id")))
             if not student:
+                continue
+            student_id = str(student.get("id") or "")
+            if not student_id:
                 continue
             organization = organizations_by_id.get(str(enrollment.get("organization_id")))
             overall = self._get_overall_by_enrollment(str(enrollment.get("id")))
@@ -554,7 +557,12 @@ class IndicatorCargaService:
             )
             if performance_score <= 0.0:
                 performance_score = float(summary.get("hormoziScore", 0)) / 100
-            ranked_items.append((summary, performance_score))
+
+            previous = ranked_items_by_student.get(student_id)
+            if previous is None or performance_score > previous[1]:
+                ranked_items_by_student[student_id] = (summary, performance_score)
+
+        ranked_items = list(ranked_items_by_student.values())
 
         context_protocol_id = protocol_ids_seen[0] if protocol_ids_seen else ""
         context_protocol = self._protocols_by_id().get(context_protocol_id)
@@ -570,14 +578,15 @@ class IndicatorCargaService:
                 str(row[0].get("name", "")),
             )
         )
+        all_items = [item for item, _ in ranked_items]
 
         if len(ranked_items) <= 20:
-            items = [item for item, _ in ranked_items]
             return {
-                "items": items,
-                "topItems": items,
+                "items": all_items,
+                "allItems": all_items,
+                "topItems": all_items,
                 "bottomItems": [],
-                "totalStudents": len(deduped_enrollments),
+                "totalStudents": len(all_items),
                 "rankingMode": "full",
                 "context": context,
             }
@@ -595,10 +604,11 @@ class IndicatorCargaService:
         top_items = [item for item, _ in top]
         bottom_items = [item for item, _ in bottom]
         return {
-            "items": top_items + bottom_items,
+            "items": all_items,
+            "allItems": all_items,
             "topItems": top_items,
             "bottomItems": bottom_items,
-            "totalStudents": len(deduped_enrollments),
+            "totalStudents": len(all_items),
             "rankingMode": "top_bottom",
             "context": context,
         }

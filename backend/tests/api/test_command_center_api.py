@@ -262,15 +262,15 @@ def test_center_returns_top_and_bottom_10_when_over_20_students(monkeypatch, tmp
     assert response.status_code == 200
     payload = response.json()
     items = payload["items"]
-    assert len(items) == 20
+    assert len(items) == 22
     assert payload["rankingMode"] == "top_bottom"
     assert payload["totalStudents"] == 22
+    assert len(payload["allItems"]) == 22
     assert len(payload["topItems"]) == 10
     assert len(payload["bottomItems"]) == 10
 
     returned_ids = [str(item["id"]) for item in items]
-    excluded_ids = {student_ids[10], student_ids[11]}
-    assert excluded_ids.isdisjoint(set(returned_ids))
+    assert len(returned_ids) == len(set(returned_ids))
     assert student_ids[21] in returned_ids
     assert student_ids[0] in returned_ids
 
