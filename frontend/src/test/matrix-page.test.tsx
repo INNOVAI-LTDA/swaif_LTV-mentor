@@ -91,7 +91,7 @@ describe("MatrixPage", () => {
         expect(screen.getByRole("heading", { name: "Ajustar plano" })).toBeInTheDocument();
         expect(screen.getByRole("heading", { name: "Resgatar valor" })).toBeInTheDocument();
         expect(screen.getByRole("heading", { name: "Recuperação urgente" })).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: "10 por quadrante" })).toHaveClass("is-active");
+        expect(screen.getByRole("button", { name: "5 por quadrante" })).toHaveClass("is-active");
 
         fireEvent.click(screen.getByRole("button", { name: /ap/i }));
 
@@ -104,7 +104,7 @@ describe("MatrixPage", () => {
         expect(screen.queryByText("Contexto de Renovação")).toBeNull();
     });
 
-    it("limits density by visual quadrant with controlled balanced dataset and removes limits on Todos", () => {
+    it("applies density strictly on load and after sequential changes between 5, 10, 20 and Todos", () => {
         const buildItem = (
             id: string,
             initials: string,
@@ -165,31 +165,39 @@ describe("MatrixPage", () => {
             </MemoryRouter>
         );
 
-        const densityRow = screen.getByLabelText("Quantidade de bolhas por quadrante");
-        fireEvent.click(within(densityRow).getByRole("button", { name: "5 por quadrante" }));
-
         const board = document.querySelector(".mx-board-surface");
         expect(board).not.toBeNull();
 
-        const visibleTopRight = board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="topRight"]') ?? [];
-        const visibleTopLeft = board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="topLeft"]') ?? [];
-        const visibleBottomRight = board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="bottomRight"]') ?? [];
-        const visibleBottomLeft = board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="bottomLeft"]') ?? [];
+        const countByVisualQuadrant = (quadrant: "topRight" | "topLeft" | "bottomRight" | "bottomLeft") =>
+            board?.querySelectorAll(`button.mx-bubble[data-visual-quadrant="${quadrant}"]`)?.length ?? 0;
 
-        expect(visibleTopRight).toHaveLength(5);
-        expect(visibleTopLeft).toHaveLength(5);
-        expect(visibleBottomRight).toHaveLength(4);
-        expect(visibleBottomLeft).toHaveLength(4);
+        const expectVisibleCounts = (expected: { topRight: number; topLeft: number; bottomRight: number; bottomLeft: number }) => {
+            expect(countByVisualQuadrant("topRight")).toBe(expected.topRight);
+            expect(countByVisualQuadrant("topLeft")).toBe(expected.topLeft);
+            expect(countByVisualQuadrant("bottomRight")).toBe(expected.bottomRight);
+            expect(countByVisualQuadrant("bottomLeft")).toBe(expected.bottomLeft);
+        };
+
+        const densityRow = screen.getByLabelText("Quantidade de bolhas por quadrante");
+
+        expectVisibleCounts({ topRight: 5, topLeft: 5, bottomRight: 4, bottomLeft: 4 });
         expect(screen.queryByRole("button", { name: /TR6/i })).toBeNull();
         expect(screen.queryByRole("button", { name: /TL6/i })).toBeNull();
 
-        fireEvent.click(within(densityRow).getByRole("button", { name: "Todos" }));
-
+        fireEvent.click(within(densityRow).getByRole("button", { name: "10 por quadrante" }));
+        expectVisibleCounts({ topRight: 6, topLeft: 6, bottomRight: 4, bottomLeft: 4 });
         expect(screen.getByRole("button", { name: /TR6/i })).toBeInTheDocument();
         expect(screen.getByRole("button", { name: /TL6/i })).toBeInTheDocument();
-        expect(board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="topRight"]')).toHaveLength(6);
-        expect(board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="topLeft"]')).toHaveLength(6);
-        expect(board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="bottomRight"]')).toHaveLength(4);
-        expect(board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="bottomLeft"]')).toHaveLength(4);
+
+        fireEvent.click(within(densityRow).getByRole("button", { name: "20 por quadrante" }));
+        expectVisibleCounts({ topRight: 6, topLeft: 6, bottomRight: 4, bottomLeft: 4 });
+
+        fireEvent.click(within(densityRow).getByRole("button", { name: "Todos" }));
+        expectVisibleCounts({ topRight: 6, topLeft: 6, bottomRight: 4, bottomLeft: 4 });
+
+        fireEvent.click(within(densityRow).getByRole("button", { name: "5 por quadrante" }));
+        expectVisibleCounts({ topRight: 5, topLeft: 5, bottomRight: 4, bottomLeft: 4 });
+        expect(screen.queryByRole("button", { name: /TR6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /TL6/i })).toBeNull();
     });
 });

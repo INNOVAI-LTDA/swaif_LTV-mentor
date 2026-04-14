@@ -83,7 +83,7 @@ function markerValue(value: string | number) {
 
 export function MatrixPage() {
   const [filter, setFilter] = useState<MatrixFilter>("all");
-  const [density, setDensity] = useState<BubbleDensity>(10);
+  const [density, setDensity] = useState<BubbleDensity>(5);
   const resource = useRenewalMatrix(filter);
   const items = resource.data.items;
   const [selectedId, setSelectedId] = useState<string | null>(null);
