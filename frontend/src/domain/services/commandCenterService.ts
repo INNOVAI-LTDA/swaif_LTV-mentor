@@ -1,10 +1,10 @@
-import { adaptCommandCenterCollection, adaptCommandCenterDetail, adaptCommandCenterListPayload, adaptTimelineAnomalies } from "../adapters/commandCenterAdapter";
+import { adaptCommandCenterCollection, adaptCommandCenterDetail, adaptTimelineAnomalies } from "../adapters/commandCenterAdapter";
 import { httpClient } from "../../shared/api/httpClient";
 import type { CommandCenterStudentCollection, StudentDetail, StudentListItem, TimelineAnomalies } from "../models";
 
 export async function listCommandCenterStudents(): Promise<StudentListItem[]> {
   const payload = await httpClient.get<unknown>("/mentor/centro-comando/alunos");
-  return adaptCommandCenterListPayload(payload);
+  return adaptCommandCenterCollection(payload).items;
 }
 
 export async function getCommandCenterStudentCollection(): Promise<CommandCenterStudentCollection> {

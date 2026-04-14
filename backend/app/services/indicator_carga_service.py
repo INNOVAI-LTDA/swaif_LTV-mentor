@@ -555,10 +555,11 @@ class IndicatorCargaService:
             ),
         )[:10]
 
+        items = [item for item, _ in ranked_items]
         top_items = [item for item, _ in top]
         bottom_items = [item for item, _ in bottom]
         return {
-            "items": top_items + bottom_items,
+            "items": items,
             "topItems": top_items,
             "bottomItems": bottom_items,
             "totalStudents": len(ranked_items),
