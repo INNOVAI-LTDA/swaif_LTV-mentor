@@ -247,6 +247,18 @@ class IndicatorCargaService:
         score = (progress * 0.4 + engagement * 0.6) * 100
         return int(max(0, min(100, round(score))))
 
+    @staticmethod
+    def _dedupe_items_by_id(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        deduped: list[dict[str, Any]] = []
+        seen_ids: set[str] = set()
+        for item in items:
+            item_id = str(item.get("id") or "")
+            if not item_id or item_id in seen_ids:
+                continue
+            seen_ids.add(item_id)
+            deduped.append(item)
+        return deduped
+
     def _get_student_and_enrollment(self, student_id: str, *, mentor_id: str | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
         student = self._students_by_id().get(student_id)
         if not student:
@@ -576,6 +588,7 @@ class IndicatorCargaService:
                 -row[1],
                 -int(row[0].get("hormoziScore", 0)),
                 str(row[0].get("name", "")),
+                str(row[0].get("id", "")),
             )
         )
         all_items = [item for item, _ in ranked_items]
@@ -592,17 +605,26 @@ class IndicatorCargaService:
             }
 
         top = ranked_items[:10]
-        bottom = sorted(
+        top_items = [item for item, _ in top]
+        top_ids = {str(item.get("id") or "") for item in top_items}
+        bottom_candidates = sorted(
             ranked_items,
             key=lambda row: (
                 row[1],
                 int(row[0].get("hormoziScore", 0)),
                 str(row[0].get("name", "")),
+                str(row[0].get("id", "")),
             ),
-        )[:10]
-
-        top_items = [item for item, _ in top]
-        bottom_items = [item for item, _ in bottom]
+        )
+        bottom_items: list[dict[str, Any]] = []
+        for item, _ in bottom_candidates:
+            item_id = str(item.get("id") or "")
+            if not item_id or item_id in top_ids:
+                continue
+            bottom_items.append(item)
+            if len(bottom_items) == 10:
+                break
+        combined_items = self._dedupe_items_by_id(top_items + bottom_items)
         return {
             "items": all_items,
             "allItems": all_items,

@@ -21,6 +21,17 @@ const URGENCY_META: Record<
   rescue: { label: "Resgate", className: "cc-urgency--rescue" }
 };
 
+function dedupeStudentsById(students: StudentListItem[]): StudentListItem[] {
+  const seenIds = new Set<string>();
+  return students.filter((student) => {
+    if (seenIds.has(student.id)) {
+      return false;
+    }
+    seenIds.add(student.id);
+    return true;
+  });
+}
+
 export function CommandCenterPage() {
   const studentsResource = useCommandCenterStudentCollection();
   const [activeTab, setActiveTab] = useState<"top" | "bottom" | "all">("top");
