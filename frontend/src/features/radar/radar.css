@@ -38,9 +38,32 @@
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
+  background-color: #121212;
   color: #f2f2f2;
   padding: 10px 12px;
+}
+
+.radar-select-wrap select:hover {
+  border-color: rgba(242, 206, 115, 0.56);
+}
+
+.radar-select-wrap select:focus,
+.radar-select-wrap select:focus-visible {
+  outline: 2px solid #fab800;
+  outline-offset: 2px;
+  border-color: rgba(250, 184, 0, 0.7);
+}
+
+.radar-select-wrap select option {
+  color: #f2f2f2;
+  background-color: #121212;
+}
+
+.radar-select-wrap select option:hover,
+.radar-select-wrap select option:checked,
+.radar-select-wrap select option:focus {
+  color: #111111;
+  background-color: #f2ce73;
 }
 
 .radar-slider-header {
