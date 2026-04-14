@@ -19,6 +19,7 @@ export type CommandCenterStudentListItemDto = {
 
 export type CommandCenterStudentListPayloadDto = {
   items: CommandCenterStudentListItemDto[];
+  allItems?: CommandCenterStudentListItemDto[];
   topItems?: CommandCenterStudentListItemDto[];
   bottomItems?: CommandCenterStudentListItemDto[];
   totalStudents?: number;
