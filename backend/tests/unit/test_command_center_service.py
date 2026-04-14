@@ -22,6 +22,9 @@ class _FakeOrganizationRepository:
     def get_by_id(self, organization_id: str):
         return self.items.get(organization_id)
 
+    def list_organizations(self):
+        return list(self.items.values())
+
 
 class _FakeEnrollmentRepository:
     def list_enrollments(self):
@@ -36,6 +39,7 @@ class _FakeEnrollmentRepository:
                 "engagement_score": 0.0,
                 "progress_score": 0.2,
                 "is_active": True,
+                "updated_at": "2026-04-10T12:00:00Z",
             },
             {
                 "id": "enr_2",
@@ -47,6 +51,7 @@ class _FakeEnrollmentRepository:
                 "engagement_score": 0.7,
                 "progress_score": 0.4,
                 "is_active": True,
+                "updated_at": "2026-04-10T12:00:00Z",
             },
         ]
 
@@ -98,7 +103,8 @@ def test_command_center_derivations_include_edge_cases() -> None:
         checkpoints=_FakeCheckpointRepository(),
     )
 
-    items = service.list_command_center_students()
+    result = service.list_command_center_students()
+    items = result["items"]
     by_id = {item["id"]: item for item in items}
 
     first = by_id["std_1"]
@@ -112,3 +118,67 @@ def test_command_center_derivations_include_edge_cases() -> None:
     assert second["totalDays"] == 0
     assert second["progress"] == 0.4
     assert 0 <= second["hormoziScore"] <= 100
+    assert result["totalStudents"] == 2
+
+
+class _FakeEnrollmentRepositoryWithDuplicates(_FakeEnrollmentRepository):
+    def list_enrollments(self):
+        return [
+            {
+                "id": "enr_old",
+                "student_id": "std_1",
+                "organization_id": "org_1",
+                "day": 10,
+                "total_days": 90,
+                "days_left": 80,
+                "engagement_score": 0.2,
+                "progress_score": 0.1,
+                "is_active": True,
+                "updated_at": "2026-04-01T10:00:00Z",
+            },
+            {
+                "id": "enr_new",
+                "student_id": "std_1",
+                "organization_id": "org_1",
+                "day": 60,
+                "total_days": 90,
+                "days_left": 30,
+                "engagement_score": 0.8,
+                "progress_score": 0.9,
+                "is_active": True,
+                "updated_at": "2026-04-12T10:00:00Z",
+            },
+            {
+                "id": "enr_2",
+                "student_id": "std_2",
+                "organization_id": "org_1",
+                "day": 0,
+                "total_days": 0,
+                "days_left": 80,
+                "engagement_score": 0.7,
+                "progress_score": 0.4,
+                "is_active": True,
+                "updated_at": "2026-04-10T12:00:00Z",
+            },
+        ]
+
+
+def test_command_center_deduplicates_active_enrollments_by_student_id_using_latest_updated_at() -> None:
+    service = IndicatorCargaService(
+        students=_FakeStudentRepository(),
+        organizations=_FakeOrganizationRepository(),
+        enrollments=_FakeEnrollmentRepositoryWithDuplicates(),
+        metrics=_FakeMetricRepository(),
+        measurements=_FakeMeasurementRepository(),
+        checkpoints=_FakeCheckpointRepository(),
+    )
+
+    result = service.list_command_center_students()
+    items = result["items"]
+    by_id = {item["id"]: item for item in items}
+
+    assert result["totalStudents"] == 2
+    assert len(items) == 2
+    assert by_id["std_1"]["day"] == 60
+    assert by_id["std_1"]["daysLeft"] == 30
+    assert by_id["std_1"]["progress"] == 0.6667
