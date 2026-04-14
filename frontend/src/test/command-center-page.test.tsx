@@ -85,7 +85,8 @@ const middleItems = Array.from({ length: 5 }, (_, idx) => ({
 vi.mock("../domain/hooks/useCommandCenter", () => ({
     useCommandCenterStudentCollection: () => ({
         data: {
-            items: [...topItems, ...middleItems, ...bottomItems],
+            items: [...topItems, ...bottomItems],
+            allItems: [...topItems, ...bottomItems],
             topItems,
             bottomItems,
             totalStudents: 25,

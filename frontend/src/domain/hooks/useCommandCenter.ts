@@ -23,6 +23,7 @@ export function useCommandCenterStudentCollection() {
     enabled: true,
     initialData: {
       items: [],
+      allItems: [],
       topItems: [],
       bottomItems: [],
       totalStudents: 0,

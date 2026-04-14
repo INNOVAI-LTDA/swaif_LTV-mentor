@@ -21,6 +21,17 @@ const URGENCY_META: Record<
   rescue: { label: "Resgate", className: "cc-urgency--rescue" }
 };
 
+function dedupeStudentsById(students: StudentListItem[]): StudentListItem[] {
+  const seenIds = new Set<string>();
+  return students.filter((student) => {
+    if (seenIds.has(student.id)) {
+      return false;
+    }
+    seenIds.add(student.id);
+    return true;
+  });
+}
+
 export function CommandCenterPage() {
   const studentsResource = useCommandCenterStudentCollection();
   const [activeTab, setActiveTab] = useState<"top" | "bottom" | "all">("top");
@@ -30,7 +41,7 @@ export function CommandCenterPage() {
   const timelineResource = useCommandCenterTimeline(selectedId);
   const [selectedAnomaly, setSelectedAnomaly] = useState<TimelineAnomaly | null>(null);
 
-  const allStudents = studentsResource.data.items;
+  const allStudents = studentsResource.data.allItems;
   const topStudents = studentsResource.data.topItems;
   const bottomStudents = studentsResource.data.bottomItems;
   const allStudentsForPagination = allStudents;
@@ -88,7 +99,13 @@ export function CommandCenterPage() {
   const mentorLabel = studentsResource.data.context?.mentorName || "Mentor";
   const protocolLabel = studentsResource.data.context?.protocolName || selectedStudent?.programName || undefined;
 
-  const kpis = useMemo(() => deriveCommandCenterTopKpis(allStudents), [allStudents]);
+  const kpis = useMemo(() => {
+    const derived = deriveCommandCenterTopKpis(allStudents);
+    return {
+      ...derived,
+      active: Math.max(studentsResource.data.totalStudents, allStudents.length)
+    };
+  }, [allStudents, studentsResource.data.totalStudents]);
 
   const detail = detailResource.data;
   const anomalies = timelineResource.data?.anomalies ?? [];

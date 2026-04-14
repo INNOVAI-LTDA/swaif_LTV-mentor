@@ -182,6 +182,41 @@ class IndicatorCargaService:
         return [row for row in enrollments if bool(row.get("is_active", True))]
 
     @staticmethod
+    def _parse_datetime(value: Any) -> datetime:
+        raw = str(value or "").strip()
+        if not raw:
+            return datetime.min.replace(tzinfo=timezone.utc)
+        normalized = raw.replace("Z", "+00:00")
+        try:
+            parsed = datetime.fromisoformat(normalized)
+        except ValueError:
+            return datetime.min.replace(tzinfo=timezone.utc)
+        if parsed.tzinfo is None:
+            return parsed.replace(tzinfo=timezone.utc)
+        return parsed.astimezone(timezone.utc)
+
+    @classmethod
+    def _select_most_relevant_enrollments(cls, enrollments: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """
+        Regra explicita: quando houver multiplos enrollments ativos para o mesmo aluno,
+        manter apenas o enrollment com updated_at mais recente.
+        """
+        by_student_id: dict[str, dict[str, Any]] = {}
+        for enrollment in enrollments:
+            student_id = str(enrollment.get("student_id") or "")
+            if not student_id:
+                continue
+            current = by_student_id.get(student_id)
+            if not current:
+                by_student_id[student_id] = enrollment
+                continue
+            current_updated_at = cls._parse_datetime(current.get("updated_at"))
+            incoming_updated_at = cls._parse_datetime(enrollment.get("updated_at"))
+            if incoming_updated_at >= current_updated_at:
+                by_student_id[student_id] = enrollment
+        return list(by_student_id.values())
+
+    @staticmethod
     def _derive_progress(*, day: int, total_days: int, fallback_progress: float) -> float:
         if total_days > 0:
             value = day / total_days
@@ -211,6 +246,18 @@ class IndicatorCargaService:
     def _derive_hormozi_score(*, progress: float, engagement: float) -> int:
         score = (progress * 0.4 + engagement * 0.6) * 100
         return int(max(0, min(100, round(score))))
+
+    @staticmethod
+    def _dedupe_items_by_id(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        deduped: list[dict[str, Any]] = []
+        seen_ids: set[str] = set()
+        for item in items:
+            item_id = str(item.get("id") or "")
+            if not item_id or item_id in seen_ids:
+                continue
+            seen_ids.add(item_id)
+            deduped.append(item)
+        return deduped
 
     def _get_student_and_enrollment(self, student_id: str, *, mentor_id: str | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
         student = self._students_by_id().get(student_id)
@@ -464,13 +511,18 @@ class IndicatorCargaService:
         }
 
     def list_command_center_students(self, *, mentor_id: str | None = None) -> dict[str, Any]:
-        ranked_items: list[tuple[dict[str, Any], float]] = []
+        ranked_items_by_student: dict[str, tuple[dict[str, Any], float]] = {}
         protocol_ids_seen: list[str] = []
         students_by_id = self._students_by_id()
         organizations_by_id = self._organizations_by_id()
-        for enrollment in self._iter_active_enrollments(mentor_id=mentor_id):
+        active_enrollments = self._iter_active_enrollments(mentor_id=mentor_id)
+        deduped_enrollments = self._select_most_relevant_enrollments(active_enrollments)
+        for enrollment in deduped_enrollments:
             student = students_by_id.get(str(enrollment.get("student_id")))
             if not student:
+                continue
+            student_id = str(student.get("id") or "")
+            if not student_id:
                 continue
             organization = organizations_by_id.get(str(enrollment.get("organization_id")))
             overall = self._get_overall_by_enrollment(str(enrollment.get("id")))
@@ -517,7 +569,12 @@ class IndicatorCargaService:
             )
             if performance_score <= 0.0:
                 performance_score = float(summary.get("hormoziScore", 0)) / 100
-            ranked_items.append((summary, performance_score))
+
+            previous = ranked_items_by_student.get(student_id)
+            if previous is None or performance_score > previous[1]:
+                ranked_items_by_student[student_id] = (summary, performance_score)
+
+        ranked_items = list(ranked_items_by_student.values())
 
         context_protocol_id = protocol_ids_seen[0] if protocol_ids_seen else ""
         context_protocol = self._protocols_by_id().get(context_protocol_id)
@@ -531,38 +588,49 @@ class IndicatorCargaService:
                 -row[1],
                 -int(row[0].get("hormoziScore", 0)),
                 str(row[0].get("name", "")),
+                str(row[0].get("id", "")),
             )
         )
+        all_items = [item for item, _ in ranked_items]
 
         if len(ranked_items) <= 20:
-            items = [item for item, _ in ranked_items]
             return {
-                "items": items,
-                "topItems": items,
+                "items": all_items,
+                "allItems": all_items,
+                "topItems": all_items,
                 "bottomItems": [],
-                "totalStudents": len(ranked_items),
+                "totalStudents": len(all_items),
                 "rankingMode": "full",
                 "context": context,
             }
 
         top = ranked_items[:10]
-        bottom = sorted(
+        top_items = [item for item, _ in top]
+        top_ids = {str(item.get("id") or "") for item in top_items}
+        bottom_candidates = sorted(
             ranked_items,
             key=lambda row: (
                 row[1],
                 int(row[0].get("hormoziScore", 0)),
                 str(row[0].get("name", "")),
+                str(row[0].get("id", "")),
             ),
-        )[:10]
-
-        items = [item for item, _ in ranked_items]
-        top_items = [item for item, _ in top]
-        bottom_items = [item for item, _ in bottom]
+        )
+        bottom_items: list[dict[str, Any]] = []
+        for item, _ in bottom_candidates:
+            item_id = str(item.get("id") or "")
+            if not item_id or item_id in top_ids:
+                continue
+            bottom_items.append(item)
+            if len(bottom_items) == 10:
+                break
+        combined_items = self._dedupe_items_by_id(top_items + bottom_items)
         return {
-            "items": items,
+            "items": all_items,
+            "allItems": all_items,
             "topItems": top_items,
             "bottomItems": bottom_items,
-            "totalStudents": len(ranked_items),
+            "totalStudents": len(all_items),
             "rankingMode": "top_bottom",
             "context": context,
         }
