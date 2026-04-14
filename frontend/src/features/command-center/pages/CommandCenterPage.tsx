@@ -21,6 +21,17 @@ const URGENCY_META: Record<
   rescue: { label: "Resgate", className: "cc-urgency--rescue" }
 };
 
+function dedupeStudentsById(students: StudentListItem[]): StudentListItem[] {
+  const seenIds = new Set<string>();
+  return students.filter((student) => {
+    if (seenIds.has(student.id)) {
+      return false;
+    }
+    seenIds.add(student.id);
+    return true;
+  });
+}
+
 export function CommandCenterPage() {
   const studentsResource = useCommandCenterStudentCollection();
   const [activeTab, setActiveTab] = useState<"top" | "bottom" | "all">("top");
@@ -30,9 +41,18 @@ export function CommandCenterPage() {
   const timelineResource = useCommandCenterTimeline(selectedId);
   const [selectedAnomaly, setSelectedAnomaly] = useState<TimelineAnomaly | null>(null);
 
-  const allStudents = studentsResource.data.items;
-  const topStudents = studentsResource.data.topItems;
-  const bottomStudents = studentsResource.data.bottomItems;
+  const allStudents = useMemo(
+    () => dedupeStudentsById(studentsResource.data.items),
+    [studentsResource.data.items]
+  );
+  const topStudents = useMemo(
+    () => dedupeStudentsById(studentsResource.data.topItems),
+    [studentsResource.data.topItems]
+  );
+  const bottomStudents = useMemo(
+    () => dedupeStudentsById(studentsResource.data.bottomItems),
+    [studentsResource.data.bottomItems]
+  );
   const pageSize = 10;
   const hasRankingTabs = studentsResource.data.rankingMode === "top_bottom";
   const totalPages = Math.max(1, Math.ceil(allStudents.length / pageSize));
