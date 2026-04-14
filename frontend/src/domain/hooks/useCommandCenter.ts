@@ -3,13 +3,12 @@ import { useAsyncResource } from "./useAsyncResource";
 import {
   getCommandCenterStudentCollection,
   getCommandCenterStudentDetail,
-  getCommandCenterTimelineAnomalies,
-  listCommandCenterStudents
+  getCommandCenterTimelineAnomalies
 } from "../services/commandCenterService";
 import type { CommandCenterStudentCollection, StudentDetail, StudentListItem, TimelineAnomalies } from "../models";
 
 export function useCommandCenterStudents() {
-  const loader = useCallback(() => listCommandCenterStudents(), []);
+  const loader = useCallback(async () => (await getCommandCenterStudentCollection()).items, []);
   return useAsyncResource<StudentListItem[]>(loader, [loader], {
     enabled: true,
     initialData: [],

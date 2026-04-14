@@ -44,13 +44,14 @@ export function CommandCenterPage() {
   const allStudents = studentsResource.data.allItems;
   const topStudents = studentsResource.data.topItems;
   const bottomStudents = studentsResource.data.bottomItems;
+  const allStudentsForPagination = allStudents;
   const pageSize = 10;
   const hasRankingTabs = studentsResource.data.rankingMode === "top_bottom";
-  const totalPages = Math.max(1, Math.ceil(allStudents.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(allStudentsForPagination.length / pageSize));
   const paginatedStudents = useMemo(() => {
     const start = (page - 1) * pageSize;
-    return allStudents.slice(start, start + pageSize);
-  }, [allStudents, page]);
+    return allStudentsForPagination.slice(start, start + pageSize);
+  }, [allStudentsForPagination, page]);
   const visibleStudents = hasRankingTabs
     ? activeTab === "top"
       ? topStudents
@@ -212,7 +213,7 @@ export function CommandCenterPage() {
                 })}
               </ul>
             )}
-            {hasRankingTabs && activeTab === "all" && allStudents.length > pageSize && (
+            {hasRankingTabs && activeTab === "all" && allStudentsForPagination.length > pageSize && (
               <div className="cc-pagination" aria-label="Paginação dos alunos monitorados">
                 <button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1}>
                   Anterior
