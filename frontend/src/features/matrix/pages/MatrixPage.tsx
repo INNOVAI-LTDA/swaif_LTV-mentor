@@ -83,7 +83,7 @@ function markerValue(value: string | number) {
 
 export function MatrixPage() {
   const [filter, setFilter] = useState<MatrixFilter>("all");
-  const [density, setDensity] = useState<BubbleDensity>(10);
+  const [density, setDensity] = useState<BubbleDensity>(5);
   const resource = useRenewalMatrix(filter);
   const items = resource.data.items;
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -216,7 +216,12 @@ export function MatrixPage() {
         {items.length > 0 && (
           <section className={`mx-main-grid ${selected ? "" : "mx-main-grid--solo"}`.trim()}>
             <div>
-              <MatrixBoard items={visibleItems} selectedId={selectedId} onSelect={select} />
+              <MatrixBoard
+                key={`density-${density}`}
+                items={visibleItems}
+                selectedId={selectedId}
+                onSelect={select}
+              />
 
               <article className="mx-opportunity">
                 <span>Oportunidade em contratos D-45</span>

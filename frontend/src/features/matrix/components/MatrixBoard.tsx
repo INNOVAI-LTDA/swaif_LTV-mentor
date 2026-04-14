@@ -47,6 +47,24 @@ function clampPercent(value01: number) {
   return (padding + safe * (1 - padding * 2)) * 100;
 }
 
+function resolveVisualQuadrant(item: Pick<MatrixItem, "progress" | "engagement">) {
+  const progress = normalizeScore(item.progress);
+  const engagement = normalizeScore(item.engagement);
+  const isRight = progress >= 0.5;
+  const isTop = engagement >= 0.5;
+
+  if (isTop && isRight) {
+    return "topRight";
+  }
+  if (isTop) {
+    return "topLeft";
+  }
+  if (isRight) {
+    return "bottomRight";
+  }
+  return "bottomLeft";
+}
+
 function bubbleSize(ltv: number, minLtv: number, maxLtv: number) {
   if (!Number.isFinite(ltv) || maxLtv <= minLtv) {
     return 48;
@@ -92,6 +110,7 @@ export function MatrixBoard({ items, selectedId, onSelect }: MatrixBoardProps) {
         {items.map((item) => {
           const urgency = URGENCY_META[item.urgency];
           const active = selectedId === item.id;
+          const visualQuadrant = resolveVisualQuadrant(item);
           const style: CSSProperties = {
             left: `${clampPercent(item.progress)}%`,
             bottom: `${clampPercent(item.engagement)}%`,
@@ -107,6 +126,7 @@ export function MatrixBoard({ items, selectedId, onSelect }: MatrixBoardProps) {
               style={style}
               onClick={() => onSelect(item)}
               title={`${item.name} - ${item.programName}`}
+              data-visual-quadrant={visualQuadrant}
             >
               <span>{resolveInitials(item)}</span>
               {item.daysLeft <= 45 && <small>D-{item.daysLeft}</small>}

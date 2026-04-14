@@ -91,7 +91,7 @@ describe("MatrixPage", () => {
         expect(screen.getByRole("heading", { name: "Ajustar plano" })).toBeInTheDocument();
         expect(screen.getByRole("heading", { name: "Resgatar valor" })).toBeInTheDocument();
         expect(screen.getByRole("heading", { name: "Recuperação urgente" })).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: "10 por quadrante" })).toHaveClass("is-active");
+        expect(screen.getByRole("button", { name: "5 por quadrante" })).toHaveClass("is-active");
 
         fireEvent.click(screen.getByRole("button", { name: /ap/i }));
 
@@ -104,15 +104,52 @@ describe("MatrixPage", () => {
         expect(screen.queryByText("Contexto de Renovação")).toBeNull();
     });
 
-    it("limits density by visual quadrant instead of backend quadrant field", () => {
-        mockItems = [
-            { id: "enr_1", name: "Aluno 1", initials: "A1", programName: "Master", progress: 0.9, engagement: 0.9, daysLeft: 30, urgency: "watch", ltv: 120000, renewalReason: "", suggestion: "", markers: [], quadrant: "topRight" },
-            { id: "enr_2", name: "Aluno 2", initials: "A2", programName: "Master", progress: 0.88, engagement: 0.88, daysLeft: 31, urgency: "normal", ltv: 130000, renewalReason: "", suggestion: "", markers: [], quadrant: "topLeft" },
-            { id: "enr_3", name: "Aluno 3", initials: "A3", programName: "Master", progress: 0.86, engagement: 0.86, daysLeft: 32, urgency: "normal", ltv: 140000, renewalReason: "", suggestion: "", markers: [], quadrant: "bottomRight" },
-            { id: "enr_4", name: "Aluno 4", initials: "A4", programName: "Master", progress: 0.84, engagement: 0.84, daysLeft: 33, urgency: "normal", ltv: 150000, renewalReason: "", suggestion: "", markers: [], quadrant: "bottomLeft" },
-            { id: "enr_5", name: "Aluno 5", initials: "A5", programName: "Master", progress: 0.82, engagement: 0.82, daysLeft: 34, urgency: "normal", ltv: 160000, renewalReason: "", suggestion: "", markers: [], quadrant: "topRight" },
-            { id: "enr_6", name: "Aluno 6", initials: "A6", programName: "Master", progress: 0.8, engagement: 0.8, daysLeft: 35, urgency: "normal", ltv: 170000, renewalReason: "", suggestion: "", markers: [], quadrant: "topLeft" }
-        ];
+    it("applies density strictly with large datasets per quadrant when toggling 5, 10, 20 and back to 5", () => {
+        const buildItem = (
+            id: string,
+            initials: string,
+            progress: number,
+            engagement: number
+        ): MatrixItem => ({
+            id,
+            name: `Aluno ${id}`,
+            initials,
+            programName: "Master",
+            progress,
+            engagement,
+            daysLeft: 30,
+            urgency: "normal",
+            ltv: 100000,
+            renewalReason: "",
+            suggestion: "",
+            markers: [],
+            quadrant: "bottomLeft"
+        });
+
+        const buildQuadrantItems = (
+            prefix: "tr" | "tl" | "br" | "bl",
+            count: number
+        ) => Array.from({ length: count }, (_, index) => {
+            const itemNumber = index + 1;
+
+            if (prefix === "tr") {
+                return buildItem(`tr-${itemNumber}`, `TR${itemNumber}`, 0.7 + index * 0.01, 0.7 + index * 0.01);
+            }
+            if (prefix === "tl") {
+                return buildItem(`tl-${itemNumber}`, `TL${itemNumber}`, 0.2 + index * 0.01, 0.7 + index * 0.01);
+            }
+            if (prefix === "br") {
+                return buildItem(`br-${itemNumber}`, `BR${itemNumber}`, 0.7 + index * 0.01, 0.2 + index * 0.01);
+            }
+            return buildItem(`bl-${itemNumber}`, `BL${itemNumber}`, 0.2 + index * 0.01, 0.2 + index * 0.01);
+        });
+
+        const topRight = buildQuadrantItems("tr", 22);
+        const topLeft = buildQuadrantItems("tl", 22);
+        const bottomRight = buildQuadrantItems("br", 22);
+        const bottomLeft = buildQuadrantItems("bl", 22);
+
+        mockItems = [...topRight, ...topLeft, ...bottomRight, ...bottomLeft];
 
         render(
             <MemoryRouter initialEntries={["/app/matriz-renovacao"]}>
@@ -122,14 +159,55 @@ describe("MatrixPage", () => {
             </MemoryRouter>
         );
 
-        const densityRow = screen.getByLabelText("Quantidade de bolhas por quadrante");
-        fireEvent.click(within(densityRow).getByRole("button", { name: "5 por quadrante" }));
+        const countByVisualQuadrant = (quadrant: "topRight" | "topLeft" | "bottomRight" | "bottomLeft") =>
+            document.querySelectorAll(`.mx-board-surface button.mx-bubble[data-visual-quadrant="${quadrant}"]`).length;
 
-        expect(screen.getByRole("button", { name: /a1/i })).toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /a6/i })).toBeNull();
+        const expectVisibleCounts = (expected: { topRight: number; topLeft: number; bottomRight: number; bottomLeft: number }) => {
+            expect(countByVisualQuadrant("topRight")).toBe(expected.topRight);
+            expect(countByVisualQuadrant("topLeft")).toBe(expected.topLeft);
+            expect(countByVisualQuadrant("bottomRight")).toBe(expected.bottomRight);
+            expect(countByVisualQuadrant("bottomLeft")).toBe(expected.bottomLeft);
+        };
+
+        const densityRow = screen.getByLabelText("Quantidade de bolhas por quadrante");
+
+        expectVisibleCounts({ topRight: 5, topLeft: 5, bottomRight: 5, bottomLeft: 5 });
+        expect(screen.queryByRole("button", { name: /TR6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /TL6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /BR6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /BL6/i })).toBeNull();
+
+        fireEvent.click(within(densityRow).getByRole("button", { name: "10 por quadrante" }));
+        expectVisibleCounts({ topRight: 10, topLeft: 10, bottomRight: 10, bottomLeft: 10 });
+        expect(screen.getByTitle("Aluno tr-10 - Master")).toBeInTheDocument();
+        expect(screen.getByTitle("Aluno tl-10 - Master")).toBeInTheDocument();
+        expect(screen.queryByTitle("Aluno tr-11 - Master")).toBeNull();
+        expect(screen.queryByTitle("Aluno tl-11 - Master")).toBeNull();
+
+        fireEvent.click(within(densityRow).getByRole("button", { name: "20 por quadrante" }));
+        expectVisibleCounts({ topRight: 20, topLeft: 20, bottomRight: 20, bottomLeft: 20 });
+        expect(screen.getByTitle("Aluno tr-20 - Master")).toBeInTheDocument();
+        expect(screen.getByTitle("Aluno tl-20 - Master")).toBeInTheDocument();
+        expect(screen.queryByTitle("Aluno tr-21 - Master")).toBeNull();
+        expect(screen.queryByTitle("Aluno tl-21 - Master")).toBeNull();
+
+        fireEvent.click(within(densityRow).getByRole("button", { name: "5 por quadrante" }));
+        expectVisibleCounts({ topRight: 5, topLeft: 5, bottomRight: 5, bottomLeft: 5 });
+        expect(screen.queryByRole("button", { name: /TR6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /TL6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /BR6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /BL6/i })).toBeNull();
 
         fireEvent.click(within(densityRow).getByRole("button", { name: "Todos" }));
+        expectVisibleCounts({ topRight: 22, topLeft: 22, bottomRight: 22, bottomLeft: 22 });
+        expect(screen.getByTitle("Aluno tr-22 - Master")).toBeInTheDocument();
+        expect(screen.getByTitle("Aluno tl-22 - Master")).toBeInTheDocument();
 
-        expect(screen.getByRole("button", { name: /a6/i })).toBeInTheDocument();
+        fireEvent.click(within(densityRow).getByRole("button", { name: "5 por quadrante" }));
+        expectVisibleCounts({ topRight: 5, topLeft: 5, bottomRight: 5, bottomLeft: 5 });
+        expect(screen.queryByRole("button", { name: /TR6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /TL6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /BR6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /BL6/i })).toBeNull();
     });
 });
