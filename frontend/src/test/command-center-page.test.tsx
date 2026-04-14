@@ -69,6 +69,7 @@ vi.mock("../domain/hooks/useCommandCenter", () => ({
     useCommandCenterStudentCollection: () => ({
         data: {
             items: [...topItems, ...bottomItems],
+            allItems: [...topItems, ...bottomItems],
             topItems,
             bottomItems,
             totalStudents: 42,

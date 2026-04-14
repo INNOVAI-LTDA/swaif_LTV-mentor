@@ -37,10 +37,12 @@ export function adaptCommandCenterListPayload(payload: unknown): StudentListItem
     return [];
   }
   const dto = payload as CommandCenterStudentListPayloadDto;
-  if (!Array.isArray(dto.items)) {
-    return [];
-  }
-  return dto.items.map((item) => adaptCommandCenterListItem(item));
+  const source = Array.isArray(dto.allItems)
+    ? dto.allItems
+    : Array.isArray(dto.items)
+      ? dto.items
+      : [];
+  return source.map((item) => adaptCommandCenterListItem(item));
 }
 
 export function adaptCommandCenterCollection(payload: unknown): CommandCenterStudentCollection {
@@ -48,6 +50,7 @@ export function adaptCommandCenterCollection(payload: unknown): CommandCenterStu
     const items = payload.map((item) => adaptCommandCenterListItem(item as CommandCenterStudentListItemDto));
     return {
       items,
+      allItems: items,
       topItems: items,
       bottomItems: [],
       totalStudents: items.length,
@@ -64,6 +67,7 @@ export function adaptCommandCenterCollection(payload: unknown): CommandCenterStu
   if (!payload || typeof payload !== "object") {
     return {
       items: [],
+      allItems: [],
       topItems: [],
       bottomItems: [],
       totalStudents: 0,
@@ -78,17 +82,22 @@ export function adaptCommandCenterCollection(payload: unknown): CommandCenterStu
   }
 
   const dto = payload as CommandCenterStudentListPayloadDto;
-  const items = Array.isArray(dto.items) ? dto.items.map((item) => adaptCommandCenterListItem(item)) : [];
-  const topItems = Array.isArray(dto.topItems) ? dto.topItems.map((item) => adaptCommandCenterListItem(item)) : items;
+  const allItems = Array.isArray(dto.allItems)
+    ? dto.allItems.map((item) => adaptCommandCenterListItem(item))
+    : Array.isArray(dto.items)
+      ? dto.items.map((item) => adaptCommandCenterListItem(item))
+      : [];
+  const topItems = Array.isArray(dto.topItems) ? dto.topItems.map((item) => adaptCommandCenterListItem(item)) : allItems;
   const bottomItems = Array.isArray(dto.bottomItems)
     ? dto.bottomItems.map((item) => adaptCommandCenterListItem(item))
     : [];
 
   return {
-    items,
+    items: allItems,
+    allItems,
     topItems,
     bottomItems,
-    totalStudents: coerceNumber(dto.totalStudents ?? items.length),
+    totalStudents: coerceNumber(dto.totalStudents ?? allItems.length),
     rankingMode: dto.rankingMode === "top_bottom" ? "top_bottom" : "full",
     context: {
       mentorName: String(dto.context?.mentorName ?? ""),

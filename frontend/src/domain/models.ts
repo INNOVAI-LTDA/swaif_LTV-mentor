@@ -43,6 +43,7 @@ export type StudentDetail = StudentListItem & {
 
 export type CommandCenterStudentCollection = {
   items: StudentListItem[];
+  allItems: StudentListItem[];
   topItems: StudentListItem[];
   bottomItems: StudentListItem[];
   totalStudents: number;
