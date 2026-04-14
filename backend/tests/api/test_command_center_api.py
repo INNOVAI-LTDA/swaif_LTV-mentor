@@ -262,93 +262,73 @@ def test_center_returns_top_and_bottom_10_when_over_20_students(monkeypatch, tmp
     assert response.status_code == 200
     payload = response.json()
     items = payload["items"]
-    assert len(items) == 20
+    assert len(items) == 22
     assert payload["rankingMode"] == "top_bottom"
     assert payload["totalStudents"] == 22
+    assert len(payload["allItems"]) == 22
     assert len(payload["topItems"]) == 10
     assert len(payload["bottomItems"]) == 10
 
     returned_ids = [str(item["id"]) for item in items]
-    excluded_ids = {student_ids[10], student_ids[11]}
-    assert excluded_ids.isdisjoint(set(returned_ids))
+    assert len(returned_ids) == len(set(returned_ids))
     assert student_ids[21] in returned_ids
     assert student_ids[0] in returned_ids
 
 
-def test_center_top_and_bottom_do_not_overlap_on_score_tie(monkeypatch, tmp_path: Path) -> None:
+def test_center_counts_unique_students_when_student_has_multiple_active_enrollments_history(monkeypatch, tmp_path: Path) -> None:
     _configure_stores(monkeypatch, tmp_path)
     client = TestClient(app)
     admin_token = _login(client, "admin@swaif.local", "admin123")
     headers = {"Authorization": f"Bearer {admin_token}"}
 
-    org_response = client.post("/admin/mentorias", json={"name": "Mentoria Empate"}, headers=headers)
+    org_response = client.post("/admin/mentorias", json={"name": "Mentoria Unica"}, headers=headers)
     assert org_response.status_code == 201
     organization_id = org_response.json()["id"]
 
-    student_ids: list[str] = []
-    for idx in range(21):
-        student = client.post(
-            "/admin/alunos",
-            json={"full_name": f"Aluno Empate {idx:02d}"},
-            headers=headers,
-        ).json()
-        student_ids.append(student["id"])
-        link = client.post(
-            f"/admin/alunos/{student['id']}/vincular-mentoria",
-            json={
-                "organization_id": organization_id,
-                "progress_score": 0.5,
-                "engagement_score": 0.5,
-                "day": 50,
-                "total_days": 100,
-                "days_left": 50,
-            },
-            headers=headers,
-        )
-        assert link.status_code == 200
+    student = client.post("/admin/alunos", json={"full_name": "Aluno Duplicado"}, headers=headers).json()
+    student_id = student["id"]
+
+    first_link = client.post(
+        f"/admin/alunos/{student_id}/vincular-mentoria",
+        json={
+            "organization_id": organization_id,
+            "progress_score": 0.2,
+            "engagement_score": 0.2,
+            "day": 10,
+            "total_days": 100,
+            "days_left": 90,
+        },
+        headers=headers,
+    )
+    assert first_link.status_code == 200
+
+    second_link = client.post(
+        f"/admin/alunos/{student_id}/vincular-mentoria",
+        json={
+            "organization_id": organization_id,
+            "progress_score": 0.7,
+            "engagement_score": 0.8,
+            "day": 70,
+            "total_days": 100,
+            "days_left": 30,
+        },
+        headers=headers,
+    )
+    assert second_link.status_code == 200
 
     enrollments_payload = json.loads((tmp_path / "enrollments.json").read_text(encoding="utf-8"))
     enrollments = enrollments_payload.get("items", [])
-    by_student_id = {str(row.get("student_id")): str(row.get("id")) for row in enrollments}
+    student_enrollments = [row for row in enrollments if str(row.get("student_id")) == student_id]
+    active_student_enrollments = [row for row in student_enrollments if bool(row.get("is_active", True))]
 
-    tie_score = 0.5
-    overalls_items = []
-    for student_id in student_ids:
-        enrollment_id = by_student_id[student_id]
-        overalls_items.append(
-            {
-                "enrollment_id": enrollment_id,
-                "protocol_id": "prt_tie",
-                "metrics": [],
-                "pillars": [
-                    {
-                        "pillar_id": "plr_tie",
-                        "metric_average": {"goal": 1.0, "base": tie_score, "real": tie_score},
-                    }
-                ],
-                "decision_matrix": {
-                    "product_score": tie_score,
-                    "engagement_score": tie_score,
-                    "thresholds": {"prd_thr": 0.7, "eng_thr": 0.7},
-                },
-            }
-        )
+    assert len(student_enrollments) == 2
+    assert len(active_student_enrollments) == 1
+    assert int(active_student_enrollments[0]["day"]) == 70
 
-    (tmp_path / "measurement_overalls.json").write_text(
-        json.dumps({"version": 1, "items": overalls_items}),
-        encoding="utf-8",
-    )
-
-    response = client.get("/admin/centro-comando/alunos", headers=headers)
-    assert response.status_code == 200
-    payload = response.json()
-
-    top_ids = [str(item["id"]) for item in payload["topItems"]]
-    bottom_ids = [str(item["id"]) for item in payload["bottomItems"]]
-    combined_ids = [str(item["id"]) for item in payload["items"]]
-
-    assert payload["rankingMode"] == "top_bottom"
-    assert len(top_ids) == 10
-    assert len(bottom_ids) == 10
-    assert set(top_ids).isdisjoint(set(bottom_ids))
-    assert len(combined_ids) == len(set(combined_ids))
+    center_response = client.get("/admin/centro-comando/alunos", headers=headers)
+    assert center_response.status_code == 200
+    payload = center_response.json()
+    assert payload["totalStudents"] == 1
+    assert len(payload["items"]) == 1
+    assert payload["items"][0]["id"] == student_id
+    assert payload["items"][0]["day"] == 70

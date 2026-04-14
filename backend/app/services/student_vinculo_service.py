@@ -29,6 +29,21 @@ class StudentVinculoService:
     def create_student(self, *, full_name: str, initials: str | None = None, email: str | None = None) -> dict[str, Any]:
         return self._students.create(full_name=full_name, initials=initials, email=email)
 
+    def _deactivate_active_enrollments(self, *, student_id: str) -> None:
+        active_enrollments = [
+            enrollment
+            for enrollment in self._enrollments.list_by_student(student_id)
+            if bool(enrollment.get("is_active", True))
+        ]
+        for enrollment in active_enrollments:
+            enrollment_id = str(enrollment.get("id") or "")
+            if not enrollment_id:
+                continue
+            self._enrollments.deactivate(
+                enrollment_id,
+                justification="Substituido por novo vinculo ativo",
+            )
+
     def link_student_to_organization(
         self,
         *,
@@ -60,6 +75,8 @@ class StudentVinculoService:
             raise ConsistencyError("timeline values must be non-negative")
         if int(total_days) > 0 and int(day) > int(total_days):
             raise ConsistencyError("day cannot be greater than total_days")
+
+        self._deactivate_active_enrollments(student_id=student_id)
 
         return self._enrollments.create(
             student_id=student_id,

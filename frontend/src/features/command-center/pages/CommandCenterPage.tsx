@@ -41,18 +41,9 @@ export function CommandCenterPage() {
   const timelineResource = useCommandCenterTimeline(selectedId);
   const [selectedAnomaly, setSelectedAnomaly] = useState<TimelineAnomaly | null>(null);
 
-  const allStudents = useMemo(
-    () => dedupeStudentsById(studentsResource.data.items),
-    [studentsResource.data.items]
-  );
-  const topStudents = useMemo(
-    () => dedupeStudentsById(studentsResource.data.topItems),
-    [studentsResource.data.topItems]
-  );
-  const bottomStudents = useMemo(
-    () => dedupeStudentsById(studentsResource.data.bottomItems),
-    [studentsResource.data.bottomItems]
-  );
+  const allStudents = studentsResource.data.allItems;
+  const topStudents = studentsResource.data.topItems;
+  const bottomStudents = studentsResource.data.bottomItems;
   const pageSize = 10;
   const hasRankingTabs = studentsResource.data.rankingMode === "top_bottom";
   const totalPages = Math.max(1, Math.ceil(allStudents.length / pageSize));
@@ -107,7 +98,13 @@ export function CommandCenterPage() {
   const mentorLabel = studentsResource.data.context?.mentorName || "Mentor";
   const protocolLabel = studentsResource.data.context?.protocolName || selectedStudent?.programName || undefined;
 
-  const kpis = useMemo(() => deriveCommandCenterTopKpis(allStudents), [allStudents]);
+  const kpis = useMemo(() => {
+    const derived = deriveCommandCenterTopKpis(allStudents);
+    return {
+      ...derived,
+      active: Math.max(studentsResource.data.totalStudents, allStudents.length)
+    };
+  }, [allStudents, studentsResource.data.totalStudents]);
 
   const detail = detailResource.data;
   const anomalies = timelineResource.data?.anomalies ?? [];
