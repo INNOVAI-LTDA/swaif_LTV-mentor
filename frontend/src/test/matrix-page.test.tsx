@@ -104,15 +104,58 @@ describe("MatrixPage", () => {
         expect(screen.queryByText("Contexto de Renovação")).toBeNull();
     });
 
-    it("limits density by visual quadrant instead of backend quadrant field", () => {
-        mockItems = [
-            { id: "enr_1", name: "Aluno 1", initials: "A1", programName: "Master", progress: 0.9, engagement: 0.9, daysLeft: 30, urgency: "watch", ltv: 120000, renewalReason: "", suggestion: "", markers: [], quadrant: "topRight" },
-            { id: "enr_2", name: "Aluno 2", initials: "A2", programName: "Master", progress: 0.88, engagement: 0.88, daysLeft: 31, urgency: "normal", ltv: 130000, renewalReason: "", suggestion: "", markers: [], quadrant: "topLeft" },
-            { id: "enr_3", name: "Aluno 3", initials: "A3", programName: "Master", progress: 0.86, engagement: 0.86, daysLeft: 32, urgency: "normal", ltv: 140000, renewalReason: "", suggestion: "", markers: [], quadrant: "bottomRight" },
-            { id: "enr_4", name: "Aluno 4", initials: "A4", programName: "Master", progress: 0.84, engagement: 0.84, daysLeft: 33, urgency: "normal", ltv: 150000, renewalReason: "", suggestion: "", markers: [], quadrant: "bottomLeft" },
-            { id: "enr_5", name: "Aluno 5", initials: "A5", programName: "Master", progress: 0.82, engagement: 0.82, daysLeft: 34, urgency: "normal", ltv: 160000, renewalReason: "", suggestion: "", markers: [], quadrant: "topRight" },
-            { id: "enr_6", name: "Aluno 6", initials: "A6", programName: "Master", progress: 0.8, engagement: 0.8, daysLeft: 35, urgency: "normal", ltv: 170000, renewalReason: "", suggestion: "", markers: [], quadrant: "topLeft" }
+    it("limits density by visual quadrant with controlled balanced dataset and removes limits on Todos", () => {
+        const buildItem = (
+            id: string,
+            initials: string,
+            progress: number,
+            engagement: number
+        ): MatrixItem => ({
+            id,
+            name: `Aluno ${id}`,
+            initials,
+            programName: "Master",
+            progress,
+            engagement,
+            daysLeft: 30,
+            urgency: "normal",
+            ltv: 100000,
+            renewalReason: "",
+            suggestion: "",
+            markers: [],
+            quadrant: "bottomLeft"
+        });
+
+        const topRight = [
+            buildItem("tr-1", "TR1", 0.92, 0.92),
+            buildItem("tr-2", "TR2", 0.9, 0.88),
+            buildItem("tr-3", "TR3", 0.86, 0.84),
+            buildItem("tr-4", "TR4", 0.84, 0.82),
+            buildItem("tr-5", "TR5", 0.82, 0.8),
+            buildItem("tr-6", "TR6", 0.8, 0.78)
         ];
+        const topLeft = [
+            buildItem("tl-1", "TL1", 0.2, 0.9),
+            buildItem("tl-2", "TL2", 0.24, 0.86),
+            buildItem("tl-3", "TL3", 0.28, 0.82),
+            buildItem("tl-4", "TL4", 0.3, 0.8),
+            buildItem("tl-5", "TL5", 0.34, 0.78),
+            buildItem("tl-6", "TL6", 0.38, 0.76)
+        ];
+        const bottomRight = [
+            buildItem("br-1", "BR1", 0.9, 0.2),
+            buildItem("br-2", "BR2", 0.86, 0.24),
+            buildItem("br-3", "BR3", 0.82, 0.28),
+            buildItem("br-4", "BR4", 0.78, 0.32)
+        ];
+        const bottomLeft = [
+            buildItem("bl-1", "BL1", 0.2, 0.2),
+            buildItem("bl-2", "BL2", 0.24, 0.24),
+            buildItem("bl-3", "BL3", 0.28, 0.28),
+            buildItem("bl-4", "BL4", 0.32, 0.32)
+        ];
+
+        mockItems = [...topRight, ...topLeft, ...bottomRight, ...bottomLeft];
 
         render(
             <MemoryRouter initialEntries={["/app/matriz-renovacao"]}>
@@ -125,11 +168,28 @@ describe("MatrixPage", () => {
         const densityRow = screen.getByLabelText("Quantidade de bolhas por quadrante");
         fireEvent.click(within(densityRow).getByRole("button", { name: "5 por quadrante" }));
 
-        expect(screen.getByRole("button", { name: /a1/i })).toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /a6/i })).toBeNull();
+        const board = document.querySelector(".mx-board-surface");
+        expect(board).not.toBeNull();
+
+        const visibleTopRight = board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="topRight"]') ?? [];
+        const visibleTopLeft = board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="topLeft"]') ?? [];
+        const visibleBottomRight = board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="bottomRight"]') ?? [];
+        const visibleBottomLeft = board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="bottomLeft"]') ?? [];
+
+        expect(visibleTopRight).toHaveLength(5);
+        expect(visibleTopLeft).toHaveLength(5);
+        expect(visibleBottomRight).toHaveLength(4);
+        expect(visibleBottomLeft).toHaveLength(4);
+        expect(screen.queryByRole("button", { name: /TR6/i })).toBeNull();
+        expect(screen.queryByRole("button", { name: /TL6/i })).toBeNull();
 
         fireEvent.click(within(densityRow).getByRole("button", { name: "Todos" }));
 
-        expect(screen.getByRole("button", { name: /a6/i })).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /TR6/i })).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /TL6/i })).toBeInTheDocument();
+        expect(board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="topRight"]')).toHaveLength(6);
+        expect(board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="topLeft"]')).toHaveLength(6);
+        expect(board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="bottomRight"]')).toHaveLength(4);
+        expect(board?.querySelectorAll('button.mx-bubble[data-visual-quadrant="bottomLeft"]')).toHaveLength(4);
     });
 });
