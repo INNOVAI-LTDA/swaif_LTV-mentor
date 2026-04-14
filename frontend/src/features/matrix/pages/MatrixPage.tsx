@@ -216,7 +216,12 @@ export function MatrixPage() {
         {items.length > 0 && (
           <section className={`mx-main-grid ${selected ? "" : "mx-main-grid--solo"}`.trim()}>
             <div>
-              <MatrixBoard items={visibleItems} selectedId={selectedId} onSelect={select} />
+              <MatrixBoard
+                key={`density-${density}`}
+                items={visibleItems}
+                selectedId={selectedId}
+                onSelect={select}
+              />
 
               <article className="mx-opportunity">
                 <span>Oportunidade em contratos D-45</span>
