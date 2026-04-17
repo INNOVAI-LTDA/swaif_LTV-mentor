@@ -100,13 +100,20 @@ class StudentWorkspaceService:
             raise StudentContextError("pillar not found")
 
         resolved_pillar_id = str(resolved_pillar.get("id") or "")
-        metrics_by_id = {str(metric.get("id") or ""): metric for metric in self._metrics.list_metrics()}
-        measurements = self._measurements.list_by_enrollment(str(enrollment["id"]))
+        resolved_pillar_protocol_id = str(resolved_pillar.get("protocol_id") or "")
+        enrollment_id = str(enrollment.get("id") or "")
+        overall = self._measurement_overalls.get_by_enrollment(enrollment_id=enrollment_id)
+        enrollment_protocol_id = str((overall or {}).get("protocol_id") or "")
 
-        in_scope = any(
-            str((metrics_by_id.get(str(measurement.get("metric_id") or "")) or {}).get("pillar_id") or "") == resolved_pillar_id
-            for measurement in measurements
-        )
+        metrics_by_id = {str(metric.get("id") or ""): metric for metric in self._metrics.list_metrics()}
+        measurements = self._measurements.list_by_enrollment(enrollment_id)
+
+        in_scope = bool(enrollment_protocol_id and enrollment_protocol_id == resolved_pillar_protocol_id)
+        if not in_scope:
+            in_scope = any(
+                str((metrics_by_id.get(str(measurement.get("metric_id") or "")) or {}).get("pillar_id") or "") == resolved_pillar_id
+                for measurement in measurements
+            )
         if not in_scope:
             raise StudentContextError("pillar out of scope")
 
@@ -136,7 +143,7 @@ class StudentWorkspaceService:
 
         return {
             "studentId": str(student.get("id") or ""),
-            "enrollmentId": str(enrollment.get("id") or ""),
+            "enrollmentId": enrollment_id,
             "pillar": {
                 "id": resolved_pillar_id,
                 "name": str(resolved_pillar.get("name") or "Pilar"),
