@@ -34,6 +34,26 @@ class MeasurementRepository:
     def list_by_enrollment(self, enrollment_id: str) -> list[dict[str, Any]]:
         return [item for item in self._read_items() if str(item.get("enrollment_id")) == enrollment_id]
 
+    def get_by_id(self, measurement_id: str) -> dict[str, Any] | None:
+        for item in self._read_items():
+            if str(item.get("id") or "") == measurement_id:
+                return item
+        return None
+
+    def update_value_current(self, measurement_id: str, value_current: float) -> dict[str, Any]:
+        items = self._read_items()
+        for index, item in enumerate(items):
+            if str(item.get("id") or "") != measurement_id:
+                continue
+            updated = {
+                **item,
+                "value_current": float(value_current),
+            }
+            items[index] = updated
+            self._write_items(items)
+            return updated
+        raise ValueError("measurement not found")
+
     def replace_for_enrollment(self, enrollment_id: str, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         items = [item for item in self._read_items() if str(item.get("enrollment_id")) != enrollment_id]
         created: list[dict[str, Any]] = []

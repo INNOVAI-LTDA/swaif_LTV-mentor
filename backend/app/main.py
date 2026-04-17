@@ -17,6 +17,7 @@ from app.api.routes.admin_mentoria import router as admin_mentoria_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.health import router as health_router
 from app.api.routes.mentor import router as mentor_router
+from app.api.routes.student_workspace import router as student_workspace_router
 from app.config.runtime import (
     get_app_env,
     get_client_code,
@@ -110,6 +111,7 @@ def create_app() -> FastAPI:
     app.include_router(admin_students_router)
     if mentor_routes_enabled:
         app.include_router(mentor_router)
+    app.include_router(student_workspace_router)
     return app
 
 
