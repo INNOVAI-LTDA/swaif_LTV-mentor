@@ -94,13 +94,18 @@ class StudentWorkspaceService:
 
     def list_self_pillar_measurements(self, *, user: dict[str, Any], pillar_id: str) -> dict[str, Any]:
         student, enrollment = self.resolve_student_context(user=user)
+        resolved_pillar = self._resolve_pillar_identifier(pillar_id)
+        if not resolved_pillar:
+            raise StudentContextError("pillar not found")
+
+        resolved_pillar_id = str(resolved_pillar.get("id") or "")
         metrics_by_id = {str(metric.get("id") or ""): metric for metric in self._metrics.list_metrics()}
         measurements = self._measurements.list_by_enrollment(str(enrollment["id"]))
 
         items: list[dict[str, Any]] = []
         for measurement in measurements:
             metric = metrics_by_id.get(str(measurement.get("metric_id") or ""))
-            if not metric or str(metric.get("pillar_id") or "") != pillar_id:
+            if not metric or str(metric.get("pillar_id") or "") != resolved_pillar_id:
                 continue
 
             items.append(
@@ -121,17 +126,30 @@ class StudentWorkspaceService:
                 }
             )
 
-        pillar = self._pillars.get_by_id(pillar_id)
         return {
             "studentId": str(student.get("id") or ""),
             "enrollmentId": str(enrollment.get("id") or ""),
             "pillar": {
-                "id": pillar_id,
-                "name": str((pillar or {}).get("name") or "Pilar"),
-                "code": str((pillar or {}).get("code") or pillar_id),
+                "id": resolved_pillar_id,
+                "name": str(resolved_pillar.get("name") or "Pilar"),
+                "code": str(resolved_pillar.get("code") or resolved_pillar_id),
             },
             "items": items,
         }
+
+    def _resolve_pillar_identifier(self, pillar_identifier: str) -> dict[str, Any] | None:
+        direct = self._pillars.get_by_id(pillar_identifier)
+        if direct:
+            return direct
+
+        normalized = str(pillar_identifier or "").strip().lower()
+        if not normalized:
+            return None
+
+        for pillar in self._pillars.list_pillars():
+            if str(pillar.get("code") or "").strip().lower() == normalized:
+                return pillar
+        return None
 
     def update_self_measurement_current(
         self,

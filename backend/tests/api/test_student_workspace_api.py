@@ -32,7 +32,7 @@ def _login(client: TestClient, email: str, password: str) -> str:
     return response.json()["access_token"]
 
 
-def _seed_workspace_data(client: TestClient, headers: dict[str, str]) -> tuple[str, str, str]:
+def _seed_workspace_data(client: TestClient, headers: dict[str, str]) -> tuple[str, str, str, str]:
     org = client.post("/admin/mentorias", json={"name": "Mentoria Aluno"}, headers=headers).json()
     org_id = org["id"]
 
@@ -111,7 +111,7 @@ def _seed_workspace_data(client: TestClient, headers: dict[str, str]) -> tuple[s
 
     MeasurementOverallRepository().generate_for_all_enrollments()
 
-    return student_id, enrollment_id, pillar_id
+    return student_id, enrollment_id, pillar_id, str(pillar["code"])
 
 
 def test_student_workspace_self_scoped_read_and_update(monkeypatch, tmp_path: Path) -> None:
@@ -120,7 +120,7 @@ def test_student_workspace_self_scoped_read_and_update(monkeypatch, tmp_path: Pa
     client = TestClient(app)
 
     admin_headers = {"Authorization": f"Bearer {_login(client, 'admin@swaif.local', 'admin123')}"}
-    student_id, enrollment_id, pillar_id = _seed_workspace_data(client, admin_headers)
+    student_id, enrollment_id, pillar_id, pillar_code = _seed_workspace_data(client, admin_headers)
 
     user_repo = UserRepository()
     user_repo.create(
@@ -141,6 +141,11 @@ def test_student_workspace_self_scoped_read_and_update(monkeypatch, tmp_path: Pa
     assert metrics.status_code == 200
     assert metrics.json()["enrollmentId"] == enrollment_id
     assert len(metrics.json()["items"]) == 2
+
+    metrics_by_code = client.get(f"/aluno/workspace/pilares/{pillar_code}/metricas", headers=aluno_headers)
+    assert metrics_by_code.status_code == 200
+    assert metrics_by_code.json()["pillar"]["id"] == pillar_id
+    assert len(metrics_by_code.json()["items"]) == 2
 
     measurement_id = metrics.json()["items"][0]["measurementId"]
     update = client.patch(
@@ -163,6 +168,10 @@ def test_student_workspace_self_scoped_read_and_update(monkeypatch, tmp_path: Pa
     )
     # Geometric mean(1, 9) = 3
     assert round(float(updated_pillar["metric_average"]["real"]), 3) == 3.0
+
+    missing_pillar = client.get("/aluno/workspace/pilares/inexistente/metricas", headers=aluno_headers)
+    assert missing_pillar.status_code == 404
+    assert missing_pillar.json()["error"]["code"] == "ALUNO_RESOURCE_NOT_FOUND"
 
 
 def test_student_workspace_rejects_non_aluno(monkeypatch, tmp_path: Path) -> None:

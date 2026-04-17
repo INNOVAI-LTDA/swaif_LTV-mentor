@@ -115,7 +115,7 @@ def _raise_student_context_error(exc: StudentContextError) -> None:
             message="Indicador fora do escopo autorizado do aluno.",
         ) from exc
 
-    if detail in {"measurement not found", "measurement metric not found", "student radar not found"}:
+    if detail in {"measurement not found", "measurement metric not found", "student radar not found", "pillar not found"}:
         raise api_error(
             status_code=status.HTTP_404_NOT_FOUND,
             code="ALUNO_RESOURCE_NOT_FOUND",
