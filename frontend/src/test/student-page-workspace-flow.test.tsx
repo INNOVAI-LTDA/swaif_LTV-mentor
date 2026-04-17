@@ -107,4 +107,11 @@ describe("StudentPage workspace flow", () => {
     expect(screen.getByRole("tablist", { name: "Selecao de pilar para indicadores" })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /Consistencia/i })).toBeInTheDocument();
   });
+
+
+  it("nao exibe seletor de pilares clicaveis na view de radar", () => {
+    renderPage("/app/aluno?view=radar");
+
+    expect(screen.queryByRole("tablist", { name: "Selecao de pilar para indicadores" })).not.toBeInTheDocument();
+  });
 });
