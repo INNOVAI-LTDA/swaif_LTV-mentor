@@ -131,47 +131,35 @@ export function StudentPage() {
         {feedback && <p className={feedback.tone === "success" ? "student-state student-state--success" : "student-state student-state--error"}>{feedback.message}</p>}
 
         {activeView === "radar" ? (
-          <article className="student-card" aria-label="Radar do aluno">
+          <article className="student-card student-card--radar" aria-label="Radar do aluno">
             {radarResource.loading && <p className="student-state">Carregando radar...</p>}
             {radarResource.error && <p className="student-state">{radarResource.error}</p>}
             {!radarResource.loading && !radarResource.error && radarPoints.length === 0 && <p className="student-state">Sem dados de radar para este aluno.</p>}
             {radarPoints.length > 0 && <RadarChart points={radarPoints} title="Radar do aluno" />}
-            <div className="student-pillars">
-              {pillars.map((pillar) => (
-                <button
-                  key={pillar.axisKey}
-                  type="button"
-                  className={selectedPillarId === pillar.axisKey ? "student-pillars__item is-active" : "student-pillars__item"}
-                  onClick={() => setSelectedPillarId(pillar.axisKey)}
-                >
-                  <strong>{pillar.axisLabel}</strong>
-                  <small>Atual: {(pillar.current * 100).toFixed(1)}%</small>
-                </button>
-              ))}
-            </div>
           </article>
         ) : (
           <article className="student-card" aria-label="Metricas do pilar selecionado">
             <header className="student-card__header">
-              <h2>{pillarMetricsResource.data.pillar.name || "Selecione um pilar"}</h2>
-              <p>Edicao permitida apenas no valor atual.</p>
-            </header>
+              <div>
+                <h2>{pillarMetricsResource.data.pillar.name || "Selecione um pilar"}</h2>
+                <p>Edicao permitida apenas no valor atual.</p>
+              </div>
 
-            <div className="student-pillars" role="tablist" aria-label="Selecao de pilar para indicadores">
-              {pillars.map((pillar) => (
-                <button
-                  key={pillar.axisKey}
-                  type="button"
-                  role="tab"
-                  aria-selected={selectedPillarId === pillar.axisKey}
-                  className={selectedPillarId === pillar.axisKey ? "student-pillars__item is-active" : "student-pillars__item"}
-                  onClick={() => setSelectedPillarId(pillar.axisKey)}
-                >
-                  <strong>{pillar.axisLabel}</strong>
-                  <small>Atual: {(pillar.current * 100).toFixed(1)}%</small>
-                </button>
-              ))}
-            </div>
+              <div className="student-pillars" role="tablist" aria-label="Selecao de pilar para indicadores">
+                {pillars.map((pillar) => (
+                  <button
+                    key={pillar.axisKey}
+                    type="button"
+                    role="tab"
+                    aria-selected={selectedPillarId === pillar.axisKey}
+                    className={selectedPillarId === pillar.axisKey ? "student-pillars__item is-active" : "student-pillars__item"}
+                    onClick={() => setSelectedPillarId(pillar.axisKey)}
+                  >
+                    <strong>{pillar.axisLabel}</strong>
+                  </button>
+                ))}
+              </div>
+            </header>
 
             {pillarMetricsResource.loading && <p className="student-state">Carregando metricas do pilar...</p>}
             {pillarMetricsResource.error && <p className="student-state">{pillarMetricsResource.error}</p>}

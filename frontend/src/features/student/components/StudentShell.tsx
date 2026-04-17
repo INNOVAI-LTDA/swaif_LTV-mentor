@@ -3,7 +3,6 @@ import { Link, useLocation, useSearchParams } from "react-router-dom";
 import "../student-shell.css";
 import { env } from "../../../shared/config/env";
 import { useStudentProducts } from "../hooks/useStudentProducts";
-import { useStudentMentors } from "../hooks/useStudentMentors";
 import { useStudentProfile } from "../hooks/useStudentProfile";
 
 type StudentShellProps = {
@@ -15,7 +14,7 @@ type StudentShellProps = {
   children: ReactNode;
 };
 
-type SupportPanelKey = "produtos" | "mentores" | "usuario";
+type SupportPanelKey = "produtos" | "usuario";
 
 type SupportPanelItem = {
   title: string;
@@ -25,13 +24,11 @@ type SupportPanelItem = {
   cta?: string;
 };
 
-type MainViewKey = "radar" | "timeline" | "indicadores" | "jornada";
+type MainViewKey = "radar" | "indicadores";
 
 const MAIN_NAV: Array<{ key: MainViewKey; label: string; to: string }> = [
   { key: "radar", label: "Radar de Evolucao", to: "/app/aluno" },
-  { key: "timeline", label: "Linha do Tempo", to: "/app/aluno" },
-  { key: "indicadores", label: "Indicadores", to: "/app/aluno" },
-  { key: "jornada", label: "Sua Jornada", to: "/app/aluno" }
+  { key: "indicadores", label: "Indicadores", to: "/app/aluno" }
 ];
 
 const SUPPORT_PANELS: Record<SupportPanelKey, { label: string; title: string; description: string; items: SupportPanelItem[] }> = {
@@ -39,12 +36,6 @@ const SUPPORT_PANELS: Record<SupportPanelKey, { label: string; title: string; de
     label: "Produtos",
     title: "Produtos vinculados a voce",
     description: "Lista dos programas e modulos em que voce esta ativo dentro da sua jornada atual.",
-    items: []
-  },
-  mentores: {
-    label: "Mentores",
-    title: "Mentores vinculados a voce",
-    description: "Profissionais que acompanham sua jornada e sustentam os proximos avancos do programa.",
     items: []
   },
   usuario: {
@@ -66,7 +57,7 @@ const SUPPORT_PANELS: Record<SupportPanelKey, { label: string; title: string; de
 
 
 function isSupportPanel(value: string | null): value is SupportPanelKey {
-  return value === "produtos" || value === "mentores" || value === "usuario";
+  return value === "produtos" || value === "usuario";
 }
 
 export function StudentShell({ eyebrow, title, description, actions, metrics = [], children }: StudentShellProps) {
@@ -78,13 +69,11 @@ export function StudentShell({ eyebrow, title, description, actions, metrics = [
   const panelKey = isSupportPanel(searchPanel) ? searchPanel : null;
   // Fetch data for support panels
   const { products, loading: loadingProducts, error: errorProducts } = useStudentProducts();
-  const { mentors, loading: loadingMentors, error: errorMentors } = useStudentMentors();
   const { profile, loading: loadingProfile, error: errorProfile } = useStudentProfile();
 
   const panel = panelKey ? SUPPORT_PANELS[panelKey] : null;
   const activePanelKey = panelKey ?? "produtos";
-  const activeView: MainViewKey =
-    searchView === "timeline" || searchView === "indicadores" || searchView === "jornada" ? searchView : "radar";
+  const activeView: MainViewKey = searchView === "indicadores" ? "indicadores" : "radar";
 
   function buildJourneySearch(defaultView = "radar") {
     const params = new URLSearchParams(searchParams);
@@ -151,11 +140,6 @@ export function StudentShell({ eyebrow, title, description, actions, metrics = [
             </div>
           </div>
 
-          <div className="student-sidebar__spotlight">
-            <span className="student-sidebar__label">Jornada do aluno</span>
-            <strong>Visao integrada para acompanhar evolucao, indicadores e proximos passos.</strong>
-            <p>Leitura orientada para progresso continuo e acao taticamente priorizada.</p>
-          </div>
         </aside>
 
         <div className="student-main">
@@ -206,23 +190,6 @@ export function StudentShell({ eyebrow, title, description, actions, metrics = [
                           <strong>{product.name}</strong>
                           <span>{product.code}</span>
                           <small>Status: {product.status}</small>
-                        </li>
-                      ))
-                    )
-                  )}
-                  {panelKey === "mentores" && (
-                    loadingMentors ? (
-                      <li>Carregando mentores...</li>
-                    ) : errorMentors ? (
-                      <li>Erro: {errorMentors}</li>
-                    ) : mentors.length === 0 ? (
-                      <li>Nenhum mentor encontrado.</li>
-                    ) : (
-                      mentors.map((mentor) => (
-                        <li key={mentor.id}>
-                          <strong>{mentor.name}</strong>
-                          <span>{mentor.role}</span>
-                          {mentor.email && <small>{mentor.email}</small>}
                         </li>
                       ))
                     )

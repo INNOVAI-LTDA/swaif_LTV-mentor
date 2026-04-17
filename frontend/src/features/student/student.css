@@ -455,3 +455,138 @@
     width: min(300px, calc(100vw - 56px));
   }
 }
+
+.student-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(18, 18, 18, 0.98) 0%, rgba(11, 11, 11, 0.98) 100%);
+  padding: 22px;
+}
+
+.student-card--radar .radar-chart {
+  margin: 0;
+  max-width: 900px;
+}
+
+.student-card--radar .radar-chart svg {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, #121212 0%, #0c0c0c 100%);
+}
+
+.student-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.student-card__header h2 {
+  margin: 0;
+  font-size: 42px;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.student-card__header p {
+  margin: 12px 0 0;
+  color: #c6c6c6;
+  line-height: 1.6;
+}
+
+.student-pillars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.student-pillars__item {
+  border: 1px solid rgba(250, 184, 0, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff6dc;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.student-pillars__item.is-active {
+  border-color: rgba(250, 184, 0, 0.5);
+  background: linear-gradient(180deg, rgba(250, 184, 0, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
+  color: #fff7e0;
+}
+
+.student-pillars__item strong {
+  display: block;
+}
+
+.student-metrics-list {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.student-metrics-list__item {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.student-metrics-list__item p {
+  margin: 8px 0 0;
+  color: #c8c8c8;
+}
+
+.student-metrics-list__editor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.student-metrics-list__editor input {
+  width: 120px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f2f2f2;
+  padding: 8px 10px;
+}
+
+.student-metrics-list__editor button {
+  border: 1px solid rgba(250, 184, 0, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff6dc;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+@media (max-width: 1040px) {
+  .student-card__header {
+    flex-direction: column;
+  }
+
+  .student-card__header h2 {
+    font-size: clamp(32px, 6vw, 42px);
+  }
+
+  .student-metrics-list__item {
+    flex-direction: column;
+  }
+}
