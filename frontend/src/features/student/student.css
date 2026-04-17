@@ -465,7 +465,8 @@
 
 .student-card--radar .radar-chart {
   margin: 0;
-  max-width: 900px;
+  max-width: min(100%, 680px);
+  margin-inline: auto;
 }
 
 .student-card--radar .radar-chart svg {

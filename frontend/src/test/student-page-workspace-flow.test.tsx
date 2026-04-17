@@ -104,7 +104,7 @@ describe("StudentPage workspace flow", () => {
   it("exibe seletor de pilares na view de indicadores", () => {
     renderPage();
 
-    expect(screen.getByRole("tablist", { name: "Selecao de pilar para indicadores" })).toBeInTheDocument();
+    expect(screen.getByRole("tablist", { name: "Seleção de pilar para indicadores" })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /Consistencia/i })).toBeInTheDocument();
   });
 
@@ -112,6 +112,6 @@ describe("StudentPage workspace flow", () => {
   it("nao exibe seletor de pilares clicaveis na view de radar", () => {
     renderPage("/app/aluno?view=radar");
 
-    expect(screen.queryByRole("tablist", { name: "Selecao de pilar para indicadores" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("tablist", { name: "Seleção de pilar para indicadores" })).not.toBeInTheDocument();
   });
 });

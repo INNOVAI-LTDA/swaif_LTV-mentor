@@ -103,10 +103,11 @@ def test_radar_axis_scores_contract_and_averages(monkeypatch, tmp_path: Path) ->
 
     assert "axisScores" in payload
     assert len(payload["axisScores"]) == 2
-    required = {"axisKey", "axisLabel", "axisSub", "baseline", "current", "projected", "insight"}
+    required = {"axisId", "axisKey", "axisLabel", "axisSub", "baseline", "current", "projected", "insight"}
     assert required.issubset(set(payload["axisScores"][0].keys()))
 
     eixo_b = [axis for axis in payload["axisScores"] if axis["axisKey"] == "evolucao"][0]
+    assert eixo_b["axisId"] == "plr_2"
     assert eixo_b["projected"] == eixo_b["current"]
     assert isinstance(eixo_b["insight"], str)
     assert eixo_b["insight"] != ""

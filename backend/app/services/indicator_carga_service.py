@@ -728,6 +728,7 @@ class IndicatorCargaService:
                 projected = float(values.get("goal", current))
                 axis_scores.append(
                     {
+                        "axisId": pillar_id,
                         "axisKey": str((pillar or {}).get("code") or pillar_id),
                         "axisLabel": str((pillar or {}).get("name") or pillar_id),
                         "axisSub": str((pillar or {}).get("axis_sub") or ""),
@@ -787,6 +788,7 @@ class IndicatorCargaService:
             pillar = pillars_by_id.get(pillar_id)
             axis_scores.append(
                 {
+                    "axisId": pillar_id,
                     "axisKey": str((pillar or {}).get("code") or pillar_id),
                     "axisLabel": str((pillar or {}).get("name") or pillar_id),
                     "axisSub": str((pillar or {}).get("axis_sub") or ""),

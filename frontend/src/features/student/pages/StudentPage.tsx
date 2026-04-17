@@ -42,7 +42,7 @@ export function StudentPage() {
 
   useEffect(() => {
     if (!selectedPillarId && pillars.length > 0) {
-      setSelectedPillarId(pillars[0].axisKey);
+      setSelectedPillarId(pillars[0].axisId || pillars[0].axisKey);
     }
   }, [selectedPillarId, pillars]);
 
@@ -65,11 +65,11 @@ export function StudentPage() {
   async function persistMeasurement(measurementId: string) {
     const parsed = parseNumericInput(draftValue);
     if (parsed === null) {
-      setFeedback({ tone: "error", message: "Informe um numero valido para salvar." });
+      setFeedback({ tone: "error", message: "Informe um número válido para salvar." });
       return;
     }
 
-    const confirmed = window.confirm("Confirmar atualizacao do valor atual desta metrica?");
+    const confirmed = window.confirm("Confirmar atualização do valor atual desta métrica?");
     if (!confirmed) {
       return;
     }
@@ -83,7 +83,7 @@ export function StudentPage() {
       setDraftValue("");
       setFeedback({ tone: "success", message: "Valor atualizado com sucesso." });
     } catch (error) {
-      setFeedback({ tone: "error", message: toUserErrorMessage(error, "Nao foi possivel salvar a metrica.") });
+      setFeedback({ tone: "error", message: toUserErrorMessage(error, "Não foi possível salvar a métrica.") });
       if (error instanceof AppError && error.code === "MEASUREMENT_VALUE_INVALID") {
         return;
       }
@@ -97,14 +97,14 @@ export function StudentPage() {
       ? {
           eyebrow: "Aluno | Indicadores por Pilar",
           title: "Atualize seu valor real por indicador",
-          description: "Selecione um pilar do radar para visualizar e editar apenas o campo atual de cada metrica.",
+          description: "Selecione um pilar do radar para visualizar e editar apenas o campo atual de cada métrica.",
           secondaryHref: "/app/aluno?view=radar",
           secondaryLabel: "Voltar ao radar"
         }
       : {
-          eyebrow: "Aluno | Radar de Evolucao",
+          eyebrow: "Aluno | Radar de Evolução",
           title: "Acompanhe o seu radar",
-          description: "Veja seus pilares e siga para os indicadores para registrar o valor atual da sua evolucao.",
+          description: "Veja seus pilares e siga para os indicadores para registrar o valor atual da sua evolução.",
           secondaryHref: "/app/aluno?view=indicadores",
           secondaryLabel: "Abrir indicadores"
         };
@@ -138,22 +138,22 @@ export function StudentPage() {
             {radarPoints.length > 0 && <RadarChart points={radarPoints} title="Radar do aluno" />}
           </article>
         ) : (
-          <article className="student-card" aria-label="Metricas do pilar selecionado">
+          <article className="student-card" aria-label="Métricas do pilar selecionado">
             <header className="student-card__header">
               <div>
                 <h2>{pillarMetricsResource.data.pillar.name || "Selecione um pilar"}</h2>
-                <p>Edicao permitida apenas no valor atual.</p>
+                <p>Edição permitida apenas no valor atual.</p>
               </div>
 
-              <div className="student-pillars" role="tablist" aria-label="Selecao de pilar para indicadores">
+              <div className="student-pillars" role="tablist" aria-label="Seleção de pilar para indicadores">
                 {pillars.map((pillar) => (
                   <button
-                    key={pillar.axisKey}
+                    key={pillar.axisId || pillar.axisKey}
                     type="button"
                     role="tab"
-                    aria-selected={selectedPillarId === pillar.axisKey}
-                    className={selectedPillarId === pillar.axisKey ? "student-pillars__item is-active" : "student-pillars__item"}
-                    onClick={() => setSelectedPillarId(pillar.axisKey)}
+                    aria-selected={selectedPillarId === (pillar.axisId || pillar.axisKey)}
+                    className={selectedPillarId === (pillar.axisId || pillar.axisKey) ? "student-pillars__item is-active" : "student-pillars__item"}
+                    onClick={() => setSelectedPillarId(pillar.axisId || pillar.axisKey)}
                   >
                     <strong>{pillar.axisLabel}</strong>
                   </button>
@@ -161,10 +161,10 @@ export function StudentPage() {
               </div>
             </header>
 
-            {pillarMetricsResource.loading && <p className="student-state">Carregando metricas do pilar...</p>}
+            {pillarMetricsResource.loading && <p className="student-state">Carregando métricas do pilar...</p>}
             {pillarMetricsResource.error && <p className="student-state">{pillarMetricsResource.error}</p>}
             {!pillarMetricsResource.loading && !pillarMetricsResource.error && pillarMetricsResource.data.items.length === 0 && (
-              <p className="student-state">Nenhuma metrica encontrada para o pilar selecionado.</p>
+              <p className="student-state">Nenhuma métrica encontrada para o pilar selecionado.</p>
             )}
 
             {pillarMetricsResource.data.items.length > 0 && (

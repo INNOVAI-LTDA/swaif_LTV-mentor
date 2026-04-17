@@ -21,7 +21,7 @@ describe("StudentShell navigation", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole("link", { name: "Radar de Evolucao" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Radar de Evolução" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Indicadores" })).toBeInTheDocument();
 
     expect(screen.queryByRole("link", { name: "Linha do Tempo" })).not.toBeInTheDocument();
