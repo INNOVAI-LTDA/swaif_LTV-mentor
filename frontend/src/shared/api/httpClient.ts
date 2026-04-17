@@ -53,7 +53,7 @@ function normalizeError(parsed: unknown, fallbackStatus: number): AppError {
 }
 
 type RequestOptions = {
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
   headers?: Record<string, string>;
   token?: string | null;
@@ -131,6 +131,9 @@ export const httpClient = {
   },
   put<T>(path: string, body: unknown, options: Omit<RequestOptions, "method" | "body"> = {}) {
     return request<T>(path, { ...options, method: "PUT", body });
+  },
+  patch<T>(path: string, body: unknown, options: Omit<RequestOptions, "method" | "body"> = {}) {
+    return request<T>(path, { ...options, method: "PATCH", body });
   },
   delete<T>(path: string, options: Omit<RequestOptions, "method" | "body"> = {}) {
     return request<T>(path, { ...options, method: "DELETE" });

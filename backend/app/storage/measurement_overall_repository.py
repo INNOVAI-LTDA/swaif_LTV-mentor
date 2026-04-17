@@ -99,6 +99,12 @@ class MeasurementOverallRepository:
     def list_all(self) -> list[dict[str, Any]]:
         return self._read_items()
 
+    def get_by_enrollment(self, enrollment_id: str) -> dict[str, Any] | None:
+        for item in self._read_items():
+            if str(item.get("enrollment_id") or "") == enrollment_id:
+                return item
+        return None
+
     def upsert_for_enrollment(self, enrollment_id: str, data: dict[str, Any]) -> None:
         items = self._read_items()
         items = [item for item in items if item.get("enrollment_id") != enrollment_id]
