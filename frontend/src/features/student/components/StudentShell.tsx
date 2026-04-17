@@ -27,26 +27,26 @@ type SupportPanelItem = {
 type MainViewKey = "radar" | "indicadores";
 
 const MAIN_NAV: Array<{ key: MainViewKey; label: string; to: string }> = [
-  { key: "radar", label: "Radar de Evolucao", to: "/app/aluno" },
+  { key: "radar", label: "Radar de Evolução", to: "/app/aluno" },
   { key: "indicadores", label: "Indicadores", to: "/app/aluno" }
 ];
 
 const SUPPORT_PANELS: Record<SupportPanelKey, { label: string; title: string; description: string; items: SupportPanelItem[] }> = {
   produtos: {
     label: "Produtos",
-    title: "Produtos vinculados a voce",
-    description: "Lista dos programas e modulos em que voce esta ativo dentro da sua jornada atual.",
+    title: "Produtos vinculados a você",
+    description: "Lista dos programas e módulos em que você está ativo dentro da sua jornada atual.",
     items: []
   },
   usuario: {
     label: "Minha Conta",
     title: "Minha Conta",
-    description: "Atalhos pessoais da sua conta para acesso futuro a configuracoes e dados do seu perfil.",
+    description: "Atalhos pessoais da sua conta para acesso futuro a configurações e dados do seu perfil.",
     items: [
       {
         title: "Perfil",
         meta: "Dados da sua conta",
-        detail: "Informacoes pessoais e de acesso.",
+        detail: "Informações pessoais e de acesso.",
         section: "perfil",
         cta: "Abrir"
       }
@@ -111,8 +111,8 @@ export function StudentShell({ eyebrow, title, description, actions, metrics = [
           </div>
 
           <div className="student-sidebar__block">
-            <span className="student-sidebar__label">Visao principal</span>
-            <nav className="student-sidebar__nav" aria-label="Navegacao do aluno">
+            <span className="student-sidebar__label">Visão principal</span>
+            <nav className="student-sidebar__nav" aria-label="Navegação do aluno">
               {MAIN_NAV.map((item) => (
                 <Link
                   key={item.key}
@@ -126,7 +126,7 @@ export function StudentShell({ eyebrow, title, description, actions, metrics = [
           </div>
 
           <div className="student-sidebar__block">
-            <span className="student-sidebar__label">Areas de apoio</span>
+            <span className="student-sidebar__label">Áreas de apoio</span>
             <div className="student-sidebar__nav student-sidebar__nav--secondary">
               {(Object.keys(SUPPORT_PANELS) as SupportPanelKey[]).map((key) => (
                 <Link

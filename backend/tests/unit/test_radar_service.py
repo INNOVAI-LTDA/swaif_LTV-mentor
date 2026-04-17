@@ -2,6 +2,9 @@ from app.services.indicator_carga_service import IndicatorCargaService
 
 
 class _FakeStudentRepository:
+    def list_students(self):
+        return [{"id": "std_1", "full_name": "Aluno Radar"}]
+
     def get_by_id(self, student_id: str):
         if student_id == "std_1":
             return {"id": "std_1", "full_name": "Aluno Radar"}
@@ -14,6 +17,11 @@ class _FakeOrganizationRepository:
 
 
 class _FakeEnrollmentRepository:
+    def list_by_student(self, student_id: str):
+        if student_id != "std_1":
+            return []
+        return [{"id": "enr_1", "student_id": "std_1", "organization_id": "org_1", "is_active": True}]
+
     def get_active_by_student(self, student_id: str):
         if student_id != "std_1":
             return None
@@ -30,6 +38,9 @@ class _FakeMetricRepository:
     def get_by_id(self, metric_id: str):
         return self.items.get(metric_id)
 
+    def list_metrics(self):
+        return list(self.items.values())
+
 
 class _FakePillarRepository:
     def __init__(self) -> None:
@@ -41,8 +52,14 @@ class _FakePillarRepository:
     def get_by_id(self, pillar_id: str):
         return self.items.get(pillar_id)
 
+    def list_pillars(self):
+        return list(self.items.values())
+
 
 class _FakeMeasurementRepository:
+    def list_measurements(self):
+        return self.list_by_enrollment("enr_1")
+
     def list_by_enrollment(self, enrollment_id: str):
         return [
             {"id": "mea_1", "enrollment_id": enrollment_id, "metric_id": "met_1", "value_baseline": 50, "value_current": 60, "value_projected": 75},
@@ -77,11 +94,13 @@ def test_radar_axis_scores_with_projected_fallback_and_averages() -> None:
     assert "axisScores" in radar
     assert len(radar["axisScores"]) == 2
     first = radar["axisScores"][0]
-    assert {"axisKey", "axisLabel", "axisSub", "baseline", "current", "projected", "insight"}.issubset(first.keys())
+    assert {"axisId", "axisKey", "axisLabel", "axisSub", "baseline", "current", "projected", "insight"}.issubset(first.keys())
+    assert first["axisId"] == "plr_1"
     assert isinstance(first["insight"], str)
     assert first["insight"] != ""
 
     second = radar["axisScores"][1]
+    assert second["axisId"] == "plr_2"
     assert second["axisKey"] == "evolucao"
     assert second["projected"] == second["current"]
     assert isinstance(second["insight"], str)

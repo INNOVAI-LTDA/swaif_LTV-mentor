@@ -84,6 +84,7 @@ export type TimelineAnomalies = {
 };
 
 export type RadarAxis = {
+  axisId?: string;
   axisKey: string;
   axisLabel: string;
   axisSub: string;

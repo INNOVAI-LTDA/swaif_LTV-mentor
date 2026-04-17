@@ -16,6 +16,7 @@ export function adaptRadarPayload(payload: unknown): StudentRadar {
           : coerceNumber(axis.projected, current);
 
       return {
+        axisId: String(axis.axisId ?? ""),
         axisKey: String(axis.axisKey ?? `axis_${index + 1}`),
         axisLabel: String(axis.axisLabel ?? `Eixo ${index + 1}`),
         axisSub: String(axis.axisSub ?? ""),

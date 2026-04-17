@@ -1,4 +1,5 @@
 export type RadarAxisScoreDto = {
+  axisId?: string;
   axisKey: string;
   axisLabel: string;
   axisSub?: string;
