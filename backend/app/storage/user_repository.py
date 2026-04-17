@@ -78,13 +78,6 @@ class UserRepository:
                 "role": "mentor",
                 "is_active": True,
             },
-            {
-                "id": "usr_aluno",
-                "email": "aluno@swaif.local",
-                "password_hash": hash_password("aluno123"),
-                "role": "aluno",
-                "is_active": True,
-            },
         ]
         self._store.write({"version": 1, "items": seed})
 
