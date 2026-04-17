@@ -11,45 +11,27 @@ sem alterar regras de autenticacao nem contratos da API.
 - O contexto de aluno e resolvido por email: o email autenticado deve corresponder
   a um `student` ativo com matricula ativa.
 - O papel `client` e normalizado para `aluno` no endpoint `/me`.
+- Se o aluno existir em `students.json` e tentar login com a senha padrao
+  `aluno_accmed`, o backend cria automaticamente o usuario de autenticacao
+  com role `aluno` no primeiro login.
 
 ## Passo 1 - Escolher um aluno ativo existente
 
 Use um `student` ativo ja presente em `backend/data/students.json` e confirme que
 existe uma matricula ativa correspondente em `backend/data/enrollments.json`.
 
-## Passo 2 - Criar usuario de autenticacao para o mesmo email
+## Passo 2 - Usar a senha padrao no primeiro login
 
-No root do repositório, execute:
+Senha padrao para primeiro acesso de aluno:
 
-```bash
-python - <<'PY'
-from backend.app.storage.user_repository import UserRepository
-from backend.app.core.security import hash_password
-
-repo = UserRepository("backend/data/users.json")
-repo.create(
-    id="usr_local_aluno",
-    email="<email_do_student_ativo>",
-    password_hash=hash_password("<senha_temporaria_local>"),
-    role="aluno",
-    is_active=True,
-)
-print("usuario criado")
-PY
-```
-
-Notas:
-
-- Se o email ja existir em `users.json`, a criacao falha por duplicidade.
-- Para manter compatibilidade legada, `role="client"` tambem funciona, pois o
-  backend normaliza para `aluno`.
+`aluno_accmed`
 
 ## Passo 3 - Autenticar
 
 ```bash
 curl -s -X POST http://127.0.0.1:8000/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"<email_do_student_ativo>","password":"<senha_temporaria_local>"}'
+  -d '{"email":"<email_do_student_ativo>","password":"aluno_accmed"}'
 ```
 
 ## Passo 4 - Validar sessao e role
