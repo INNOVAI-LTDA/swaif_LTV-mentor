@@ -131,6 +131,17 @@ describe("app routes", () => {
     expect(screen.queryByRole("heading", { name: "Centro Institucional" })).not.toBeInTheDocument();
   });
 
+  it("redireciona rota do aluno para acesso negado quando o usuario autenticado nao e aluno", async () => {
+    authState.accessToken = "token";
+    authState.isAuthenticated = true;
+    authState.user = { id: "usr_mentor", email: "mentor@cliente.test", role: "mentor" };
+
+    renderRoute(["/app/aluno"]);
+
+    expect(await screen.findByRole("heading", { name: "Acesso negado" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Acompanhe seu radar de evolucao" })).not.toBeInTheDocument();
+  });
+
   it("redireciona /app para a home da role autenticada", async () => {
     authState.accessToken = "token";
     authState.isAuthenticated = true;

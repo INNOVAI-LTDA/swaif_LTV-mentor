@@ -84,6 +84,24 @@ function RequireMentorWorkspace() {
   return <Outlet />;
 }
 
+function RequireStudentWorkspace() {
+  const { authReady, isAuthenticated, user } = useAuth();
+
+  if (!authReady) {
+    return <AuthLoadingFallback />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!user || user.role !== "aluno") {
+    return <Navigate to="/app/acesso-negado" replace />;
+  }
+
+  return <Outlet />;
+}
+
 function RoleHomeRedirect() {
   const { authReady, isAuthenticated, user } = useAuth();
 
@@ -131,7 +149,10 @@ export const appRoutes: RouteObject[] = [
               , { path: "checkpoints", element: <CheckpointsList /> }
             ]
           },
-          { path: "aluno", element: <StudentPage /> },
+          {
+            element: <RequireStudentWorkspace />,
+            children: [{ path: "aluno", element: <StudentPage /> }]
+          },
           {
             path: "admin",
             element: <RequireAdmin />,

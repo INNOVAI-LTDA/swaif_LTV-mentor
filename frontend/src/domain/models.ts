@@ -107,6 +107,29 @@ export type StudentRadar = {
   };
 };
 
+export type StudentWorkspacePillarMetrics = {
+  studentId: string;
+  enrollmentId: string;
+  pillar: {
+    id: string;
+    name: string;
+    code: string;
+  };
+  items: Array<{
+    measurementId: string;
+    metricId: string;
+    metricLabel: string;
+    direction: string;
+    unit: string | null;
+    valueBaseline: number;
+    valueCurrent: number;
+    valueProjected: number | null;
+    improvingTrend: boolean | null;
+    minScore: number | null;
+    maxScore: number | null;
+  }>;
+};
+
 export type MatrixMarker = {
   label: string;
   value: string | number;
