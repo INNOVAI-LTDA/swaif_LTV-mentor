@@ -34,7 +34,7 @@ def _login(client: TestClient, email: str, password: str) -> str:
     return response.json()["access_token"]
 
 
-def _seed_workspace_data(client: TestClient, headers: dict[str, str]) -> tuple[str, str, str, str, str]:
+def _seed_workspace_data(client: TestClient, headers: dict[str, str]) -> tuple[str, str, str, str]:
     suffix = uuid4().hex[:8]
 
     org_response = client.post("/admin/mentorias", json={"name": f"Mentoria Aluno {suffix}"}, headers=headers)
@@ -59,14 +59,6 @@ def _seed_workspace_data(client: TestClient, headers: dict[str, str]) -> tuple[s
     assert pillar_response.status_code == 201
     pillar = pillar_response.json()
     pillar_id = pillar["id"]
-    empty_pillar_response = client.post(
-        "/admin/pilares",
-        json={"protocol_id": protocol_id, "name": "Presenca", "code": f"presenca-{suffix}"},
-        headers=headers,
-    )
-    assert empty_pillar_response.status_code == 201
-    empty_pillar = empty_pillar_response.json()
-    empty_pillar_id = empty_pillar["id"]
 
     metric_a = client.post(
         "/admin/metricas",
@@ -129,7 +121,7 @@ def _seed_workspace_data(client: TestClient, headers: dict[str, str]) -> tuple[s
 
     MeasurementOverallRepository().generate_for_all_enrollments()
 
-    return student_id, enrollment_id, pillar_id, str(pillar["code"]), empty_pillar_id
+    return student_id, enrollment_id, pillar_id, str(pillar["code"])
 
 
 def test_student_workspace_self_scoped_read_and_update(monkeypatch, tmp_path: Path) -> None:
@@ -138,7 +130,7 @@ def test_student_workspace_self_scoped_read_and_update(monkeypatch, tmp_path: Pa
     client = TestClient(app)
 
     admin_headers = {"Authorization": f"Bearer {_login(client, 'admin@swaif.local', 'admin123')}"}
-    student_id, enrollment_id, pillar_id, pillar_code, empty_pillar_id = _seed_workspace_data(client, admin_headers)
+    student_id, enrollment_id, pillar_id, pillar_code = _seed_workspace_data(client, admin_headers)
 
     user_repo = UserRepository()
     user_repo.create(
@@ -164,11 +156,6 @@ def test_student_workspace_self_scoped_read_and_update(monkeypatch, tmp_path: Pa
     assert metrics_by_code.status_code == 200
     assert metrics_by_code.json()["pillar"]["id"] == pillar_id
     assert len(metrics_by_code.json()["items"]) == 2
-
-    empty_metrics = client.get(f"/aluno/workspace/pilares/{empty_pillar_id}/metricas", headers=aluno_headers)
-    assert empty_metrics.status_code == 200
-    assert empty_metrics.json()["pillar"]["id"] == empty_pillar_id
-    assert empty_metrics.json()["items"] == []
 
     measurement_id = metrics.json()["items"][0]["measurementId"]
     update = client.patch(
@@ -215,7 +202,7 @@ def test_student_workspace_accepts_legacy_client_role(monkeypatch, tmp_path: Pat
     client = TestClient(app)
 
     admin_headers = {"Authorization": f"Bearer {_login(client, 'admin@swaif.local', 'admin123')}"}
-    student_id, _, _, _, _ = _seed_workspace_data(client, admin_headers)
+    student_id, _, _, _ = _seed_workspace_data(client, admin_headers)
 
     user_repo = UserRepository()
     user_repo.create(
@@ -275,7 +262,7 @@ def test_student_workspace_rejects_pillar_out_of_scope(monkeypatch, tmp_path: Pa
     client = TestClient(app)
 
     admin_headers = {"Authorization": f"Bearer {_login(client, 'admin@swaif.local', 'admin123')}"}
-    _, _, _, _, _ = _seed_workspace_data(client, admin_headers)
+    _, _, _, _ = _seed_workspace_data(client, admin_headers)
 
     org_response = client.post("/admin/mentorias", json={"name": f"Mentoria Extra {uuid4().hex[:6]}"}, headers=admin_headers)
     assert org_response.status_code == 201

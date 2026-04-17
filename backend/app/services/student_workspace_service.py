@@ -15,7 +15,6 @@ from app.storage.measurement_overall_repository import (
 from app.storage.measurement_repository import MeasurementRepository
 from app.storage.metric_repository import MetricRepository
 from app.storage.pillar_repository import PillarRepository
-from app.storage.protocol_repository import ProtocolRepository
 from app.storage.student_repository import StudentRepository
 from app.services.indicator_carga_service import IndicatorCargaService, EntityNotFoundError as IndicatorEntityNotFoundError
 
@@ -33,7 +32,6 @@ class StudentWorkspaceService:
         measurements: MeasurementRepository,
         metrics: MetricRepository,
         pillars: PillarRepository,
-        protocols: ProtocolRepository,
         measurement_overalls: MeasurementOverallRepository,
         indicator_carga: IndicatorCargaService,
     ) -> None:
@@ -42,7 +40,6 @@ class StudentWorkspaceService:
         self._measurements = measurements
         self._metrics = metrics
         self._pillars = pillars
-        self._protocols = protocols
         self._measurement_overalls = measurement_overalls
         self._indicator_carga = indicator_carga
 
@@ -101,12 +98,17 @@ class StudentWorkspaceService:
         resolved_pillar = self._resolve_pillar_identifier(pillar_id)
         if not resolved_pillar:
             raise StudentContextError("pillar not found")
-        if not self._is_pillar_in_enrollment_scope(enrollment=enrollment, pillar=resolved_pillar):
-            raise StudentContextError("pillar out of scope")
 
         resolved_pillar_id = str(resolved_pillar.get("id") or "")
         metrics_by_id = {str(metric.get("id") or ""): metric for metric in self._metrics.list_metrics()}
         measurements = self._measurements.list_by_enrollment(str(enrollment["id"]))
+
+        in_scope = any(
+            str((metrics_by_id.get(str(measurement.get("metric_id") or "")) or {}).get("pillar_id") or "") == resolved_pillar_id
+            for measurement in measurements
+        )
+        if not in_scope:
+            raise StudentContextError("pillar out of scope")
 
         items: list[dict[str, Any]] = []
         for measurement in measurements:
@@ -142,22 +144,6 @@ class StudentWorkspaceService:
             },
             "items": items,
         }
-
-    def _is_pillar_in_enrollment_scope(self, *, enrollment: dict[str, Any], pillar: dict[str, Any]) -> bool:
-        organization_id = str(enrollment.get("organization_id") or "")
-        if not organization_id:
-            return False
-
-        protocol_ids = {
-            str(protocol.get("id") or "")
-            for protocol in self._protocols.list_by_organization(organization_id)
-            if str(protocol.get("id") or "")
-        }
-        if not protocol_ids:
-            return False
-
-        pillar_protocol_id = str(pillar.get("protocol_id") or "")
-        return bool(pillar_protocol_id and pillar_protocol_id in protocol_ids)
 
     def _resolve_pillar_identifier(self, pillar_identifier: str) -> dict[str, Any] | None:
         direct = self._pillars.get_by_id(pillar_identifier)

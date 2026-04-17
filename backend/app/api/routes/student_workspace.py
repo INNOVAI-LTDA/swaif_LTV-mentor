@@ -59,7 +59,6 @@ def get_student_workspace_service() -> StudentWorkspaceService:
         measurements=measurements,
         metrics=metrics,
         pillars=pillars,
-        protocols=protocols,
         measurement_overalls=measurement_overalls,
         indicator_carga=indicator_carga,
     )
