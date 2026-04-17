@@ -9,8 +9,15 @@ import time
 from typing import Any
 
 
-ALLOWED_ROLES = {"admin", "mentor", "client"}
+ALLOWED_ROLES = {"admin", "mentor", "client", "aluno"}
 PBKDF2_ITERATIONS = 120_000
+
+
+def canonicalize_role(role: str) -> str:
+    normalized = str(role or "").strip().lower()
+    if normalized == "client":
+        return "aluno"
+    return normalized
 
 
 def _b64url_encode(data: bytes) -> str:
