@@ -298,3 +298,48 @@ def test_student_workspace_rejects_pillar_out_of_scope(monkeypatch, tmp_path: Pa
 
     assert response.status_code == 403
     assert response.json()["error"]["code"] == "MEASUREMENT_FORBIDDEN"
+
+
+def test_student_workspace_allows_empty_metrics_for_in_scope_pillar(monkeypatch, tmp_path: Path) -> None:
+    _configure_store_paths(monkeypatch, tmp_path)
+    app = create_app()
+    client = TestClient(app)
+
+    admin_headers = {"Authorization": f"Bearer {_login(client, 'admin@swaif.local', 'admin123')}"}
+    _, enrollment_id, _, _ = _seed_workspace_data(client, admin_headers)
+
+    enrollment = next(
+        item
+        for item in client.get("/admin/matriz-renovacao", headers=admin_headers).json()["items"]
+        if item["enrollmentId"] == enrollment_id
+    )
+    protocol_id = enrollment["protocolId"]
+
+    second_pillar = client.post(
+        "/admin/pilares",
+        json={"protocol_id": protocol_id, "name": "Pilar Sem Medicao", "code": f"sem-medicao-{uuid4().hex[:6]}"},
+        headers=admin_headers,
+    )
+    assert second_pillar.status_code == 201
+    second_pillar_id = second_pillar.json()["id"]
+
+    user_repo = UserRepository()
+    user_repo.create(
+        id="usr_empty_scope",
+        email="aluno.workspace@swaif.local",
+        password_hash=hash_password("scope-empty123"),
+        role="aluno",
+        is_active=True,
+    )
+
+    token = _login(client, "aluno.workspace@swaif.local", "scope-empty123")
+    response = client.get(
+        f"/aluno/workspace/pilares/{second_pillar_id}/metricas",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["enrollmentId"] == enrollment_id
+    assert body["pillar"]["id"] == second_pillar_id
+    assert body["items"] == []
