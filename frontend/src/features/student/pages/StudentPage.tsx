@@ -135,7 +135,7 @@ export function StudentPage() {
             {radarResource.loading && <p className="student-state">Carregando radar...</p>}
             {radarResource.error && <p className="student-state">{radarResource.error}</p>}
             {!radarResource.loading && !radarResource.error && radarPoints.length === 0 && <p className="student-state">Sem dados de radar para este aluno.</p>}
-            {radarPoints.length > 0 && <RadarChart points={radarPoints} />}
+            {radarPoints.length > 0 && <RadarChart points={radarPoints} title="Radar do aluno" />}
             <div className="student-pillars">
               {pillars.map((pillar) => (
                 <button
