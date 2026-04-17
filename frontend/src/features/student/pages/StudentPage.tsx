@@ -157,6 +157,22 @@ export function StudentPage() {
               <p>Edicao permitida apenas no valor atual.</p>
             </header>
 
+            <div className="student-pillars" role="tablist" aria-label="Selecao de pilar para indicadores">
+              {pillars.map((pillar) => (
+                <button
+                  key={pillar.axisKey}
+                  type="button"
+                  role="tab"
+                  aria-selected={selectedPillarId === pillar.axisKey}
+                  className={selectedPillarId === pillar.axisKey ? "student-pillars__item is-active" : "student-pillars__item"}
+                  onClick={() => setSelectedPillarId(pillar.axisKey)}
+                >
+                  <strong>{pillar.axisLabel}</strong>
+                  <small>Atual: {(pillar.current * 100).toFixed(1)}%</small>
+                </button>
+              ))}
+            </div>
+
             {pillarMetricsResource.loading && <p className="student-state">Carregando metricas do pilar...</p>}
             {pillarMetricsResource.error && <p className="student-state">{pillarMetricsResource.error}</p>}
             {!pillarMetricsResource.loading && !pillarMetricsResource.error && pillarMetricsResource.data.items.length === 0 && (

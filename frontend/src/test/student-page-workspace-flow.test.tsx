@@ -100,4 +100,11 @@ describe("StudentPage workspace flow", () => {
     expect(mockPillarRefresh).toHaveBeenCalled();
     expect(await screen.findByText("Valor atualizado com sucesso.")).toBeInTheDocument();
   });
+
+  it("exibe seletor de pilares na view de indicadores", () => {
+    renderPage();
+
+    expect(screen.getByRole("tablist", { name: "Selecao de pilar para indicadores" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /Consistencia/i })).toBeInTheDocument();
+  });
 });
