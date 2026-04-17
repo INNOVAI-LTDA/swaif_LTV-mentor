@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.api.errors import api_error
+from app.core.security import canonicalize_role
 from app.schemas.auth import LoginRequest, LoginResponse, MeResponse
 from app.services.auth_service import AuthService
 from app.storage.user_repository import UserRepository
@@ -60,5 +61,5 @@ def me(
     return MeResponse(
         id=str(user["id"]),
         email=str(user["email"]),
-        role=str(user["role"]),
+        role=canonicalize_role(str(user["role"])),
     )
