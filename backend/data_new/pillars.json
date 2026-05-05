@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "plr_0001",
+      "name": "Captação",
+      "code": "men_accmed_plr_cap",
+      "order_index": 1,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true,
+      "product_id": "prd_0002"
+    },
+    {
+      "id": "plr_0002",
+      "name": "Vendas",
+      "code": "men_accmed_plr_vendas",
+      "order_index": 2,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true,
+      "product_id": "prd_0002"
+    },
+    {
+      "id": "plr_0003",
+      "name": "Mentalidade",
+      "code": "men_accmed_plr_mentalidade",
+      "order_index": 3,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true,
+      "product_id": "prd_0002"
+    },
+    {
+      "id": "plr_0004",
+      "name": "Gestão",
+      "code": "men_accmed_plr_gestao",
+      "order_index": 4,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true,
+      "product_id": "prd_0002"
+    },
+    {
+      "id": "plr_0005",
+      "name": "Repertório",
+      "code": "men_accmed_plr_repertorio",
+      "order_index": 5,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true,
+      "product_id": "prd_0002"
+    },
+    {
+      "id": "plr_0006",
+      "name": "Captação",
+      "code": "mstr_accmed_plr_cap",
+      "order_index": 1,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true,
+      "product_id": "prd_0003"
+    },
+    {
+      "id": "plr_0007",
+      "name": "Vendas",
+      "code": "mstr_accmed_plr_vendas",
+      "order_index": 2,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true,
+      "product_id": "prd_0003"
+    },
+    {
+      "id": "plr_0008",
+      "name": "Mentalidade",
+      "code": "mstr_accmed_plr_mentalidade",
+      "order_index": 3,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true,
+      "product_id": "prd_0003"
+    },
+    {
+      "id": "plr_0009",
+      "name": "Gestão",
+      "code": "mstr_accmed_plr_gestao",
+      "order_index": 4,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true,
+      "product_id": "prd_0003"
+    },
+    {
+      "id": "plr_0010",
+      "name": "Repertório",
+      "code": "mstr_accmed_plr_repertorio",
+      "order_index": 5,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true,
+      "product_id": "prd_0003"
+    }
+  ]
+}
