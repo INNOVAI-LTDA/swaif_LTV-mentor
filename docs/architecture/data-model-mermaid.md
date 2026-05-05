@@ -26,6 +26,13 @@ classDiagram
     +bool is_active
   }
 
+  class Protocol {
+    +string id
+    +string name
+    +string code
+    +bool is_active
+  }
+
   class Organization {
     +string id
     +string name
@@ -122,6 +129,8 @@ classDiagram
   Student "1" --> "0..*" Enrollment : has
   Mentor "1" --> "0..*" Enrollment : guides
   Organization "1" --> "0..*" Enrollment : offers
+  Protocol "1" --> "0..*" Pillar : structures
+  Protocol "1" --> "0..*" Metric : structures
   Organization "1" --> "0..*" Mentor : owner/context
 
   Enrollment "1" --> "0..*" Measurement : records
@@ -156,6 +165,13 @@ erDiagram
     boolean is_active
   }
 
+  PROTOCOLS {
+    string id PK
+    string name
+    string code
+    boolean is_active
+  }
+
   ORGANIZATIONS {
     string id PK
     string name
@@ -187,7 +203,7 @@ erDiagram
 
   PILLARS {
     string id PK
-    string protocol_id
+    string protocol_id FK
     string name
     string code
     int order_index
@@ -196,7 +212,7 @@ erDiagram
 
   METRICS {
     string id PK
-    string protocol_id
+    string protocol_id FK
     string pillar_id FK
     string name
     string code
@@ -219,7 +235,7 @@ erDiagram
 
   MEASUREMENT_OVERALLS {
     string enrollment_id PK, FK
-    string protocol_id
+    string protocol_id FK
     json metrics
     json pillars
     json decision_matrix
@@ -229,11 +245,14 @@ erDiagram
   MENTORS ||--o{ ENROLLMENTS : "guides"
   ORGANIZATIONS ||--o{ ENROLLMENTS : "offers"
 
+  PROTOCOLS ||--o{ PILLARS : "defines"
+  PROTOCOLS ||--o{ METRICS : "defines"
   PILLARS ||--o{ METRICS : "contains"
   ENROLLMENTS ||--o{ MEASUREMENTS : "tracks"
   METRICS ||--o{ MEASUREMENTS : "measured_as"
 
   ENROLLMENTS ||--|| MEASUREMENT_OVERALLS : "aggregates"
+  PROTOCOLS ||--o{ MEASUREMENT_OVERALLS : "context"
 ```
 
 ## Observações
