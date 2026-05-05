@@ -1,22 +1,38 @@
 # Modelo de Dados (Mermaid)
 
-Este documento descreve o modelo atual dos dados JSON em formato de:
+Este documento descreve o **redesenho proposto** para validar o reajuste estrutural do domínio.
 
-1. Diagrama de classes
-2. Modelo Entidade-Relacionamento (ER)
+## Premissas de negócio (alinhadas)
 
-## 1) Diagrama de Classes
+- Uma **Organization** pode possuir **N Protocols**, **N Mentors**, **N Students** e **N Enrollments**.
+- Não existe relação obrigatória direta entre Mentor, Student e Protocol fora de Enrollment.
+- **Enrollment** é o vínculo que conecta: **Student + Mentor + Protocol** (e o contexto organizacional).
+- **Protocol** possui **Pillars**.
+- **Pillar** possui **Metrics**.
+- Cálculo e apresentação usam a entidade **Measurement** com diferentes escopos:
+  - medição de **Metric** (valor base do domínio)
+  - medição de **Pillar** (agregação geométrica das métricas)
+  - medição de **Protocol** para matriz de decisão (agregação dos pilares por método próprio)
+- O conceito de `measurement_overalls` é substituído por medições explícitas por escopo + método.
+
+---
+
+## 1) Diagrama de Classes (Modelo Alvo)
 
 ```mermaid
 classDiagram
+  class Organization {
+    +string id
+    +string name
+    +string slug
+    +bool is_active
+  }
+
   class Student {
     +string id
     +string full_name
     +string email
-    +string status
     +bool is_active
-    +date start_enrollment_date
-    +date end_enrollment_date
   }
 
   class Mentor {
@@ -28,35 +44,18 @@ classDiagram
 
   class Protocol {
     +string id
+    +string organization_id
     +string name
     +string code
-    +bool is_active
-  }
-
-  class Organization {
-    +string id
-    +string name
-    +string slug
-    +string code
-    +string client_id
-    +string mentor_id
-    +string delivery_model
-    +string status
     +bool is_active
   }
 
   class Enrollment {
     +string id
-    +string student_id
     +string organization_id
+    +string student_id
     +string mentor_id
-    +float progress_score
-    +float engagement_score
-    +string urgency_status
-    +int day
-    +int total_days
-    +int days_left
-    +int ltv_cents
+    +string protocol_id
     +bool is_active
     +datetime created_at
     +datetime updated_at
@@ -68,94 +67,84 @@ classDiagram
     +string name
     +string code
     +int order_index
-    +json metadata
     +bool is_active
   }
 
   class Metric {
     +string id
-    +string protocol_id
     +string pillar_id
     +string name
     +string code
     +string direction
     +string unit
-    +json scoring_rules
-    +string score_type
-    +float min_score
-    +float max_score
     +bool is_active
   }
 
   class Measurement {
     +string id
     +string enrollment_id
-    +string metric_id
-    +float value_baseline
+    +string level_type  // metric|pillar|protocol
+    +string level_id    // metric_id|pillar_id|protocol_id
+    +float value_base
     +float value_current
-    +float value_projected
+    +float value_target
     +bool improving_trend
+    +string method_id
+    +datetime calculated_at
   }
 
-  class MeasurementOverall {
-    +string enrollment_id
-    +string protocol_id
-    +MetricOverall[] metrics
-    +PillarOverall[] pillars
-    +DecisionMatrix decision_matrix
+  class CalculationMethod {
+    +string id
+    +string scope_type // metric|pillar|protocol
+    +string code
+    +string name
+    +json config
+    +bool is_active
   }
 
-  class MetricOverall {
-    +string metric_id
-    +float goal
-    +float base
-    +float real
+  class MeasurementInput {
+    +string id
+    +string source_measurement_id
+    +string input_measurement_id
+    +float weight
   }
 
-  class PillarOverall {
-    +string pillar_id
-    +float goal
-    +float base
-    +float real
-  }
+  Organization "1" --> "0..*" Protocol : owns
+  Organization "1" --> "0..*" Mentor : has
+  Organization "1" --> "0..*" Student : has
+  Organization "1" --> "0..*" Enrollment : contextualizes
 
-  class DecisionMatrix {
-    +float product_score
-    +float engagement_score
-    +float prd_thr
-    +float eng_thr
-  }
+  Student "1" --> "0..*" Enrollment : enrolls
+  Mentor "1" --> "0..*" Enrollment : mentors
+  Protocol "1" --> "0..*" Enrollment : applies
 
-  Student "1" --> "0..*" Enrollment : has
-  Mentor "1" --> "0..*" Enrollment : guides
-  Organization "1" --> "0..*" Enrollment : offers
-  Protocol "1" --> "0..*" Pillar : structures
-  Protocol "1" --> "0..*" Metric : structures
-  Organization "1" --> "0..*" Mentor : owner/context
+  Protocol "1" --> "0..*" Pillar : defines
+  Pillar "1" --> "0..*" Metric : defines
 
   Enrollment "1" --> "0..*" Measurement : records
-  Metric "1" --> "0..*" Measurement : measured_by
+  CalculationMethod "1" --> "0..*" Measurement : computes
 
-  Pillar "1" --> "0..*" Metric : groups
-
-  Enrollment "1" --> "1" MeasurementOverall : aggregates
-  MeasurementOverall "1" --> "0..*" MetricOverall : per metric
-  MeasurementOverall "1" --> "0..*" PillarOverall : per pillar
-  MeasurementOverall "1" --> "1" DecisionMatrix : matrix
+  Measurement "1" --> "0..*" MeasurementInput : depends_on
 ```
 
-## 2) Modelo Entidade-Relacionamento (ER)
+---
+
+## 2) Modelo Entidade-Relacionamento (ER) Alvo
 
 ```mermaid
 erDiagram
+  ORGANIZATIONS {
+    string id PK
+    string name
+    string slug
+    boolean is_active
+  }
+
   STUDENTS {
     string id PK
     string full_name
     string email
-    string status
     boolean is_active
-    date start_enrollment_date
-    date end_enrollment_date
   }
 
   MENTORS {
@@ -167,35 +156,18 @@ erDiagram
 
   PROTOCOLS {
     string id PK
+    string organization_id FK
     string name
     string code
-    boolean is_active
-  }
-
-  ORGANIZATIONS {
-    string id PK
-    string name
-    string slug
-    string code
-    string client_id
-    string mentor_id FK
-    string delivery_model
-    string status
     boolean is_active
   }
 
   ENROLLMENTS {
     string id PK
-    string student_id FK
     string organization_id FK
+    string student_id FK
     string mentor_id FK
-    float progress_score
-    float engagement_score
-    string urgency_status
-    int day
-    int total_days
-    int days_left
-    int ltv_cents
+    string protocol_id FK
     boolean is_active
     datetime created_at
     datetime updated_at
@@ -212,51 +184,79 @@ erDiagram
 
   METRICS {
     string id PK
-    string protocol_id FK
     string pillar_id FK
     string name
     string code
     string direction
     string unit
-    float min_score
-    float max_score
+    boolean is_active
+  }
+
+  CALCULATION_METHODS {
+    string id PK
+    string scope_type
+    string code
+    string name
+    json config
     boolean is_active
   }
 
   MEASUREMENTS {
     string id PK
     string enrollment_id FK
-    string metric_id FK
-    float value_baseline
+    string level_type
+    string level_id
+    float value_base
     float value_current
-    float value_projected
+    float value_target
     boolean improving_trend
+    string method_id FK
+    datetime calculated_at
   }
 
-  MEASUREMENT_OVERALLS {
-    string enrollment_id PK, FK
-    string protocol_id FK
-    json metrics
-    json pillars
-    json decision_matrix
+  MEASUREMENT_INPUTS {
+    string id PK
+    string source_measurement_id FK
+    string input_measurement_id FK
+    float weight
   }
 
-  STUDENTS ||--o{ ENROLLMENTS : "has"
-  MENTORS ||--o{ ENROLLMENTS : "guides"
-  ORGANIZATIONS ||--o{ ENROLLMENTS : "offers"
+  ORGANIZATIONS ||--o{ PROTOCOLS : "owns"
+  ORGANIZATIONS ||--o{ MENTORS : "has"
+  ORGANIZATIONS ||--o{ STUDENTS : "has"
+  ORGANIZATIONS ||--o{ ENROLLMENTS : "context"
+
+  STUDENTS ||--o{ ENROLLMENTS : "enrolls"
+  MENTORS ||--o{ ENROLLMENTS : "mentors"
+  PROTOCOLS ||--o{ ENROLLMENTS : "applies"
 
   PROTOCOLS ||--o{ PILLARS : "defines"
-  PROTOCOLS ||--o{ METRICS : "defines"
-  PILLARS ||--o{ METRICS : "contains"
-  ENROLLMENTS ||--o{ MEASUREMENTS : "tracks"
-  METRICS ||--o{ MEASUREMENTS : "measured_as"
+  PILLARS ||--o{ METRICS : "defines"
 
-  ENROLLMENTS ||--|| MEASUREMENT_OVERALLS : "aggregates"
-  PROTOCOLS ||--o{ MEASUREMENT_OVERALLS : "context"
+  ENROLLMENTS ||--o{ MEASUREMENTS : "records"
+  CALCULATION_METHODS ||--o{ MEASUREMENTS : "computes"
+
+  MEASUREMENTS ||--o{ MEASUREMENT_INPUTS : "source"
+  MEASUREMENTS ||--o{ MEASUREMENT_INPUTS : "input"
 ```
 
-## Observações
+---
 
-- `measurement_overalls` é uma estrutura agregada para leitura rápida (denormalizada).
-- `measurements` é o nível de granularidade por enrollment + métrica.
-- Pilares e métricas são estruturados por protocolo.
+## 3) Fluxo de cálculo por escopo
+
+```mermaid
+flowchart TD
+  A[Metric Measurements<br/>level_type=metric] --> B[Pillar Measurement<br/>level_type=pillar<br/>method=geometric_mean]
+  B --> C[Protocol Measurement<br/>level_type=protocol<br/>method=decision_matrix_aggregation]
+  C --> D[Matriz de Decisão]
+```
+
+---
+
+## 4) Estratégia de transição recomendada
+
+1. Introduzir `protocol_id` explícito em `enrollments`.
+2. Migrar `measurement_overalls` para `measurements(level_type=pillar|protocol)`.
+3. Registrar método de cálculo em `calculation_methods` e vínculo em `measurements.method_id`.
+4. Persistir rastreabilidade de agregação em `measurement_inputs`.
+5. Atualizar serviços de leitura para consumir medições por escopo.
