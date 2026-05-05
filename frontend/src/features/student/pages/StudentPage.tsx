@@ -58,6 +58,23 @@ export function StudentPage() {
     setDraftValue("");
   }, [selectedPillarId]);
 
+  async function loadPillarMetricItems(axisId: string | undefined, axisKey: string) {
+    const candidates = [axisId, axisKey].filter((candidate, index, arr): candidate is string => Boolean(candidate) && arr.indexOf(candidate) === index);
+
+    for (const candidate of candidates) {
+      const response = await getSelfPillarMetrics(candidate);
+      if (response.items.length > 0 || response.pillar.id || candidate === candidates[candidates.length - 1]) {
+        return response;
+      }
+    }
+
+    return {
+      studentId: "",
+      enrollmentId: "",
+      pillar: { id: "", name: "", code: "" },
+      items: []
+    };
+  }
 
   useEffect(() => {
     let active = true;
@@ -78,7 +95,7 @@ export function StudentPage() {
         const results = await Promise.all(
           pillars.map(async (pillar) => {
             const pillarId = pillar.axisId || pillar.axisKey;
-            const response = await getSelfPillarMetrics(pillarId);
+            const response = await loadPillarMetricItems(pillar.axisId, pillar.axisKey);
             return [
               pillarId,
               {
@@ -225,7 +242,7 @@ export function StudentPage() {
                       <section key={pillarId} className="student-pillar-panel-item">
                         <h3>{panel?.pillarName || pillar.axisLabel}</h3>
                         {panelItems.length === 0 ? (
-                          <p className="student-state">Sem métricas para este pilar.</p>
+                          <p className="student-state">Sem métricas para este pilar. Verifique se o aluno tem indicadores iniciais carregados para este pilar.</p>
                         ) : (
                           <ul className="student-pillar-metric-list">
                             {panelItems.map((metric) => (
