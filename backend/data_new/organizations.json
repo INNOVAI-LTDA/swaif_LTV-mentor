@@ -2,46 +2,32 @@
   "version": 1,
   "items": [
     {
-      "id": "org_1",
-      "name": "Inovação em 5 passos",
-      "slug": "mtn_inova5",
-      "mentor_id": "mtr_1",
-      "is_active": true,
-      "code": "MENTORIA INNOVA5",
-      "client_id": "cli_2",
-      "description": null,
-      "delivery_model": "live",
+      "id": "cli_1",
+      "name": "Grupo Acelerador Medico",
+      "brand_name": "Grupo Acelerador Medico",
+      "slug": "cli_grpaccmed",
+      "cnpj": "XXXXXXXXXXXXXX",
+      "timezone": "America/Sao_Paulo",
+      "currency": "BRL",
       "status": "active",
-      "created_at": "2026-03-15T06:45:48.612001Z",
-      "updated_at": "2026-03-30T19:48:45.693613Z"
+      "is_active": true,
+      "notes": null,
+      "created_at": "2026-03-15T05:25:51.063897Z",
+      "updated_at": "2026-03-30T19:48:45.409769Z"
     },
     {
-      "id": "org_2",
-      "name": "Mentoria Acelerador Medico",
-      "slug": "mnt_accmed",
-      "code": "MENTORIA ACMED",
-      "client_id": "cli_1",
-      "mentor_id": "mtr_2",
-      "description": null,
-      "delivery_model": "live",
+      "id": "cli_2",
+      "name": "Innovai Solutions",
+      "brand_name": "INNOVAI",
+      "slug": "cli_innovai",
+      "cnpj": "XXXXXXXXXXXXXX",
+      "timezone": "America/Sao_Paulo",
+      "currency": "BRL",
       "status": "active",
       "is_active": true,
-      "created_at": "2026-03-15T06:45:48.612001Z",
-      "updated_at": "2026-03-30T19:48:45.745639Z"
-    },
-    {
-      "id": "org_3",
-      "name": "Master Acelerador Medico",
-      "slug": "mst_accmed",
-      "code": "MASTERMIND",
-      "client_id": "cli_1",
-      "mentor_id": "mtr_2",
-      "description": null,
-      "delivery_model": "live",
-      "status": "active",
-      "is_active": true,
-      "created_at": "2026-03-30T15:24:22.045833Z",
-      "updated_at": "2026-03-30T15:24:22.045833Z"
+      "notes": null,
+      "created_at": "2026-03-30T15:24:21.645968Z",
+      "updated_at": "2026-03-30T15:24:21.645968Z"
     }
   ]
 }

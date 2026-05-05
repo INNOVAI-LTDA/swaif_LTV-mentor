@@ -3,7 +3,8 @@
   "items": [
     {
       "id": "prt_1",
-      "organization_id": "org_1",
+      "organization_id": "cli_2",
+      "product_id": "org_1",
       "name": "Protocolo Trilha 3D",
       "code": "protocolo-trilha-3d",
       "metadata": {
@@ -14,7 +15,8 @@
     },
     {
       "id": "prt_2",
-      "organization_id": "org_2",
+      "organization_id": "cli_1",
+      "product_id": "org_2",
       "name": "Mentoria Acelerador Médico",
       "code": "mtn-accmed",
       "metadata": {
@@ -25,7 +27,8 @@
     },
     {
       "id": "prt_3",
-      "organization_id": "org_3",
+      "organization_id": "cli_1",
+      "product_id": "org_3",
       "name": "Master Acelerador Médico",
       "code": "mstr-accmed",
       "metadata": {

@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "org_1",
+      "organization_id": "cli_2",
+      "name": "Inovação em 5 passos",
+      "slug": "mtn_inova5",
+      "code": "MENTORIA INNOVA5",
+      "mentor_id": "mtr_1",
+      "delivery_model": "live",
+      "status": "active",
+      "is_active": true,
+      "description": null,
+      "created_at": "2026-03-15T06:45:48.612001Z",
+      "updated_at": "2026-03-30T19:48:45.693613Z"
+    },
+    {
+      "id": "org_2",
+      "organization_id": "cli_1",
+      "name": "Mentoria Acelerador Medico",
+      "slug": "mnt_accmed",
+      "code": "MENTORIA ACMED",
+      "mentor_id": "mtr_2",
+      "delivery_model": "live",
+      "status": "active",
+      "is_active": true,
+      "description": null,
+      "created_at": "2026-03-15T06:45:48.612001Z",
+      "updated_at": "2026-03-30T19:48:45.745639Z"
+    },
+    {
+      "id": "org_3",
+      "organization_id": "cli_1",
+      "name": "Master Acelerador Medico",
+      "slug": "mst_accmed",
+      "code": "MASTERMIND",
+      "mentor_id": "mtr_2",
+      "delivery_model": "live",
+      "status": "active",
+      "is_active": true,
+      "description": null,
+      "created_at": "2026-03-30T15:24:22.045833Z",
+      "updated_at": "2026-03-30T15:24:22.045833Z"
+    }
+  ]
+}
