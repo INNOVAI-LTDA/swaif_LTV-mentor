@@ -3,11 +3,17 @@ import { Link, useSearchParams } from "react-router-dom";
 import { RadarChart } from "../../radar/components/RadarChart";
 import { StudentShell } from "../components/StudentShell";
 import { useSelfPillarMetrics, useSelfRadar } from "../../../domain/hooks/useStudentWorkspace";
-import { updateSelfMeasurementValueCurrent } from "../../../domain/services/studentWorkspaceService";
+import { getSelfPillarMetrics, updateSelfMeasurementValueCurrent } from "../../../domain/services/studentWorkspaceService";
 import { AppError, toUserErrorMessage } from "../../../shared/api/types";
 import "../student.css";
 
 type StudentView = "radar" | "indicadores";
+
+type PillarMetricsPanelState = {
+  loading: boolean;
+  error: string | null;
+  byPillarId: Record<string, { pillarName: string; items: Array<{ measurementId: string; metricLabel: string; valueBaseline: number; valueCurrent: number; valueProjected: number | null; unit: string | null }> }>;
+};
 
 function resolveView(value: string | null): StudentView {
   if (value === "indicadores") {
@@ -35,6 +41,7 @@ export function StudentPage() {
   const [draftValue, setDraftValue] = useState<string>("");
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: "success" | "error"; message: string } | null>(null);
+  const [pillarMetricsPanel, setPillarMetricsPanel] = useState<PillarMetricsPanelState>({ loading: false, error: null, byPillarId: {} });
 
   const radarResource = useSelfRadar();
   const pillars = radarResource.data.axisScores;
@@ -50,6 +57,64 @@ export function StudentPage() {
     setEditingMeasurementId(null);
     setDraftValue("");
   }, [selectedPillarId]);
+
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadPillarMetricsPanel() {
+      if (pillars.length === 0) {
+        if (active) {
+          setPillarMetricsPanel({ loading: false, error: null, byPillarId: {} });
+        }
+        return;
+      }
+
+      if (active) {
+        setPillarMetricsPanel((current) => ({ ...current, loading: true, error: null }));
+      }
+
+      try {
+        const results = await Promise.all(
+          pillars.map(async (pillar) => {
+            const pillarId = pillar.axisId || pillar.axisKey;
+            const response = await getSelfPillarMetrics(pillarId);
+            return [
+              pillarId,
+              {
+                pillarName: response.pillar.name || pillar.axisLabel,
+                items: response.items.map((item) => ({
+                  measurementId: item.measurementId,
+                  metricLabel: item.metricLabel,
+                  valueBaseline: item.valueBaseline,
+                  valueCurrent: item.valueCurrent,
+                  valueProjected: item.valueProjected,
+                  unit: item.unit
+                }))
+              }
+            ] as const;
+          })
+        );
+
+        if (!active) {
+          return;
+        }
+
+        setPillarMetricsPanel({ loading: false, error: null, byPillarId: Object.fromEntries(results) });
+      } catch (error) {
+        if (!active) {
+          return;
+        }
+        setPillarMetricsPanel({ loading: false, error: toUserErrorMessage(error, "Não foi possível carregar as métricas por pilar."), byPillarId: {} });
+      }
+    }
+
+    void loadPillarMetricsPanel();
+
+    return () => {
+      active = false;
+    };
+  }, [pillars]);
 
   const radarPoints = useMemo(
     () =>
@@ -131,12 +196,55 @@ export function StudentPage() {
         {feedback && <p className={feedback.tone === "success" ? "student-state student-state--success" : "student-state student-state--error"}>{feedback.message}</p>}
 
         {activeView === "radar" ? (
-          <article className="student-card student-card--radar" aria-label="Radar do aluno">
+          <section className="student-radar-grid">
+            <article className="student-card student-card--radar" aria-label="Radar do aluno">
             {radarResource.loading && <p className="student-state">Carregando radar...</p>}
             {radarResource.error && <p className="student-state">{radarResource.error}</p>}
             {!radarResource.loading && !radarResource.error && radarPoints.length === 0 && <p className="student-state">Sem dados de radar para este aluno.</p>}
             {radarPoints.length > 0 && <RadarChart points={radarPoints} title="Radar do aluno" />}
-          </article>
+            </article>
+
+            <article className="student-card student-card--pillar-panel" aria-label="Métricas por pilar">
+              <header className="student-card__header">
+                <div>
+                  <h2>Painel de métricas por pilar</h2>
+                  <p>Visualize base, atual e projetado em cada indicador.</p>
+                </div>
+              </header>
+
+              {pillarMetricsPanel.loading && <p className="student-state">Carregando métricas por pilar...</p>}
+              {pillarMetricsPanel.error && <p className="student-state">{pillarMetricsPanel.error}</p>}
+
+              {!pillarMetricsPanel.loading && !pillarMetricsPanel.error && (
+                <div className="student-pillar-panel-list">
+                  {pillars.map((pillar) => {
+                    const pillarId = pillar.axisId || pillar.axisKey;
+                    const panel = pillarMetricsPanel.byPillarId[pillarId];
+                    const panelItems = panel?.items ?? [];
+                    return (
+                      <section key={pillarId} className="student-pillar-panel-item">
+                        <h3>{panel?.pillarName || pillar.axisLabel}</h3>
+                        {panelItems.length === 0 ? (
+                          <p className="student-state">Sem métricas para este pilar.</p>
+                        ) : (
+                          <ul className="student-pillar-metric-list">
+                            {panelItems.map((metric) => (
+                              <li key={metric.measurementId}>
+                                <strong>{metric.metricLabel}</strong>
+                                <span>Base: {metric.valueBaseline}{metric.unit ? ` ${metric.unit}` : ""}</span>
+                                <span>Atual: {metric.valueCurrent}{metric.unit ? ` ${metric.unit}` : ""}</span>
+                                <span>Projetado: {metric.valueProjected ?? "-"}{metric.unit ? ` ${metric.unit}` : ""}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </section>
+                    );
+                  })}
+                </div>
+              )}
+            </article>
+          </section>
         ) : (
           <article className="student-card" aria-label="Métricas do pilar selecionado">
             <header className="student-card__header">
