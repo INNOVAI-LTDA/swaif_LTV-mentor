@@ -1340,15 +1340,6 @@
       "end_enrollment_date": "2026-07-30"
     },
     {
-      "id": "std_0123",
-      "full_name": "Lucas Martins de Almeida",
-      "initials": "LM",
-      "email": "drlucasma1994@gmail.com",
-      "phone": "7991199999",
-      "status": "active",
-      "is_active": true
-    },
-    {
       "id": "std_0124",
       "full_name": "Fábio Strauss",
       "initials": "FS",
