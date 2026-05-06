@@ -49,7 +49,6 @@ class StudentVinculoService:
         *,
         student_id: str,
         organization_id: str,
-        mentor_id: str | None = None,
         progress_score: float,
         engagement_score: float,
         urgency_status: str = "normal",
@@ -81,7 +80,6 @@ class StudentVinculoService:
         return self._enrollments.create(
             student_id=student_id,
             organization_id=organization_id,
-            mentor_id=mentor_id,
             progress_score=progress_score,
             engagement_score=engagement_score,
             urgency_status=urgency_status,

@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 class ProtocolCreate(BaseModel):
     organization_id: str
+    mentor_id: str | None = None
     name: str
     code: str | None = None
     metadata: dict | None = None
@@ -13,6 +14,7 @@ class ProtocolCreate(BaseModel):
 class ProtocolOut(BaseModel):
     id: str
     organization_id: str
+    mentor_id: str | None = None
     name: str
     code: str
     metadata: dict

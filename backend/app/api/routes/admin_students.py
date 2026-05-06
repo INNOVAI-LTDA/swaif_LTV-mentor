@@ -205,7 +205,6 @@ def link_student_to_mentoria(
         enrollment = service.link_student_to_organization(
             student_id=student_id,
             organization_id=payload.organization_id,
-            mentor_id=payload.mentor_id,
             progress_score=payload.progress_score,
             engagement_score=payload.engagement_score,
             urgency_status=payload.urgency_status,
