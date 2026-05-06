@@ -92,7 +92,6 @@ class AdminStudentService:
         enrollment = self._enrollments.create(
             student_id=str(student["id"]),
             organization_id=product_id,
-            mentor_id=mentor_id,
             progress_score=0,
             engagement_score=0,
             urgency_status="normal",

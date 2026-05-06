@@ -7,7 +7,6 @@ from app.schemas.student import StudentOut
 
 class LinkStudentMentoriaRequest(BaseModel):
     organization_id: str
-    mentor_id: str | None = None
     progress_score: float
     engagement_score: float
     urgency_status: str = "normal"
@@ -21,7 +20,6 @@ class EnrollmentOut(BaseModel):
     id: str
     student_id: str
     organization_id: str
-    mentor_id: str | None = None
     progress_score: float
     engagement_score: float
     urgency_status: str

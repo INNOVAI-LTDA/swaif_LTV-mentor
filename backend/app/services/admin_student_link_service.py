@@ -94,7 +94,6 @@ class AdminStudentLinkService:
         new_enrollment = self._enrollments.create(
             student_id=student_id,
             organization_id=current_product_id,
-            mentor_id=target_mentor_id,
             progress_score=float(current_enrollment.get("progress_score", 0)),
             engagement_score=float(current_enrollment.get("engagement_score", 0)),
             urgency_status=str(current_enrollment.get("urgency_status") or "normal"),

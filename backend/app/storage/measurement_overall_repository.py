@@ -132,6 +132,13 @@ class MeasurementOverallRepository:
                 "real": normalized_mcv,
             }
 
+        def to_history(values: dict[str, float]) -> dict[str, list[float]]:
+            return {
+                "goal": [float(values.get("goal") or 0.0)],
+                "base": [float(values.get("base") or 0.0)],
+                "real": [float(values.get("real") or 0.0)],
+            }
+
         def load_first_load_profiles() -> dict[str, dict[str, Any]]:
             source_path = default_first_load_student_source_path()
             if not source_path.exists():
@@ -290,7 +297,8 @@ class MeasurementOverallRepository:
                         values = derive_metric_tuple(metric)
                     metric_tuples.append({
                         "metric_id": metric["id"],
-                        "values": values
+                        "values": values,
+                        "history": to_history(values),
                     })
                     metric_values_by_id[metric["id"]] = values
 
@@ -305,7 +313,8 @@ class MeasurementOverallRepository:
                 pillar_tuple = aggregate_pillar(pillar_metric_values)
                 pillar_tuples.append({
                     "pillar_id": pillar["id"],
-                    "metric_average": pillar_tuple
+                    "metric_average": pillar_tuple,
+                    "history": to_history(pillar_tuple),
                 })
                 pillar_overalls[pillar["id"]] = pillar_tuple["real"]
 

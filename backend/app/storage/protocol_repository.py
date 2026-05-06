@@ -42,7 +42,15 @@ class ProtocolRepository:
             if str(protocol.get("organization_id") or "") == organization_id
         ]
 
-    def create(self, *, organization_id: str, name: str, code: str | None = None, metadata: dict | None = None) -> dict[str, Any]:
+    def create(
+        self,
+        *,
+        organization_id: str,
+        mentor_id: str | None = None,
+        name: str,
+        code: str | None = None,
+        metadata: dict | None = None,
+    ) -> dict[str, Any]:
         items = self._read_items()
         final_code = _slugify(code or name)
         if any(str(item.get("code")) == final_code for item in items):
@@ -51,6 +59,7 @@ class ProtocolRepository:
         protocol = {
             "id": f"prt_{len(items) + 1}",
             "organization_id": organization_id,
+            "mentor_id": mentor_id,
             "name": name,
             "code": final_code,
             "metadata": metadata or {},
