@@ -223,3 +223,22 @@ def test_smoke_e2e_critical_error_invalid_indicator(monkeypatch, tmp_path: Path)
     assert invalid_load.status_code == 404
     error = invalid_load.json()["error"]
     assert error["code"] == "INDICADOR_NOT_FOUND"
+
+
+def test_smoke_e2e_role_alias_backward_compatibility(monkeypatch, tmp_path: Path) -> None:
+    _configure_stores(monkeypatch, tmp_path)
+    client = TestClient(app)
+
+    mentor_login = client.post("/auth/login", json={"email": "mentor@swaif.local", "password": "mentor123"})
+    assert mentor_login.status_code == 200
+
+    mentor_me = client.get("/me", headers={"Authorization": f"Bearer {mentor_login.json()['access_token']}"})
+    assert mentor_me.status_code == 200
+    assert mentor_me.json()["role"] == "mentor"
+
+    aluno_login = client.post("/auth/login", json={"email": "aluno@swaif.local", "password": "aluno123"})
+    assert aluno_login.status_code == 200
+
+    aluno_me = client.get("/me", headers={"Authorization": f"Bearer {aluno_login.json()['access_token']}"})
+    assert aluno_me.status_code == 200
+    assert aluno_me.json()["role"] == "aluno"

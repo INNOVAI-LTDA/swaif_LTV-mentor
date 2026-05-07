@@ -9,14 +9,26 @@ import time
 from typing import Any
 
 
-ALLOWED_ROLES = {"admin", "mentor", "client", "aluno"}
+ALLOWED_ROLES = {"admin", "mentor", "provider", "client", "aluno", "student"}
+INTERNAL_ROLES = {"admin", "provider", "client"}
 PBKDF2_ITERATIONS = 120_000
 
 
 def canonicalize_role(role: str) -> str:
     normalized = str(role or "").strip().lower()
-    if normalized == "client":
+    if normalized in {"client", "student"}:
         return "aluno"
+    if normalized == "provider":
+        return "mentor"
+    return normalized
+
+
+def normalize_role_for_internal(role: str) -> str:
+    normalized = str(role or "").strip().lower()
+    if normalized == "mentor":
+        return "provider"
+    if normalized in {"aluno", "student"}:
+        return "client"
     return normalized
 
 
@@ -59,12 +71,13 @@ def verify_password(password: str, hashed_password: str) -> bool:
 
 
 def create_access_token(user_id: str, role: str, secret: str, ttl_seconds: int = 3600) -> str:
-    if role not in ALLOWED_ROLES:
+    normalized_role = normalize_role_for_internal(role)
+    if normalized_role not in INTERNAL_ROLES:
         raise ValueError("invalid role")
 
     payload = {
         "sub": user_id,
-        "role": role,
+        "role": normalized_role,
         "exp": int(time.time()) + ttl_seconds,
     }
     payload_b64 = _b64url_encode(json.dumps(payload, separators=(",", ":")).encode("utf-8"))
@@ -84,8 +97,10 @@ def verify_access_token(token: str, secret: str) -> dict[str, Any] | None:
             return None
 
         payload = json.loads(_b64url_decode(payload_b64).decode("utf-8"))
-        if payload.get("role") not in ALLOWED_ROLES:
+        payload_role = normalize_role_for_internal(str(payload.get("role") or ""))
+        if payload_role not in INTERNAL_ROLES:
             return None
+        payload["role"] = payload_role
         if int(payload.get("exp", 0)) < int(time.time()):
             return None
         if not payload.get("sub"):

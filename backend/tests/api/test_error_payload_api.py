@@ -111,3 +111,25 @@ def test_standard_error_payload_for_422(monkeypatch, tmp_path: Path) -> None:
         expected_code="VALIDATION_ERROR",
     )
     assert isinstance(response.json()["error"]["details"], list)
+
+
+def test_me_role_keeps_v1_mentor_with_internal_provider_token(monkeypatch, tmp_path: Path) -> None:
+    _configure_stores(monkeypatch, tmp_path)
+    client = TestClient(app)
+
+    token = _login(client, "mentor@swaif.local", "mentor123")
+    response = client.get("/me", headers={"Authorization": f"Bearer {token}"})
+
+    assert response.status_code == 200
+    assert response.json()["role"] == "mentor"
+
+
+def test_me_role_keeps_v1_aluno_with_internal_client_token(monkeypatch, tmp_path: Path) -> None:
+    _configure_stores(monkeypatch, tmp_path)
+    client = TestClient(app)
+
+    token = _login(client, "aluno@swaif.local", "aluno123")
+    response = client.get("/me", headers={"Authorization": f"Bearer {token}"})
+
+    assert response.status_code == 200
+    assert response.json()["role"] == "aluno"
