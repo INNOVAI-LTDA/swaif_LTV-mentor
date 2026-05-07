@@ -764,7 +764,8 @@ class IndicatorCargaService:
 
             axis_scores.sort(key=lambda item: int(item.get("_order", 999)))
             for axis in axis_scores:
-                axis["insight"] = self._build_axis_insight(
+                if str(axis.get("dataStatus") or "ok") == "ok":
+                    axis["insight"] = self._build_axis_insight(
                     axis_label=str(axis.get("axisLabel") or "Eixo"),
                     baseline=float(axis.get("baseline", 0)),
                     current=float(axis.get("current", 0)),
