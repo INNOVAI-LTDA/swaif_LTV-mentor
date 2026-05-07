@@ -8,6 +8,7 @@ from app.api.errors import api_error
 from app.api.routes.admin_mentoria import require_admin_user
 from app.schemas.mentor import AdminMentorCreate, MentorOut
 from app.services.admin_mentor_service import AdminMentorService, EntityNotFoundError, ValidationError
+from app.storage.contact_user_repository import ContactUserRepository
 from app.storage.mentor_repository import MentorRepository
 from app.storage.organization_repository import OrganizationRepository
 
@@ -16,7 +17,7 @@ router = APIRouter(prefix="/admin", tags=["admin-mentores"])
 
 
 def get_admin_mentor_service() -> AdminMentorService:
-    return AdminMentorService(OrganizationRepository(), MentorRepository())
+    return AdminMentorService(OrganizationRepository(), MentorRepository(), ContactUserRepository())
 
 
 @router.get("/produtos/{product_id}/mentores", response_model=list[MentorOut])
