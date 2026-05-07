@@ -275,3 +275,34 @@ def test_backup_snapshot_manifest_is_json(tmp_path: Path, monkeypatch) -> None:
 
     assert isinstance(manifest["stores"], list)
     assert manifest["snapshot_dir"] == str(snapshot_dir.resolve())
+
+
+def test_validate_catalog_integrity_reports_orphans(monkeypatch, tmp_path: Path) -> None:
+    configured_paths = _configure_store_paths(monkeypatch, tmp_path)
+
+    JsonRepository(configured_paths["ORG_STORE_PATH"]).write({"version": 1, "items": [{"id": "prd_ok", "name": "Produto"}]})
+    JsonRepository(configured_paths["PILLAR_STORE_PATH"]).write(
+        {
+            "version": 1,
+            "items": [
+                {"id": "plr_ok", "product_id": "prd_ok", "name": "Pilar OK"},
+                {"id": "plr_orf", "product_id": "prd_missing", "name": "Pilar Orfao"},
+            ],
+        }
+    )
+    JsonRepository(configured_paths["METRIC_STORE_PATH"]).write(
+        {
+            "version": 1,
+            "items": [
+                {"id": "mtr_ok", "pillar_id": "plr_ok", "product_id": "prd_ok", "name": "Metrica OK"},
+                {"id": "mtr_orf", "pillar_id": "plr_missing", "product_id": "prd_ok", "name": "Metrica Orfa"},
+            ],
+        }
+    )
+
+    report = storage_maintenance.validate_catalog_integrity()
+
+    assert report["orphan_pillar_ids"] == ["plr_orf"]
+    assert report["orphan_metric_ids"] == ["mtr_orf"]
+    assert any(item["type"] == "pillar_without_product" for item in report["inconsistencies"])
+    assert any(item["type"] == "metric_without_pillar" for item in report["inconsistencies"])
