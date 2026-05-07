@@ -305,6 +305,9 @@ def test_mentor_command_center_radar_and_timeline_use_live_student_data(monkeypa
     assert radar_response.status_code == 200
     radar = radar_response.json()
     assert len(radar["axisScores"]) == 2
+    assert radar["productId"] == "prt_1"
+    assert len(radar["pillars"]) == 2
+    assert radar["metrics"] == []
     assert radar["avgBaseline"] == 0.4
     assert radar["avgCurrent"] == 0.6
     assert radar["avgProjected"] == 1.0
