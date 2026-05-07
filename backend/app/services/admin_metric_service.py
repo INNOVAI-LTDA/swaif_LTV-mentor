@@ -52,18 +52,10 @@ class AdminMetricService:
         return sorted(items, key=lambda item: (str(item.get("name") or "").lower(), str(item.get("code") or "").lower()))
 
     def list_metrics_by_product(self, product_id: str) -> list[dict[str, Any]]:
-        protocol_ids = {
-            str(protocol.get("id"))
-            for protocol in self._protocols.list_by_organization(product_id)
-            if bool(protocol.get("is_active", True))
-        }
-        if not protocol_ids:
-            return []
-
         active_pillars = {
             str(pillar.get("id")): pillar
             for pillar in self._pillars.list_pillars()
-            if str(pillar.get("protocol_id") or "") in protocol_ids and bool(pillar.get("is_active", True))
+            if str(pillar.get("product_id") or "") == product_id and bool(pillar.get("is_active", True))
         }
         if not active_pillars:
             return []
@@ -71,7 +63,9 @@ class AdminMetricService:
         items = [
             {**item, "pillar_name": str(active_pillars[str(item.get("pillar_id"))].get("name") or "")}
             for item in self._metrics.list_metrics()
-            if str(item.get("pillar_id") or "") in active_pillars and bool(item.get("is_active", True))
+            if str(item.get("pillar_id") or "") in active_pillars
+            and str(item.get("product_id") or "") == product_id
+            and bool(item.get("is_active", True))
         ]
         return sorted(
             items,

@@ -12,6 +12,9 @@ from app.config.runtime import get_storage_backup_dir
 from app.storage.catalog import resolve_storage_root, resolve_storage_targets
 from app.storage.io_gate import hold_storage_io_lock
 from app.storage.json_repository import JsonRepository
+from app.storage.metric_repository import MetricRepository
+from app.storage.pillar_repository import PillarRepository
+from app.storage.organization_repository import OrganizationRepository
 
 
 def _snapshot_id() -> str:
@@ -195,6 +198,55 @@ def restore_backup_snapshot(
         }
 
 
+def validate_catalog_integrity() -> dict[str, Any]:
+    products = OrganizationRepository().list_organizations()
+    pillars = PillarRepository().list_pillars()
+    metrics = MetricRepository().list_metrics()
+
+    products_by_id = {str(item.get("id") or "") for item in products}
+    pillars_by_id = {str(item.get("id") or ""): item for item in pillars}
+
+    orphan_pillars = sorted(
+        str(item.get("id") or "")
+        for item in pillars
+        if str(item.get("product_id") or "") not in products_by_id
+    )
+    orphan_metrics = sorted(
+        str(item.get("id") or "")
+        for item in metrics
+        if str(item.get("pillar_id") or "") not in pillars_by_id
+    )
+
+    inconsistencies: list[dict[str, Any]] = []
+    for pillar_id in orphan_pillars:
+        pillar = next((item for item in pillars if str(item.get("id") or "") == pillar_id), {})
+        inconsistencies.append(
+            {
+                "type": "pillar_without_product",
+                "id": pillar_id,
+                "product_id": str(pillar.get("product_id") or ""),
+            }
+        )
+    for metric_id in orphan_metrics:
+        metric = next((item for item in metrics if str(item.get("id") or "") == metric_id), {})
+        inconsistencies.append(
+            {
+                "type": "metric_without_pillar",
+                "id": metric_id,
+                "pillar_id": str(metric.get("pillar_id") or ""),
+            }
+        )
+
+    return {
+        "products_count": len(products),
+        "pillars_count": len(pillars),
+        "metrics_count": len(metrics),
+        "orphan_pillar_ids": orphan_pillars,
+        "orphan_metric_ids": orphan_metrics,
+        "inconsistencies": inconsistencies,
+    }
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Manage JSON storage snapshots for local production validation.")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -207,6 +259,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     restore_parser = subparsers.add_parser("restore", help="Restore all JSON stores from a snapshot.")
     restore_parser.add_argument("snapshot_dir")
+    subparsers.add_parser("validate-integrity", help="Validate product/pillar/metric relationships.")
 
     return parser
 
@@ -229,6 +282,11 @@ def main(argv: list[str] | None = None) -> int:
         result = restore_backup_snapshot(args.snapshot_dir)
         print(json.dumps(result, indent=2))
         return 0
+
+    if args.command == "validate-integrity":
+        result = validate_catalog_integrity()
+        print(json.dumps(result, indent=2))
+        return 0 if not result["inconsistencies"] else 1
 
     parser.error("Unknown command.")
     return 2
