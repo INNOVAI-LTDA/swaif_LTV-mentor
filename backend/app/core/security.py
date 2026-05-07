@@ -9,27 +9,22 @@ import time
 from typing import Any
 
 
-ALLOWED_ROLES = {"admin", "mentor", "provider", "client", "aluno", "student"}
+ALLOWED_ROLES = {"admin", "provider", "client", "mentor", "aluno", "student"}
 INTERNAL_ROLES = {"admin", "provider", "client"}
 PBKDF2_ITERATIONS = 120_000
 
 
 def canonicalize_role(role: str) -> str:
     normalized = str(role or "").strip().lower()
-    if normalized in {"client", "student"}:
-        return "aluno"
-    if normalized == "provider":
-        return "mentor"
+    if normalized in {"aluno", "student"}:
+        return "client"
+    if normalized == "mentor":
+        return "provider"
     return normalized
 
 
 def normalize_role_for_internal(role: str) -> str:
-    normalized = str(role or "").strip().lower()
-    if normalized == "mentor":
-        return "provider"
-    if normalized in {"aluno", "student"}:
-        return "client"
-    return normalized
+    return canonicalize_role(role)
 
 
 def _b64url_encode(data: bytes) -> str:

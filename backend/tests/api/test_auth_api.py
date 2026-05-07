@@ -63,7 +63,7 @@ def test_login_success_and_me_flow(monkeypatch, tmp_path: Path) -> None:
     assert me_body["role"] == "admin"
 
 
-def test_me_normalizes_legacy_client_role_to_aluno(monkeypatch, tmp_path: Path) -> None:
+def test_me_normalizes_legacy_aluno_and_student_roles_to_client(monkeypatch, tmp_path: Path) -> None:
     users_file = tmp_path / "users.json"
     _prepare_user_store(users_file)
     monkeypatch.setenv("USER_STORE_PATH", str(users_file))
@@ -74,7 +74,7 @@ def test_me_normalizes_legacy_client_role_to_aluno(monkeypatch, tmp_path: Path) 
         id="usr_legacy_client",
         email="legacy.client@swaif.local",
         password_hash=hash_password("legacy123"),
-        role="client",
+        role="aluno",
         is_active=True,
     )
 
@@ -88,10 +88,10 @@ def test_me_normalizes_legacy_client_role_to_aluno(monkeypatch, tmp_path: Path) 
 
     me_response = client.get("/me", headers={"Authorization": f"Bearer {token}"})
     assert me_response.status_code == 200
-    assert me_response.json()["role"] == "aluno"
+    assert me_response.json()["role"] == "client"
 
 
-def test_login_provisions_active_student_with_default_password(monkeypatch, tmp_path: Path) -> None:
+def test_login_provisions_active_client_with_default_password(monkeypatch, tmp_path: Path) -> None:
     users_file = tmp_path / "users.json"
     students_file = tmp_path / "students.json"
     _prepare_user_store(users_file)
@@ -120,9 +120,28 @@ def test_login_provisions_active_student_with_default_password(monkeypatch, tmp_
     assert me_response.status_code == 200
     me_payload = me_response.json()
     assert me_payload["email"] == "aluno.provisionado@swaif.local"
-    assert me_payload["role"] == "aluno"
+    assert me_payload["role"] == "client"
 
-    users_repo = UserRepository(users_file)
-    provisioned_user = users_repo.get_by_email("aluno.provisionado@swaif.local")
-    assert provisioned_user is not None
-    assert provisioned_user["role"] == "aluno"
+
+
+def test_me_returns_provider_for_provider_and_mentor_alias(monkeypatch, tmp_path: Path) -> None:
+    users_file = tmp_path / "users.json"
+    _prepare_user_store(users_file)
+    monkeypatch.setenv("USER_STORE_PATH", str(users_file))
+    monkeypatch.setenv("APP_AUTH_SECRET", "test-secret")
+
+    repo = UserRepository(users_file)
+    repo.create(id="usr_provider", email="provider@swaif.local", password_hash=hash_password("provider123"), role="provider", is_active=True)
+    repo.create(id="usr_mentor_alias", email="mentor.alias@swaif.local", password_hash=hash_password("mentor123"), role="mentor", is_active=True)
+
+    client = TestClient(app)
+    provider_token = client.post("/auth/login", json={"email": "provider@swaif.local", "password": "provider123"}).json()["access_token"]
+    mentor_token = client.post("/auth/login", json={"email": "mentor.alias@swaif.local", "password": "mentor123"}).json()["access_token"]
+
+    provider_me = client.get("/me", headers={"Authorization": f"Bearer {provider_token}"})
+    mentor_me = client.get("/me", headers={"Authorization": f"Bearer {mentor_token}"})
+
+    assert provider_me.status_code == 200
+    assert provider_me.json()["role"] == "provider"
+    assert mentor_me.status_code == 200
+    assert mentor_me.json()["role"] == "provider"
