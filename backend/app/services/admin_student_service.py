@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from app.storage.enrollment_repository import EnrollmentRepository
+from app.storage.contact_user_repository import ContactUserRepository
 from app.storage.mentor_repository import MentorRepository
 from app.storage.organization_repository import OrganizationRepository
 from app.storage.student_repository import StudentRepository
@@ -27,11 +28,13 @@ class AdminStudentService:
         mentors: MentorRepository,
         students: StudentRepository,
         enrollments: EnrollmentRepository,
+        contacts: ContactUserRepository,
     ) -> None:
         self._organizations = organizations
         self._mentors = mentors
         self._students = students
         self._enrollments = enrollments
+        self._contacts = contacts
 
     def _get_active_product(self, product_id: str) -> dict[str, Any]:
         product = self._organizations.get_by_id(product_id)
@@ -101,6 +104,20 @@ class AdminStudentService:
             days_left=0,
             ltv_cents=0,
         )
+        try:
+            self._contacts.create(
+                id=str(student["id"]),
+                full_name=str(student.get("full_name") or normalized_name),
+                email=str(student.get("email") or f"{student['id']}@unknown.local"),
+                role="aluno",
+                is_active=True,
+                cpf=normalized_cpf,
+                phone=phone,
+                organization_id=product_id,
+                notes=notes,
+            )
+        except ValueError:
+            pass
         return {**student, "mentor_id": mentor_id, "organization_id": product_id, "enrollment_id": enrollment["id"]}
 
     def _build_student_row(self, enrollment: dict[str, Any]) -> dict[str, Any] | None:

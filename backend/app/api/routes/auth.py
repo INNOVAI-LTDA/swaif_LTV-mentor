@@ -9,6 +9,7 @@ from app.api.errors import api_error
 from app.core.security import canonicalize_role
 from app.schemas.auth import LoginRequest, LoginResponse, MeResponse
 from app.services.auth_service import AuthService
+from app.storage.contact_user_repository import ContactUserRepository
 from app.storage.student_repository import StudentRepository
 from app.storage.user_repository import UserRepository
 
@@ -25,9 +26,14 @@ def get_student_repository() -> StudentRepository:
     return StudentRepository()
 
 
+def get_contact_user_repository() -> ContactUserRepository:
+    return ContactUserRepository()
+
+
 def get_auth_service(
     users: UserRepository = Depends(get_user_repository),
     students: StudentRepository = Depends(get_student_repository),
+    contacts: ContactUserRepository = Depends(get_contact_user_repository),
 ) -> AuthService:
     secret = os.getenv("APP_AUTH_SECRET", "dev-auth-secret")
     ttl_seconds = int(os.getenv("APP_AUTH_TTL_SECONDS", "3600"))
@@ -35,6 +41,7 @@ def get_auth_service(
     return AuthService(
         users=users,
         students=students,
+        contacts=contacts,
         secret=secret,
         ttl_seconds=ttl_seconds,
         default_student_password=default_student_password,

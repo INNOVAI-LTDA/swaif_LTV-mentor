@@ -26,6 +26,7 @@ from app.services.indicator_carga_service import EntityNotFoundError as Indicato
 from app.services.indicator_carga_service import IndicatorCargaService
 from app.services.student_vinculo_service import ConsistencyError, EntityNotFoundError, StudentVinculoService
 from app.storage.checkpoint_repository import CheckpointRepository
+from app.storage.contact_user_repository import ContactUserRepository
 from app.storage.enrollment_repository import EnrollmentRepository
 from app.storage.measurement_repository import MeasurementRepository
 from app.storage.measurement_overall_repository import MeasurementOverallRepository
@@ -44,6 +45,7 @@ def get_student_vinculo_service() -> StudentVinculoService:
         organizations=OrganizationRepository(),
         students=StudentRepository(),
         enrollments=EnrollmentRepository(),
+        contacts=ContactUserRepository(),
     )
 
 
@@ -66,6 +68,7 @@ def get_admin_student_service() -> AdminStudentService:
         mentors=MentorRepository(),
         students=StudentRepository(),
         enrollments=EnrollmentRepository(),
+        contacts=ContactUserRepository(),
     )
 
 
@@ -75,6 +78,7 @@ def get_admin_student_link_service() -> AdminStudentLinkService:
         mentors=MentorRepository(),
         students=StudentRepository(),
         enrollments=EnrollmentRepository(),
+        contacts=ContactUserRepository(),
     )
 
 

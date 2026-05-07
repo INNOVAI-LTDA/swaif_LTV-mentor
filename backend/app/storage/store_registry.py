@@ -13,6 +13,7 @@ class StorePathConfig:
 
 
 STORE_PATH_CONFIGS = [
+    StorePathConfig(name="contact_users_v2", env_var="CONTACT_USER_STORE_PATH", filename="contacts_users_v2.json"),
     StorePathConfig(name="users", env_var="USER_STORE_PATH", filename="users.json"),
     StorePathConfig(name="clients", env_var="CLIENT_STORE_PATH", filename="clients.json"),
     StorePathConfig(name="organizations", env_var="ORG_STORE_PATH", filename="organizations.json"),

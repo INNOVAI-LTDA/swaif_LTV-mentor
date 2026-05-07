@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.storage.contact_user_repository import ContactUserRepository
 from app.storage.mentor_repository import MentorRepository
 from app.storage.organization_repository import OrganizationRepository
 
@@ -15,9 +16,10 @@ class ValidationError(Exception):
 
 
 class AdminMentorService:
-    def __init__(self, organizations: OrganizationRepository, mentors: MentorRepository) -> None:
+    def __init__(self, organizations: OrganizationRepository, mentors: MentorRepository, contacts: ContactUserRepository) -> None:
         self._organizations = organizations
         self._mentors = mentors
+        self._contacts = contacts
 
     def _get_active_product(self, product_id: str) -> dict[str, Any]:
         product = self._organizations.get_by_id(product_id)
@@ -32,6 +34,9 @@ class AdminMentorService:
             for item in self._mentors.list_by_organization(product["id"])
             if bool(item.get("is_active", True))
         ]
+        if not items:
+            contacts = [item for item in self._contacts.list_items() if str(item.get("role") or "") == "mentor" and bool(item.get("is_active", True)) and str(item.get("organization_id") or "") == product["id"]]
+            items = contacts
         return sorted(items, key=lambda item: (str(item.get("full_name") or "").lower(), str(item.get("email") or "").lower()))
 
     def create_mentor(
@@ -63,4 +68,18 @@ class AdminMentorService:
             notes=notes,
         )
         self._organizations.set_mentor(product["id"], mentor["id"])
+        try:
+            self._contacts.create(
+                id=str(mentor["id"]),
+                full_name=str(mentor.get("full_name") or normalized_name),
+                email=normalized_email,
+                role="mentor",
+                is_active=True,
+                cpf=normalized_cpf,
+                phone=phone,
+                organization_id=product["id"],
+                notes=notes,
+            )
+        except ValueError:
+            pass
         return mentor
