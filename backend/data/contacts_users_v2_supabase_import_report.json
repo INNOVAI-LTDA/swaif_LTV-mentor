@@ -1,0 +1,11 @@
+{
+  "source": "backend/data/contacts_users_v2.json",
+  "mode": "dry-run",
+  "timestamp_utc": "2026-05-07T19:40:06.892107+00:00",
+  "total_rows": 253,
+  "valid_rows": 253,
+  "inserted": 0,
+  "updated": 0,
+  "rejected": 0,
+  "input_rejections": []
+}
