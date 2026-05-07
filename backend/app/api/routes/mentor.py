@@ -9,6 +9,7 @@ from app.api.errors import api_error
 from app.api.routes.auth import bearer, get_auth_service
 from app.services.indicator_carga_service import EntityNotFoundError as IndicatorEntityNotFoundError
 from app.services.indicator_carga_service import IndicatorCargaService
+from app.services.student_workspace_service import StudentContextError, StudentWorkspaceService
 from app.services.auth_service import AuthService
 from app.storage.checkpoint_repository import CheckpointRepository
 from app.storage.enrollment_repository import EnrollmentRepository
@@ -41,6 +42,25 @@ def get_indicator_carga_service() -> IndicatorCargaService:
 
 def get_mentor_repository() -> MentorRepository:
     return MentorRepository()
+
+
+def get_student_workspace_service() -> StudentWorkspaceService:
+    students = StudentRepository()
+    enrollments = EnrollmentRepository()
+    measurements = MeasurementRepository()
+    metrics = MetricRepository()
+    pillars = PillarRepository()
+    measurement_overalls = MeasurementOverallRepository()
+    indicator_carga = get_indicator_carga_service()
+    return StudentWorkspaceService(
+        students=students,
+        enrollments=enrollments,
+        measurements=measurements,
+        metrics=metrics,
+        pillars=pillars,
+        measurement_overalls=measurement_overalls,
+        indicator_carga=indicator_carga,
+    )
 
 
 def require_mentor_user(
@@ -95,6 +115,26 @@ def _raise_student_not_found(exc: IndicatorEntityNotFoundError) -> None:
         status_code=status.HTTP_404_NOT_FOUND,
         code="ALUNO_NOT_FOUND",
         message=message,
+    ) from exc
+
+
+def _raise_student_workspace_error(exc: StudentContextError) -> None:
+    if str(exc) in {"measurement out of scope", "pillar out of scope", "active enrollment not found"}:
+        raise api_error(
+            status_code=status.HTTP_404_NOT_FOUND,
+            code="ALUNO_NOT_FOUND",
+            message="Aluno nao encontrado na carteira do mentor.",
+        ) from exc
+    if str(exc) in {"pillar not found"}:
+        raise api_error(
+            status_code=status.HTTP_404_NOT_FOUND,
+            code="ALUNO_RESOURCE_NOT_FOUND",
+            message="Recurso do workspace do aluno nao encontrado.",
+        ) from exc
+    raise api_error(
+        status_code=status.HTTP_409_CONFLICT,
+        code="ALUNO_WORKSPACE_CONFLICT",
+        message="Nao foi possivel concluir a operacao no workspace do aluno.",
     ) from exc
 
 
@@ -170,3 +210,20 @@ def get_renewal_matrix(
         "mentorName": str(mentor.get("full_name") or mentor.get("id") or "Mentor"),
     }
     return payload
+
+
+@router.get("/radar/alunos/{student_id}/pilares/{pillar_id}/metricas")
+def get_student_pillar_metrics(
+    student_id: str,
+    pillar_id: str,
+    mentor: dict[str, Any] = Depends(require_mentor_profile),
+    service: StudentWorkspaceService = Depends(get_student_workspace_service),
+) -> dict[str, Any]:
+    try:
+        return service.list_student_pillar_measurements_for_mentor(
+            mentor_id=str(mentor["id"]),
+            student_id=student_id,
+            pillar_id=pillar_id,
+        )
+    except StudentContextError as exc:
+        _raise_student_workspace_error(exc)

@@ -201,6 +201,7 @@ def _prepare_live_mentor_data(
     return {
         "student_id": str(primary_student["id"]),
         "hidden_student_id": str(hidden_student["id"]),
+        "pillar_id": str(pillar_a["id"]),
         "expected_day": expected_day,
         "expected_total_days": expected_total_days,
         "expected_days_left": expected_days_left,
@@ -308,6 +309,21 @@ def test_mentor_command_center_radar_and_timeline_use_live_student_data(monkeypa
     assert radar["avgBaseline"] == 0.4
     assert radar["avgCurrent"] == 0.6
     assert radar["avgProjected"] == 1.0
+
+    metrics_response = client.get(
+        f"/mentor/radar/alunos/{prepared['student_id']}/pilares/{prepared['pillar_id']}/metricas",
+        headers=mentor_headers,
+    )
+    assert metrics_response.status_code == 200
+    metrics_payload = metrics_response.json()
+    assert metrics_payload["studentId"] == prepared["student_id"]
+    assert len(metrics_payload["items"]) >= 1
+
+    hidden_metrics = client.get(
+        f"/mentor/radar/alunos/{prepared['hidden_student_id']}/pilares/{prepared['pillar_id']}/metricas",
+        headers=mentor_headers,
+    )
+    assert hidden_metrics.status_code == 404
 
     timeline_response = client.get(
         f"/mentor/centro-comando/alunos/{prepared['student_id']}/timeline-anomalias",

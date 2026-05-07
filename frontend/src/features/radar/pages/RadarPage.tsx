@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useCommandCenterStudents } from "../../../domain/hooks/useCommandCenter";
 import { useStudentRadar } from "../../../domain/hooks/useRadar";
-import { useAdminMetrics } from "../../../domain/hooks/useAdminMetrics";
+import { useAsyncResource } from "../../../domain/hooks/useAsyncResource";
+import { getMentorStudentPillarMetrics } from "../../../domain/services/mentorWorkspaceService";
 import { formatPercent01 } from "../../../shared/formatters/percent";
 import { MentorShell } from "../../mentor/components/MentorShell";
 import { RadarChart } from "../components/RadarChart";
@@ -34,7 +35,11 @@ export function RadarPage() {
 
   const radarResource = useStudentRadar(selectedStudentId);
   const [selectedPillarId, setSelectedPillarId] = useState<string | null>(null);
-  const metricsResource = useAdminMetrics(selectedPillarId);
+  const metricsResource = useAsyncResource(
+    () => getMentorStudentPillarMetrics(selectedStudentId ?? "", selectedPillarId ?? ""),
+    [selectedStudentId, selectedPillarId],
+    { enabled: Boolean(selectedStudentId && selectedPillarId), initialData: { studentId: "", enrollmentId: "", pillar: { id: "", name: "", code: "" }, items: [] } }
+  );
 
   const radarPoints = radarResource.data.axisScores.map((axis) => ({
     axisLabel: axis.axisLabel,
@@ -195,7 +200,7 @@ export function RadarPage() {
         <section className="radar-panel radar-panel--axis-list">
           <header>
             <h2>Métricas do pilar selecionado</h2>
-            <p>Drill-down do catálogo de métricas por pilar</p>
+            <p>Leitura de base, real e meta por métrica (somente visualização para mentor).</p>
           </header>
 
           {metricsResource.loading && <p className="radar-state">Carregando métricas...</p>}
@@ -207,20 +212,21 @@ export function RadarPage() {
               </button>
             </div>
           )}
-          {!metricsResource.loading && !metricsResource.error && metricsResource.data.length === 0 && (
+          {!metricsResource.loading && !metricsResource.error && metricsResource.data.items.length === 0 && (
             <p className="radar-state">Sem métricas para o pilar selecionado.</p>
           )}
-          {metricsResource.data.length > 0 && (
+          {metricsResource.data.items.length > 0 && (
             <ul className="radar-axis-list">
-              {metricsResource.data.map((metric) => (
-                <li key={metric.id}>
+              {metricsResource.data.items.map((metric) => (
+                <li key={metric.measurementId}>
                   <div className="radar-axis-top">
-                    <strong>{metric.name}</strong>
-                    <span>{metric.code}</span>
+                    <strong>{metric.metricLabel}</strong>
+                    <span>{metric.metricId}</span>
                   </div>
                   <div className="radar-axis-values">
-                    <span>direção {metric.direction}</span>
-                    <span>unidade {metric.unit ?? "-"}</span>
+                    <span>base {metric.valueBaseline}{metric.unit ? ` ${metric.unit}` : ""}</span>
+                    <span>real {metric.valueCurrent}{metric.unit ? ` ${metric.unit}` : ""}</span>
+                    <span>meta {metric.valueProjected ?? "-"}{metric.unit ? ` ${metric.unit}` : ""}</span>
                   </div>
                 </li>
               ))}

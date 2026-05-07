@@ -95,6 +95,20 @@ class StudentWorkspaceService:
 
     def list_self_pillar_measurements(self, *, user: dict[str, Any], pillar_id: str) -> dict[str, Any]:
         student, enrollment = self.resolve_student_context(user=user)
+        return self._list_pillar_measurements(student=student, enrollment=enrollment, pillar_id=pillar_id)
+
+    def list_student_pillar_measurements_for_mentor(self, *, mentor_id: str, student_id: str, pillar_id: str) -> dict[str, Any]:
+        student = self._students.get_by_id(student_id)
+        if not student:
+            raise StudentContextError("student radar not found")
+        enrollment = self._enrollments.get_active_by_student(student_id)
+        if not enrollment:
+            raise StudentContextError("active enrollment not found")
+        if str(enrollment.get("mentor_id") or "") != mentor_id:
+            raise StudentContextError("measurement out of scope")
+        return self._list_pillar_measurements(student=student, enrollment=enrollment, pillar_id=pillar_id)
+
+    def _list_pillar_measurements(self, *, student: dict[str, Any], enrollment: dict[str, Any], pillar_id: str) -> dict[str, Any]:
         resolved_pillar = self._resolve_pillar_identifier(pillar_id)
         if not resolved_pillar:
             raise StudentContextError("pillar not found")
