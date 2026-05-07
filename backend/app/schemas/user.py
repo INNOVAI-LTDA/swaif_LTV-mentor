@@ -5,7 +5,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 
-RoleType = Literal["admin", "mentor", "client", "aluno"]
+RoleType = Literal["admin", "provider", "client"]
 
 
 class UserOut(BaseModel):

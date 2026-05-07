@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from app.core.security import create_access_token, hash_password, verify_access_token, verify_password
+from app.core.security import canonicalize_role, create_access_token, hash_password, verify_access_token, verify_password
 from app.storage.contact_user_repository import ContactUserRepository
 from app.storage.student_repository import StudentRepository
 from app.storage.user_repository import UserRepository
@@ -25,7 +25,7 @@ class AuthService:
         self._ttl_seconds = ttl_seconds
         self._default_student_password = default_student_password
 
-    def _provision_student_user(self, email: str, password: str) -> dict[str, Any] | None:
+    def _provision_client_user(self, email: str, password: str) -> dict[str, Any] | None:
         normalized_email = email.strip().lower()
         if not normalized_email:
             return None
@@ -33,7 +33,7 @@ class AuthService:
             return None
 
         existing_contact = self._contacts.get_by_email(normalized_email)
-        if existing_contact and str(existing_contact.get("role") or "") == "aluno":
+        if existing_contact and canonicalize_role(str(existing_contact.get("role") or "")) == "client":
             return existing_contact
 
         for student in self._students.list_students():
@@ -50,7 +50,7 @@ class AuthService:
                 id=user_id,
                 full_name=str(student.get("full_name") or normalized_email),
                 email=normalized_email,
-                role="aluno",
+                role="client",
                 is_active=True,
                 cpf=student.get("cpf"),
                 phone=student.get("phone"),
@@ -67,7 +67,7 @@ class AuthService:
                     id=user_id,
                     email=normalized_email,
                     password_hash=password_hash,
-                    role="aluno",
+                    role="client",
                     is_active=True,
                 )
             except ValueError:
@@ -85,7 +85,7 @@ class AuthService:
                         id=str(user["id"]),
                         full_name=str(user.get("email") or user.get("id") or ""),
                         email=str(user.get("email") or ""),
-                        role=str(user.get("role") or "aluno"),
+                        role=canonicalize_role(str(user.get("role") or "client")),
                         is_active=bool(user.get("is_active", True)),
                         password_hash=str(user.get("password_hash") or ""),
                     )
@@ -93,7 +93,7 @@ class AuthService:
                     pass
 
         if not user:
-            user = self._provision_student_user(email, password)
+            user = self._provision_client_user(email, password)
         if not user:
             return None
         if not user.get("is_active", False):

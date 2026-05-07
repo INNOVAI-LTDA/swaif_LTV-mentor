@@ -4,6 +4,9 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 
+from app.core.security import hash_password
+from app.storage.user_repository import UserRepository
+
 
 def _configure_stores(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setenv("APP_AUTH_SECRET", "test-secret")
@@ -113,7 +116,7 @@ def test_standard_error_payload_for_422(monkeypatch, tmp_path: Path) -> None:
     assert isinstance(response.json()["error"]["details"], list)
 
 
-def test_me_role_keeps_v1_mentor_with_internal_provider_token(monkeypatch, tmp_path: Path) -> None:
+def test_me_role_returns_provider_for_mentor_alias_with_internal_provider_token(monkeypatch, tmp_path: Path) -> None:
     _configure_stores(monkeypatch, tmp_path)
     client = TestClient(app)
 
@@ -121,15 +124,24 @@ def test_me_role_keeps_v1_mentor_with_internal_provider_token(monkeypatch, tmp_p
     response = client.get("/me", headers={"Authorization": f"Bearer {token}"})
 
     assert response.status_code == 200
-    assert response.json()["role"] == "mentor"
+    assert response.json()["role"] == "provider"
 
 
-def test_me_role_keeps_v1_aluno_with_internal_client_token(monkeypatch, tmp_path: Path) -> None:
+def test_me_role_returns_client_for_aluno_alias_with_internal_client_token(monkeypatch, tmp_path: Path) -> None:
     _configure_stores(monkeypatch, tmp_path)
     client = TestClient(app)
+
+    users_repo = UserRepository(tmp_path / "users.json")
+    users_repo.create(
+        id="usr_aluno_alias",
+        email="aluno@swaif.local",
+        password_hash=hash_password("aluno123"),
+        role="aluno",
+        is_active=True,
+    )
 
     token = _login(client, "aluno@swaif.local", "aluno123")
     response = client.get("/me", headers={"Authorization": f"Bearer {token}"})
 
     assert response.status_code == 200
-    assert response.json()["role"] == "aluno"
+    assert response.json()["role"] == "client"
