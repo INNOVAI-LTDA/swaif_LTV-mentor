@@ -14,6 +14,7 @@ from app.api.routes.admin_products import router as admin_products_router
 from app.api.routes.admin_students import router as admin_students_router
 from app.api.routes.admin_method_config import router as admin_method_config_router
 from app.api.routes.admin_mentoria import router as admin_mentoria_router
+from app.api.routes.admin_catalog_diagnostics import router as admin_catalog_diagnostics_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.health import router as health_router
 from app.api.routes.mentor import router as mentor_router
@@ -109,6 +110,7 @@ def create_app() -> FastAPI:
     app.include_router(admin_mentoria_router)
     app.include_router(admin_method_config_router)
     app.include_router(admin_students_router)
+    app.include_router(admin_catalog_diagnostics_router)
     if mentor_routes_enabled:
         app.include_router(mentor_router)
     app.include_router(student_workspace_router)

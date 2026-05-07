@@ -717,10 +717,12 @@ class IndicatorCargaService:
         if overall and isinstance(overall.get("pillars"), list):
             axis_scores: list[dict[str, Any]] = []
             pillars_by_id = self._pillars_by_id()
+            seen_pillar_ids: set[str] = set()
             for pillar_row in overall.get("pillars", []):
                 pillar_id = str(pillar_row.get("pillar_id") or "")
                 if not pillar_id:
                     continue
+                seen_pillar_ids.add(pillar_id)
                 pillar = pillars_by_id.get(pillar_id)
                 values = pillar_row.get("metric_average") if isinstance(pillar_row.get("metric_average"), dict) else {}
                 baseline = float(values.get("base", 0.0))
@@ -736,7 +738,27 @@ class IndicatorCargaService:
                         "current": current,
                         "projected": projected,
                         "insight": "",
+                        "dataStatus": "ok",
                         "_order": int((pillar or {}).get("order_index", 999)),
+                    }
+                )
+            protocol_pillars = [p for p in pillars_by_id.values() if str(p.get("protocol_id") or p.get("product_id") or "") == protocol_id]
+            for pillar in protocol_pillars:
+                pillar_id = str(pillar.get("id") or "")
+                if not pillar_id or pillar_id in seen_pillar_ids:
+                    continue
+                axis_scores.append(
+                    {
+                        "axisId": pillar_id,
+                        "axisKey": str(pillar.get("code") or pillar_id),
+                        "axisLabel": str(pillar.get("name") or pillar_id),
+                        "axisSub": str((pillar.get("metadata") or {}).get("axis_sub") or pillar.get("axis_sub") or ""),
+                        "baseline": 0.0,
+                        "current": 0.0,
+                        "projected": 0.0,
+                        "insight": "Sem medicao para este pilar.",
+                        "dataStatus": "no_data",
+                        "_order": int(pillar.get("order_index", 999)),
                     }
                 )
 
@@ -796,6 +818,7 @@ class IndicatorCargaService:
                     "current": self._avg(values["current"]),
                     "projected": self._avg(values["projected"]),
                     "insight": "",
+                    "dataStatus": "ok",
                     "_order": int((pillar or {}).get("order_index", 999)),
                 }
             )

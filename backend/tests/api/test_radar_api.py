@@ -167,3 +167,25 @@ def test_radar_uses_measurement_overalls_when_available(monkeypatch, tmp_path: P
     assert payload["avgBaseline"] == 0.4
     assert payload["avgCurrent"] == 0.6
     assert payload["avgProjected"] == 1.0
+
+def test_radar_includes_pillar_without_measurement_as_no_data(monkeypatch, tmp_path: Path) -> None:
+    _configure_stores(monkeypatch, tmp_path)
+    client = TestClient(app)
+    admin_token = _login(client, "admin@swaif.local", "admin123")
+    headers = {"Authorization": f"Bearer {admin_token}"}
+
+    student_id = _prepare_radar_data(client, headers)
+
+    protocol_id = json.loads((tmp_path / "protocols.json").read_text(encoding="utf-8"))["items"][0]["id"]
+    extra_pillar = client.post(
+        "/admin/pilares",
+        json={"protocol_id": protocol_id, "name": "Sem Dados", "code": "sem-dados", "order_index": 3},
+        headers=headers,
+    )
+    assert extra_pillar.status_code == 201
+
+    response = client.get(f"/admin/radar/alunos/{student_id}", headers=headers)
+    assert response.status_code == 200
+    axis_scores = response.json()["axisScores"]
+    sem_dados = [axis for axis in axis_scores if axis["axisKey"] == "sem-dados"][0]
+    assert sem_dados["dataStatus"] == "no_data"
