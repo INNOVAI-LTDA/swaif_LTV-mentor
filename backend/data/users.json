@@ -4,7 +4,7 @@
     {
       "id": "usr_admin",
       "email": "admin@innovai-solutions.com.br",
-      "password_hash": "pbkdf2_sha256$120000$60777bbb05ac1c4ec89431ea56e4c11c$8705a699705a7a6d66e3b0d68d11a06ffca56a8a747352a5696225fec70c96aa",
+      "password_hash": "pbkdf2_sha256$120000$9822e3028561014092aa864b8ae133a5$696b126ddb41a69e27971050d3c9196026ed2fda511b4f5b55b041f1ecc1ff88",
       "role": "admin",
       "is_active": true
     },
