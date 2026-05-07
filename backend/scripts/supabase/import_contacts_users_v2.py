@@ -18,6 +18,7 @@ except ImportError:  # pragma: no cover
 ROOT = Path(__file__).resolve().parents[3]
 INPUT_PATH = ROOT / "backend" / "data" / "contacts_users_v2.json"
 REPORT_PATH = ROOT / "backend" / "data" / "contacts_users_v2_supabase_import_report.json"
+AUTHENTICABLE_ROLES = {"admin", "provider"}
 
 
 @dataclass(frozen=True)
@@ -93,6 +94,15 @@ def validate_rows(rows: list[UserRow]) -> tuple[list[UserRow], list[dict[str, An
             reasons.append("duplicate_id_in_input")
         if emails_lower[row.email.strip().lower()] > 1:
             reasons.append("duplicate_email_in_input_case_insensitive")
+        password_hash = row.password_hash.strip() if isinstance(row.password_hash, str) else None
+        if row.role in AUTHENTICABLE_ROLES and not password_hash:
+            reasons.append(
+                "invalid_password_hash_for_role: role admin/provider exige password_hash preenchido"
+            )
+        if row.role == "client" and password_hash:
+            reasons.append(
+                "invalid_password_hash_for_role: role client nao deve conter password_hash"
+            )
         if reasons:
             rejected.append({"id": row.id, "email": row.email, "reasons": reasons})
             continue
