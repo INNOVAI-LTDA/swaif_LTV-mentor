@@ -714,105 +714,117 @@ class IndicatorCargaService:
             "protocolName": str((context_protocol or {}).get("name") or ""),
         }
 
+        pillars_by_id = self._pillars_by_id()
+        metrics_by_id = self._metrics_by_id()
+        ordered_pillar_ids = [
+            str(pillar.get("id") or "")
+            for pillar in sorted(
+                [item for item in pillars_by_id.values() if str(item.get("protocol_id") or "") == protocol_id],
+                key=lambda item: int(item.get("order_index", 999)),
+            )
+            if str(pillar.get("id") or "")
+        ]
+
+        pillar_details: list[dict[str, Any]] = []
+        metric_details: list[dict[str, Any]] = []
+        axis_scores: list[dict[str, Any]] = []
+
         if overall and isinstance(overall.get("pillars"), list):
-            axis_scores: list[dict[str, Any]] = []
-            pillars_by_id = self._pillars_by_id()
-            for pillar_row in overall.get("pillars", []):
-                pillar_id = str(pillar_row.get("pillar_id") or "")
-                if not pillar_id:
-                    continue
+            overall_pillars = {str(row.get("pillar_id") or ""): row for row in overall.get("pillars", []) if isinstance(row, dict)}
+            overall_metrics = {str(row.get("metric_id") or ""): row for row in overall.get("metrics", []) if isinstance(row, dict)}
+            active_pillar_ids = ordered_pillar_ids or [pid for pid in overall_pillars.keys() if pid]
+
+            for pillar_id in active_pillar_ids:
                 pillar = pillars_by_id.get(pillar_id)
+                pillar_row = overall_pillars.get(pillar_id, {})
                 values = pillar_row.get("metric_average") if isinstance(pillar_row.get("metric_average"), dict) else {}
                 baseline = float(values.get("base", 0.0))
                 current = float(values.get("real", 0.0))
                 projected = float(values.get("goal", current))
-                axis_scores.append(
-                    {
-                        "axisId": pillar_id,
-                        "axisKey": str((pillar or {}).get("code") or pillar_id),
-                        "axisLabel": str((pillar or {}).get("name") or pillar_id),
-                        "axisSub": str((pillar or {}).get("axis_sub") or ""),
-                        "baseline": baseline,
-                        "current": current,
-                        "projected": projected,
-                        "insight": "",
-                        "_order": int((pillar or {}).get("order_index", 999)),
-                    }
-                )
-
-            axis_scores.sort(key=lambda item: int(item.get("_order", 999)))
-            for axis in axis_scores:
-                axis["insight"] = self._build_axis_insight(
-                    axis_label=str(axis.get("axisLabel") or "Eixo"),
-                    baseline=float(axis.get("baseline", 0)),
-                    current=float(axis.get("current", 0)),
-                    projected=float(axis.get("projected", 0)),
-                )
-                axis.pop("_order", None)
-
-            return {
-                "studentId": student_id,
-                "axisScores": axis_scores,
-                "avgBaseline": self._avg([float(axis["baseline"]) for axis in axis_scores]),
-                "avgCurrent": self._avg([float(axis["current"]) for axis in axis_scores]),
-                "avgProjected": self._avg([float(axis["projected"]) for axis in axis_scores]),
-                "context": context,
-            }
-
-        grouped: dict[str, dict[str, Any]] = {}
-        measurements = self._measurements_by_enrollment().get(str(enrollment["id"]), [])
-        metrics_by_id = self._metrics_by_id()
-        for measurement in measurements:
-            metric = metrics_by_id.get(str(measurement["metric_id"]))
-            if not metric:
-                continue
-            pillar_id = str(metric.get("pillar_id", ""))
-            if not pillar_id:
-                continue
-
-            projected_raw = measurement.get("value_projected")
-            current = float(measurement["value_current"])
-            projected = current if projected_raw is None else float(projected_raw)
-
-            bucket = grouped.setdefault(
-                pillar_id,
-                {"baseline": [], "current": [], "projected": []},
-            )
-            bucket["baseline"].append(float(measurement["value_baseline"]))
-            bucket["current"].append(current)
-            bucket["projected"].append(projected)
-
-        axis_scores: list[dict[str, Any]] = []
-        pillars_by_id = self._pillars_by_id()
-        for pillar_id, values in grouped.items():
-            pillar = pillars_by_id.get(pillar_id)
-            axis_scores.append(
-                {
+                pillar_details.append({
+                    "pillarId": pillar_id,
+                    "pillarName": str((pillar or {}).get("name") or pillar_id),
+                    "baseline": baseline,
+                    "current": current,
+                    "projected": projected,
+                })
+                axis_scores.append({
                     "axisId": pillar_id,
                     "axisKey": str((pillar or {}).get("code") or pillar_id),
                     "axisLabel": str((pillar or {}).get("name") or pillar_id),
                     "axisSub": str((pillar or {}).get("axis_sub") or ""),
-                    "baseline": self._avg(values["baseline"]),
-                    "current": self._avg(values["current"]),
-                    "projected": self._avg(values["projected"]),
+                    "baseline": baseline,
+                    "current": current,
+                    "projected": projected,
                     "insight": "",
                     "_order": int((pillar or {}).get("order_index", 999)),
-                }
-            )
+                })
+
+                for metric in sorted(
+                    [m for m in metrics_by_id.values() if str(m.get("pillar_id") or "") == pillar_id],
+                    key=lambda item: int(item.get("order_index", 999)),
+                ):
+                    metric_id = str(metric.get("id") or "")
+                    metric_row = overall_metrics.get(metric_id, {})
+                    metric_values = metric_row.get("values") if isinstance(metric_row.get("values"), dict) else {}
+                    metric_history = metric_row.get("history") if isinstance(metric_row.get("history"), dict) else {}
+                    values_payload = metric_history if metric_history else {
+                        "base": [float(metric_values.get("base", 0.0))],
+                        "real": [float(metric_values.get("real", 0.0))],
+                        "goal": [float(metric_values.get("goal", metric_values.get("real", 0.0)))],
+                    }
+                    metric_details.append({
+                        "pillarId": pillar_id,
+                        "metricId": metric_id,
+                        "metricName": str(metric.get("name") or metric_id),
+                        "values": values_payload,
+                    })
+
+        else:
+            measurements = self._measurements_by_enrollment().get(str(enrollment["id"]), [])
+            grouped: dict[str, dict[str, Any]] = {}
+            for measurement in measurements:
+                metric = metrics_by_id.get(str(measurement["metric_id"]))
+                if not metric:
+                    continue
+                pillar_id = str(metric.get("pillar_id", ""))
+                if not pillar_id:
+                    continue
+                projected_raw = measurement.get("value_projected")
+                current = float(measurement["value_current"])
+                projected = current if projected_raw is None else float(projected_raw)
+                bucket = grouped.setdefault(pillar_id, {"baseline": [], "current": [], "projected": [], "metrics": []})
+                bucket["baseline"].append(float(measurement["value_baseline"]))
+                bucket["current"].append(current)
+                bucket["projected"].append(projected)
+                bucket["metrics"].append({
+                    "metricId": str(metric.get("id") or ""),
+                    "metricName": str(metric.get("name") or metric.get("id") or ""),
+                    "values": {"base": [float(measurement["value_baseline"])], "real": [current], "goal": [projected]},
+                })
+
+            for pillar_id in (ordered_pillar_ids or list(grouped.keys())):
+                pillar = pillars_by_id.get(pillar_id)
+                values = grouped.get(pillar_id, {"baseline": [], "current": [], "projected": [], "metrics": []})
+                baseline = self._avg(values["baseline"])
+                current = self._avg(values["current"])
+                projected = self._avg(values["projected"])
+                pillar_details.append({"pillarId": pillar_id, "pillarName": str((pillar or {}).get("name") or pillar_id), "baseline": baseline, "current": current, "projected": projected})
+                axis_scores.append({"axisId": pillar_id, "axisKey": str((pillar or {}).get("code") or pillar_id), "axisLabel": str((pillar or {}).get("name") or pillar_id), "axisSub": str((pillar or {}).get("axis_sub") or ""), "baseline": baseline, "current": current, "projected": projected, "insight": "", "_order": int((pillar or {}).get("order_index", 999))})
+                for row in values["metrics"]:
+                    metric_details.append({"pillarId": pillar_id, **row})
 
         axis_scores.sort(key=lambda item: int(item.get("_order", 999)))
         for axis in axis_scores:
-            axis["insight"] = self._build_axis_insight(
-                axis_label=str(axis.get("axisLabel") or "Eixo"),
-                baseline=float(axis.get("baseline", 0)),
-                current=float(axis.get("current", 0)),
-                projected=float(axis.get("projected", 0)),
-            )
+            axis["insight"] = self._build_axis_insight(axis_label=str(axis.get("axisLabel") or "Eixo"), baseline=float(axis.get("baseline", 0)), current=float(axis.get("current", 0)), projected=float(axis.get("projected", 0)))
             axis.pop("_order", None)
 
         return {
             "studentId": student_id,
+            "productId": protocol_id,
             "axisScores": axis_scores,
+            "pillars": pillar_details,
+            "metrics": metric_details,
             "avgBaseline": self._avg([float(axis["baseline"]) for axis in axis_scores]),
             "avgCurrent": self._avg([float(axis["current"]) for axis in axis_scores]),
             "avgProjected": self._avg([float(axis["projected"]) for axis in axis_scores]),

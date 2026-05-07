@@ -102,6 +102,9 @@ def test_radar_axis_scores_contract_and_averages(monkeypatch, tmp_path: Path) ->
     payload = response.json()
 
     assert "axisScores" in payload
+    assert payload["productId"] == "prt_1"
+    assert len(payload["pillars"]) == 2
+    assert len(payload["metrics"]) == 2
     assert len(payload["axisScores"]) == 2
     required = {"axisId", "axisKey", "axisLabel", "axisSub", "baseline", "current", "projected", "insight"}
     assert required.issubset(set(payload["axisScores"][0].keys()))
@@ -164,6 +167,9 @@ def test_radar_uses_measurement_overalls_when_available(monkeypatch, tmp_path: P
     payload = response.json()
 
     assert len(payload["axisScores"]) == 2
+    assert payload["productId"] == "prt_test"
+    assert len(payload["pillars"]) == 2
+    assert payload["metrics"] == []
     assert payload["avgBaseline"] == 0.4
     assert payload["avgCurrent"] == 0.6
     assert payload["avgProjected"] == 1.0
