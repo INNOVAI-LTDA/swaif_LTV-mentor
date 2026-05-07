@@ -39,6 +39,7 @@ class ImportStats:
     inserted: int = 0
     updated: int = 0
     rejected: int = 0
+    conflicts: list[dict[str, Any]] | None = None
 
 
 def parse_args() -> argparse.Namespace:
@@ -111,21 +112,30 @@ def validate_rows(rows: list[UserRow]) -> tuple[list[UserRow], list[dict[str, An
     return valid, rejected
 
 
+def normalize_email(email: str) -> str:
+    return email.strip().lower()
+
+
 def apply_upsert(database_url: str, rows: list[UserRow]) -> ImportStats:
     if psycopg is None:
         raise RuntimeError("psycopg is not installed. Install dependency before --apply.")
 
-    stats = ImportStats()
+    stats = ImportStats(conflicts=[])
     with psycopg.connect(database_url) as conn:
         with conn.cursor() as cur:
             for row in rows:
                 cur.execute(
                     "SELECT id FROM contacts_users_v2 WHERE lower(email) = lower(%s) AND id <> %s",
-                    (row.email, row.id),
+                    (normalize_email(row.email), row.id),
                 )
                 email_conflict = cur.fetchone()
                 if email_conflict:
                     stats.rejected += 1
+                    stats.conflicts.append({
+                        "reason": "duplicate_email_in_destination_case_insensitive",
+                        "record": {"id": row.id, "email": normalize_email(row.email)},
+                        "conflict_with_id": str(email_conflict[0]),
+                    })
                     continue
 
                 cur.execute("SELECT 1 FROM contacts_users_v2 WHERE id = %s", (row.id,))
@@ -148,7 +158,7 @@ def apply_upsert(database_url: str, rows: list[UserRow]) -> ImportStats:
                     """,
                     (
                         row.id,
-                        row.email,
+                        normalize_email(row.email),
                         row.role,
                         row.full_name,
                         row.is_active,
@@ -177,6 +187,7 @@ def write_report(mode: str, total_rows: int, valid_rows: int, stats: ImportStats
         "updated": stats.updated,
         "rejected": stats.rejected + len(rejected),
         "input_rejections": rejected,
+        "apply_conflicts": stats.conflicts or [],
     }
     REPORT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -188,7 +199,7 @@ def main() -> None:
 
     rows = load_rows()
     valid_rows, rejected = validate_rows(rows)
-    stats = ImportStats(rejected=len(rejected))
+    stats = ImportStats()
 
     if args.apply:
         if not args.database_url:
@@ -197,6 +208,7 @@ def main() -> None:
         stats.inserted = applied_stats.inserted
         stats.updated = applied_stats.updated
         stats.rejected += applied_stats.rejected
+        stats.conflicts = applied_stats.conflicts
 
     write_report("apply" if args.apply else "dry-run", len(rows), len(valid_rows), stats, rejected)
 

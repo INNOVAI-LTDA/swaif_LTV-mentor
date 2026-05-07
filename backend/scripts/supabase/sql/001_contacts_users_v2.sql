@@ -23,8 +23,21 @@ CREATE TABLE IF NOT EXISTS contacts_users_v2 (
   )
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS uq_contacts_users_v2_email_lower
+CREATE UNIQUE INDEX IF NOT EXISTS uq_contacts_users_v2_email_lower_idx
   ON contacts_users_v2 (LOWER(email));
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'uq_contacts_users_v2_email_lower'
+  ) THEN
+    ALTER TABLE contacts_users_v2
+      ADD CONSTRAINT uq_contacts_users_v2_email_lower
+      UNIQUE USING INDEX uq_contacts_users_v2_email_lower_idx;
+  END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS ix_contacts_users_v2_role_password_hash
   ON contacts_users_v2 (role, password_hash);
