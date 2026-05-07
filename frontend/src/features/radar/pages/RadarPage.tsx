@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useCommandCenterStudents } from "../../../domain/hooks/useCommandCenter";
 import { useStudentRadar } from "../../../domain/hooks/useRadar";
+import { useAdminMetrics } from "../../../domain/hooks/useAdminMetrics";
 import { formatPercent01 } from "../../../shared/formatters/percent";
 import { MentorShell } from "../../mentor/components/MentorShell";
 import { RadarChart } from "../components/RadarChart";
@@ -32,6 +33,8 @@ export function RadarPage() {
   }, [selectedStudentId, studentsResource.data]);
 
   const radarResource = useStudentRadar(selectedStudentId);
+  const [selectedPillarId, setSelectedPillarId] = useState<string | null>(null);
+  const metricsResource = useAdminMetrics(selectedPillarId);
 
   const radarPoints = radarResource.data.axisScores.map((axis) => ({
     axisLabel: axis.axisLabel,
@@ -58,6 +61,13 @@ export function RadarPage() {
   const avgProjected = average(projectedValues);
   const deltaCurrentVsBaseline = avgCurrent - avgBaseline;
   const gapGoalVsCurrent = avgProjected - avgCurrent;
+
+  useEffect(() => {
+    if (!selectedPillarId && radarResource.data.axisScores.length > 0) {
+      const firstPillar = radarResource.data.axisScores[0];
+      setSelectedPillarId(firstPillar.axisId ?? firstPillar.axisKey);
+    }
+  }, [selectedPillarId, radarResource.data.axisScores]);
 
   const selectedStudent = studentsResource.data.find((student) => student.id === selectedStudentId) ?? null;
   const mentorLabel = radarResource.data.context?.mentorName || "Mentor";
@@ -159,6 +169,7 @@ export function RadarPage() {
                   const delta = axis.current - axis.baseline;
                   return (
                     <li key={axis.axisKey}>
+                      <button type="button" onClick={() => setSelectedPillarId(axis.axisId ?? axis.axisKey)}>Selecionar pilar</button>
                       <div className="radar-axis-top">
                         <strong>{axis.axisLabel}</strong>
                         <span>{formatPercentPointDelta(delta, 1)}</span>
@@ -177,6 +188,44 @@ export function RadarPage() {
               <p className="radar-state">Sem eixos para exibir.</p>
             )}
           </article>
+        </section>
+
+
+
+        <section className="radar-panel radar-panel--axis-list">
+          <header>
+            <h2>Métricas do pilar selecionado</h2>
+            <p>Drill-down do catálogo de métricas por pilar</p>
+          </header>
+
+          {metricsResource.loading && <p className="radar-state">Carregando métricas...</p>}
+          {metricsResource.error && (
+            <div className="radar-state radar-state--error">
+              <p>{metricsResource.error}</p>
+              <button type="button" onClick={() => void metricsResource.refresh()}>
+                Tentar novamente
+              </button>
+            </div>
+          )}
+          {!metricsResource.loading && !metricsResource.error && metricsResource.data.length === 0 && (
+            <p className="radar-state">Sem métricas para o pilar selecionado.</p>
+          )}
+          {metricsResource.data.length > 0 && (
+            <ul className="radar-axis-list">
+              {metricsResource.data.map((metric) => (
+                <li key={metric.id}>
+                  <div className="radar-axis-top">
+                    <strong>{metric.name}</strong>
+                    <span>{metric.code}</span>
+                  </div>
+                  <div className="radar-axis-values">
+                    <span>direção {metric.direction}</span>
+                    <span>unidade {metric.unit ?? "-"}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         <section className="radar-insight">

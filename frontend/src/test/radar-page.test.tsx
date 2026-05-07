@@ -69,6 +69,27 @@ vi.mock("../domain/hooks/useRadar", () => ({
     })
 }));
 
+
+
+vi.mock("../domain/hooks/useAdminMetrics", () => ({
+    useAdminMetrics: () => ({
+        data: [
+            {
+                id: "met_1",
+                protocol_id: "pro_1",
+                pillar_id: "cap",
+                name: "Leads qualificadas",
+                code: "leads-qualificadas",
+                direction: "higher_better",
+                unit: "%",
+                is_active: true
+            }
+        ],
+        loading: false,
+        error: null,
+        refresh: vi.fn()
+    })
+}));
 describe("RadarPage", () => {
     it("renders normalized radar values as percentages on the UI", () => {
         render(
