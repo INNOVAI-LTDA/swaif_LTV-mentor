@@ -1,0 +1,7 @@
+2026-05-12 02:02:53,074 INFO swaif.runtime backend_runtime_configured app_env=local client_code=accmed cors_origins=http://127.0.0.1:4173 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
+INFO:     Started server process [12460]
+INFO:     Waiting for application startup.
+2026-05-12 02:02:53,194 INFO swaif.runtime backend_startup_complete app_env=local client_code=accmed cors_origins=http://127.0.0.1:4173 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled supabase_sync_on_startup=False storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
+2026-05-12 02:02:53,195 WARNING swaif.runtime mentor_routes_enabled=true; keep this restricted to local-only validation environments.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8003 (Press CTRL+C to quit)

@@ -333,3 +333,61 @@ def test_mentor_command_center_radar_and_timeline_use_live_student_data(monkeypa
     timeline = timeline_response.json()
     assert timeline["summary"]["hasAnomalies"] is True
     assert timeline["summary"]["anomalyCount"] >= 1
+
+
+def test_mentor_student_id_returns_product_pillars_and_pillar_metrics(monkeypatch, tmp_path: Path) -> None:
+    _configure_stores(monkeypatch, tmp_path)
+    primary_mentor = _create_mentor_user(email="mentor2@swaif.local", password="mentor456")
+    other_mentor = _create_mentor_user(email="mentor3@swaif.local", password="mentor789")
+
+    client = TestClient(app)
+    admin_headers = {"Authorization": f"Bearer {_login(client, 'admin@swaif.local', 'admin123')}"}
+    mentor_headers = {"Authorization": f"Bearer {_login(client, primary_mentor['email'], primary_mentor['password'])}"}
+
+    prepared = _prepare_live_mentor_data(
+        client,
+        headers=admin_headers,
+        mentor_id=str(primary_mentor["mentor_id"]),
+        other_mentor_id=str(other_mentor["mentor_id"]),
+        tmp_path=tmp_path,
+    )
+
+    detail_response = client.get(
+        f"/mentor/centro-comando/alunos/{prepared['student_id']}",
+        headers=mentor_headers,
+    )
+    assert detail_response.status_code == 200
+    detail = detail_response.json()
+    assert detail["id"] == prepared["student_id"]
+    assert detail["programName"] == "Mentoria Mentor"
+
+    radar_response = client.get(
+        f"/mentor/radar/alunos/{prepared['student_id']}",
+        headers=mentor_headers,
+    )
+    assert radar_response.status_code == 200
+    radar = radar_response.json()
+    assert radar["studentId"] == prepared["student_id"]
+    assert len(radar["axisScores"]) == 2
+    first_axis = radar["axisScores"][0]
+    assert first_axis["axisId"] == prepared["pillar_id"]
+    assert first_axis["baseline"] == 0.2
+    assert first_axis["current"] == 0.4
+    assert first_axis["projected"] == 1.0
+
+    pillar_metrics_response = client.get(
+        f"/mentor/radar/alunos/{prepared['student_id']}/pilares/{prepared['pillar_id']}/metricas",
+        headers=mentor_headers,
+    )
+    assert pillar_metrics_response.status_code == 200
+    pillar_metrics = pillar_metrics_response.json()
+    assert pillar_metrics["studentId"] == prepared["student_id"]
+    assert pillar_metrics["pillar"]["id"] == prepared["pillar_id"]
+    assert len(pillar_metrics["items"]) >= 1
+
+    first_metric = pillar_metrics["items"][0]
+    assert first_metric["measurementId"]
+    assert first_metric["metricId"]
+    assert first_metric["valueBaseline"] == 80.0
+    assert first_metric["valueCurrent"] == 52.0
+    assert first_metric["valueProjected"] == 65.0

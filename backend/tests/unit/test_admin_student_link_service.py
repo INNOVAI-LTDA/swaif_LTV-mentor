@@ -74,6 +74,20 @@ class _FakeEnrollmentRepository:
         return item
 
 
+class _FakeProductAssignmentRepository:
+    def __init__(self) -> None:
+        self.deactivate_calls: list[dict] = []
+        self.upsert_calls: list[dict] = []
+
+    def deactivate(self, assignment_id: str, **payload) -> dict:
+        self.deactivate_calls.append({"assignment_id": assignment_id, **payload})
+        return {"id": assignment_id, "status": "inactive"}
+
+    def upsert_from_enrollment(self, enrollment: dict) -> dict:
+        self.upsert_calls.append(enrollment)
+        return {"assignment_id": enrollment["id"]}
+
+
 def test_service_reassigns_student_and_preserves_history() -> None:
     enrollments = _FakeEnrollmentRepository()
     service = AdminStudentLinkService(_FakeOrganizationRepository(), _FakeMentorRepository(), _FakeStudentRepository(), enrollments)
@@ -134,3 +148,45 @@ def test_service_requires_existing_active_enrollment() -> None:
         assert str(exc) == "active enrollment not found"
     else:
         raise AssertionError("EntityNotFoundError was expected")
+
+
+def test_service_reassign_syncs_authoritative_product_assignments() -> None:
+    enrollments = _FakeEnrollmentRepository()
+    product_assignments = _FakeProductAssignmentRepository()
+    service = AdminStudentLinkService(
+        _FakeOrganizationRepository(),
+        _FakeMentorRepository(),
+        _FakeStudentRepository(),
+        enrollments,
+        product_assignments=product_assignments,
+    )
+
+    result = service.reassign_student(
+        student_id="std_1",
+        target_mentor_id="mtr_2",
+        justificativa="Redistribuicao",
+        performed_by="admin@swaif.local",
+    )
+
+    assert result["enrollment_id"] == "enr_2"
+    assert len(product_assignments.deactivate_calls) == 1
+    assert product_assignments.deactivate_calls[0]["assignment_id"] == "enr_1"
+    assert len(product_assignments.upsert_calls) == 1
+    assert product_assignments.upsert_calls[0]["id"] == "enr_2"
+
+
+def test_service_unlink_syncs_authoritative_product_assignments() -> None:
+    enrollments = _FakeEnrollmentRepository()
+    product_assignments = _FakeProductAssignmentRepository()
+    service = AdminStudentLinkService(
+        _FakeOrganizationRepository(),
+        _FakeMentorRepository(),
+        _FakeStudentRepository(),
+        enrollments,
+        product_assignments=product_assignments,
+    )
+
+    service.unlink_student(student_id="std_1", justificativa="Pausado", performed_by="admin@swaif.local")
+
+    assert len(product_assignments.deactivate_calls) == 1
+    assert product_assignments.deactivate_calls[0]["assignment_id"] == "enr_1"

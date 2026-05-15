@@ -1,0 +1,11 @@
+INFO:     127.0.0.1:53281 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53281 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53281 - "POST /admin/alunos/std_1/indicadores/carga-inicial HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:53281 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53281 - "POST /admin/mentorias HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53281 - "POST /admin/alunos HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53281 - "POST /admin/alunos/std_308/vincular-mentoria HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53281 - "POST /admin/protocolos HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53281 - "POST /admin/pilares HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53281 - "POST /admin/metricas HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53281 - "POST /admin/alunos/std_308/indicadores/carga-inicial HTTP/1.1" 200 OK

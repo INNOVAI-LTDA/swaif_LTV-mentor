@@ -22,9 +22,18 @@ from app.config.runtime import (
     get_app_env,
     get_client_code,
     get_cors_allow_origin_regex,
+    get_supabase_db_url,
+    get_supabase_sync_default_admin_password,
+    get_supabase_sync_default_client_password,
+    get_supabase_sync_default_provider_password,
     get_storage_backup_dir,
     resolve_mentor_route_policy,
     resolve_cors_origins,
+    supabase_sync_on_startup_enabled,
+)
+from app.operations.sync_runtime_stores_from_supabase import (
+    SupabaseSyncConfig,
+    sync_runtime_stores_from_supabase,
 )
 from app.storage.checkpoint_repository import CheckpointRepository
 from app.storage.catalog import resolve_storage_root
@@ -73,6 +82,7 @@ def create_app() -> FastAPI:
         # Legacy aliases kept for compatibility with older diagnostics consumers.
         "mentor_demo_routes_enabled": mentor_routes_enabled,
         "mentor_demo_policy_source": mentor_route_policy.policy_source,
+        "supabase_sync_on_startup": supabase_sync_on_startup_enabled(),
         "storage_root": str(resolve_storage_root()),
         "backup_dir": str(get_storage_backup_dir()),
     }
@@ -120,6 +130,22 @@ app = create_app()
 
 @app.on_event("startup")
 def bootstrap_user_storage() -> None:
+    summary = app.state.runtime_summary
+    if summary["supabase_sync_on_startup"]:
+        database_url = get_supabase_db_url()
+        if not database_url:
+            raise RuntimeError("SUPABASE_SYNC_ON_STARTUP is enabled but SUPABASE_DB_URL is missing.")
+
+        sync_result = sync_runtime_stores_from_supabase(
+            SupabaseSyncConfig(
+                database_url=database_url,
+                default_admin_password=get_supabase_sync_default_admin_password(),
+                default_provider_password=get_supabase_sync_default_provider_password(),
+                default_client_password=get_supabase_sync_default_client_password(),
+            )
+        )
+        summary["supabase_sync_written"] = sync_result.counters
+
     UserRepository().list_users()
     ClientRepository().list_clients()
     OrganizationRepository().list_organizations()
@@ -132,15 +158,15 @@ def bootstrap_user_storage() -> None:
     MeasurementRepository().list_measurements()
     CheckpointRepository().list_checkpoints()
 
-    summary = app.state.runtime_summary
     logger.info(
-        "backend_startup_complete app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_routes=%s mentor_route_policy=%s storage_root=%s backup_dir=%s",
+        "backend_startup_complete app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_routes=%s mentor_route_policy=%s supabase_sync_on_startup=%s storage_root=%s backup_dir=%s",
         summary["app_env"],
         summary["client_code"],
         ",".join(summary["cors_origins"]),
         summary["cors_origin_regex"] or "none",
         summary["mentor_routes_enabled"],
         summary["mentor_route_policy_source"],
+        summary["supabase_sync_on_startup"],
         summary["storage_root"],
         summary["backup_dir"],
     )

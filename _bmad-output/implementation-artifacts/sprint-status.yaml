@@ -34,7 +34,7 @@
 # - After each completed story, prefer create-story/dev-story/review instead of broad quick-dev loops
 
 generated: 2026-03-19T00:00:00-03:00
-last_updated: 2026-03-20T12:17:00-03:00
+last_updated: 2026-05-11T00:00:00-03:00
 project: swaif_LTV-mentoria
 project_key: NOKEY
 tracking_system: file-system
@@ -44,6 +44,7 @@ development_status:
   epic-1: in-progress
   1-1-branding-and-shell-identity-hardening: done
   1-2-demo-residue-scan-and-client-surface-cleanup: done
+  1-2-keep-batch-g-ingestion-contract-stable-while-switching-runtime-persistence-to-supabase-postgres: review
   1-3-release-gate-tracker-and-runbook-activation: done
   epic-1-retrospective: optional
 

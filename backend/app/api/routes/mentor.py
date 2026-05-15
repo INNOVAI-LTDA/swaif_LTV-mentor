@@ -7,6 +7,7 @@ from fastapi.security import HTTPAuthorizationCredentials
 
 from app.api.errors import api_error
 from app.api.routes.auth import bearer, get_auth_service
+from app.core.security import canonicalize_role
 from app.services.indicator_carga_service import EntityNotFoundError as IndicatorEntityNotFoundError
 from app.services.indicator_carga_service import IndicatorCargaService
 from app.services.student_workspace_service import StudentContextError, StudentWorkspaceService
@@ -19,6 +20,7 @@ from app.storage.mentor_repository import MentorRepository
 from app.storage.metric_repository import MetricRepository
 from app.storage.organization_repository import OrganizationRepository
 from app.storage.pillar_repository import PillarRepository
+from app.storage.product_assignment_repository import ProductAssignmentRepository
 from app.storage.protocol_repository import ProtocolRepository
 from app.storage.student_repository import StudentRepository
 
@@ -31,6 +33,7 @@ def get_indicator_carga_service() -> IndicatorCargaService:
         students=StudentRepository(),
         organizations=OrganizationRepository(),
         enrollments=EnrollmentRepository(),
+        product_assignments=ProductAssignmentRepository(),
         metrics=MetricRepository(),
         measurements=MeasurementRepository(),
         checkpoints=CheckpointRepository(),
@@ -82,7 +85,7 @@ def require_mentor_user(
             message="Token de acesso invalido.",
         )
 
-    if str(user.get("role")) != "mentor":
+    if canonicalize_role(str(user.get("role"))) != "provider":
         raise api_error(
             status_code=status.HTTP_403_FORBIDDEN,
             code="AUTH_FORBIDDEN",

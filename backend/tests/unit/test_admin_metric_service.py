@@ -60,13 +60,20 @@ class _FakeMetricRepository:
             **payload,
         }
         item.pop("metadata", None)
-        # Add required new fields with dummy values if missing
-        item.setdefault("scoring_rules", [{"type": "static", "score": 1}])
+        item.setdefault(
+            "scoring_rules",
+            {
+                "version": 2,
+                "input": {"kind": "number"},
+                "scoring": {"mode": "first_match", "rules": [], "fallback": {"assign": 0}},
+                "normalization": {"basis": "max_score", "value": 1},
+            },
+        )
         item.setdefault("score_type", "static")
         item.setdefault("min_score", 0)
         item.setdefault("max_score", 1)
         item.setdefault("mcv_score", 1)
-        item.setdefault("max_basis_score", 1)
+        item.setdefault("max_basis_score", "MAX_VALUE")
         self.items.append(item)
         return item
 
@@ -79,6 +86,9 @@ def test_service_creates_metric_for_active_pillar() -> None:
     assert created["pillar_id"] == "plr_1"
     assert created["protocol_id"] == "prt_1"
     assert created["unit"] == "%"
+    assert created["scoring_rules"]["version"] == 2
+    assert created["score_type"] == "static"
+    assert created["max_basis_score"] == "MAX_VALUE"
 
 
 def test_service_lists_metrics_sorted_by_name() -> None:

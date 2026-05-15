@@ -46,10 +46,24 @@ class _FakeMentorRepository:
         return item
 
 
+class _FakeContactUserRepository:
+    def __init__(self) -> None:
+        self.items: list[dict] = []
+
+    def list_items(self) -> list[dict]:
+        return self.items
+
+    def create(self, **payload) -> dict:
+        item = {**payload}
+        self.items.append(item)
+        return item
+
+
 def test_service_creates_mentor_linked_to_product() -> None:
     organizations = _FakeOrganizationRepository()
     mentors = _FakeMentorRepository()
-    service = AdminMentorService(organizations, mentors)
+    contacts = _FakeContactUserRepository()
+    service = AdminMentorService(organizations, mentors, contacts)
 
     created = service.create_mentor(
         product_id="org_1",
@@ -64,7 +78,11 @@ def test_service_creates_mentor_linked_to_product() -> None:
 
 
 def test_service_rejects_blank_required_fields() -> None:
-    service = AdminMentorService(_FakeOrganizationRepository(), _FakeMentorRepository())
+    service = AdminMentorService(
+        _FakeOrganizationRepository(),
+        _FakeMentorRepository(),
+        _FakeContactUserRepository(),
+    )
 
     try:
         service.create_mentor(product_id="org_1", full_name=" ", cpf=" ", email=" ")
@@ -75,7 +93,11 @@ def test_service_rejects_blank_required_fields() -> None:
 
 
 def test_service_requires_existing_product() -> None:
-    service = AdminMentorService(_FakeOrganizationRepository(), _FakeMentorRepository())
+    service = AdminMentorService(
+        _FakeOrganizationRepository(),
+        _FakeMentorRepository(),
+        _FakeContactUserRepository(),
+    )
 
     try:
         service.list_mentors_by_product("org_missing")

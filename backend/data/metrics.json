@@ -4,36 +4,55 @@
     {
       "crud_action": "U",
       "id": "met_1",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_6",
+      "pillar_id": "1",
       "name": "N° de consultas mensais",
       "code": "mtr_consultas-mensais",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "operator": "lt",
-            "value": 15
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
         },
-        {
-          "points": 10,
-          "condition": {
-            "operator": "and",
-            "min": 15,
-            "max": 30
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "lt",
+                "value": 15
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "when": {
+                "range": {
+                  "min": 15,
+                  "max": 30
+                }
+              },
+              "then": {
+                "assign": 10
+              }
+            },
+            {
+              "when": {
+                "op": "gt",
+                "value": 30
+              },
+              "then": {
+                "assign": 20
+              }
+            }
+          ]
         },
-        {
-          "points": 20,
-          "condition": {
-            "operator": "gt",
-            "value": 30
-          }
+        "normalization": {
+          "basis": "max_score",
+          "value": 20
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 5,
       "max_score": 20,
@@ -44,28 +63,44 @@
     {
       "crud_action": "U",
       "id": "met_2",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_6",
+      "pillar_id": "1",
       "name": "N° de MQLs",
       "code": "mtr_mqls",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "operator": "lte",
-            "value": 30
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
         },
-        {
-          "points": 20,
-          "condition": {
-            "operator": "gt",
-            "value": 30
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "lte",
+                "value": 30
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "when": {
+                "op": "gt",
+                "value": 30
+              },
+              "then": {
+                "assign": 20
+              }
+            }
+          ]
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 20
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 5,
       "max_score": 20,
@@ -76,36 +111,55 @@
     {
       "crud_action": "U",
       "id": "met_3",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_7",
+      "pillar_id": "2",
       "name": "N° de Leads",
       "code": "mtr_leads",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "operator": "lte",
-            "value": 100
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
         },
-        {
-          "points": 10,
-          "condition": {
-            "operator": "and",
-            "min": 101,
-            "max": 150
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "lte",
+                "value": 100
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "when": {
+                "range": {
+                  "min": 101,
+                  "max": 150
+                }
+              },
+              "then": {
+                "assign": 10
+              }
+            },
+            {
+              "when": {
+                "op": "gt",
+                "value": 150
+              },
+              "then": {
+                "assign": 20
+              }
+            }
+          ]
         },
-        {
-          "points": 20,
-          "condition": {
-            "operator": "gt",
-            "value": 150
-          }
+        "normalization": {
+          "basis": "max_score",
+          "value": 20
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 5,
       "max_score": 20,
@@ -116,36 +170,55 @@
     {
       "crud_action": "U",
       "id": "met_4",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_7",
+      "pillar_id": "2",
       "name": "N° de Ofertas",
       "code": "mtr_ofertas",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "operator": "lte",
-            "value": 10
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
         },
-        {
-          "points": 10,
-          "condition": {
-            "operator": "and",
-            "min": 11,
-            "max": 20
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "lte",
+                "value": 10
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "when": {
+                "range": {
+                  "min": 11,
+                  "max": 20
+                }
+              },
+              "then": {
+                "assign": 10
+              }
+            },
+            {
+              "when": {
+                "op": "gt",
+                "value": 20
+              },
+              "then": {
+                "assign": 20
+              }
+            }
+          ]
         },
-        {
-          "points": 20,
-          "condition": {
-            "operator": "gt",
-            "value": 20
-          }
+        "normalization": {
+          "basis": "max_score",
+          "value": 20
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 5,
       "max_score": 20,
@@ -156,30 +229,45 @@
     {
       "crud_action": "U",
       "id": "met_5",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_7",
+      "pillar_id": "2",
       "name": "Taxa de Conversão",
       "code": "mtr_taxa-conversao",
       "direction": "higher_better",
       "unit": "%",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "operator": "lt",
-            "value": 50,
-            "unit": "%"
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number",
+          "unit": "%"
         },
-        {
-          "points": 20,
-          "condition": {
-            "operator": "gte",
-            "value": 50,
-            "unit": "%"
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "lt",
+                "value": 50
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "when": {
+                "op": "gte",
+                "value": 50
+              },
+              "then": {
+                "assign": 20
+              }
+            }
+          ]
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 20
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 5,
       "max_score": 20,
@@ -190,39 +278,56 @@
     {
       "crud_action": "U",
       "id": "met_6",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_7",
+      "pillar_id": "2",
       "name": "Ticket médio",
       "code": "mtr_ticket-medio",
       "direction": "higher_better",
       "unit": "R$",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "operator": "lt",
-            "value": 10000,
-            "unit": "R$"
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number",
+          "unit": "R$"
         },
-        {
-          "points": 10,
-          "condition": {
-            "operator": "and",
-            "min": 10000,
-            "max": 20000,
-            "unit": "R$"
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "lt",
+                "value": 10000
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "when": {
+                "range": {
+                  "min": 10000,
+                  "max": 20000
+                }
+              },
+              "then": {
+                "assign": 10
+              }
+            },
+            {
+              "when": {
+                "op": "gt",
+                "value": 20000
+              },
+              "then": {
+                "assign": 20
+              }
+            }
+          ]
         },
-        {
-          "points": 20,
-          "condition": {
-            "operator": "gt",
-            "value": 20000,
-            "unit": "R$"
-          }
+        "normalization": {
+          "basis": "max_score",
+          "value": 20
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 5,
       "max_score": 20,
@@ -233,39 +338,56 @@
     {
       "crud_action": "C",
       "id": "met_7",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_7",
+      "pillar_id": "2",
       "name": "Faturamento",
       "code": "mtr_faturamento",
       "direction": "higher_better",
       "unit": "R$",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "operator": "lt",
-            "value": 100000,
-            "unit": "R$"
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number",
+          "unit": "R$"
         },
-        {
-          "points": 10,
-          "condition": {
-            "operator": "and",
-            "min": 100000,
-            "max": 500000,
-            "unit": "R$"
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "lt",
+                "value": 100000
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "when": {
+                "range": {
+                  "min": 100000,
+                  "max": 500000
+                }
+              },
+              "then": {
+                "assign": 10
+              }
+            },
+            {
+              "when": {
+                "op": "gt",
+                "value": 500000
+              },
+              "then": {
+                "assign": 20
+              }
+            }
+          ]
         },
-        {
-          "points": 20,
-          "condition": {
-            "operator": "gt",
-            "value": 500000,
-            "unit": "R$"
-          }
+        "normalization": {
+          "basis": "max_score",
+          "value": 20
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 5,
       "max_score": 20,
@@ -276,38 +398,80 @@
     {
       "crud_action": "C",
       "id": "met_8",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_8",
+      "pillar_id": "3",
       "name": "Engajamento",
       "code": "mtr_engajamento",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "description": "presenças",
-            "operator": "gt",
-            "value": 4
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "object"
         },
-        {
-          "points": 5,
-          "condition": {
-            "description": "feedback",
-            "operator": "gt",
-            "value": 4
-          }
+        "scoring": {
+          "mode": "sum_matches",
+          "rules": [
+            {
+              "key": "presencas",
+              "label": "presenças",
+              "when": {
+                "any": [
+                  {
+                    "field": "presencas",
+                    "op": "gt",
+                    "value": 4
+                  },
+                  {
+                    "field": "presenças",
+                    "op": "gt",
+                    "value": 4
+                  }
+                ]
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "key": "feedback",
+              "label": "feedback",
+              "when": {
+                "field": "feedback",
+                "op": "gt",
+                "value": 4
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "key": "video",
+              "label": "vídeo",
+              "when": {
+                "any": [
+                  {
+                    "field": "video",
+                    "op": "gt",
+                    "value": 4
+                  },
+                  {
+                    "field": "vídeo",
+                    "op": "gt",
+                    "value": 4
+                  }
+                ]
+              },
+              "then": {
+                "assign": 10
+              }
+            }
+          ]
         },
-        {
-          "points": 10,
-          "condition": {
-            "description": "vídeo",
-            "operator": "gt",
-            "value": 4
-          }
+        "normalization": {
+          "basis": "max_score",
+          "value": 10
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 5,
       "max_score": 10,
@@ -318,31 +482,49 @@
     {
       "crud_action": "C",
       "id": "met_9",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_8",
+      "pillar_id": "3",
       "name": "Gratidão",
       "code": "mtr_gratidao",
       "direction": "higher_better",
       "unit": "pts",
-      "scoring_rules": [
-        {
-          "points_range": [
-            1,
-            4
-          ],
-          "condition": {
-            "operator": "eq",
-            "value": "respondeu"
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "string",
+          "unit": "pts"
         },
-        {
-          "points": 0,
-          "condition": {
-            "operator": "eq",
-            "value": "não respondeu"
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "eq",
+                "value": "respondeu"
+              },
+              "then": {
+                "assign_range": {
+                  "min": 1,
+                  "max": 4,
+                  "policy": "max"
+                }
+              }
+            },
+            {
+              "when": {
+                "op": "eq",
+                "value": "não respondeu"
+              },
+              "then": {
+                "assign": 0
+              }
+            }
+          ]
+        },
+        "normalization": {
+          "basis": "max_range",
+          "value": 4
         }
-      ],
+      },
       "score_type": "range",
       "min_score": 0,
       "max_score": 4,
@@ -353,28 +535,44 @@
     {
       "crud_action": "C",
       "id": "met_10",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_8",
+      "pillar_id": "3",
       "name": "NED",
       "code": "mtr_ned",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 1,
-          "condition": {
-            "operator": "lt",
-            "value": 8
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
         },
-        {
-          "points": 5,
-          "condition": {
-            "operator": "gte",
-            "value": 8
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "lt",
+                "value": 8
+              },
+              "then": {
+                "assign": 1
+              }
+            },
+            {
+              "when": {
+                "op": "gte",
+                "value": 8
+              },
+              "then": {
+                "assign": 5
+              }
+            }
+          ]
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 5
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 1,
       "max_score": 5,
@@ -385,28 +583,44 @@
     {
       "crud_action": "C",
       "id": "met_11",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_9",
+      "pillar_id": "4",
       "name": "Reuniões Semanais?",
       "code": "mtr_reunioes-semanais",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 2,
-          "condition": {
-            "operator": "eq",
-            "value": "Sim"
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "string"
         },
-        {
-          "points": 0,
-          "condition": {
-            "operator": "eq",
-            "value": "Não"
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "eq",
+                "value": "Sim"
+              },
+              "then": {
+                "assign": 2
+              }
+            },
+            {
+              "when": {
+                "op": "eq",
+                "value": "Não"
+              },
+              "then": {
+                "assign": 0
+              }
+            }
+          ]
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 2
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 0,
       "max_score": 2,
@@ -417,28 +631,44 @@
     {
       "crud_action": "C",
       "id": "met_12",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_9",
+      "pillar_id": "4",
       "name": "NPS",
       "code": "mtr_nps",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 0,
-          "condition": {
-            "operator": "lt",
-            "value": 8
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
         },
-        {
-          "points": 2,
-          "condition": {
-            "operator": "gte",
-            "value": 8
-          }
+        "scoring": {
+          "mode": "first_match",
+          "rules": [
+            {
+              "when": {
+                "op": "lt",
+                "value": 8
+              },
+              "then": {
+                "assign": 0
+              }
+            },
+            {
+              "when": {
+                "op": "gte",
+                "value": 8
+              },
+              "then": {
+                "assign": 2
+              }
+            }
+          ]
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 2
         }
-      ],
+      },
       "score_type": "static",
       "min_score": 0,
       "max_score": 2,
@@ -449,32 +679,66 @@
     {
       "crud_action": "C",
       "id": "met_13",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_9",
+      "pillar_id": "4",
       "name": "Processos",
       "code": "mtr_processos",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "description": "Vendas"
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "set"
         },
-        {
-          "points": 5,
-          "condition": {
-            "description": "Operações"
-          }
+        "scoring": {
+          "mode": "sum_matches",
+          "rules": [
+            {
+              "key": "sales_process",
+              "label": "Vendas",
+              "when": {
+                "contains_any": [
+                  "sales_process",
+                  "vendas"
+                ]
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "key": "operations_process",
+              "label": "Operações",
+              "when": {
+                "contains_any": [
+                  "operations_process",
+                  "operações",
+                  "operacoes"
+                ]
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "key": "people_process",
+              "label": "RH",
+              "when": {
+                "contains_any": [
+                  "people_process",
+                  "rh"
+                ]
+              },
+              "then": {
+                "assign": 5
+              }
+            }
+          ]
         },
-        {
-          "points": 5,
-          "condition": {
-            "description": "RH"
-          }
+        "normalization": {
+          "basis": "max_score",
+          "value": 15
         }
-      ],
+      },
       "score_type": "accumulative",
       "min_score": 5,
       "max_score": 15,
@@ -485,32 +749,65 @@
     {
       "crud_action": "C",
       "id": "met_14",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_9",
+      "pillar_id": "4",
       "name": "Ferramentas básicas",
       "code": "mtr_ferramentas-basicas",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "description": "Prontuário"
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "set"
         },
-        {
-          "points": 5,
-          "condition": {
-            "description": "CRM"
-          }
+        "scoring": {
+          "mode": "sum_matches",
+          "rules": [
+            {
+              "key": "medical_record",
+              "label": "Prontuário",
+              "when": {
+                "contains_any": [
+                  "medical_record",
+                  "prontuário",
+                  "prontuario"
+                ]
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "key": "crm",
+              "label": "CRM",
+              "when": {
+                "contains_any": [
+                  "crm"
+                ]
+              },
+              "then": {
+                "assign": 5
+              }
+            },
+            {
+              "key": "cash_flow_dre",
+              "label": "Fluxo de Caixa/DRE",
+              "when": {
+                "contains_any": [
+                  "cash_flow_dre",
+                  "fluxo de caixa/dre"
+                ]
+              },
+              "then": {
+                "assign": 5
+              }
+            }
+          ]
         },
-        {
-          "points": 5,
-          "condition": {
-            "description": "Fluxo de Caixa/DRE"
-          }
+        "normalization": {
+          "basis": "max_score",
+          "value": 15
         }
-      ],
+      },
       "score_type": "accumulative",
       "min_score": 5,
       "max_score": 15,
@@ -521,20 +818,25 @@
     {
       "crud_action": "C",
       "id": "met_15",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_10",
+      "pillar_id": "5",
       "name": "N° de Serviços",
       "code": "mtr_numero-servicos",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 2,
-          "condition": {
-            "description": "Para cada serviço oferecido"
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "per_unit",
+          "points_per_unit": 2
+        },
+        "normalization": {
+          "basis": "mcv",
+          "value": 6
         }
-      ],
+      },
       "score_type": "unrestricted_sum",
       "min_score": 0,
       "max_score": 10,
@@ -545,26 +847,1854 @@
     {
       "crud_action": "C",
       "id": "met_16",
-      "protocol_id": "prt_3",
-      "pillar_id": "plr_10",
+      "pillar_id": "5",
       "name": "N° de Produtos Digitais",
       "code": "mtr_numero-produtos-digitais",
       "direction": "higher_better",
       "unit": "",
-      "scoring_rules": [
-        {
-          "points": 5,
-          "condition": {
-            "description": "Para cada produto digital oferecido"
-          }
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "per_unit",
+          "points_per_unit": 5
+        },
+        "normalization": {
+          "basis": "mcv"
         }
-      ],
+      },
       "score_type": "unrestricted_sum",
       "min_score": 0,
       "max_score": 10,
       "max_score_basis": "MCV",
       "is_active": true,
       "mcv": 0
+    },
+    {
+      "id": "met_17",
+      "protocol_id": "prt_4",
+      "pillar_id": "plr_1",
+      "name": "Ritmo",
+      "code": "ritmo-3eb5141b",
+      "direction": "higher_better",
+      "unit": null,
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 10,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_18",
+      "protocol_id": "prt_4",
+      "pillar_id": "plr_1",
+      "name": "Execucao",
+      "code": "execucao-3eb5141b",
+      "direction": "higher_better",
+      "unit": null,
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 10,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_19",
+      "protocol_id": "prt_5",
+      "pillar_id": "plr_2",
+      "name": "Frequencia",
+      "code": "frequencia",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_20",
+      "protocol_id": "prt_6",
+      "pillar_id": "plr_3",
+      "name": "Frequencia 721213ba",
+      "code": "frequencia-721213ba",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_21",
+      "protocol_id": "prt_7",
+      "pillar_id": "plr_4",
+      "name": "Frequencia b87df602",
+      "code": "frequencia-b87df602",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_22",
+      "protocol_id": "prt_8",
+      "pillar_id": "plr_5",
+      "name": "Frequencia aaa46cac",
+      "code": "frequencia-aaa46cac",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_23",
+      "protocol_id": "prt_9",
+      "pillar_id": "plr_6",
+      "name": "Frequencia 2dddf539",
+      "code": "frequencia-2dddf539",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_24",
+      "protocol_id": "prt_10",
+      "pillar_id": "plr_7",
+      "name": "Frequencia 366f07f5",
+      "code": "frequencia-366f07f5",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_25",
+      "protocol_id": "prt_11",
+      "pillar_id": "plr_8",
+      "name": "Frequencia 37c2047b",
+      "code": "frequencia-37c2047b",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_26",
+      "protocol_id": "prt_12",
+      "pillar_id": "plr_9",
+      "name": "Frequencia 43886402",
+      "code": "frequencia-43886402",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_27",
+      "protocol_id": "prt_13",
+      "pillar_id": "plr_10",
+      "name": "Frequencia e171d4e2",
+      "code": "frequencia-e171d4e2",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_28",
+      "protocol_id": "prt_14",
+      "pillar_id": "plr_11",
+      "name": "Frequencia 16d75d33",
+      "code": "frequencia-16d75d33",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_29",
+      "protocol_id": "prt_15",
+      "pillar_id": "plr_12",
+      "name": "Frequencia b5f64cdd",
+      "code": "frequencia-b5f64cdd",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_30",
+      "protocol_id": "prt_16",
+      "pillar_id": "plr_13",
+      "name": "Frequencia 84a9339a",
+      "code": "frequencia-84a9339a",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_31",
+      "protocol_id": "prt_17",
+      "pillar_id": "plr_14",
+      "name": "Frequencia 22dcdd4e",
+      "code": "frequencia-22dcdd4e",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_32",
+      "protocol_id": "prt_18",
+      "pillar_id": "plr_15",
+      "name": "Frequencia e5b3e77e",
+      "code": "frequencia-e5b3e77e",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_33",
+      "protocol_id": "prt_19",
+      "pillar_id": "plr_16",
+      "name": "Frequencia 9fac411f",
+      "code": "frequencia-9fac411f",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_34",
+      "protocol_id": "prt_20",
+      "pillar_id": "plr_17",
+      "name": "Frequencia f4d7505b",
+      "code": "frequencia-f4d7505b",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_35",
+      "protocol_id": "prt_21",
+      "pillar_id": "plr_18",
+      "name": "Frequencia fbf29d00",
+      "code": "frequencia-fbf29d00",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_36",
+      "protocol_id": "prt_22",
+      "pillar_id": "plr_19",
+      "name": "Frequencia 05a8363e",
+      "code": "frequencia-05a8363e",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_37",
+      "protocol_id": "prt_23",
+      "pillar_id": "plr_20",
+      "name": "Frequencia 894b812e",
+      "code": "frequencia-894b812e",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_38",
+      "protocol_id": "prt_24",
+      "pillar_id": "plr_21",
+      "name": "Frequencia 152f7e5c",
+      "code": "frequencia-152f7e5c",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_39",
+      "protocol_id": "prt_25",
+      "pillar_id": "plr_22",
+      "name": "Frequencia fbb2cd3f",
+      "code": "frequencia-fbb2cd3f",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_40",
+      "protocol_id": "prt_26",
+      "pillar_id": "plr_23",
+      "name": "Frequencia 400f1270",
+      "code": "frequencia-400f1270",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_41",
+      "protocol_id": "prt_27",
+      "pillar_id": "plr_24",
+      "name": "Frequencia 8a386bf1",
+      "code": "frequencia-8a386bf1",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_42",
+      "protocol_id": "prt_28",
+      "pillar_id": "plr_25",
+      "name": "Frequencia 9c95baa0",
+      "code": "frequencia-9c95baa0",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_43",
+      "protocol_id": "prt_29",
+      "pillar_id": "plr_26",
+      "name": "Frequencia 0d314257",
+      "code": "frequencia-0d314257",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_44",
+      "protocol_id": "prt_30",
+      "pillar_id": "plr_27",
+      "name": "Frequencia 2e610009",
+      "code": "frequencia-2e610009",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_45",
+      "protocol_id": "prt_31",
+      "pillar_id": "plr_28",
+      "name": "Frequencia 037a7b18",
+      "code": "frequencia-037a7b18",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_46",
+      "protocol_id": "prt_32",
+      "pillar_id": "plr_29",
+      "name": "Frequencia 128032a1",
+      "code": "frequencia-128032a1",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_47",
+      "protocol_id": "prt_33",
+      "pillar_id": "plr_30",
+      "name": "Frequencia e383d88d",
+      "code": "frequencia-e383d88d",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_48",
+      "protocol_id": "prt_34",
+      "pillar_id": "plr_31",
+      "name": "Frequencia c4f8cc87",
+      "code": "frequencia-c4f8cc87",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_49",
+      "protocol_id": "prt_35",
+      "pillar_id": "plr_32",
+      "name": "Frequencia 6d1e3aff",
+      "code": "frequencia-6d1e3aff",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_50",
+      "protocol_id": "prt_36",
+      "pillar_id": "plr_33",
+      "name": "Frequencia b64aaf88",
+      "code": "frequencia-b64aaf88",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_51",
+      "protocol_id": "prt_37",
+      "pillar_id": "plr_34",
+      "name": "Frequencia b607818d",
+      "code": "frequencia-b607818d",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_52",
+      "protocol_id": "prt_38",
+      "pillar_id": "plr_35",
+      "name": "Frequencia 7b084c01",
+      "code": "frequencia-7b084c01",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_53",
+      "protocol_id": "prt_39",
+      "pillar_id": "plr_36",
+      "name": "Frequencia 597fe3c5",
+      "code": "frequencia-597fe3c5",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_54",
+      "protocol_id": "prt_40",
+      "pillar_id": "plr_37",
+      "name": "Frequencia 5f2dea10",
+      "code": "frequencia-5f2dea10",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_55",
+      "protocol_id": "prt_41",
+      "pillar_id": "plr_38",
+      "name": "Frequencia 0683bab7",
+      "code": "frequencia-0683bab7",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_56",
+      "protocol_id": "prt_42",
+      "pillar_id": "plr_39",
+      "name": "Frequencia bc31aa46",
+      "code": "frequencia-bc31aa46",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_57",
+      "protocol_id": "prt_43",
+      "pillar_id": "plr_40",
+      "name": "Frequencia a72a89fe",
+      "code": "frequencia-a72a89fe",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_58",
+      "protocol_id": "prt_44",
+      "pillar_id": "plr_41",
+      "name": "Frequencia f3affd91",
+      "code": "frequencia-f3affd91",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_59",
+      "protocol_id": "prt_45",
+      "pillar_id": "plr_42",
+      "name": "Frequencia 81cfb5c6",
+      "code": "frequencia-81cfb5c6",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_60",
+      "protocol_id": "prt_46",
+      "pillar_id": "plr_43",
+      "name": "Frequencia 4d464dc9",
+      "code": "frequencia-4d464dc9",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_61",
+      "protocol_id": "prt_47",
+      "pillar_id": "plr_44",
+      "name": "Frequencia 1a0f782c",
+      "code": "frequencia-1a0f782c",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_62",
+      "protocol_id": "prt_48",
+      "pillar_id": "plr_45",
+      "name": "Frequencia 14efcdd2",
+      "code": "frequencia-14efcdd2",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_63",
+      "protocol_id": "prt_49",
+      "pillar_id": "plr_46",
+      "name": "Frequencia 8a7a67e4",
+      "code": "frequencia-8a7a67e4",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_64",
+      "protocol_id": "prt_50",
+      "pillar_id": "plr_47",
+      "name": "Frequencia a7653b69",
+      "code": "frequencia-a7653b69",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_65",
+      "protocol_id": "prt_51",
+      "pillar_id": "plr_48",
+      "name": "Frequencia 9a6e6115",
+      "code": "frequencia-9a6e6115",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_66",
+      "protocol_id": "prt_52",
+      "pillar_id": "plr_49",
+      "name": "Frequencia 0a6c3ee2",
+      "code": "frequencia-0a6c3ee2",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_67",
+      "protocol_id": "prt_53",
+      "pillar_id": "plr_50",
+      "name": "Frequencia 95f52f40",
+      "code": "frequencia-95f52f40",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_68",
+      "protocol_id": "prt_54",
+      "pillar_id": "plr_51",
+      "name": "Frequencia 38869874",
+      "code": "frequencia-38869874",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_69",
+      "protocol_id": "prt_55",
+      "pillar_id": "plr_52",
+      "name": "Frequencia caefb80a",
+      "code": "frequencia-caefb80a",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_70",
+      "protocol_id": "prt_56",
+      "pillar_id": "plr_53",
+      "name": "Frequencia 7cbf1b55",
+      "code": "frequencia-7cbf1b55",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_71",
+      "protocol_id": "prt_57",
+      "pillar_id": "plr_54",
+      "name": "Frequencia 5a3dd8d8",
+      "code": "frequencia-5a3dd8d8",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_72",
+      "protocol_id": "prt_58",
+      "pillar_id": "plr_55",
+      "name": "Frequencia 78c5c34a",
+      "code": "frequencia-78c5c34a",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_73",
+      "protocol_id": "prt_59",
+      "pillar_id": "plr_56",
+      "name": "Frequencia 4d5b3077",
+      "code": "frequencia-4d5b3077",
+      "direction": "higher_better",
+      "unit": "%",
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 1,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
     }
   ]
 }

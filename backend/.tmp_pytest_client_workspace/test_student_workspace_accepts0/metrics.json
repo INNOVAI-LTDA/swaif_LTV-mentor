@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "met_1",
+      "protocol_id": "prt_1",
+      "pillar_id": "plr_1",
+      "name": "Ritmo",
+      "code": "ritmo",
+      "direction": "higher_better",
+      "unit": null,
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 10,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    },
+    {
+      "id": "met_2",
+      "protocol_id": "prt_1",
+      "pillar_id": "plr_1",
+      "name": "Execucao",
+      "code": "execucao",
+      "direction": "higher_better",
+      "unit": null,
+      "scoring_rules": {
+        "version": 2,
+        "input": {
+          "kind": "number"
+        },
+        "scoring": {
+          "mode": "first_match",
+          "rules": [],
+          "fallback": {
+            "assign": 0
+          }
+        },
+        "normalization": {
+          "basis": "max_score",
+          "value": 1
+        }
+      },
+      "score_type": "static",
+      "min_score": 0,
+      "max_score": 10,
+      "mcv_score": 1,
+      "max_basis_score": "MAX_VALUE",
+      "is_active": true
+    }
+  ]
+}

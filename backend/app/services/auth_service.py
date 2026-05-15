@@ -76,9 +76,10 @@ class AuthService:
         return None
 
     def login(self, email: str, password: str) -> str | None:
+        fallback_user = self._users.get_by_email(email)
         user = self._contacts.get_by_email(email)
         if not user:
-            user = self._users.get_by_email(email)
+            user = fallback_user
             if user:
                 try:
                     self._contacts.create(
@@ -99,7 +100,11 @@ class AuthService:
         if not user.get("is_active", False):
             return None
         if not verify_password(password, str(user.get("password_hash", ""))):
-            return None
+            if not fallback_user or not fallback_user.get("is_active", False):
+                return None
+            if not verify_password(password, str(fallback_user.get("password_hash", ""))):
+                return None
+            user = fallback_user
         return create_access_token(
             user_id=str(user["id"]),
             role=str(user["role"]),

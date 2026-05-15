@@ -5,6 +5,7 @@ from typing import Any
 from app.storage.enrollment_repository import EnrollmentRepository
 from app.storage.mentor_repository import MentorRepository
 from app.storage.organization_repository import OrganizationRepository
+from app.storage.product_assignment_repository import ProductAssignmentRepository
 from app.storage.student_repository import StudentRepository
 
 
@@ -27,11 +28,13 @@ class AdminStudentLinkService:
         mentors: MentorRepository,
         students: StudentRepository,
         enrollments: EnrollmentRepository,
+        product_assignments: ProductAssignmentRepository | None = None,
     ) -> None:
         self._organizations = organizations
         self._mentors = mentors
         self._students = students
         self._enrollments = enrollments
+        self._product_assignments = product_assignments
 
     def _get_active_student(self, student_id: str) -> dict[str, Any]:
         student = self._students.get_by_id(student_id)
@@ -91,6 +94,13 @@ class AdminStudentLinkService:
             performed_by=performed_by,
             reassigned_to_mentor_id=target_mentor_id,
         )
+        if self._product_assignments is not None:
+            self._product_assignments.deactivate(
+                str(current_enrollment.get("id") or ""),
+                justification=justification,
+                performed_by=performed_by,
+                reassigned_to_provider_id=target_mentor_id,
+            )
         new_enrollment = self._enrollments.create(
             student_id=student_id,
             organization_id=current_product_id,
@@ -106,6 +116,8 @@ class AdminStudentLinkService:
             source_enrollment_id=str(current_enrollment.get("id")),
             created_by=performed_by,
         )
+        if self._product_assignments is not None:
+            self._product_assignments.upsert_from_enrollment(new_enrollment)
         return {
             **student,
             "mentor_id": target_mentor_id,
@@ -132,6 +144,13 @@ class AdminStudentLinkService:
             performed_by=performed_by,
             reassigned_to_mentor_id=None,
         )
+        if self._product_assignments is not None:
+            self._product_assignments.deactivate(
+                str(current_enrollment.get("id") or ""),
+                justification=justification,
+                performed_by=performed_by,
+                reassigned_to_provider_id=None,
+            )
         if not deactivated:
             raise EntityNotFoundError("active enrollment not found")
         return deactivated

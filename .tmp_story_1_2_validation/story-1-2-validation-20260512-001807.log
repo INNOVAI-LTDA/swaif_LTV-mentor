@@ -1,0 +1,11 @@
+[2026-05-12 00:18:07] [INFO] Validation started.
+[2026-05-12 00:18:07] [INFO] Python found: C:\Python313\python.exe
+[2026-05-12 00:18:07] [INFO] Environment configured.
+[2026-05-12 00:18:07] [WARN] SkipBackendStart enabled.
+[2026-05-12 00:18:08] [INFO] Mentor login succeeded.
+[2026-05-12 00:18:08] [INFO] Mentor blocked as expected (status 403).
+[2026-05-12 00:18:08] [INFO] Admin login succeeded.
+[2026-05-12 00:18:08] [ERROR] Missing v1 envelope error object. Body: 
+[2026-05-12 00:18:08] [WARN] SkipPytest enabled.
+[2026-05-12 00:18:08] [INFO] Printed Supabase SQL manual checks.
+[2026-05-12 00:18:08] [INFO] Validation completed successfully.

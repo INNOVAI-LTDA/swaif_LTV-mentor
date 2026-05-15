@@ -49,357 +49,431 @@ FR8: The apply flow must preserve current `replace_enrollment` semantics for `me
 
 FR9: The system must persist execution audit records for preview and apply, including operator, timestamps, source metadata, summary data, affected stores, backup reference, and rollback status.
 
-FR10: Admin/support users must be able to retrieve a structured ingestion execution report by `execution_id`.
+---
+stepsCompleted: [1, 2, 3, 4]
+inputDocuments:
+  - _bmad-output/project-context.md
+  - docs/architecture/platform_architecture_operational_model.md
+  - docs/architecture/new_database_architecture.md
+  - docs/mvp-mentoria/contracts-freeze-v1.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-05-08.md
+  - _bmad-output/planning-artifacts/batch-g-data-ingestion-admin-architecture.md
+workflowType: epics-and-stories
+project_name: swaif_LTV-mentoria
+user_name: dmene
+date: 2026-05-08
+lastStep: 4
+status: complete
+completedAt: 2026-05-08
+scope: batch-g-data-ingestion-admin-and-persistence-transition
+---
 
-FR11: The system must support the documented operator-assisted rollback path and record rollback outcome linked to the execution log.
+# swaif_LTV-mentoria - Epic Breakdown
 
-FR12: The feature must ship with nearest-layer automated coverage and operational documentation for preview, apply, audit, backup, and rollback-sensitive behavior.
+## Overview
+
+This document revises the existing Batch G epic and story plan to align with the approved major change proposal and the updated transition architecture.
+
+The plan is no longer limited to a narrow ingestion enhancement. It now decomposes the approved work into two explicit tracks:
+
+- Track 1: stabilize the current JSON-backed runtime and keep the valid Batch G ingestion scope operating safely inside that runtime
+- Track 2: prepare, validate, and gate the controlled migration path toward the target relational architecture without breaking the frozen v1 API contract
+
+The plan preserves the original Batch G scope where it is still valid, especially the admin-only ingestion flow and JSON-authoritative write path. It removes assumptions that direct repository replacement or broad persistence cutover can happen immediately.
+
+## Requirements Inventory
+
+### Functional Requirements
+
+FR1: The current JSON-backed runtime must be stabilized and regain a trustworthy green regression baseline before any relational cutover work can begin.
+
+FR2: Batch G admin ingestion must remain inside the existing admin surface and continue writing only to the approved JSON-backed targets while the JSON runtime is authoritative.
+
+FR3: The platform must define and validate deterministic mappings from current runtime entities to the target relational entities for organizations, users, products, product pillars, product metrics, and enrollments.
+
+FR4: Repository coexistence must be implemented through canonical adapters or migration-aware ports so that target relational naming does not leak into frozen v1 routes and DTOs.
+
+FR5: Relational mirror repositories and controlled migration jobs must be introduced only for entities that already have direct target relational tables.
+
+FR6: Selected admin/runtime surfaces must support shadow-read parity validation between current JSON-backed outputs and relational/canonical outputs before any cutover.
+
+FR7: Persistence cutover must happen one entity slice at a time behind service and repository boundaries while preserving frozen v1 endpoint paths, field presence, and field types.
+
+FR8: Measurements, checkpoints, and derived measurement overalls must remain JSON-backed until an explicit target relational schema exists for them.
+
+FR9: Backup and rollback must be split by persistence model: JSON flows continue using existing snapshot tooling, while relational migrations define dedicated restore points, manifests, and reconciliation evidence.
+
+FR10: Downstream planning and readiness artifacts must be revised to reflect coexistence boundaries, contract constraints, rollback implications, and migration validation gates before sprint planning resumes.
+
+FR11: Implementation readiness must explicitly validate the next migration gates: current-runtime regression, mapping tests, export/import reconciliation, contract compatibility, and rollback approval for the relevant slice.
 
 ### NonFunctional Requirements
 
-NFR1: Preserve the existing role-based admin boundary in frontend and backend (`RequireAdmin` and `require_admin_user`) and do not depend on a literal admin email.
+NFR1: Preserve the frozen v1 API contract, including endpoint paths, HTTP methods, field presence, field types, `organization_id` and `protocol_id` semantics, and the standardized error envelope.
 
-NFR2: Keep FastAPI route handlers thin and place orchestration in `backend/app/services` and persistence in `backend/app/storage`.
+NFR2: Keep the solution brownfield and incremental; do not authorize a big-bang rewrite or uncontrolled direct persistence replacement.
 
-NFR3: Preserve the standardized API error envelope `{ error: { status, code, message, details } }` for request-level failures.
+NFR3: Maintain one authoritative writer per entity per migration phase and do not introduce unrestricted dual-write.
 
-NFR4: Keep the solution brownfield and incremental by extending the existing student indicator-load flow rather than creating a generic ingestion subsystem.
+NFR4: Keep FastAPI route handlers thin, business orchestration in services, and persistence mechanics in repositories or migration operations.
 
-NFR5: Keep writes constrained to `measurements`, `checkpoints`, and `ingestion_executions`; do not widen scope to other JSON stores.
+NFR5: Keep target relational naming out of current frontend components and current v1 route DTOs.
 
-NFR6: Preserve frontend service/adapter boundaries, TypeScript strict mode, `AppError`, centralized env access, and existing admin shell/page patterns.
+NFR6: Preserve operational recoverability and do not describe JSON snapshot restore as sufficient rollback for relational state.
 
-NFR7: Do not expose filesystem paths, snapshot directories, or server storage details in the UI.
+NFR7: Require nearest-layer automated coverage plus route-level regression checks for every repository swap or migration-sensitive service change.
 
-NFR8: Keep raw API payload handling and alias normalization out of React components.
+NFR8: Do not migrate measurements, checkpoints, or derived overalls into undefined relational destinations.
 
-NFR9: Preserve Portuguese user-facing copy and established loading, error, empty, and success state conventions.
+NFR9: Preserve metric scoring behavior for existing metrics unless an intentional versioned change is approved.
 
-NFR10: Reuse the existing snapshot and restore tooling instead of introducing parallel backup logic.
-
-NFR11: Add or extend nearest-layer backend and frontend tests for all new behavior touched by the feature.
-
-NFR12: Preserve frozen v1 contract compatibility by keeping the existing `/admin/alunos/{student_id}/indicadores/carga-inicial` path available as a compatibility bridge during migration.
+NFR10: Require explicit migration manifests, row counts, reconciliation outputs, and rollback points for each relational migration step.
 
 ### Additional Requirements
 
-- No new starter template or parallel architecture is allowed; this is a brownfield extension of the current React + FastAPI + JSON repository stack.
-- Batch G is intentionally narrow: one selected student enrollment at a time inside the existing admin surface.
-- The approved business write targets are `measurements` and `checkpoints`; the approved operational write target is `ingestion_executions`.
-- The active MVP source mode is `manual_assisted`; `json_file` is reserved for future expansion and should not drive Batch G scope.
-- The recommended frontend entry is a dedicated admin panel keyed by `panel=ingestao-dados` inside the existing `AdminPage` and `AdminShell`.
-- The recommended backend endpoints are `POST /admin/alunos/{student_id}/indicadores/carga-inicial/preview`, `POST /admin/alunos/{student_id}/indicadores/carga-inicial/apply`, and `GET /admin/ingestoes/{execution_id}`.
-- The legacy `POST /admin/alunos/{student_id}/indicadores/carga-inicial` endpoint should remain available and delegate to the new apply orchestration during migration.
-- Preview writes only the execution log and never business stores.
-- Apply must consume `preview_execution_id` rather than trusting a second ad hoc payload.
-- Apply must create a backup through `storage_maintenance.create_backup_snapshot(...)` before changing business stores and attempt restore on post-snapshot failure.
-- Rollback in MVP is operator-assisted, not a primary frontend action.
-- Existing indicator-load API, service, and admin modal tests are the seed regression surface and should be extended rather than replaced.
+- The preferred coexistence seam is the canonical adapter layer already present in `backend/app/storage/canonical_repositories.py`.
+- JSON repositories remain the authoritative runtime persistence implementation until a slice is explicitly cut over.
+- Batch G remains valid in Track 1 as an admin-only ingestion flow scoped to approved JSON targets.
+- The direct target relational tables currently in scope are `deva_accmed_organizations`, `deva_accmed_users`, `deva_accmed_products`, `deva_accmed_product_pillars`, `deva_accmed_product_metrics`, and `deva_accmed_enrollments`.
+- `MeasurementRepository`, `CheckpointRepository`, and `MeasurementOverallRepository` stay on JSON until target relational tables are designed and approved.
+- The known route/service drift around `StudentVinculoService` is treated as evidence that baseline stabilization must precede migration-sensitive work.
+- Shadow-read validation must compare semantics, not only row existence.
+- The following downstream artifacts must be updated or confirmed before sprint planning resumes:
+  - `docs/mvp-mentoria/frontend-integration-architecture.md`
+  - `docs/mvp-mentoria/backend-test-strategy.md`
+  - `_bmad-output/planning-artifacts/batch-g-data-ingestion-admin-epics-and-stories.md`
+  - sprint planning inputs that currently assume local feature expansion only
 
 ### UX Design Requirements
 
-No standalone UX specification was provided for this scope. UX work is constrained by the approved architecture and current admin patterns: keep the flow in the existing admin surface, preserve Portuguese operational copy, use preview-before-apply states, and avoid exposing sensitive technical details.
+No standalone UX design document was revised for this transition. UX work remains constrained by the existing admin shell and current frontend conventions:
+
+- keep Track 1 ingestion inside the current admin surface
+- preserve Portuguese user-facing copy where the flow already exists
+- avoid exposing internal persistence names, file paths, or backup locations in UI states
+- keep current frontend adapters aligned to frozen v1 route semantics while backend storage evolves behind the contract boundary
 
 ### FR Coverage Map
 
-FR1: Epic 1 - Add the admin-only `Ingestao de Dados` panel inside the existing admin surface.
+FR1: Epic 1 - Restore the current JSON-backed runtime and regression baseline.
 
-FR2: Epic 1 - Reuse selected-student context and capture source metadata for manual-assisted ingestion.
+FR2: Epic 1 - Keep Batch G ingestion scoped to approved JSON-authoritative writes.
 
-FR3: Epic 1 - Provide a backend preview flow that performs validation without business persistence.
+FR3: Epic 2 - Define and test the current-to-target domain mapping contract.
 
-FR4: Epic 1 - Validate selected-student ingestion payloads and replacement impact before apply.
+FR4: Epic 2 - Implement repository coexistence through canonical adapters and migration-aware boundaries.
 
-FR5: Epic 1 - Return a structured preview report with execution ID, summary counts, conflicts, and rejections.
+FR5: Epic 3 - Introduce relational mirror repositories and controlled migration jobs only for direct-target entities.
 
-FR6: Epic 2 - Require explicit confirmation and a valid preview execution before apply.
+FR6: Epic 3 - Validate parity through shadow reads on selected current-runtime surfaces.
 
-FR7: Epic 2 - Revalidate, snapshot, and write only to the approved stores.
+FR7: Epic 3 - Gate cutover one entity slice at a time behind service boundaries.
 
-FR8: Epic 2 - Preserve `replace_enrollment` semantics for measurements and checkpoints.
+FR8: Epic 1 and Epic 3 - Keep measures, checkpoints, and derived overalls on JSON until explicit target schema exists.
 
-FR9: Epic 2 - Persist execution audit records for preview and apply outcomes.
+FR9: Epic 4 - Define split backup and rollback discipline by persistence model.
 
-FR10: Epic 3 - Retrieve structured execution details by execution identifier.
+FR10: Epic 4 - Update downstream planning, test strategy, and readiness artifacts.
 
-FR11: Epic 3 - Support the documented operator-assisted rollback path and record rollback outcomes.
-
-FR12: Epic 3 - Deliver regression coverage and operational documentation for stabilization.
+FR11: Epic 4 - Publish the next implementation-readiness validation gates before sprint re-entry.
 
 ## Epic List
 
-### Epic 1: Admin Preview Workflow for Indicator Ingestion
-Admin operators can open a dedicated ingestion flow for a selected student, submit a manual-assisted preview, and review validated impact before any write is possible.
-**FRs covered:** FR1, FR2, FR3, FR4, FR5
+### Epic 1: Stabilize the Current Runtime and Preserve Valid Batch G Scope
+The team restores a trustworthy JSON-backed baseline, fixes current route/service drift, and keeps the existing Batch G ingestion scope operating only where it is still architecturally valid.
+**FRs covered:** FR1, FR2, FR8
 
-### Epic 2: Controlled Apply with Backup and Audit
-Admin operators can confirm a validated preview and apply it safely with snapshot protection, constrained writes, compatibility preservation, and durable execution evidence.
-**FRs covered:** FR6, FR7, FR8, FR9
+### Epic 2: Define the Domain Mapping and Coexistence Contract
+The team formalizes the current-to-target entity mapping, locks the canonical coexistence seam, and protects frozen v1 route semantics while internal storage evolves.
+**FRs covered:** FR3, FR4
 
-### Epic 3: Execution Follow-Up and Stabilization Readiness
-Admin and support operators can inspect execution outcomes, follow the rollback procedure, and rely on documentation and tests that keep the feature safe during final stabilization.
-**FRs covered:** FR10, FR11, FR12
+### Epic 3: Build the Relational Mirror and Validate Cutover Readiness by Slice
+The team adds non-authoritative relational mirrors for direct-target entities, validates parity through migration jobs and shadow reads, and gates any future cutover entity by entity.
+**FRs covered:** FR5, FR6, FR7, FR8
 
-## Epic 1: Admin Preview Workflow for Indicator Ingestion
+### Epic 4: Establish Rollback Discipline and Re-Open Readiness for Planning
+The team defines backup and rollback rules for both persistence models, updates downstream artifacts, and documents the exact gates that must be green before sprint planning resumes.
+**FRs covered:** FR9, FR10, FR11
 
-Enable admins to start the Batch G ingestion flow from the existing admin area, use the selected-student context, and obtain a backend-validated preview before any business write can occur.
+## Epic 1: Stabilize the Current Runtime and Preserve Valid Batch G Scope
 
-### Story 1.1: Expose the `Ingestao de Dados` Admin Panel (FR1)
+Restore confidence in the current JSON-backed platform first. Keep Batch G within the already-approved admin ingestion boundaries while fixing the regressions and drift that currently block safe validation.
+
+### Story 1.1: Fix Current Route and Service Wiring Defects Before Migration Work
+
+As a platform maintainer,
+I want current route and service mismatches resolved in the JSON runtime,
+So that migration planning starts from a working baseline instead of a broken one.
+
+**Acceptance Criteria:**
+
+**Given** current admin and student routes contain stale integration assumptions
+**When** the affected route and service wiring is corrected
+**Then** the route layer delegates to services without dependency mismatches or ad hoc workarounds
+**And** the fix preserves the current service/repository layering.
+
+**Given** the current runtime baseline is re-tested after the fixes
+**When** the relevant API suites execute
+**Then** the existing admin/student flows run against JSON-backed repositories without new contract drift
+**And** failures still use the standardized v1 error envelope.
+
+### Story 1.2: Keep Batch G Ingestion JSON-Authoritative in Track 1
 
 As an admin operator,
-I want to open `Ingestao de Dados` from the existing admin area,
-So that I can start the ingestion workflow without leaving the established admin boundary.
+I want the existing Batch G ingestion flow to remain constrained to the approved JSON-backed stores,
+So that valid current-scope functionality survives while migration planning proceeds separately.
 
 **Acceptance Criteria:**
 
-**Given** an authenticated admin user is on `/app/admin`
-**When** the admin views the available admin operations
-**Then** the UI exposes an `Ingestao de Dados` entry inside the existing `AdminShell` and `AdminPage`
-**And** the entry is implemented as a panel selection within the current admin surface rather than a new top-level route family.
+**Given** Batch G preview and apply flows run inside the current admin surface
+**When** the operator submits or confirms ingestion
+**Then** business writes remain limited to the approved JSON-backed targets for the current runtime
+**And** relational repositories are not introduced as authoritative writers for this flow.
 
-**Given** a non-admin user or unauthenticated visitor
-**When** that user attempts to access the ingestion panel
-**Then** the existing frontend and backend admin guards continue to block access
-**And** no ingestion-specific access rule depends on `admin@swaif.local`.
+**Given** the legacy ingestion endpoint remains part of the frozen v1 surface during Track 1
+**When** the endpoint is exercised
+**Then** it preserves the current mentoring vocabulary and endpoint contract
+**And** any internal orchestration changes stay behind service boundaries.
 
-### Story 1.2: Bind the Panel to Selected-Student Context and Source Metadata (FR2)
+### Story 1.3: Re-Establish the Current-Runtime Regression Baseline
 
-As an admin operator,
-I want the ingestion panel to reuse the selected-student context and record source metadata,
-So that preview operates on the intended enrollment with traceable origin information.
-
-**Acceptance Criteria:**
-
-**Given** the admin has selected a student within the current admin workflow
-**When** the `Ingestao de Dados` panel is opened
-**Then** the panel receives the selected student context needed for preview and apply
-**And** it does not ask the operator to navigate to a separate route or reselect the same hierarchy outside existing admin patterns.
-
-**Given** the admin prepares a preview request
-**When** source metadata is collected
-**Then** the request includes `source_type` and `source_label`
-**And** Batch G activates `manual_assisted` as the allowed source mode while leaving `json_file` reserved for future scope.
-
-### Story 1.3: Add the Preview Contract, Route, and Frontend Service Boundary (FR3)
-
-As an admin operator,
-I want a dedicated preview API and frontend service flow,
-So that the system can validate ingestion input without mixing transport logic into page JSX.
+As a release owner,
+I want the JSON-backed runtime to have a trustworthy regression baseline,
+So that later migration-sensitive work can be gated against a known-good platform state.
 
 **Acceptance Criteria:**
 
-**Given** a selected student and a preview request payload
-**When** the frontend submits the request
-**Then** the call flows through a dedicated admin data ingestion service and contract boundary
-**And** React components do not contain direct fetch logic, env access, or contract normalization.
+**Given** the current runtime stabilization work is complete
+**When** the API and smoke regression suites run
+**Then** the admin, mentor, student, command center, radar, matrix, and error payload guard suites are green against the JSON-backed runtime
+**And** that green baseline is recorded as a prerequisite for later migration stories.
 
-**Given** the backend receives the preview request
-**When** it reaches the admin route layer
-**Then** a thin route in the existing admin student namespace validates the wrapper schema and delegates orchestration to a service
-**And** malformed requests continue to use the standardized API error envelope.
+**Given** a migration-sensitive story is proposed after this baseline step
+**When** readiness is reviewed
+**Then** the story cannot proceed if the current-runtime regression baseline has regressed
+**And** the regression failure is treated as a Track 1 blocker rather than a Track 2 shortcut.
 
-### Story 1.4: Validate Preview Input and Produce Structured Diagnostics (FR3, FR4, FR5)
+## Epic 2: Define the Domain Mapping and Coexistence Contract
 
-As an admin operator,
-I want the backend to validate the full preview input and explain its impact,
-So that I can detect data issues before confirming apply.
+Convert the transition architecture into explicit implementation slices by defining the domain mapping, canonical adapter boundaries, and frozen-contract protections that all later migration work must respect.
 
-**Acceptance Criteria:**
+### Story 2.1: Document and Test the Current-to-Target Domain Mapping Contract
 
-**Given** a preview request for a selected student
-**When** the ingestion service validates the request
-**Then** it verifies student existence, active enrollment, active metrics, product-context compatibility, checkpoint field validity, and replacement impact counts
-**And** it does so without persisting `measurements` or `checkpoints`.
-
-**Given** the preview completes
-**When** the backend returns the result
-**Then** the response includes `execution_id`, student and enrollment identifiers, preview status, summary counts, conflicts, rejections, and `affected_stores`
-**And** `affected_stores` is limited to approved logical store names instead of filesystem paths.
-
-### Story 1.5: Render the Preview Report and Explicit Apply Gate (FR4, FR5)
-
-As an admin operator,
-I want to review preview findings before apply becomes available,
-So that confirmation is based on backend-validated impact instead of local assumptions.
+As an architect,
+I want an explicit mapping contract from current runtime entities to target relational entities,
+So that migration jobs and repository slices use deterministic semantics instead of ad hoc renaming.
 
 **Acceptance Criteria:**
 
-**Given** a preview response is available
-**When** the admin reviews the ingestion panel
-**Then** the UI shows Portuguese copy for summary counts, conflicts, rejections, and affected stores using existing request-state conventions
-**And** it does not expose raw server paths, snapshot directories, or internal repository names.
+**Given** the current runtime entities and the target relational tables are known
+**When** the mapping contract is finalized
+**Then** each direct-target entity class has an explicit current-to-target mapping with unresolved gaps called out
+**And** measurements, checkpoints, and derived overalls remain explicitly marked as deferred.
 
-**Given** the preview has not been executed or contains blocking issues
-**When** the admin attempts to proceed to apply
-**Then** the confirm action remains unavailable or blocked with a controlled explanation
-**And** apply is only enabled from a reviewed preview state tied to a preview execution.
+**Given** the mapping contract is used by implementation work
+**When** tests or migration utilities consume it
+**Then** the expected target table shape can be derived deterministically from current data
+**And** mismatches fail as explicit mapping defects rather than silent coercions.
 
-## Epic 2: Controlled Apply with Backup and Audit
+### Story 2.2: Harden Canonical Adapters and Migration-Aware Service Boundaries
 
-Allow admins to confirm a valid preview and apply it safely by reusing the current replace semantics, backup tooling, and execution logging boundaries.
-
-### Story 2.1: Enforce Apply Preconditions from Preview Execution (FR6)
-
-As an admin operator,
-I want apply to require explicit confirmation and a valid preview execution,
-So that writes cannot occur from stale or unreviewed input.
+As a backend maintainer,
+I want coexistence to flow through canonical adapters and migration-aware ports,
+So that services can evolve internally without leaking target naming into frozen v1 APIs.
 
 **Acceptance Criteria:**
 
-**Given** an admin attempts to apply ingestion
-**When** the backend receives the request
-**Then** the request must include `preview_execution_id` and explicit confirmation
-**And** the service rejects apply when the preview execution does not exist, is not `previewed`, or does not belong to the same student context.
+**Given** coexistence logic is implemented for a target entity slice
+**When** services need migration-aware behavior
+**Then** they call canonical adapters or dedicated migration-aware ports internally
+**And** route handlers continue to operate on current v1 mentoring vocabulary DTOs.
 
-**Given** a preview execution has already been consumed or invalidated
-**When** apply is attempted again
-**Then** the system returns a controlled conflict response through the standard error envelope
-**And** no business write is performed.
+**Given** an entity slice is in a coexistence phase
+**When** write ownership is defined
+**Then** exactly one authoritative writer is documented for that entity in that phase
+**And** unrestricted dual-write is not introduced.
 
-### Story 2.2: Snapshot, Revalidate, and Apply Only Approved Writes (FR7, FR8)
+### Story 2.3: Preserve the Frozen v1 Contract and Frontend Adapter Insulation
 
-As an admin operator,
-I want the confirmed apply flow to rerun validation and snapshot before writing,
-So that the system can fail safely while preserving approved persistence semantics.
-
-**Acceptance Criteria:**
-
-**Given** a valid apply request linked to a preview execution
-**When** the service enters the apply flow
-**Then** it reruns the same validation pipeline used by preview before any write occurs
-**And** it creates a backup snapshot through `storage_maintenance.create_backup_snapshot(...)` before changing business stores.
-
-**Given** the apply validation passes
-**When** the service persists data
-**Then** it writes only to `measurements` and `checkpoints`
-**And** it preserves the existing `replace_for_enrollment(...)` / `replace_enrollment` behavior for the selected enrollment.
-
-### Story 2.3: Persist Execution Audit and Failure-Recovery Outcomes (FR7, FR9)
-
-As an operator responsible for supportability,
-I want preview and apply executions recorded with backup and rollback evidence,
-So that operational history survives the ingestion lifecycle.
+As a frontend and API owner,
+I want storage evolution to remain invisible at the v1 contract boundary,
+So that route consumers do not break while the backend prepares relational cutover.
 
 **Acceptance Criteria:**
 
-**Given** a preview or apply execution is processed
-**When** the ingestion service persists execution metadata
-**Then** the system records operator identity, timestamps, source metadata, summary counts, affected stores, status, and backup reference in the dedicated `ingestion_executions` store
-**And** preview persists only execution evidence rather than business writes.
+**Given** a migration-sensitive backend change affects an existing route family
+**When** the route is exercised through API tests or adapters
+**Then** endpoint paths, methods, field presence, field types, and `organization_id` or `protocol_id` semantics remain unchanged
+**And** target names such as `product_id`, `provider_user_id`, or `client_user_id` do not leak into v1 payloads.
 
-**Given** a failure occurs after snapshot creation
-**When** the service handles the failure
-**Then** it attempts restore through the existing backup utilities and records `rolled_back` or `rollback_failed` outcome in the execution log
-**And** the recovery attempt does not invent a new error response shape.
+**Given** frontend adapter code consumes these routes
+**When** the backend internal storage source changes behind the route
+**Then** the adapter-level contract remains stable for current frontend features
+**And** migration-specific normalization logic stays out of React components.
 
-### Story 2.4: Return the Final Apply Result and Preserve Legacy Endpoint Compatibility (FR8, FR9)
+### Story 2.4: Preserve Metric DSL Semantics at the Migration Boundary
 
-As an admin operator,
-I want the final apply result and compatibility behavior to remain predictable,
-So that the new orchestration can ship without breaking existing consumers.
-
-**Acceptance Criteria:**
-
-**Given** an apply execution completes successfully
-**When** the backend returns the response
-**Then** the result includes `execution_id`, `preview_execution_id`, mode, status, affected stores, counts, and a safe `backup_ref`
-**And** the payload excludes internal snapshot paths.
-
-**Given** the existing `POST /admin/alunos/{student_id}/indicadores/carga-inicial` endpoint is still in use during migration
-**When** it is invoked
-**Then** the endpoint remains available as a compatibility bridge to the new apply orchestration
-**And** it preserves frozen-contract expectations until the frontend is fully moved.
-
-### Story 2.5: Complete the Apply UX in the Admin Panel (FR6, FR9)
-
-As an admin operator,
-I want the admin panel to execute apply and render the final outcome cleanly,
-So that I can complete the ingestion flow without leaving the established operational context.
+As a platform maintainer,
+I want metric DSL evolution isolated behind scoring and repository boundaries,
+So that persistence migration does not accidentally rewrite current scoring behavior.
 
 **Acceptance Criteria:**
 
-**Given** a reviewed preview is ready for confirmation
-**When** the admin confirms apply
-**Then** the frontend calls the apply service using the preview execution reference and existing `AppError` handling
-**And** loading, success, and error states follow the current admin conventions.
+**Given** existing metrics are exported, mirrored, or rehydrated during transition work
+**When** metric configuration passes through the current and future persistence paths
+**Then** existing score semantics remain equivalent unless an explicit versioned change is approved
+**And** descriptive labels are not promoted into canonical logical keys.
 
-**Given** the final apply response is received
-**When** the completion state is rendered
-**Then** the UI shows execution identifier, final status, summary counts, and safe backup reference details in Portuguese copy
-**And** it continues to avoid raw transport payload binding in React components.
+**Given** a migration step touches scoring metadata or serialization
+**When** validation runs
+**Then** scoring behavior is verified through metric-level tests and representative runtime flows
+**And** the migration is rejected if it changes current score behavior unintentionally.
 
-## Epic 3: Execution Follow-Up and Stabilization Readiness
+## Epic 3: Build the Relational Mirror and Validate Cutover Readiness by Slice
 
-Enable the operational follow-up needed after apply by exposing execution detail, documenting rollback handling, and locking the feature down with the nearest regression coverage.
+Introduce relational persistence only where the target schema is already defined, keep it non-authoritative until validated, and use migration jobs and shadow reads to prove parity before any cutover is considered.
 
-### Story 3.1: Retrieve Structured Execution Details by Identifier (FR10)
+### Story 3.1: Add Relational Mirror Repositories for Direct-Target Entities Only
 
-As an admin or support operator,
-I want to fetch an ingestion execution by `execution_id`,
-So that I can inspect what happened after preview or apply.
+As a backend maintainer,
+I want relational repositories introduced only for entity classes that already have target tables,
+So that the migration mirror reflects the approved schema without inventing destinations for unresolved data.
 
 **Acceptance Criteria:**
 
-**Given** a valid recorded execution identifier
-**When** an authenticated admin requests execution detail
-**Then** the backend returns the stored structured execution report with source metadata, status, counts, affected stores, backup reference, and rollback fields
-**And** missing execution identifiers continue to use the standardized API error envelope.
+**Given** the target relational schema currently covers organizations, users, products, product pillars, product metrics, and enrollments
+**When** relational repositories are added
+**Then** only those entity classes receive relational repository implementations
+**And** measurements, checkpoints, and measurement overalls do not receive relational repositories yet.
 
-**Given** the frontend holds a completed preview or apply result
-**When** the operator requests more detail for that execution
-**Then** the UI can render the execution evidence using the established service/adapter pattern
-**And** the response remains safe for UI display without exposing internal paths.
+**Given** those repositories are introduced during coexistence
+**When** application code uses them
+**Then** they remain hidden behind service or migration boundaries
+**And** they are not treated as runtime-authoritative writers until validation gates pass.
 
-### Story 3.2: Document and Record the Operator-Assisted Rollback Path (FR11)
+### Story 3.2: Build Controlled Export, Import, and Reconciliation Jobs
+
+As a migration operator,
+I want repeatable export/import jobs with reconciliation evidence,
+So that relational mirrors are populated through controlled operations rather than ad hoc scripts.
+
+**Acceptance Criteria:**
+
+**Given** JSON remains authoritative in the current runtime
+**When** migration jobs populate the relational mirror
+**Then** export, import, and reconciliation operations produce manifests with row counts, target slice identifiers, and outcome evidence
+**And** the jobs do not become part of request-time route handling.
+
+**Given** a migration job reports success
+**When** the evidence is reviewed
+**Then** the reconciliation output proves semantic alignment between exported JSON/canonical records and inserted relational rows
+**And** missing or divergent records are surfaced explicitly for correction.
+
+### Story 3.3: Validate Shadow-Read Parity on Selected Current-Runtime Surfaces
+
+As an architect,
+I want shadow-read parity checks on selected admin/runtime surfaces,
+So that the team can validate relational readiness before any slice is cut over.
+
+**Acceptance Criteria:**
+
+**Given** a relational mirror is populated for an approved entity slice
+**When** selected admin or current-runtime surfaces are evaluated in shadow-read mode
+**Then** relational/canonical outputs are compared against current JSON-backed responses for semantic parity
+**And** parity review covers meaning and contract behavior, not only raw record presence.
+
+**Given** parity defects are found during shadow validation
+**When** the findings are triaged
+**Then** the slice remains on JSON authority
+**And** the defects are corrected in mapping, migration, or service boundaries before cutover is reconsidered.
+
+### Story 3.4: Gate Controlled Cutover Per Entity Slice and Defer Unresolved Domains
+
+As a platform owner,
+I want cutover to happen only for validated slices with defined destinations,
+So that unresolved entity classes do not get forced into the wrong relational shape.
+
+**Acceptance Criteria:**
+
+**Given** an entity slice has passed mapping, migration, and shadow-read validation
+**When** a cutover decision is made
+**Then** the slice is switched behind service and repository boundaries without changing the external v1 DTOs
+**And** a rollback point is defined before the cutover executes.
+
+**Given** the target relational schema does not yet include measures, checkpoints, or derived overalls
+**When** implementation planning reaches those domains
+**Then** they remain on JSON-backed persistence
+**And** no story may force them into unrelated relational tables as a shortcut.
+
+## Epic 4: Establish Rollback Discipline and Re-Open Readiness for Planning
+
+Define the operational safeguards and artifact updates that must exist before sprint planning resumes, so the team can move from architecture approval into implementation with explicit gates instead of assumptions.
+
+### Story 4.1: Define the Split Backup and Rollback Operating Model
 
 As an operations owner,
-I want a documented rollback procedure linked to execution records,
-So that recovery can be performed safely without inventing an unsafe self-service UI.
+I want a persistence-specific rollback model for JSON and relational phases,
+So that recovery expectations remain accurate while both models coexist.
 
 **Acceptance Criteria:**
 
-**Given** an applied execution with a recorded backup reference
-**When** an operator follows the rollback procedure
-**Then** the documented path uses `execution_id`, the internal snapshot reference, and the existing restore command/tooling
-**And** rollback remains operator-assisted rather than a primary frontend button in Batch G.
+**Given** Track 1 continues on JSON-backed persistence
+**When** JSON-authoritative flows execute writes
+**Then** they continue using `storage_maintenance.py` snapshot and restore semantics
+**And** those semantics are documented as JSON-only recovery behavior.
 
-**Given** a rollback attempt succeeds or fails
-**When** the outcome is recorded
-**Then** the execution log stores rollback status and follow-up evidence
-**And** operational documentation explains how to verify the restored state afterward.
+**Given** a relational migration or cutover slice is planned
+**When** rollback expectations are defined
+**Then** the slice has its own restore point, migration manifest, and reconciliation evidence
+**And** JSON snapshot restore is not described as sufficient rollback for relational state.
 
-### Story 3.3: Add Stabilization-Focused Automated Coverage (FR12)
+### Story 4.2: Update Downstream Docs and Test Strategy for Coexistence
 
-As a release owner,
-I want automated coverage at the nearest relevant layers,
-So that the Batch G ingestion flow can be stabilized without regressions.
-
-**Acceptance Criteria:**
-
-**Given** the Batch G implementation is added
-**When** automated tests run
-**Then** backend API tests cover preview/apply permissions, error envelope behavior, and execution detail responses
-**And** backend service or integration tests cover validation, snapshot-before-write, apply success, and restore-on-failure behavior.
-
-**Given** the frontend panel flow is implemented
-**When** frontend tests run
-**Then** they cover admin-only access, preview rendering, apply confirmation, and final outcome states
-**And** they extend the existing admin indicator-load baseline instead of replacing it with unrelated abstractions.
-
-### Story 3.4: Publish the Batch G Operations Runbook (FR12)
-
-As a release owner,
-I want an explicit operations runbook for Batch G ingestion,
-So that preview, apply, execution lookup, and rollback can be used consistently in local and staging environments.
+As a planning owner,
+I want downstream architecture, integration, and test artifacts updated for coexistence,
+So that readiness review and future implementation work use the same transition assumptions.
 
 **Acceptance Criteria:**
 
-**Given** the feature is ready for final stabilization
-**When** the supporting documentation is published
-**Then** the repository includes a runbook that documents preview, apply, execution lookup, backup expectations, rollback procedure, and local/staging-first usage constraints
-**And** the document references execution IDs and safe backup tokens instead of raw server paths.
+**Given** the transition architecture is approved
+**When** downstream artifacts are revised
+**Then** frontend integration guidance covers semantic drift behind stable v1 DTOs, backend test strategy adds mapping and rollback gates, and sprint inputs stop assuming direct persistence replacement
+**And** the revised artifacts distinguish Track 1 stabilization from Track 2 migration planning.
 
-**Given** future agents or operators use the artifact set
-**When** they trace the implementation scope
-**Then** the runbook remains aligned with the approved write targets, the Batch G architecture, and the existing deployment-readiness conventions
-**And** it does not describe broader generic ingestion capabilities as if they already exist.
+**Given** a future implementation story depends on those artifacts
+**When** the story is reviewed
+**Then** it references the updated coexistence boundaries and readiness gates
+**And** it is rejected if it still assumes feature-only expansion on the old single-persistence model.
+
+### Story 4.3: Publish the Next Implementation-Readiness Validation Gate
+
+As a scrum and architecture lead,
+I want the exact next validations listed before sprint re-entry,
+So that the team knows what must be green before implementation planning resumes.
+
+**Acceptance Criteria:**
+
+**Given** the revised epics and stories are accepted
+**When** implementation readiness is prepared
+**Then** the next required validations are explicitly recorded as:
+**And** current JSON-backed API regression is green.
+**And** entity mapping rules are documented and testable.
+**And** canonical export/import reconciliation evidence exists for the direct-target relational entities.
+**And** the backup and rollback procedure is approved for the persistence slice under review.
+**And** contract-compatibility checks and selected shadow-read parity checks are complete.
+
+**Given** one or more of those validations is still missing
+**When** sprint planning is proposed
+**Then** sprint planning does not resume for migration-sensitive implementation
+**And** the missing gate is treated as the next planning blocker to resolve.
+
+## Implementation Readiness - Next Validation Targets
+
+The next implementation-readiness review must explicitly validate the following before sprint planning and migration-sensitive development resume:
+
+1. The current JSON-backed API regression baseline is green again.
+2. The current-to-target entity mapping contract is documented and backed by tests.
+3. Canonical export, import, and reconciliation evidence exists for organizations, users, products, product pillars, product metrics, and enrollments.
+4. The rollback procedure for the next persistence slice is approved and differentiates JSON recovery from relational recovery.
+5. Frozen v1 contract compatibility has been re-verified for the affected route families.
+6. Shadow-read parity has been reviewed for the selected current-runtime surfaces before any cutover is approved.

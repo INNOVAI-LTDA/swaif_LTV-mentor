@@ -96,12 +96,18 @@ class _FakeMetricRepository:
             "direction": direction,
             "unit": unit,
             "is_active": True,
-            "scoring_rules": scoring_rules or [{"type": "static", "score": 1}],
+            "scoring_rules": scoring_rules
+            or {
+                "version": 2,
+                "input": {"kind": "number"},
+                "scoring": {"mode": "first_match", "rules": [], "fallback": {"assign": 0}},
+                "normalization": {"basis": "max_score", "value": 1},
+            },
             "score_type": score_type or "static",
             "min_score": min_score if min_score is not None else 0,
             "max_score": max_score if max_score is not None else 1,
             "mcv_score": mcv_score if mcv_score is not None else 1,
-            "max_basis_score": max_basis_score if max_basis_score is not None else 1,
+            "max_basis_score": max_basis_score if max_basis_score is not None else "MAX_VALUE",
         }
         self.items[metric["id"]] = metric
         return metric
@@ -124,6 +130,9 @@ def test_method_config_creation_flow() -> None:
     assert protocol["organization_id"] == "org_1"
     assert pillar["protocol_id"] == protocol["id"]
     assert metric["pillar_id"] == pillar["id"]
+    assert metric["scoring_rules"]["version"] == 2
+    assert metric["score_type"] == "static"
+    assert metric["max_basis_score"] == "MAX_VALUE"
 
 
 def test_method_config_consistency_validation() -> None:

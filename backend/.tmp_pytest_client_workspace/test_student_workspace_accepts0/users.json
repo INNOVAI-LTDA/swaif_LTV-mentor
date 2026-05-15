@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "usr_admin",
+      "email": "admin@swaif.local",
+      "password_hash": "pbkdf2_sha256$120000$6687d15fb9373f5d51f1cbffafeecb76$f43ceca183b59ef3bba7206f077bb2ae6dcfedf063327676e4042f195c086777",
+      "role": "admin",
+      "is_active": true
+    },
+    {
+      "id": "usr_mentor",
+      "email": "mentor@swaif.local",
+      "password_hash": "pbkdf2_sha256$120000$c66c72bde4e80efe2753f962fe962168$5ed720c2604df6983bd4d9d704072d7fc4d4e9c7ca47b0cabd5871b0f6aff1f1",
+      "role": "mentor",
+      "is_active": true
+    },
+    {
+      "id": "usr_legacy_client_workspace",
+      "email": "aluno.workspace@swaif.local",
+      "password_hash": "pbkdf2_sha256$120000$d6fddf96e88c578d5c04a66aaf91261d$82d2a173395a4d430d3f1f7ab195529647fdbe6d095bc34d86507fddca62b506",
+      "role": "client",
+      "is_active": true
+    }
+  ]
+}

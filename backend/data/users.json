@@ -14,6 +14,13 @@
       "password_hash": "pbkdf2_sha256$120000$2fc6e1cfc4ad6d9b049c9325709209bc$b505789f7d958de59383faf56d7189863c28a20cc671c292c6243616edc0c83b",
       "role": "mentor",
       "is_active": true
+    },
+    {
+      "id": "usr_std_255",
+      "email": "smoke.aluno.3eb5141b@swaif.local",
+      "password_hash": "pbkdf2_sha256$120000$72ba09859cc33568f239bf95152564b4$d493c4cbc855b65bebb1160bf562c02f601e63b621a0e7168cbe301edd5bb535",
+      "role": "client",
+      "is_active": true
     }
   ]
 }

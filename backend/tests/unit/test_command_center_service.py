@@ -102,6 +102,35 @@ class _FakeCheckpointRepository:
         return rows
 
 
+class _FakeProductAssignmentRepository:
+    def list_assignments(self):
+        return [
+            {
+                "id": "asg_1",
+                "assignment_id": "asg_1",
+                "product_id": "org_1",
+                "provider_id": "mtr_1",
+                "end_user_id": "std_1",
+                "status": "active",
+                "is_active": True,
+                "day": 45,
+                "total_days": 90,
+                "days_left": 45,
+                "engagement_score": 0.0,
+                "progress_score": 0.2,
+                "updated_at": "2026-04-10T12:00:00Z",
+            }
+        ]
+
+
+class _ExplodingEnrollmentRepository:
+    def list_enrollments(self):
+        raise AssertionError("legacy enrollment repository should not be used when authoritative assignments exist")
+
+    def list_by_mentor(self, mentor_id: str | None = None):
+        raise AssertionError("legacy enrollment repository should not be used when authoritative assignments exist")
+
+
 def test_command_center_derivations_include_edge_cases() -> None:
     service = IndicatorCargaService(
         students=_FakeStudentRepository(),
@@ -126,7 +155,7 @@ def test_command_center_derivations_include_edge_cases() -> None:
     assert second["totalDays"] == 0
     assert second["progress"] == 0.4
     assert 0 <= second["hormoziScore"] <= 100
-    assert result["totalStudents"] == 2
+    assert payload["totalStudents"] == 2
 
 
 class _FakeEnrollmentRepositoryWithDuplicates(_FakeEnrollmentRepository):
@@ -190,3 +219,21 @@ def test_command_center_deduplicates_active_enrollments_by_student_id_using_late
     assert by_id["std_1"]["day"] == 60
     assert by_id["std_1"]["daysLeft"] == 30
     assert by_id["std_1"]["progress"] == 0.6667
+
+
+def test_command_center_prefers_authoritative_product_assignments_over_legacy_enrollments() -> None:
+    service = IndicatorCargaService(
+        students=_FakeStudentRepository(),
+        organizations=_FakeOrganizationRepository(),
+        enrollments=_ExplodingEnrollmentRepository(),
+        product_assignments=_FakeProductAssignmentRepository(),
+        metrics=_FakeMetricRepository(),
+        measurements=_FakeMeasurementRepository(),
+        checkpoints=_FakeCheckpointRepository(),
+    )
+
+    payload = service.list_command_center_students()
+
+    assert payload["totalStudents"] == 1
+    assert payload["items"][0]["id"] == "std_1"
+    assert payload["items"][0]["day"] == 45

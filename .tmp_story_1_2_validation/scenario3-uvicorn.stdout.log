@@ -1,0 +1,9 @@
+INFO:     127.0.0.1:53579 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53579 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53579 - "POST /admin/mentorias HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53579 - "POST /admin/alunos HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53579 - "POST /admin/alunos/std_310/vincular-mentoria HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53579 - "POST /admin/protocolos HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53579 - "POST /admin/pilares HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53579 - "POST /admin/metricas HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53579 - "POST /admin/alunos/std_310/indicadores/carga-inicial HTTP/1.1" 409 Conflict

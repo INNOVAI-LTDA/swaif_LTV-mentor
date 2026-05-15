@@ -1,0 +1,6 @@
+[2026-05-12 00:13:02] [INFO] Validation started.
+[2026-05-12 00:13:02] [INFO] Python found: C:\Python313\python.exe
+[2026-05-12 00:13:02] [INFO] Environment configured.
+[2026-05-12 00:13:02] [ERROR] O processo não pode acessar o arquivo 'C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\.tmp_story_1_2_validation\story-1-2-validation-20260512-001302.log' porque ele está sendo usado por outro processo.
+[2026-05-12 00:13:03] [INFO] Backend started with PID 6988
+[2026-05-12 00:13:38] [ERROR] Backend did not become ready at http://127.0.0.1:8000

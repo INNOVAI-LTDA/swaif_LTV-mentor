@@ -15,6 +15,9 @@ class _FakeOrganizationRepository:
     def get_by_id(self, organization_id: str):
         return {"id": organization_id, "name": "Mentoria Radar"}
 
+    def list_organizations(self):
+        return [{"id": "org_1", "name": "Mentoria Radar"}]
+
 
 class _FakeEnrollmentRepository:
     def list_by_student(self, student_id: str):
@@ -26,6 +29,9 @@ class _FakeEnrollmentRepository:
         if student_id != "std_1":
             return None
         return {"id": "enr_1", "student_id": "std_1", "organization_id": "org_1", "is_active": True}
+
+    def list_enrollments(self):
+        return [{"id": "enr_1", "student_id": "std_1", "organization_id": "org_1", "is_active": True}]
 
 
 class _FakeMetricRepository:

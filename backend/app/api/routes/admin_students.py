@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, status
 
 from app.api.errors import api_error
+from app.config.runtime import get_supabase_db_url
 from app.api.routes.admin_mentoria import require_admin_user
 from app.schemas.enrollment import (
     EnrollmentOut,
@@ -24,6 +25,9 @@ from app.services.admin_student_service import EntityNotFoundError as AdminEntit
 from app.services.admin_student_service import ValidationError as AdminValidationError
 from app.services.indicator_carga_service import EntityNotFoundError as IndicatorEntityNotFoundError
 from app.services.indicator_carga_service import IndicatorCargaService
+from app.services.indicator_carga_service import DomainNotReadyError as IndicatorDomainNotReadyError
+from app.services.indicator_carga_service import JsonFallbackForbiddenError as IndicatorJsonFallbackForbiddenError
+from app.services.indicator_carga_service import RuntimeDependencyError as IndicatorRuntimeDependencyError
 from app.services.student_vinculo_service import ConsistencyError, EntityNotFoundError, StudentVinculoService
 from app.storage.checkpoint_repository import CheckpointRepository
 from app.storage.contact_user_repository import ContactUserRepository
@@ -34,6 +38,8 @@ from app.storage.metric_repository import MetricRepository
 from app.storage.mentor_repository import MentorRepository
 from app.storage.organization_repository import OrganizationRepository
 from app.storage.pillar_repository import PillarRepository
+from app.storage.postgres_indicator_repositories import PostgresCheckpointRepository, PostgresMeasurementRepository
+from app.storage.product_assignment_repository import ProductAssignmentRepository
 from app.storage.student_repository import StudentRepository
 
 
@@ -45,18 +51,22 @@ def get_student_vinculo_service() -> StudentVinculoService:
         organizations=OrganizationRepository(),
         students=StudentRepository(),
         enrollments=EnrollmentRepository(),
-        contacts=ContactUserRepository(),
+        product_assignments=ProductAssignmentRepository(),
     )
 
 
 def get_indicator_carga_service() -> IndicatorCargaService:
+    database_url = get_supabase_db_url()
+    measurements = PostgresMeasurementRepository(database_url) if database_url else MeasurementRepository()
+    checkpoints = PostgresCheckpointRepository(database_url) if database_url else CheckpointRepository()
     return IndicatorCargaService(
         students=StudentRepository(),
         organizations=OrganizationRepository(),
         enrollments=EnrollmentRepository(),
+        product_assignments=ProductAssignmentRepository(),
         metrics=MetricRepository(),
-        measurements=MeasurementRepository(),
-        checkpoints=CheckpointRepository(),
+        measurements=measurements,
+        checkpoints=checkpoints,
         pillars=PillarRepository(),
         measurement_overalls=MeasurementOverallRepository(),
     )
@@ -68,6 +78,7 @@ def get_admin_student_service() -> AdminStudentService:
         mentors=MentorRepository(),
         students=StudentRepository(),
         enrollments=EnrollmentRepository(),
+        product_assignments=ProductAssignmentRepository(),
         contacts=ContactUserRepository(),
     )
 
@@ -78,7 +89,7 @@ def get_admin_student_link_service() -> AdminStudentLinkService:
         mentors=MentorRepository(),
         students=StudentRepository(),
         enrollments=EnrollmentRepository(),
-        contacts=ContactUserRepository(),
+        product_assignments=ProductAssignmentRepository(),
     )
 
 
@@ -332,6 +343,24 @@ def load_initial_indicators(
     except IndicatorEntityNotFoundError as exc:
         error_code, message = _map_indicator_not_found(exc)
         raise api_error(status_code=status.HTTP_404_NOT_FOUND, code=error_code, message=message) from exc
+    except IndicatorRuntimeDependencyError as exc:
+        raise api_error(
+            status_code=status.HTTP_409_CONFLICT,
+            code="POSTGRES_RUNTIME_UNAVAILABLE",
+            message="Runtime Postgres indisponivel para carga inicial de indicadores.",
+        ) from exc
+    except IndicatorDomainNotReadyError as exc:
+        raise api_error(
+            status_code=status.HTTP_409_CONFLICT,
+            code="POSTGRES_DOMAIN_NOT_READY",
+            message="Dominios Postgres de indicadores ainda nao estao prontos para este fluxo.",
+        ) from exc
+    except IndicatorJsonFallbackForbiddenError as exc:
+        raise api_error(
+            status_code=status.HTTP_409_CONFLICT,
+            code="JSON_FALLBACK_FORBIDDEN",
+            message="Fallback JSON proibido para carga inicial em runtime production-like.",
+        ) from exc
     return IndicatorLoadResult(**result)
 
 

@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "prt_1",
+      "organization_id": "org_1",
+      "name": "Metodo Indicadores",
+      "code": "metodo-indicadores",
+      "metadata": {},
+      "is_active": true
+    }
+  ]
+}

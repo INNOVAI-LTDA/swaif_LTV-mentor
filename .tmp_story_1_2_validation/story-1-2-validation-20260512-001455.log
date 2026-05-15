@@ -1,0 +1,6 @@
+[2026-05-12 00:14:55] [INFO] Validation started.
+[2026-05-12 00:14:55] [INFO] Python found: C:\Python313\python.exe
+[2026-05-12 00:14:55] [INFO] Environment configured.
+[2026-05-12 00:14:55] [INFO] Backend started with PID 16820
+[2026-05-12 00:15:30] [ERROR] Backend did not become ready at http://127.0.0.1:8000
+[2026-05-12 00:15:30] [INFO] Backend stopped (PID 16820).

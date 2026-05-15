@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 from typing import Literal
 
 from pydantic import BaseModel
@@ -15,7 +16,7 @@ class MetricCreate(BaseModel):
     code: str | None = None
     direction: MetricDirection = "higher_better"
     unit: str | None = None
-    scoring_rules: list[dict] | None = None
+    scoring_rules: list[dict[str, Any]] | dict[str, Any] | None = None
     score_type: str | None = None
     min_score: int | None = None
     max_score: int | None = None
@@ -38,7 +39,7 @@ class MetricOut(BaseModel):
     code: str
     direction: MetricDirection
     unit: str | None = None
-    scoring_rules: list[dict]
+    scoring_rules: list[dict[str, Any]] | dict[str, Any]
     score_type: str
     min_score: int
     max_score: int

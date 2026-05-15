@@ -1,0 +1,4 @@
+{
+  "backend/tests/unit/test_indicator_carga_service.py": true,
+  "backend/tests/api/test_admin_indicator_load_api.py": true
+}

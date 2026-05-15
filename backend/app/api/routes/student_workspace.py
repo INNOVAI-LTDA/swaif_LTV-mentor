@@ -19,6 +19,7 @@ from app.storage.measurement_repository import MeasurementRepository
 from app.storage.metric_repository import MetricRepository
 from app.storage.organization_repository import OrganizationRepository
 from app.storage.pillar_repository import PillarRepository
+from app.storage.product_assignment_repository import ProductAssignmentRepository
 from app.storage.protocol_repository import ProtocolRepository
 from app.storage.student_repository import StudentRepository
 
@@ -45,6 +46,7 @@ def get_student_workspace_service() -> StudentWorkspaceService:
         students=students,
         organizations=organizations,
         enrollments=enrollments,
+        product_assignments=ProductAssignmentRepository(),
         metrics=metrics,
         measurements=measurements,
         checkpoints=checkpoints,
@@ -83,7 +85,7 @@ def require_aluno_user(
             message="Token de acesso invalido.",
         )
 
-    if canonicalize_role(str(user.get("role"))) != "aluno":
+    if canonicalize_role(str(user.get("role"))) != "client":
         raise api_error(
             status_code=status.HTTP_403_FORBIDDEN,
             code="AUTH_FORBIDDEN",
@@ -123,7 +125,7 @@ def _raise_student_context_error(exc: StudentContextError) -> None:
             message="Recurso do workspace do aluno nao encontrado.",
         ) from exc
 
-    if detail in {"value below min score", "value above max score"}:
+    if detail in {"value below min score", "value above max score", "measurement value invalid"}:
         raise api_error(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             code="MEASUREMENT_VALUE_INVALID",

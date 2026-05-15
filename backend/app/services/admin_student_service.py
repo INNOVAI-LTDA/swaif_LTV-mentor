@@ -6,6 +6,7 @@ from app.storage.enrollment_repository import EnrollmentRepository
 from app.storage.contact_user_repository import ContactUserRepository
 from app.storage.mentor_repository import MentorRepository
 from app.storage.organization_repository import OrganizationRepository
+from app.storage.product_assignment_repository import ProductAssignmentRepository
 from app.storage.student_repository import StudentRepository
 
 
@@ -29,12 +30,14 @@ class AdminStudentService:
         students: StudentRepository,
         enrollments: EnrollmentRepository,
         contacts: ContactUserRepository,
+        product_assignments: ProductAssignmentRepository | None = None,
     ) -> None:
         self._organizations = organizations
         self._mentors = mentors
         self._students = students
         self._enrollments = enrollments
         self._contacts = contacts
+        self._product_assignments = product_assignments
 
     def _get_active_product(self, product_id: str) -> dict[str, Any]:
         product = self._organizations.get_by_id(product_id)
@@ -104,6 +107,8 @@ class AdminStudentService:
             days_left=0,
             ltv_cents=0,
         )
+        if self._product_assignments is not None:
+            self._product_assignments.upsert_from_enrollment(enrollment)
         try:
             self._contacts.create(
                 id=str(student["id"]),

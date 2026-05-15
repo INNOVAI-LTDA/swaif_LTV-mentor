@@ -33,82 +33,128 @@ The architecture is intentionally narrow:
 - keep writes limited to explicitly approved JSON stores
 - avoid introducing a generic repository-wide importer in final stabilization mode
 
+  - docs/architecture/new_database_architecture.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-05-08.md
+### Requirements Overview
+
+**Functional requirements**
+date: "2026-05-08"
+The solution must allow an admin user to:
+
+completedAt: "2026-05-08"
+scope: "data-ingestion-admin-and-persistence-transition"
+- identify the ingestion origin
+- run a dry-run without persisting business data
+- review a structured preview before confirming the write
+  - docs/architecture/new_database_architecture.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-05-08.md
+- execute the apply step only after explicit confirmation
+- receive an execution identifier and structured result
+# Batch G Data Ingestion and Persistence Transition Architecture
+
+This document supersedes the earlier narrow ingestion-only interpretation.
+
+The approved change proposal reclassifies the work as a major architectural transition. The platform now needs an architecture that explicitly separates:
+
+- the current JSON-backed runtime that still powers the API today
+- the target relational database architecture defined in `docs/architecture/new_database_architecture.md`
+- the migration and coexistence rules required to move between them without violating the frozen v1 API contract
+
+The architecture remains brownfield and stabilization-first. It does not authorize a big-bang rewrite.
+
 ## Project Context Analysis
 
 ### Requirements Overview
 
 **Functional requirements**
 
-The solution must allow an admin user to:
+The revised architecture must support two parallel needs:
 
-- enter the admin surface and access an `Ingestao de Dados` operation
-- identify the ingestion origin
-- run a dry-run without persisting business data
-- review a structured preview before confirming the write
-- execute the apply step only after explicit confirmation
-- receive an execution identifier and structured result
-- preserve enough evidence for support and rollback
+1. keep the current admin/student/mentor platform working on the existing JSON-backed runtime
+2. prepare a controlled migration path toward a relational model with:
+   - organizations
+   - users
+   - products
+   - product pillars
+   - product metrics
+   - enrollments
+
+It must also provide explicit decisions for:
+
+- how current domain entities map to target tables
+- how repository coexistence is handled during transition
+- where metric DSL evolution is allowed and where compatibility must be preserved
+- how backup and rollback work while two persistence models may temporarily coexist
+- what planning artifacts must be updated before epics, stories, and sprint planning continue
 
 **Non-functional requirements**
 
-- preserve the existing admin role boundary on frontend and backend
-- keep the backend error envelope `{ error: { status, code, message, details } }`
-- avoid raw filesystem path exposure in the UI
-- keep writes constrained to approved JSON targets
-- preserve current brownfield conventions: thin FastAPI routes, service-layer business logic, JSON-backed repositories, frontend adapter/service boundaries
-- add nearest-layer tests for preview, apply, backup, audit, and rollback-sensitive behavior
+- preserve the frozen v1 API contract
+- keep FastAPI routes thin and business logic in services
+- keep the current standardized error envelope `{ error: { status, code, message, details } }`
+- avoid simultaneous uncontrolled writers across JSON and relational stores
+- preserve operational recoverability during migration
+- keep frontend DTO expectations stable even when backend canonical storage changes
 
 **Scale and complexity**
 
-- Primary domain: full-stack brownfield admin workflow
-- Complexity level: medium
-- Estimated architectural components: 1 frontend admin panel, 1 backend orchestration service, 1 execution-audit repository, contract/schema extensions, targeted tests
+This is now a major platform refactor with two tracks:
+
+- Track 1: stabilize the current JSON-backed runtime
+- Track 2: design and sequence migration to the relational target model
+
+The complexity is no longer limited to Batch G ingestion. It affects core runtime persistence, domain naming, canonical exports, and route/service/repository boundaries.
 
 ### Technical Constraints and Dependencies
 
-- The current repo already has `/app/admin` behind `RequireAdmin` and backend `require_admin_user`.
-- The current ingestion capability is `POST /admin/alunos/{student_id}/indicadores/carga-inicial`.
-- Current persistence semantics are `replace_for_enrollment(...)` for measurements and checkpoints.
-- Snapshot and restore utilities already exist in `backend/app/operations/storage_maintenance.py`.
-- Frontend integration must continue to use `httpClient`, `AppError`, adapters, and centralized env access.
-- Contract freeze v1 forbids silent breaking changes to existing routes and error payload behavior.
+- The live backend still relies on `JsonRepository` across the primary domain repositories.
+- The route layer currently instantiates those repositories directly in several places.
+- `backend/app/storage/canonical_repositories.py` already provides a partial domain bridge and is the best current seam for coexistence.
+- `backend/app/storage/product_repository.py` is currently an alias over `ProtocolRepository`, which confirms that the product terminology is still transitional in code.
+- `backend/app/operations/storage_maintenance.py` currently backs up and restores JSON stores only.
+- The frozen v1 contract keeps endpoint names and field types stable in the mentoring vocabulary.
+- The new target schema does not yet define relational tables for measurements, checkpoints, or measurement overalls.
 
 ### Cross-Cutting Concerns Identified
 
-- authorization and role gating
-- validation before persistence
-- backup-before-write
-- immutable execution audit
-- rollback procedure
-- frontend safe handling of preview/apply states
-- explicit scope control for allowed JSON targets
+- domain naming drift between current v1 terminology and target relational terminology
+- repository lifecycle drift between file-backed stores and future relational tables
+- rollout safety for score and metric semantics
+- operational recovery when JSON and relational persistence have different backup mechanics
+- compatibility of admin, mentor, student, radar, matrix, and command-center reads
+- migration sequencing for entities that do not yet have target relational tables
 
 ## Starter Template Evaluation
 
 ### Primary Technology Domain
 
-Brownfield full-stack web application on the repo's existing React/Vite frontend and FastAPI/Pydantic backend.
+Brownfield platform transition on the existing stack:
+
+- frontend: React 18 + Vite + TypeScript strict
+- backend: FastAPI + Pydantic v2
+- current persistence: JSON repositories
+- target persistence: relational database architecture compatible with Supabase/Postgres
 
 ### Selected Foundation
 
-No new starter template or stack change is approved for this batch.
+No stack replacement is approved.
 
-**Rationale**
+The selected foundation is a coexistence architecture:
 
-- the repository is already operational and in final stabilization mode
-- the current stack already contains the exact layers needed for this feature
-- introducing a starter, framework migration, or parallel architecture would increase risk without solving a current blocker
+- current runtime remains authoritative on JSON-backed stores until each migration slice is explicitly cut over
+- target relational tables are introduced incrementally behind migration-specific adapters and validation flows
+- canonical domain adapters become the transition seam between current naming and target naming
 
-**Brownfield baseline retained**
+### First Implementation Foundation
 
-- Frontend: React 18 + Vite + TypeScript strict mode
-- Backend: FastAPI + Pydantic + JSON repositories
-- Admin shell and route model: existing `/app/admin` surface
-- Operational snapshot tooling: existing storage maintenance module
+The first implementation priority is not repository replacement. It is baseline stabilization.
 
-**First implementation priority**
+Before any repository cutover:
 
-Implement preview/apply orchestration around the existing indicator load flow before any wider ingestion ambition.
+1. fix current route/service wiring regressions
+2. restore trustworthy API regression signals in the JSON runtime
+3. document domain mapping and migration boundaries
+4. decide the repository coexistence strategy per entity class
 
 ## Core Architectural Decisions
 
@@ -116,498 +162,475 @@ Implement preview/apply orchestration around the existing indicator load flow be
 
 **Critical decisions**
 
-- freeze the MVP scope to indicator ingestion for one selected student enrollment at a time
-- separate preview from apply in the backend contract
-- require backup snapshot before any apply write
-- persist execution audit records
-- preserve current replace-for-enrollment semantics
+- Separate present-state runtime architecture from target-state relational architecture.
+- Keep a single source of truth per migration phase.
+- Use canonical adapters as the transition seam rather than leaking target naming into v1 routes.
+- Preserve v1 route names, response field types, and mentoring vocabulary.
+- Treat measurements, checkpoints, and measurement overalls as unresolved relational targets until explicit table design exists.
+- Preserve JSON snapshot tooling for the JSON runtime and define a separate rollback strategy for relational migrations.
 
 **Important decisions**
 
-- place the new entry inside the existing admin surface instead of creating a new top-level route
-- keep rollback operator-assisted in MVP rather than exposing a UI rollback button
-- introduce forward-compatible source metadata without committing to multi-target file import in this batch
+- Document exact current->target entity mappings.
+- Sequence read migration before write migration where practical.
+- Keep metric DSL evolution behind repository/service boundaries, not in route DTOs or frontend components.
+- Distinguish between platform canonical naming and frozen v1 external naming.
 
 **Deferred decisions**
 
-- generic multi-entity JSON ingestion
-- recurring or scheduled ingestion
-- multi-user concurrent bulk ingestion workflows
-- UI-native rollback execution
-- generic file-upload ingestion beyond the current indicator domain
+- final relational design for measurements and checkpoints
+- final relational design for measurement overalls / derived projections
+- whether relational cutover uses shadow reads, dual-write, or batch reconciliation for late migration phases
+- whether `protocol` remains a persisted concept or is reduced to metadata/versioning inside product/pillar structures
 
 ### Scope Boundary
 
-Batch G does **not** create a generic "write any JSON file" capability.
+This architecture now covers two explicit tracks.
 
-Approved business targets for this batch:
+**Track 1: Current-runtime stabilization**
 
-- `measurements`
-- `checkpoints`
+- current JSON repositories remain authoritative
+- route/service mismatches are fixed
+- API regression is restored
+- Batch G ingestion remains limited to approved JSON targets
 
-Approved operational target for this batch:
+**Track 2: Persistence transition planning**
 
-- `ingestion_executions`
+- target relational tables are treated as the future canonical storage model for the entities they define
+- coexistence rules are documented before implementation
+- migration proceeds entity by entity, not as a platform-wide swap
 
-All other JSON-backed entities remain outside this architecture until explicitly approved in a later artifact.
+This document does not authorize direct replacement of all repositories at once.
 
-### Admin Entry and Frontend Surface
+### Current Runtime Architecture
 
-The feature will live inside the existing `/app/admin` route and `AdminShell`.
+The current runtime remains organized around:
 
-Recommended UI entry:
+- `ClientRepository` for client companies
+- `OrganizationRepository` for mentoria/product-like records scoped to a client
+- `MentorRepository` and `StudentRepository` for role-specific people records
+- `EnrollmentRepository` for mentor/student/product assignment state
+- `ProtocolRepository`, `PillarRepository`, and `MetricRepository` for method configuration
+- `MeasurementRepository`, `CheckpointRepository`, and `MeasurementOverallRepository` for operational metric data and derived views
 
-- add a dedicated admin panel keyed by `panel=ingestao-dados`
-- keep the current student context model: client -> product -> mentor -> student
-- render a dedicated ingestion panel/wizard for the selected student instead of a new top-level route
+Key implications:
 
-This keeps routing centralized, preserves the existing admin shell pattern, and avoids a second admin surface.
+- current runtime naming is historically layered and not yet normalized
+- route handlers and services often depend on concrete repositories directly
+- current backup and restore tooling assumes JSON stores are the authoritative source
 
-### Source Model
+### Target Relational Architecture
 
-The contract will include source metadata from day one, but Batch G will activate only one source mode:
+The target architecture introduces the following relational backbone:
 
-- active in MVP: `manual_assisted`
-- reserved for future expansion: `json_file`
+- `deva_accmed_organizations`
+- `deva_accmed_users`
+- `deva_accmed_products`
+- `deva_accmed_product_pillars`
+- `deva_accmed_product_metrics`
+- `deva_accmed_enrollments`
 
-Required source metadata in MVP:
+Key implications:
 
-- `source_type`
-- `source_label`
+- identity is unified under `users` rather than split mentor/student stores
+- product and product-metric naming becomes canonical in storage
+- enrollments reference provider user, client user, and product explicitly
+- the target schema formalizes product pillars and product metrics but does not yet formalize measures/checkpoints
 
-This satisfies the operational requirement to record origin while keeping the batch aligned to the existing brownfield flow. File upload remains a future extension, not part of this stabilization batch.
+### Domain Mapping Between Current Entities and Target Tables
 
-### Backend Contract
+The migration cannot rely on superficial naming. The correct mapping is:
 
-Use the existing `admin_students.py` route module and extend the current indicator-load namespace with explicit preview/apply endpoints.
+| Current runtime entity | Current meaning in code | Target relational table | Migration note |
+| --- | --- | --- | --- |
+| `ClientRepository` | client company/account | `deva_accmed_organizations` | direct semantic match for company/brand/cnpj/timezone/currency |
+| `OrganizationRepository` | mentoria/product-like unit linked to a client | `deva_accmed_products` | current `organization` name is legacy v1 naming, not target organization semantics |
+| `MentorRepository` | provider person record | `deva_accmed_users` | migrate as `role = provider/mentor` compatible user rows |
+| `StudentRepository` | end-user/client participant record | `deva_accmed_users` | migrate as `role = client_user/student` compatible user rows |
+| `EnrollmentRepository` | assignment between mentor, student, and organization/product | `deva_accmed_enrollments` | rename fields through adapter layer, not public route changes |
+| `ProtocolRepository` | method/version context | no direct target table in supplied schema | remains transitional metadata until target persistence is explicitly designed |
+| `PillarRepository` | pillar scoped by protocol/method | `deva_accmed_product_pillars` | requires protocol->product/method-version mapping during migration |
+| `MetricRepository` | metric scoped by pillar/protocol | `deva_accmed_product_metrics` | metrics migrate only after pillar mapping is stable |
+| `MeasurementRepository` | raw measurement values | no target table yet | keep JSON authoritative until relational schema exists |
+| `CheckpointRepository` | journey checkpoint values | no target table yet | keep JSON authoritative until relational schema exists |
+| `MeasurementOverallRepository` | derived summary/projection | no target table yet | treat as derived read model, not migration-first storage |
+| `ContactUserRepository` | contact metadata | unresolved | decide whether it becomes user metadata or a separate relational model |
 
-Recommended endpoints:
+This mapping is the architectural contract for migration planning.
 
-```txt
-POST /admin/alunos/{student_id}/indicadores/carga-inicial/preview
-POST /admin/alunos/{student_id}/indicadores/carga-inicial/apply
-GET  /admin/ingestoes/{execution_id}
-```
+### Repository Migration and Coexistence Strategy
 
-The existing endpoint:
+#### Guiding rule
 
-```txt
-POST /admin/alunos/{student_id}/indicadores/carga-inicial
-```
+At any point in time, each business entity class has exactly one authoritative write path.
 
-should remain as a compatibility bridge during migration and internally delegate to the new apply orchestration until the frontend is fully moved.
+#### Transition seam
 
-#### Preview request
+The preferred seam is the canonical adapter layer already present in `backend/app/storage/canonical_repositories.py`.
 
-```json
-{
-  "source_type": "manual_assisted",
-  "source_label": "Carga inicial guiada no admin",
-  "duplication_mode": "replace_enrollment",
-  "metric_values": [
-    {
-      "metric_id": "met_123",
-      "value_baseline": 55,
-      "value_current": 68,
-      "value_projected": 75,
-      "improving_trend": true
-    }
-  ],
-  "checkpoints": [
-    {
-      "week": 1,
-      "status": "green",
-      "label": "Inicio consistente"
-    }
-  ]
-}
-```
+That means:
 
-#### Preview response
+- v1 routes continue to consume current mentoring vocabulary DTOs
+- services may call canonical adapters or migration-aware ports internally
+- target relational naming must not leak directly into frozen v1 route contracts
 
-```json
-{
-  "execution_id": "ing_preview_001",
-  "student_id": "std_1",
-  "enrollment_id": "enr_1",
-  "mode": "preview",
-  "status": "previewed",
-  "summary": {
-    "received_metric_rows": 1,
-    "received_checkpoint_rows": 1,
-    "valid_metric_rows": 1,
-    "valid_checkpoint_rows": 1,
-    "rejected_rows": 0,
-    "conflict_count": 0,
-    "will_replace_measurements": 3,
-    "will_replace_checkpoints": 2
-  },
-  "affected_stores": ["measurements", "checkpoints"],
-  "conflicts": [],
-  "rejections": []
-}
-```
+#### Migration phases
 
-#### Apply request
+**Phase 0: Stabilize current JSON runtime**
 
-```json
-{
-  "preview_execution_id": "ing_preview_001",
-  "confirm": true
-}
-```
+- fix route/service wiring problems
+- run current API regression suite
+- keep JSON as the only writer
 
-#### Apply response
+**Phase 1: Mapping and export validation**
 
-```json
-{
-  "execution_id": "ing_apply_001",
-  "preview_execution_id": "ing_preview_001",
-  "student_id": "std_1",
-  "enrollment_id": "enr_1",
-  "mode": "apply",
-  "status": "applied",
-  "measurement_count": 1,
-  "checkpoint_count": 1,
-  "affected_stores": ["measurements", "checkpoints"],
-  "backup_ref": "snapshot-20260330T000000Z"
-}
-```
+- harden canonical export/mapping logic for products, users, pillars, metrics, and enrollments
+- validate that JSON data can be transformed to the target table shape deterministically
+- no relational writes required for production traffic yet
 
-### Validation and Duplication Policy
+**Phase 2: Relational mirror for entities with direct target tables**
 
-Batch G freezes the duplication behavior to:
+- add relational repositories for organizations, users, products, product pillars, product metrics, and enrollments
+- populate them through controlled migration/import jobs
+- keep JSON authoritative for runtime writes until validation is complete
 
-- `duplication_mode = replace_enrollment`
+**Phase 3: Shadow-read validation**
 
-This is an explicit continuation of current repository behavior and not a new merge strategy.
+- compare relational reads against JSON/canonical outputs for selected admin surfaces
+- verify semantic parity before route/service cutover
 
-Preview must validate at least:
+**Phase 4: Controlled cutover per entity slice**
 
-- student exists
-- active enrollment exists for the selected student
-- every metric exists and is active
-- metrics are valid for the selected product context
-- checkpoint fields are valid
-- payload shape is complete enough for apply
-- counts of existing measurement/checkpoint rows that will be replaced
+- switch one entity slice at a time behind service/repository boundaries
+- preserve external v1 DTOs and endpoint names
+- only cut over entities whose target relational schema is complete
 
-Apply must reject when:
+**Phase 5: Post-schema expansion for measures/checkpoints**
 
-- the preview execution does not exist
-- the preview execution is not in `previewed` status
-- the apply request references a different student than the preview
-- the preview payload has expired or was invalidated by an earlier apply
+- measurements, checkpoints, and derived overalls remain on JSON until their target relational design exists
+- do not force them into the current relational schema by overloading existing tables
 
-### Orchestration and Audit
+#### Explicit non-decision
 
-Introduce a dedicated backend orchestration service:
+This architecture does not approve unrestricted dual-write.
 
-- `backend/app/services/admin_indicator_ingestion_service.py`
+Dual-write is deferred unless the team later defines:
 
-Responsibilities:
+- idempotency guarantees
+- reconciliation jobs
+- drift detection
+- rollback rules for divergent writes
 
-- normalize and validate preview input
-- persist preview execution records
-- create pre-apply backup snapshot
-- call measurement/checkpoint repositories with current replace semantics
-- persist final execution result
-- trigger restore on post-snapshot apply failure
+### API Compatibility Boundaries Under Frozen v1
 
-Introduce a dedicated JSON-backed execution repository:
+The frozen v1 contract remains the boundary for all current frontend-facing APIs.
 
-- `backend/app/storage/ingestion_execution_repository.py`
+**Must remain stable**
 
-Each execution record should capture:
+- endpoint paths and HTTP methods
+- current mentoring vocabulary in route names and public error semantics
+- field presence and field types in existing response DTOs
+- standardized error envelope
 
-- `id`
-- `student_id`
-- `enrollment_id`
-- `requested_at`
-- `performed_by`
-- `mode`
-- `status`
-- `source_type`
-- `source_label`
-- `duplication_mode`
-- normalized payload summary
-- `total_received`
-- `total_valid`
-- `total_applied`
-- `total_rejected`
-- `conflicts`
-- `rejections`
-- `affected_stores`
-- `backup_ref`
-- internal `snapshot_dir` for operator use only
-- `rollback_status`
-- `error_code`
-- `error_message`
+**May change internally**
+
+- repository implementation behind services
+- canonical entity names used inside migration adapters
+- persistence source for a route, if output shape and semantics remain compatible
+
+**Must not happen during migration**
+
+- exposing `product_id`, `provider_user_id`, or `client_user_id` directly as replacements for v1 public fields without versioning
+- renaming `organization_id` / `protocol_id` fields in v1 payloads
+- pushing target naming changes into frontend components as an ad hoc migration shortcut
+
+### Metric DSL Architecture Boundary
+
+Metric DSL evolution is now part of the persistence transition architecture.
+
+Rules:
+
+- target DSL semantics live behind metric repository and score service boundaries
+- frontend remains insulated by current backend payload contracts
+- metric configuration migration must preserve existing score behavior for current metrics unless intentionally versioned
+- descriptive labels must not become canonical logical keys in the new model
+
+The implemented v2 scoring direction is compatible with this architecture, but it is not enough on its own to define repository migration.
 
 ### Backup and Rollback
 
-Apply must create a backup snapshot before touching measurements or checkpoints.
+Current JSON runtime rollback remains implemented by `backend/app/operations/storage_maintenance.py` and is valid only for JSON-backed stores.
 
-Implementation rule:
+Therefore:
 
-1. load approved preview execution
-2. acquire storage IO lock
-3. create snapshot using existing `storage_maintenance.create_backup_snapshot(...)`
-4. write measurements and checkpoints
-5. persist apply execution result
-6. on post-snapshot failure, call `restore_backup_snapshot(...)`
-7. mark execution as `rolled_back` or `rollback_failed`
+- JSON-backed flows keep backup-before-write and restore semantics through the existing snapshot tooling
+- relational migration flows require a separate backup/rollback discipline, such as:
+  - transactional SQL migration scripts where possible
+  - database snapshots or export bundles for data migrations
+  - migration run manifests with row counts and reconciliation outputs
 
-Rollback in MVP is operator-assisted, not user-driven in the UI.
+Architectural rule:
 
-Documented rollback path:
+- JSON snapshot restore must never be described as sufficient rollback for relational state
+- relational cutover steps must define their own restore point before execution
 
-- operator locates execution by `execution_id`
-- operator reads the internal snapshot reference from the audit store
-- operator executes the documented restore command
-- operator records the rollback outcome back into the execution log
+### Validation and Sequencing Policy
 
-### Error Handling
+Before any relational cutover begins:
 
-API failures must continue to use the standard envelope:
+1. current JSON-backed API regression must be green
+2. entity mapping rules must be documented and testable
+3. canonical export outputs must be verifiable against target schema expectations
+4. backup and rollback procedures for the relevant persistence slice must be approved
 
-```json
-{
-  "error": {
-    "status": 409,
-    "code": "INGESTAO_CONFLICT",
-    "message": "A carga nao pode ser aplicada neste estado.",
-    "details": null
-  }
-}
-```
+### Frontend and Operational Implications
 
-Target failure classes:
+Frontend remains aligned to v1 route families and adapters.
 
-- `401` missing or invalid token
-- `403` non-admin access
-- `404` student, enrollment, metric, or execution not found
-- `409` invalid state transition, preview already applied, or restore conflict
-- `422` invalid preview/apply payload
+Operational implications:
 
-### Frontend Architecture
-
-Frontend must follow the existing layered integration pattern:
-
-- component/panel
-- domain service
-- shared `httpClient`
-- adapter from API DTO to frontend domain
-
-Recommended additions:
-
-- `frontend/src/contracts/adminDataIngestion.ts`
-- `frontend/src/domain/adapters/adminDataIngestionAdapter.ts`
-- `frontend/src/domain/services/adminDataIngestionService.ts`
-- `frontend/src/features/admin/components/AdminDataIngestionPanel.tsx`
-
-Frontend rules for this feature:
-
-- no raw API payload binding in React state
-- no direct `import.meta.env` reads
-- no fetch details in page JSX
-- all API failures normalize through existing `AppError`
-- copy remains in Portuguese
-- UI shows intro -> edit -> preview -> apply result states
-
-The current `AdminPage.tsx` can host the panel entry and current selected student context without a route redesign.
+- admin ingestion in Batch G still writes only approved JSON targets in the current runtime
+- command center, radar, matrix, and student workspace remain consumers of the current service contracts until cutover per slice is validated
+- operator runbooks must eventually distinguish JSON recovery flows from relational recovery flows
 
 ## Implementation Patterns and Consistency Rules
 
 ### Naming Patterns
 
-**Backend**
-
-- route paths remain in existing Portuguese admin namespace
-- request/response schema fields remain `snake_case`
-- execution repository file and service names remain explicit: `ingestion_execution`, `indicator_ingestion`
-
-**Frontend**
-
-- contracts and services use `adminDataIngestion*`
-- UI-facing domain fields may use `camelCase`
-- normalization from backend `snake_case` to frontend `camelCase` belongs in adapters, never in components
+- External v1 API naming remains `mentor`, `aluno`, `mentoria`, `metodo`.
+- Internal canonical naming may use `product`, `provider`, `end_user`, and `assignment`.
+- Relational storage naming follows the new table semantics.
+- Route DTOs must not expose internal canonical renames unless a new contract version is created.
 
 ### Structure Patterns
 
-- keep FastAPI route handlers thin inside `backend/app/api/routes/admin_students.py`
-- put orchestration rules in `backend/app/services/admin_indicator_ingestion_service.py`
-- keep JSON store read/write details inside repositories under `backend/app/storage`
-- keep frontend feature code under `frontend/src/features/admin`
-- keep API services under `frontend/src/domain/services`
-- keep frontend tests under `frontend/src/test`
-- keep backend tests split by `unit`, `api`, and `integration`
-
-### Format Patterns
-
-- preview/apply success payloads use direct JSON responses
-- errors always use the standard envelope
-- timestamps use ISO-8601 strings in UTC
-- `affected_stores` uses explicit stable store names, not filesystem paths
-- `backup_ref` is opaque and safe for UI display
+- routes call services
+- services depend on repositories or canonical adapters
+- repositories own persistence mechanics
+- migration jobs and reconciliation scripts live outside route handlers
+- current JSON repositories and future relational repositories must both be hidden behind service-level orchestration
 
 ### Communication Patterns
 
-- preview writes only the execution log, never business stores
-- apply consumes a preview execution ID instead of trusting a second ad hoc payload
-- UI confirmation is not the safeguard by itself; backend preview/apply state is the safeguard
+- current runtime routes continue using existing service signatures until refactor slices are ready
+- migration-specific transforms happen in canonical adapters or dedicated migration services
+- reconciliation outputs must be explicit artifacts, not implicit assumptions from successful inserts
 
-### Process Patterns
+### Migration Rules
 
-- every apply begins from a valid preview execution
-- every apply records `performed_by`
-- every apply creates backup before touching business stores
-- every post-snapshot failure attempts restore
-- every rollback outcome is recorded in the execution log
+- one authoritative writer per entity per phase
+- no silent route contract changes during migration
+- no direct frontend dependency on target relational naming
+- no migration of measurements/checkpoints into undefined relational destinations
 
 ### Enforcement Guidelines
 
-All AI agents must:
-
-- keep allowed write targets limited to measurements, checkpoints, and ingestion_executions
-- preserve replace-for-enrollment semantics unless a later approved architecture changes it
-- avoid exposing server paths in any UI response or copy
-- extend the nearest existing admin modules instead of introducing a parallel ingestion subsystem
+- every repository swap requires nearest-layer tests plus route-level regression for affected surfaces
+- every relational migration step requires a documented rollback point
+- every changed artifact that affects implementation sequencing must be updated before sprint planning resumes
 
 ## Project Structure and Boundaries
 
 ### Scoped Project Directory Structure
 
 ```txt
-_bmad-output/
-  planning-artifacts/
-    batch-g-data-ingestion-admin-architecture.md
-
-frontend/
-  src/
-    contracts/
-      adminDataIngestion.ts
-    domain/
-      adapters/
-        adminDataIngestionAdapter.ts
+repo/
+  backend/
+    app/
+      api/
+        routes/
+          admin_students.py
+          admin_metrics.py
+          student_workspace.py
+          mentor.py
       services/
-        adminDataIngestionService.ts
-    features/
-      admin/
-        components/
-          AdminDataIngestionPanel.tsx
-        pages/
-          AdminPage.tsx
-    test/
-      admin-data-ingestion-panel.test.tsx
-      admin-client-modal.test.tsx
-
-backend/
-  app/
-    api/
-      routes/
-        admin_students.py
-    schemas/
-      indicator_load.py
-    services/
-      admin_indicator_ingestion_service.py
-      indicator_carga_service.py
-    storage/
-      ingestion_execution_repository.py
-      measurement_repository.py
-      checkpoint_repository.py
-    operations/
-      storage_maintenance.py
-  tests/
-    api/
-      test_admin_indicator_ingestion_api.py
-    unit/
-      test_admin_indicator_ingestion_service.py
-    integration/
-      test_admin_indicator_ingestion_storage.py
-
-docs/
-  mvp-mentoria/
-    data-ingestion-admin-operations.md
+        metric_score_service.py
+        student_workspace_service.py
+        indicator_carga_service.py
+        admin_metric_service.py
+        method_config_service.py
+        student_vinculo_service.py
+      storage/
+        json_repository.py
+        canonical_repositories.py
+        client_repository.py
+        organization_repository.py
+        protocol_repository.py
+        pillar_repository.py
+        metric_repository.py
+        mentor_repository.py
+        student_repository.py
+        enrollment_repository.py
+        measurement_repository.py
+        checkpoint_repository.py
+        measurement_overall_repository.py
+        relational/
+          organizations_repository.py
+          users_repository.py
+          products_repository.py
+          product_pillars_repository.py
+          product_metrics_repository.py
+          enrollments_repository.py
+      operations/
+        storage_maintenance.py
+        export_canonical_data.py
+        migration/
+          export_current_runtime.py
+          import_relational_seed.py
+          reconcile_runtime_vs_relational.py
+    tests/
+      api/
+      integration/
+      unit/
+      e2e/
+  docs/
+    architecture/
+      platform_architecture_operational_model.md
+      new_database_architecture.md
+    mvp-mentoria/
+      contracts-freeze-v1.md
+      frontend-integration-architecture.md
+      backend-test-strategy.md
+  _bmad-output/
+    planning-artifacts/
+      sprint-change-proposal-2026-05-08.md
+      batch-g-data-ingestion-admin-architecture.md
+      batch-g-data-ingestion-admin-epics-and-stories.md
 ```
 
 ### Architectural Boundaries
 
-**Frontend boundary**
+**Current-runtime boundary**
 
-- `AdminPage.tsx` owns panel selection and shell integration
-- `AdminDataIngestionPanel.tsx` owns the wizard state only
-- `adminDataIngestionService.ts` owns HTTP calls
-- adapter owns DTO-to-domain normalization
+- JSON repositories remain the runtime persistence implementation until a slice is cut over
 
-**Backend boundary**
+**Canonical boundary**
 
-- `admin_students.py` owns HTTP routing and error mapping
-- `admin_indicator_ingestion_service.py` owns preview/apply orchestration
-- `indicator_carga_service.py` remains the existing domain helper for student/enrollment/metric context and read-model behavior
-- repositories own JSON persistence
-- `storage_maintenance.py` remains the backup/restore implementation
+- canonical repositories translate legacy runtime entities into product/provider/end-user abstractions used for migration planning
 
-**Data boundary**
+**Relational boundary**
 
-- business writes: `measurements`, `checkpoints`
-- operational writes: `ingestion_executions`
-- snapshots cover the current registered JSON storage set through the existing snapshot module
+- future relational repositories must align exactly to the new schema and remain hidden behind services or migration operations until validated
+
+**Contract boundary**
+
+- frozen v1 routes remain stable regardless of internal storage evolution
 
 ### Requirements-to-Structure Mapping
 
-**Admin-only entry**
+- Current API stabilization: route files, affected services, existing JSON repositories, API tests, E2E smoke tests
+- Domain mapping and coexistence: `canonical_repositories.py`, migration operations, architecture artifacts, reconciliation tests
+- Metric DSL evolution: `metric_score_service.py`, `metric_repository.py`, method/admin metric services, metric tests
+- Backup/rollback split: `storage_maintenance.py` for JSON, new relational migration runbooks/scripts for relational phases
 
-- frontend `AdminPage.tsx`
-- existing `/app/admin` route and `RequireAdmin`
-- backend `require_admin_user`
+### Required Artifact Updates Before Epics, Stories, and Sprint Planning Continue
 
-**Dry-run and preview**
+The following artifacts must be updated or confirmed before implementation planning resumes:
 
-- frontend `AdminDataIngestionPanel.tsx`
-- backend `admin_students.py`
-- backend `admin_indicator_ingestion_service.py`
-- backend `ingestion_execution_repository.py`
-
-**Apply with backup**
-
-- backend `admin_indicator_ingestion_service.py`
-- backend `storage_maintenance.py`
-- backend `measurement_repository.py`
-- backend `checkpoint_repository.py`
-
-**Audit and rollback**
-
-- backend `ingestion_execution_repository.py`
-- docs `data-ingestion-admin-operations.md`
-
-**Coverage**
-
-- frontend tests for panel flow
-- backend API tests for preview/apply envelopes and permissions
-- backend unit/integration tests for backup, write, and restore behavior
+1. `docs/architecture/new_database_architecture.md`
+   - must remain the target-state relational reference
+2. `_bmad-output/planning-artifacts/batch-g-data-ingestion-admin-architecture.md`
+   - now serves as the transition architecture between current and target states
+3. `docs/mvp-mentoria/frontend-integration-architecture.md`
+   - must add semantic compatibility guidance for persistence/domain migration
+4. `docs/mvp-mentoria/backend-test-strategy.md`
+   - must add coexistence, mapping, rollback, and cutover validation gates
+5. `_bmad-output/planning-artifacts/batch-g-data-ingestion-admin-epics-and-stories.md`
+   - must split stabilization work from migration-planning work
+6. sprint planning inputs
+   - must not assume feature expansion continues before architecture and migration boundaries are accepted
 
 ## Architecture Validation Results
 
 ### Coherence Validation
 
-The architecture is coherent with the current repository because it:
+The revised architecture is coherent because it stops mixing present-state and target-state assumptions.
 
-- reuses the existing admin route and auth boundary
-- preserves current measurement/checkpoint replace semantics
-- routes backup and restore through the existing operations module
-- keeps frontend integration inside the current service/adapter/httpClient model
-- does not introduce any new persistence technology or parallel admin surface
+- current JSON runtime concerns stay in Track 1
+- target relational persistence concerns stay in Track 2
+- canonical adapters provide a valid transition seam already grounded in the codebase
+- frozen v1 compatibility remains the outer contract boundary
 
 ### Requirements Coverage Validation
 
-The architecture covers the requested Batch G outcomes:
+This architecture covers the requested revision scope:
 
-- admin-only access: covered
-- dedicated admin entry for ingestion: covered
-- dry-run without business persistence: covered
-- preview summary before apply: covered
-- explicit confirmation and apply: covered
+- current JSON-backed runtime and target relational runtime are explicitly separated
+- current entities are mapped to target tables with unresolved gaps called out
+- repository migration and coexistence strategy is defined by phase
+- API compatibility boundaries are stated under the frozen v1 contract
+- backup and rollback are split correctly by persistence model
+- artifact updates required before planning resumes are listed explicitly
+
+### Implementation Readiness Validation
+
+The architecture is ready for planning and sequencing, but not yet for unconstrained implementation.
+
+Ready now:
+
+- current-runtime stabilization work
+- mapping and export validation work
+- planning/artifact updates
+
+Not ready yet:
+
+- full repository cutover
+- measurement/checkpoint migration
+- public API contract rename or vocabulary change
+
+### Gap Analysis
+
+**Critical gaps**
+
+- no target relational tables yet for measurements, checkpoints, and measurement overalls
+- no approved relational rollback runbook yet
+- current route/service wiring still has known defects that block trustworthy regression
+
+**Important gaps**
+
+- explicit decision needed for `ContactUserRepository`
+- explicit decision needed for whether `ProtocolRepository` survives as persisted method-version state
+- relational repository interfaces are not yet defined in code
+
+**Nice-to-have gaps**
+
+- automated reconciliation reports between canonical JSON export and relational mirror
+- shadow-read diagnostics for admin surfaces before cutover
+
+### Architecture Readiness Assessment
+
+**Overall Status:** READY FOR REPLANNING AND STABILIZATION, NOT READY FOR FULL PERSISTENCE CUTOVER
+
+This architecture is sufficient to:
+
+- guide the next planning updates
+- anchor entity mapping decisions
+- prevent accidental contract drift during migration
+
+It is intentionally not a green light for broad implementation against the target relational model until the missing slices are designed.
+
+### Implementation Handoff
+
+**Development**
+
+- restore current runtime stability first
+- implement mapping/export validation next
+- keep repository cutover behind service boundaries and migration scripts
+
+**Architecture / Product**
+
+- approve unresolved mappings and target-state gaps
+- decide measurement/checkpoint relational design before those slices migrate
+
+**QA**
+
+- preserve current-runtime API regression as the baseline gate
+- add migration-sensitive tests before any slice cutover
+
+**Planning**
+
+- update epics and stories to split stabilization from migration
+- do not advance sprint planning on hidden assumptions about storage cutover
 - backup before write: covered
 - structured result and execution identifier: covered
 - audit trail: covered

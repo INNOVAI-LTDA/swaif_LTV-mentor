@@ -34,7 +34,7 @@ class AdminMentorService:
             for item in self._mentors.list_by_organization(product["id"])
             if bool(item.get("is_active", True))
         ]
-        if not items:
+        if not items and str(product.get("mentor_id") or ""):
             contacts = [item for item in self._contacts.list_items() if str(item.get("role") or "") == "mentor" and bool(item.get("is_active", True)) and str(item.get("organization_id") or "") == product["id"]]
             items = contacts
         return sorted(items, key=lambda item: (str(item.get("full_name") or "").lower(), str(item.get("email") or "").lower()))

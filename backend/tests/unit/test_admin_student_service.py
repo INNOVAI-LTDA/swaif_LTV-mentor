@@ -75,12 +75,31 @@ class _FakeEnrollmentRepository:
         return [item for item in self.items if item["mentor_id"] == mentor_id]
 
 
+class _FakeContactUserRepository:
+    def __init__(self) -> None:
+        self.items: list[dict] = []
+
+    def create(self, **payload) -> dict:
+        self.items.append(payload)
+        return payload
+
+
+class _FakeProductAssignmentRepository:
+    def __init__(self) -> None:
+        self.upsert_calls: list[dict] = []
+
+    def upsert_from_enrollment(self, enrollment: dict) -> dict:
+        self.upsert_calls.append(enrollment)
+        return {"assignment_id": enrollment["id"]}
+
+
 def test_service_creates_student_linked_to_mentor_and_product() -> None:
     service = AdminStudentService(
         organizations=_FakeOrganizationRepository(),
         mentors=_FakeMentorRepository(),
         students=_FakeStudentRepository(),
         enrollments=_FakeEnrollmentRepository(),
+        contacts=_FakeContactUserRepository(),
     )
 
     created = service.create_student(
@@ -101,6 +120,7 @@ def test_service_rejects_blank_required_fields() -> None:
         mentors=_FakeMentorRepository(),
         students=_FakeStudentRepository(),
         enrollments=_FakeEnrollmentRepository(),
+        contacts=_FakeContactUserRepository(),
     )
 
     try:
@@ -117,6 +137,7 @@ def test_service_requires_existing_mentor() -> None:
         mentors=_FakeMentorRepository(),
         students=_FakeStudentRepository(),
         enrollments=_FakeEnrollmentRepository(),
+        contacts=_FakeContactUserRepository(),
     )
 
     try:
@@ -135,6 +156,7 @@ def test_service_requires_mentor_linked_to_product() -> None:
         mentors=mentors,
         students=_FakeStudentRepository(),
         enrollments=_FakeEnrollmentRepository(),
+        contacts=_FakeContactUserRepository(),
     )
 
     try:
@@ -165,6 +187,7 @@ def test_service_lists_legacy_students_without_mentor_id_for_primary_mentor() ->
         mentors=_FakeMentorRepository(),
         students=students,
         enrollments=enrollments,
+        contacts=_FakeContactUserRepository(),
     )
 
     items = service.list_students_by_mentor("mtr_1")
@@ -173,3 +196,26 @@ def test_service_lists_legacy_students_without_mentor_id_for_primary_mentor() ->
     assert items[0]["id"] == created_student["id"]
     assert items[0]["organization_id"] == "org_1"
     assert items[0]["enrollment_id"] == "enr_legacy"
+
+
+def test_service_syncs_product_assignment_on_student_create() -> None:
+    product_assignments = _FakeProductAssignmentRepository()
+    service = AdminStudentService(
+        organizations=_FakeOrganizationRepository(),
+        mentors=_FakeMentorRepository(),
+        students=_FakeStudentRepository(),
+        enrollments=_FakeEnrollmentRepository(),
+        contacts=_FakeContactUserRepository(),
+        product_assignments=product_assignments,
+    )
+
+    created = service.create_student(
+        mentor_id="mtr_1",
+        full_name="Aluno Assignment",
+        cpf="11122233344",
+        email="assignment@swaif.local",
+    )
+
+    assert created["enrollment_id"].startswith("enr_")
+    assert len(product_assignments.upsert_calls) == 1
+    assert product_assignments.upsert_calls[0]["id"] == created["enrollment_id"]

@@ -13,10 +13,21 @@ class _FakeStudentRepository:
     def get_by_id(self, student_id: str):
         return self.items.get(student_id)
 
+    def list_students(self):
+        return list(self.items.values())
+
 
 class _FakeOrganizationRepository:
+    def __init__(self) -> None:
+        self.items = {
+            "org_1": {"id": "org_1", "name": "Mentoria Matrix"}
+        }
+
     def get_by_id(self, organization_id: str):
-        return {"id": organization_id, "name": "Mentoria Matrix"}
+        return self.items.get(organization_id)
+
+    def list_organizations(self):
+        return list(self.items.values())
 
 
 class _FakeEnrollmentRepository:
@@ -65,7 +76,7 @@ class _FakeEnrollmentRepository:
                 "day": 80,
                 "total_days": 100,
                 "days_left": 20,
-                "engagement_score": 0.65,
+                "engagement_score": 0.75,
                 "progress_score": 0.8,
                 "ltv_cents": 30000,
                 "is_active": True,
@@ -92,13 +103,28 @@ class _FakeMetricRepository:
     def get_by_id(self, metric_id: str):
         return self.items.get(metric_id)
 
+    def list_metrics(self):
+        return list(self.items.values())
+
 
 class _FakeMeasurementRepository:
-    def list_by_enrollment(self, enrollment_id: str):
-        return [
-            {"id": f"mea_{enrollment_id}_1", "metric_id": "met_1", "value_current": 60, "value_baseline": 50, "value_projected": 70, "improving_trend": True},
-            {"id": f"mea_{enrollment_id}_2", "metric_id": "met_2", "value_current": 40, "value_baseline": 30, "value_projected": None, "improving_trend": False},
+    def __init__(self) -> None:
+        self.items = [
+            {"id": "mea_enr_1_1", "enrollment_id": "enr_1", "metric_id": "met_1", "value_current": 60, "value_baseline": 50, "value_projected": 70, "improving_trend": True},
+            {"id": "mea_enr_1_2", "enrollment_id": "enr_1", "metric_id": "met_2", "value_current": 40, "value_baseline": 30, "value_projected": None, "improving_trend": False},
+            {"id": "mea_enr_2_1", "enrollment_id": "enr_2", "metric_id": "met_1", "value_current": 60, "value_baseline": 50, "value_projected": 70, "improving_trend": True},
+            {"id": "mea_enr_2_2", "enrollment_id": "enr_2", "metric_id": "met_2", "value_current": 40, "value_baseline": 30, "value_projected": None, "improving_trend": False},
+            {"id": "mea_enr_3_1", "enrollment_id": "enr_3", "metric_id": "met_1", "value_current": 60, "value_baseline": 50, "value_projected": 70, "improving_trend": True},
+            {"id": "mea_enr_3_2", "enrollment_id": "enr_3", "metric_id": "met_2", "value_current": 40, "value_baseline": 30, "value_projected": None, "improving_trend": False},
+            {"id": "mea_enr_4_1", "enrollment_id": "enr_4", "metric_id": "met_1", "value_current": 60, "value_baseline": 50, "value_projected": 70, "improving_trend": True},
+            {"id": "mea_enr_4_2", "enrollment_id": "enr_4", "metric_id": "met_2", "value_current": 40, "value_baseline": 30, "value_projected": None, "improving_trend": False},
         ]
+
+    def list_by_enrollment(self, enrollment_id: str):
+        return [item for item in self.items if item["enrollment_id"] == enrollment_id]
+
+    def list_measurements(self):
+        return list(self.items)
 
     def replace_for_enrollment(self, enrollment_id: str, rows: list[dict]):
         return rows
@@ -152,7 +178,7 @@ def test_matrix_kpis_and_fields() -> None:
     assert kpis["totalLTV"] == 250000
     assert kpis["criticalRenewals"] == 2
     assert kpis["rescueCount"] == 1
-    assert kpis["avgEngagement"] == 55.0
+    assert kpis["avgEngagement"] == 57.5
 
 
 def test_matrix_filters() -> None:

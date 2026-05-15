@@ -17,6 +17,7 @@ from app.storage.metric_repository import MetricRepository
 from app.storage.pillar_repository import PillarRepository
 from app.storage.student_repository import StudentRepository
 from app.services.indicator_carga_service import IndicatorCargaService, EntityNotFoundError as IndicatorEntityNotFoundError
+from app.services.metric_score_service import ScoreCalculationError, calculate_metric_score
 
 
 class StudentContextError(Exception):
@@ -58,7 +59,7 @@ class StudentWorkspaceService:
         return round(math.exp(log_sum / len(non_negative)), 6)
 
     def resolve_student_context(self, *, user: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
-        if canonicalize_role(str(user.get("role"))) != "aluno":
+        if canonicalize_role(str(user.get("role"))) != "client":
             raise StudentContextError("student role required")
 
         explicit_student_id = str(user.get("student_id") or "")
@@ -201,12 +202,10 @@ class StudentWorkspaceService:
         if not metric:
             raise StudentContextError("measurement metric not found")
 
-        min_score = metric.get("min_score")
-        max_score = metric.get("max_score")
-        if min_score is not None and float(value_current) < float(min_score):
-            raise StudentContextError("value below min score")
-        if max_score is not None and float(value_current) > float(max_score):
-            raise StudentContextError("value above max score")
+        try:
+            calculate_metric_score(metric, value_current)
+        except ScoreCalculationError as exc:
+            raise StudentContextError("measurement value invalid") from exc
 
         updated = self._measurements.update_value_current(measurement_id=measurement_id, value_current=value_current)
         existing_overall = self._measurement_overalls.get_by_enrollment(enrollment_id=enrollment_id)
@@ -246,11 +245,38 @@ class StudentWorkspaceService:
         for measurement in measurements:
             metric_id = str(measurement.get("metric_id") or "")
             metric_row = metric_values_by_id.get(metric_id)
-            if not metric_row:
+            metric = metrics_by_id.get(metric_id)
+            if not metric_row or not metric:
                 continue
-            values = metric_row.get("values") if isinstance(metric_row.get("values"), dict) else {}
-            values["real"] = float(measurement.get("value_current") or 0)
-            metric_row["values"] = values
+            projected_raw = measurement.get("value_projected")
+            projected_input = measurement.get("value_current") if projected_raw is None else projected_raw
+            try:
+                baseline_score = calculate_metric_score(metric, measurement.get("value_baseline"))
+                current_score = calculate_metric_score(metric, measurement.get("value_current"))
+                projected_score = calculate_metric_score(metric, projected_input)
+                scoring_rules = metric.get("scoring_rules") if isinstance(metric.get("scoring_rules"), dict) else {}
+                scoring = scoring_rules.get("scoring") if isinstance(scoring_rules.get("scoring"), dict) else {}
+                rules = scoring.get("rules") if isinstance(scoring.get("rules"), list) else None
+                has_degenerate_rules = rules is not None and len(rules) == 0
+
+                if has_degenerate_rules and current_score.normalized_score == 0.0 and baseline_score.normalized_score == 0.0:
+                    metric_row["values"] = {
+                        "goal": float(projected_input or 0.0),
+                        "base": float(measurement.get("value_baseline") or 0.0),
+                        "real": float(measurement.get("value_current") or 0.0),
+                    }
+                else:
+                    metric_row["values"] = {
+                        "goal": float(projected_score.normalized_score),
+                        "base": float(baseline_score.normalized_score),
+                        "real": float(current_score.normalized_score),
+                    }
+            except ScoreCalculationError:
+                metric_row["values"] = {
+                    "goal": float(projected_input or 0.0),
+                    "base": float(measurement.get("value_baseline") or 0.0),
+                    "real": float(measurement.get("value_current") or 0.0),
+                }
 
         affected_metric_values: list[dict[str, float]] = []
         for metric_id, metric_row in metric_values_by_id.items():

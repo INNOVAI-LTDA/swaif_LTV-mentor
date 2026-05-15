@@ -18,6 +18,22 @@ def _slugify(value: str) -> str:
     return "-".join(value.strip().lower().split())
 
 
+def _default_scoring_rules_v2() -> dict[str, Any]:
+    return {
+        "version": 2,
+        "input": {"kind": "number"},
+        "scoring": {
+            "mode": "first_match",
+            "rules": [],
+            "fallback": {"assign": 0},
+        },
+        "normalization": {
+            "basis": "max_score",
+            "value": 1,
+        },
+    }
+
+
 class MetricRepository:
     def update(self, **kwargs) -> dict[str, Any]:
         metric_id = kwargs.get("id")
@@ -71,7 +87,7 @@ class MetricRepository:
         code: str | None = None,
         direction: str = "higher_better",
         unit: str | None = None,
-        scoring_rules: list[dict] | None = None,
+        scoring_rules: list[dict[str, Any]] | dict[str, Any] | None = None,
         score_type: str | None = None,
         min_score: int | None = None,
         max_score: int | None = None,
@@ -92,12 +108,12 @@ class MetricRepository:
             "code": final_code,
             "direction": direction,
             "unit": unit,
-            "scoring_rules": scoring_rules or [],
-            "score_type": score_type,
-            "min_score": min_score,
-            "max_score": max_score,
-            "mcv_score": mcv_score,
-            "max_basis_score": max_basis_score,
+            "scoring_rules": _default_scoring_rules_v2() if scoring_rules is None else scoring_rules,
+            "score_type": score_type or "static",
+            "min_score": 0 if min_score is None else min_score,
+            "max_score": 1 if max_score is None else max_score,
+            "mcv_score": 1 if mcv_score is None else mcv_score,
+            "max_basis_score": max_basis_score or "MAX_VALUE",
             "is_active": True,
         }
         items.append(metric)

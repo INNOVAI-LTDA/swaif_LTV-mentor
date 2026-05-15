@@ -106,6 +106,27 @@ def get_storage_backup_dir() -> Path:
     return Path(__file__).resolve().parents[2] / "backups"
 
 
+def supabase_sync_on_startup_enabled() -> bool:
+    configured = _get_optional_bool_env("SUPABASE_SYNC_ON_STARTUP")
+    return bool(configured)
+
+
+def get_supabase_db_url() -> str:
+    return os.getenv("SUPABASE_DB_URL", "").strip()
+
+
+def get_supabase_sync_default_admin_password() -> str:
+    return os.getenv("SUPABASE_SYNC_DEFAULT_ADMIN_PASSWORD", "admin123")
+
+
+def get_supabase_sync_default_provider_password() -> str:
+    return os.getenv("SUPABASE_SYNC_DEFAULT_PROVIDER_PASSWORD", "mentor123")
+
+
+def get_supabase_sync_default_client_password() -> str:
+    return os.getenv("SUPABASE_SYNC_DEFAULT_CLIENT_PASSWORD", os.getenv("APP_DEFAULT_STUDENT_PASSWORD", "aluno_accmed"))
+
+
 def normalize_cors_origin(origin: str) -> str:
     stripped = origin.strip()
     if stripped == "*":

@@ -9,10 +9,12 @@ from pathlib import Path
 from typing import Any
 from app.storage.json_repository import JsonRepository
 from app.storage.enrollment_repository import EnrollmentRepository
+from app.storage.measurement_repository import MeasurementRepository
 from app.storage.protocol_repository import ProtocolRepository
 from app.storage.pillar_repository import PillarRepository
 from app.storage.metric_repository import MetricRepository
 from app.storage.student_repository import StudentRepository
+from app.services.metric_score_service import ScoreCalculationError, calculate_measurement_score_values
 
 
 PRD_THR = 0.7
@@ -113,10 +115,36 @@ class MeasurementOverallRepository:
 
     def generate_for_all_enrollments(self):
         enrollments = EnrollmentRepository().list_enrollments()
+        if not enrollments:
+            for fallback_enrollments_path in (
+                Path(__file__).resolve().parents[2] / "data_old" / "enrollments.json",
+                Path(__file__).resolve().parents[2] / "data_ops" / "enrollments.json",
+            ):
+                if fallback_enrollments_path.exists():
+                    enrollments = EnrollmentRepository(fallback_enrollments_path).list_enrollments()
+                if enrollments:
+                    break
         protocols = ProtocolRepository().list_protocols()
         pillars = PillarRepository().list_pillars()
         metrics = MetricRepository().list_metrics()
+        measurements = MeasurementRepository().list_measurements()
         students = StudentRepository().list_students()
+
+        def _load_items(path: Path) -> list[dict[str, Any]]:
+            if not path.exists():
+                return []
+            payload = JsonRepository(path).read()
+            raw_items = payload.get("items", [])
+            return [item for item in raw_items if isinstance(item, dict)]
+
+        if not pillars:
+            pillars = _load_items(Path(__file__).resolve().parents[2] / "data_old" / "pillars.json")
+
+        def _normalize_pillar_id(value: Any) -> str:
+            raw = str(value or "").strip()
+            if raw.isdigit():
+                return f"plr_{raw}"
+            return raw
 
         def derive_metric_tuple(metric: dict[str, Any]) -> dict[str, float]:
             max_score = float(metric.get("max_score") or 0)
@@ -130,6 +158,26 @@ class MeasurementOverallRepository:
                 "goal": 1.0,
                 "base": normalized_mcv,
                 "real": normalized_mcv,
+            }
+
+        def derive_metric_from_measurement(metric: dict[str, Any], measurement: dict[str, Any]) -> dict[str, float]:
+            max_score = float(metric.get("max_score") or 0)
+            baseline = float(measurement.get("value_baseline") or 0)
+            current = float(measurement.get("value_current") or 0)
+            projected_raw = measurement.get("value_projected")
+            projected = current if projected_raw is None else float(projected_raw)
+
+            if max_score > 0:
+                return {
+                    "goal": _clamp01(projected / max_score),
+                    "base": _clamp01(baseline / max_score),
+                    "real": _clamp01(current / max_score),
+                }
+
+            return {
+                "goal": _clamp01(projected),
+                "base": _clamp01(baseline),
+                "real": _clamp01(current),
             }
 
         def load_first_load_profiles() -> dict[str, dict[str, Any]]:
@@ -244,15 +292,53 @@ class MeasurementOverallRepository:
             }
 
         # Map for quick lookup
-        protocol_by_org = {p["organization_id"]: p for p in protocols}
+        protocol_by_org: dict[str, dict[str, Any]] = {}
+        for protocol in protocols:
+            product_id = str(protocol.get("product_id") or "")
+            organization_id = str(protocol.get("organization_id") or "")
+            if product_id and product_id not in protocol_by_org:
+                protocol_by_org[product_id] = protocol
+            if organization_id and organization_id not in protocol_by_org:
+                protocol_by_org[organization_id] = protocol
+
+        has_supported_matrix_protocol = False
+        for enrollment in enrollments:
+            protocol = protocol_by_org.get(str(enrollment.get("organization_id") or ""))
+            protocol_id = str((protocol or {}).get("id") or "")
+            if protocol_id in PRODUCT_PILLARS_BY_PROTOCOL:
+                has_supported_matrix_protocol = True
+                break
+
+        if not os.getenv("ENROLLMENT_STORE_PATH") and not has_supported_matrix_protocol:
+            fallback_enrollments_path = Path(__file__).resolve().parents[2] / "data_old" / "enrollments.json"
+            if fallback_enrollments_path.exists():
+                enrollments = EnrollmentRepository(fallback_enrollments_path).list_enrollments()
         students_by_id = {str(student.get("id")): student for student in students if student.get("id")}
         first_load_profiles = load_first_load_profiles()
         pillars_by_protocol = {}
+        pillar_protocol_by_id: dict[str, str] = {}
         for pillar in pillars:
-            pillars_by_protocol.setdefault(pillar["protocol_id"], []).append(pillar)
+            protocol_id = str(pillar.get("protocol_id") or "")
+            pillar_id = str(pillar.get("id") or "")
+            if not protocol_id or not pillar_id:
+                continue
+            pillars_by_protocol.setdefault(protocol_id, []).append(pillar)
+            pillar_protocol_by_id[pillar_id] = protocol_id
         metrics_by_protocol = {}
         for metric in metrics:
-            metrics_by_protocol.setdefault(metric["protocol_id"], []).append(metric)
+            protocol_id = str(metric.get("protocol_id") or "")
+            if not protocol_id:
+                protocol_id = pillar_protocol_by_id.get(_normalize_pillar_id(metric.get("pillar_id")), "")
+            if not protocol_id:
+                continue
+            metrics_by_protocol.setdefault(protocol_id, []).append(metric)
+        measurements_by_enrollment: dict[str, dict[str, dict[str, Any]]] = {}
+        for measurement in measurements:
+            enrollment_id = str(measurement.get("enrollment_id") or "")
+            metric_id = str(measurement.get("metric_id") or "")
+            if not enrollment_id or not metric_id:
+                continue
+            measurements_by_enrollment.setdefault(enrollment_id, {})[metric_id] = measurement
 
         items = []
         for enr in enrollments:
@@ -268,18 +354,39 @@ class MeasurementOverallRepository:
             first_load_profile = first_load_profiles.get(str(enr.get("student_id") or ""))
             seed_key = f"{enr.get('id', '')}:{enr.get('student_id', '')}"
             pillar_targets = derive_pillar_targets(student=student, profile=first_load_profile, seed_key=seed_key) if student else {}
+            enrollment_measurements = measurements_by_enrollment.get(str(enr.get("id") or ""), {})
 
             metric_tuples = []
             metric_values_by_id: dict[str, dict[str, float]] = {}
+            metric_pillar_by_id: dict[str, str] = {}
             metrics_by_pillar: dict[str, list[dict[str, Any]]] = {}
             for metric in protocol_metrics:
-                metrics_by_pillar.setdefault(str(metric.get("pillar_id") or ""), []).append(metric)
+                metrics_by_pillar.setdefault(_normalize_pillar_id(metric.get("pillar_id")), []).append(metric)
+
+            if not metrics_by_pillar and protocol_pillars:
+                for pillar in protocol_pillars:
+                    pillar_id = str(pillar.get("id") or "")
+                    if not pillar_id:
+                        continue
+                    metrics_by_pillar[pillar_id] = [
+                        {
+                            "id": f"syn_{protocol_id}_{pillar_id}",
+                            "pillar_id": pillar_id,
+                            "max_score": 1.0,
+                        }
+                    ]
 
             for pillar_metrics in metrics_by_pillar.values():
                 total_metrics = len(pillar_metrics)
                 for index, metric in enumerate(pillar_metrics):
-                    pillar_id = str(metric.get("pillar_id") or "")
-                    if pillar_id in pillar_targets:
+                    pillar_id = _normalize_pillar_id(metric.get("pillar_id"))
+                    measurement = enrollment_measurements.get(str(metric.get("id") or ""))
+                    if measurement:
+                        try:
+                            values = calculate_measurement_score_values(metric, measurement)
+                        except ScoreCalculationError:
+                            values = derive_metric_from_measurement(metric, measurement)
+                    elif pillar_id in pillar_targets:
                         values = derive_metric_from_pillar(
                             pillar_target=pillar_targets[pillar_id],
                             index=index,
@@ -287,20 +394,26 @@ class MeasurementOverallRepository:
                             seed_key=f"{seed_key}:{metric.get('id', '')}",
                         )
                     else:
-                        values = derive_metric_tuple(metric)
+                        values = derive_metric_from_pillar(
+                            pillar_target=_clamp01(0.5 + _deterministic_gaussian(seed_key, f"pillar_fallback_{pillar_id}", 0.04)),
+                            index=index,
+                            total=max(total_metrics, 1),
+                            seed_key=f"{seed_key}:{metric.get('id', '')}",
+                        )
                     metric_tuples.append({
                         "metric_id": metric["id"],
                         "values": values
                     })
                     metric_values_by_id[metric["id"]] = values
+                    metric_pillar_by_id[str(metric.get("id") or "")] = pillar_id
 
             pillar_tuples = []
             pillar_overalls: dict[str, float] = {}
             for pillar in protocol_pillars:
                 pillar_metric_values = [
-                    metric_values_by_id[metric["id"]]
-                    for metric in protocol_metrics
-                    if metric.get("pillar_id") == pillar.get("id") and metric.get("id") in metric_values_by_id
+                    values
+                    for metric_id, values in metric_values_by_id.items()
+                    if metric_pillar_by_id.get(metric_id) == str(pillar.get("id") or "")
                 ]
                 pillar_tuple = aggregate_pillar(pillar_metric_values)
                 pillar_tuples.append({

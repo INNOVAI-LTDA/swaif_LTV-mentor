@@ -4,6 +4,7 @@ from typing import Any
 
 from app.storage.enrollment_repository import EnrollmentRepository
 from app.storage.organization_repository import OrganizationRepository
+from app.storage.product_assignment_repository import ProductAssignmentRepository
 from app.storage.student_repository import StudentRepository
 
 
@@ -21,10 +22,17 @@ class StudentVinculoService:
         organizations: OrganizationRepository,
         students: StudentRepository,
         enrollments: EnrollmentRepository,
+        product_assignments: ProductAssignmentRepository | None = None,
     ) -> None:
         self._organizations = organizations
         self._students = students
         self._enrollments = enrollments
+        self._product_assignments = product_assignments
+
+    def _sync_product_assignment(self, enrollment: dict[str, Any]) -> None:
+        if self._product_assignments is None:
+            return
+        self._product_assignments.upsert_from_enrollment(enrollment)
 
     def create_student(self, *, full_name: str, initials: str | None = None, email: str | None = None) -> dict[str, Any]:
         return self._students.create(full_name=full_name, initials=initials, email=email)
@@ -43,6 +51,11 @@ class StudentVinculoService:
                 enrollment_id,
                 justification="Substituido por novo vinculo ativo",
             )
+            if self._product_assignments is not None:
+                self._product_assignments.deactivate(
+                    enrollment_id,
+                    justification="Substituido por novo vinculo ativo",
+                )
 
     def link_student_to_organization(
         self,
@@ -78,7 +91,7 @@ class StudentVinculoService:
 
         self._deactivate_active_enrollments(student_id=student_id)
 
-        return self._enrollments.create(
+        enrollment = self._enrollments.create(
             student_id=student_id,
             organization_id=organization_id,
             mentor_id=mentor_id,
@@ -90,6 +103,8 @@ class StudentVinculoService:
             days_left=days_left,
             ltv_cents=ltv_cents,
         )
+        self._sync_product_assignment(enrollment)
+        return enrollment
 
     def list_students_by_organization(self, organization_id: str) -> list[dict[str, Any]]:
         organization = self._organizations.get_by_id(organization_id)

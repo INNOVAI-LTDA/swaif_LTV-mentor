@@ -3,18 +3,32 @@ from __future__ import annotations
 from datetime import date, datetime, timezone
 from typing import Any
 
+from app.config.runtime import get_supabase_db_url, is_production_like_environment, get_app_env
 from app.storage.checkpoint_repository import CheckpointRepository
 from app.storage.enrollment_repository import EnrollmentRepository
 from app.storage.measurement_repository import MeasurementRepository
 from app.storage.metric_repository import MetricRepository
 from app.storage.organization_repository import OrganizationRepository
 from app.storage.pillar_repository import PillarRepository
+from app.storage.product_assignment_repository import ProductAssignmentRepository
 from app.storage.protocol_repository import ProtocolRepository
 from app.storage.student_repository import StudentRepository
 from app.storage.measurement_overall_repository import MeasurementOverallRepository
 
 
 class EntityNotFoundError(Exception):
+    pass
+
+
+class RuntimeDependencyError(Exception):
+    pass
+
+
+class DomainNotReadyError(Exception):
+    pass
+
+
+class JsonFallbackForbiddenError(Exception):
     pass
 
 
@@ -28,6 +42,7 @@ class IndicatorCargaService:
         metrics: MetricRepository,
         measurements: MeasurementRepository,
         checkpoints: CheckpointRepository,
+        product_assignments: ProductAssignmentRepository | None = None,
         pillars: PillarRepository | None = None,
         protocols: ProtocolRepository | None = None,
         measurement_overalls: MeasurementOverallRepository | None = None,
@@ -38,6 +53,7 @@ class IndicatorCargaService:
         self._metrics = metrics
         self._measurements = measurements
         self._checkpoints = checkpoints
+        self._product_assignments = product_assignments
         self._pillars = pillars
         self._protocols = protocols
         self._measurement_overalls = measurement_overalls
@@ -49,6 +65,22 @@ class IndicatorCargaService:
         self._protocol_by_org_id_cache: dict[str, dict[str, Any]] | None = None
         self._measurements_by_enrollment_cache: dict[str, list[dict[str, Any]]] | None = None
         self._measurement_overalls_by_enrollment_cache: dict[str, dict[str, Any]] | None = None
+
+    def _uses_json_runtime_for_indicator_load(self) -> bool:
+        """
+        Explicit capability gate for Story 1.2:
+        production-like indicator load must not run on the current JSON repositories.
+        """
+        measurement_backend = str(getattr(self._measurements, "runtime_backend", "")).strip().lower()
+        checkpoint_backend = str(getattr(self._checkpoints, "runtime_backend", "")).strip().lower()
+        if measurement_backend == "json" or checkpoint_backend == "json":
+            return True
+        return isinstance(self._measurements, MeasurementRepository) or isinstance(self._checkpoints, CheckpointRepository)
+
+    def _supports_postgres_runtime_for_indicator_load(self) -> bool:
+        measurement_backend = str(getattr(self._measurements, "runtime_backend", "")).strip().lower()
+        checkpoint_backend = str(getattr(self._checkpoints, "runtime_backend", "")).strip().lower()
+        return measurement_backend == "postgres" and checkpoint_backend == "postgres"
 
     def _students_by_id(self) -> dict[str, dict[str, Any]]:
         if self._students_by_id_cache is None:
@@ -120,9 +152,13 @@ class IndicatorCargaService:
                 grouped: dict[str, dict[str, Any]] = {}
                 for protocol in self._protocols.list_protocols():
                     organization_id = str(protocol.get("organization_id") or "")
+                    product_id = str(protocol.get("product_id") or "")
                     if not organization_id or organization_id in grouped:
-                        continue
-                    grouped[organization_id] = protocol
+                        pass
+                    else:
+                        grouped[organization_id] = protocol
+                    if product_id and product_id not in grouped:
+                        grouped[product_id] = protocol
                 self._protocol_by_org_id_cache = grouped
         return self._protocol_by_org_id_cache
 
@@ -177,8 +213,45 @@ class IndicatorCargaService:
             int(enrollment.get("days_left", 0)),
         )
 
+    @staticmethod
+    def _normalize_assignment(enrollment: dict[str, Any]) -> dict[str, Any]:
+        normalized = dict(enrollment)
+        assignment_id = str(normalized.get("id") or normalized.get("assignment_id") or "")
+        product_id = str(normalized.get("organization_id") or normalized.get("product_id") or "")
+        provider_id = str(normalized.get("mentor_id") or normalized.get("provider_id") or "")
+        student_id = str(normalized.get("student_id") or normalized.get("end_user_id") or "")
+
+        normalized["id"] = assignment_id
+        normalized["assignment_id"] = assignment_id
+        normalized["organization_id"] = product_id
+        normalized["product_id"] = product_id
+        normalized["mentor_id"] = provider_id or None
+        normalized["provider_id"] = provider_id or None
+        normalized["student_id"] = student_id
+        normalized["end_user_id"] = student_id
+
+        if "status" not in normalized:
+            normalized["status"] = "active" if bool(normalized.get("is_active", True)) else "inactive"
+        if "is_active" not in normalized:
+            normalized["is_active"] = str(normalized.get("status") or "").lower() == "active"
+
+        return normalized
+
+    def _list_assignment_source_rows(self) -> list[dict[str, Any]]:
+        if self._product_assignments is not None:
+            assignments = self._product_assignments.list_assignments()
+            if assignments:
+                return assignments
+        return self._enrollments.list_enrollments()
+
     def _iter_active_enrollments(self, *, mentor_id: str | None = None) -> list[dict[str, Any]]:
-        enrollments = self._enrollments.list_by_mentor(mentor_id) if mentor_id else self._enrollments.list_enrollments()
+        enrollments = [self._normalize_assignment(row) for row in self._list_assignment_source_rows()]
+        if mentor_id:
+            enrollments = [
+                row
+                for row in enrollments
+                if str(row.get("mentor_id") or "") == mentor_id
+            ]
         return [row for row in enrollments if bool(row.get("is_active", True))]
 
     @staticmethod
@@ -264,15 +337,13 @@ class IndicatorCargaService:
         if not student:
             raise EntityNotFoundError("student not found")
 
-        enrollment = next(
-            (
-                row
-                for row in self._enrollments.list_by_student(student_id)
-                if bool(row.get("is_active", True))
-                and (mentor_id is None or str(row.get("mentor_id") or "") == mentor_id)
-            ),
-            None,
-        )
+        enrollments = [
+            row
+            for row in self._iter_active_enrollments(mentor_id=mentor_id)
+            if str(row.get("student_id") or "") == student_id
+        ]
+        selected = self._select_most_relevant_enrollments(enrollments)
+        enrollment = selected[0] if selected else None
         if not enrollment:
             raise EntityNotFoundError("student enrollment not found")
 
@@ -495,6 +566,7 @@ class IndicatorCargaService:
         renewal_reason, suggestion = self._renewal_texts(str(base["urgency"]))
         return {
             "id": str(base["id"]),
+            "enrollmentId": str(enrollment.get("id") or ""),
             "name": str(base["name"]),
             "initials": str(student.get("initials") or ""),
             "programName": str(base["programName"]),
@@ -647,18 +719,23 @@ class IndicatorCargaService:
             organization = organizations_by_id.get(str(enrollment.get("organization_id")))
             overall = self._get_overall_by_enrollment(str(enrollment.get("id") or ""))
             protocol_id = str((overall or {}).get("protocol_id") or "")
+            protocol_name = ""
             if not protocol_id:
                 protocol = self._protocol_by_org_id().get(str(enrollment.get("organization_id") or ""))
                 protocol_id = str((protocol or {}).get("id") or "")
+                protocol_name = str((protocol or {}).get("name") or "")
+            if protocol_id and not protocol_name:
+                protocol_name = str((self._protocols_by_id().get(protocol_id) or {}).get("name") or "")
             if protocol_id:
                 protocol_ids_seen.append(protocol_id)
-            all_items.append(
-                self._build_matrix_item(
-                    student=student,
-                    enrollment=enrollment,
-                    organization=organization,
-                )
+            item = self._build_matrix_item(
+                student=student,
+                enrollment=enrollment,
+                organization=organization,
             )
+            item["protocolId"] = protocol_id
+            item["protocolName"] = protocol_name
+            all_items.append(item)
 
         total_ltv = sum(int(item["ltv"]) for item in all_items)
         critical_renewals = sum(1 for item in all_items if item["daysLeft"] <= 45 and item["quadrant"] == "topRight")
@@ -878,6 +955,14 @@ class IndicatorCargaService:
         metric_values: list[dict[str, Any]],
         checkpoints: list[dict[str, Any]],
     ) -> dict[str, Any]:
+        _ = get_app_env()
+        if not get_supabase_db_url():
+            raise RuntimeDependencyError("postgres runtime unavailable")
+        if self._uses_json_runtime_for_indicator_load():
+            raise JsonFallbackForbiddenError("json fallback forbidden")
+        if not self._supports_postgres_runtime_for_indicator_load():
+            raise DomainNotReadyError("measurement/checkpoint postgres domains not ready")
+
         _, enrollment = self._get_student_and_enrollment(student_id)
 
         normalized_measurements: list[dict[str, Any]] = []
@@ -906,14 +991,17 @@ class IndicatorCargaService:
             for row in checkpoints
         ]
 
-        persisted_measurements = self._measurements.replace_for_enrollment(
-            str(enrollment["id"]),
-            normalized_measurements,
-        )
-        persisted_checkpoints = self._checkpoints.replace_for_enrollment(
-            str(enrollment["id"]),
-            normalized_checkpoints,
-        )
+        try:
+            persisted_measurements = self._measurements.replace_for_enrollment(
+                str(enrollment["id"]),
+                normalized_measurements,
+            )
+            persisted_checkpoints = self._checkpoints.replace_for_enrollment(
+                str(enrollment["id"]),
+                normalized_checkpoints,
+            )
+        except Exception as exc:
+            raise RuntimeDependencyError("postgres runtime unavailable") from exc
         return {
             "student_id": student_id,
             "enrollment_id": str(enrollment["id"]),

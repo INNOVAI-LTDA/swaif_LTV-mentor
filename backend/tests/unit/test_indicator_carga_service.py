@@ -1,4 +1,6 @@
 from app.services.indicator_carga_service import EntityNotFoundError, IndicatorCargaService
+from app.services.indicator_carga_service import DomainNotReadyError, RuntimeDependencyError
+from app.services.indicator_carga_service import JsonFallbackForbiddenError
 
 
 class _FakeStudentRepository:
@@ -8,6 +10,9 @@ class _FakeStudentRepository:
     def get_by_id(self, student_id: str):
         return self.items.get(student_id)
 
+    def list_students(self):
+        return list(self.items.values())
+
 
 class _FakeOrganizationRepository:
     def __init__(self) -> None:
@@ -15,6 +20,9 @@ class _FakeOrganizationRepository:
 
     def get_by_id(self, organization_id: str):
         return self.items.get(organization_id)
+
+    def list_organizations(self):
+        return list(self.items.values())
 
 
 class _FakeEnrollmentRepository:
@@ -35,6 +43,9 @@ class _FakeEnrollmentRepository:
             return self.item
         return None
 
+    def list_enrollments(self):
+        return [self.item]
+
 
 class _FakeMetricRepository:
     def __init__(self) -> None:
@@ -46,8 +57,13 @@ class _FakeMetricRepository:
     def get_by_id(self, metric_id: str):
         return self.items.get(metric_id)
 
+    def list_metrics(self):
+        return list(self.items.values())
+
 
 class _FakeMeasurementRepository:
+    runtime_backend = "postgres"
+
     def __init__(self) -> None:
         self.items: list[dict] = []
 
@@ -58,8 +74,13 @@ class _FakeMeasurementRepository:
     def list_by_enrollment(self, enrollment_id: str):
         return [item for item in self.items if item["enrollment_id"] == enrollment_id]
 
+    def list_measurements(self):
+        return list(self.items)
+
 
 class _FakeCheckpointRepository:
+    runtime_backend = "postgres"
+
     def __init__(self) -> None:
         self.items: list[dict] = []
 
@@ -71,7 +92,16 @@ class _FakeCheckpointRepository:
         return [item for item in self.items if item["enrollment_id"] == enrollment_id]
 
 
-def test_load_initial_indicators_and_read_student_detail() -> None:
+class _JsonBackendMeasurementRepository(_FakeMeasurementRepository):
+    runtime_backend = "json"
+
+
+class _JsonBackendCheckpointRepository(_FakeCheckpointRepository):
+    runtime_backend = "json"
+
+
+def test_load_initial_indicators_and_read_student_detail(monkeypatch) -> None:
+    monkeypatch.setenv("SUPABASE_DB_URL", "postgresql://runtime-db")
     service = IndicatorCargaService(
         students=_FakeStudentRepository(),
         organizations=_FakeOrganizationRepository(),
@@ -104,7 +134,8 @@ def test_load_initial_indicators_and_read_student_detail() -> None:
     assert detail["checkpoints"][0]["status"] == "green"
 
 
-def test_rejects_indicator_not_registered() -> None:
+def test_rejects_indicator_not_registered(monkeypatch) -> None:
+    monkeypatch.setenv("SUPABASE_DB_URL", "postgresql://runtime-db")
     service = IndicatorCargaService(
         students=_FakeStudentRepository(),
         organizations=_FakeOrganizationRepository(),
@@ -122,4 +153,80 @@ def test_rejects_indicator_not_registered() -> None:
         )
         assert False, "expected EntityNotFoundError"
     except EntityNotFoundError:
+        assert True
+
+
+def test_load_initial_indicators_fails_without_postgres_url_in_production_like(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.delenv("SUPABASE_DB_URL", raising=False)
+    service = IndicatorCargaService(
+        students=_FakeStudentRepository(),
+        organizations=_FakeOrganizationRepository(),
+        enrollments=_FakeEnrollmentRepository(),
+        metrics=_FakeMetricRepository(),
+        measurements=_FakeMeasurementRepository(),
+        checkpoints=_FakeCheckpointRepository(),
+    )
+
+    try:
+        service.load_initial_indicators(
+            student_id="std_1",
+            metric_values=[{"metric_id": "met_1", "value_baseline": 1, "value_current": 2}],
+            checkpoints=[],
+        )
+        assert False, "expected RuntimeDependencyError"
+    except RuntimeDependencyError:
+        assert True
+
+
+def test_load_initial_indicators_flags_unready_domains_in_production_like(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("SUPABASE_DB_URL", "postgresql://runtime-db")
+
+    class _UnknownBackendMeasurementRepository(_FakeMeasurementRepository):
+        runtime_backend = "unknown"
+
+    class _UnknownBackendCheckpointRepository(_FakeCheckpointRepository):
+        runtime_backend = "unknown"
+
+    service = IndicatorCargaService(
+        students=_FakeStudentRepository(),
+        organizations=_FakeOrganizationRepository(),
+        enrollments=_FakeEnrollmentRepository(),
+        metrics=_FakeMetricRepository(),
+        measurements=_UnknownBackendMeasurementRepository(),
+        checkpoints=_UnknownBackendCheckpointRepository(),
+    )
+
+    try:
+        service.load_initial_indicators(
+            student_id="std_1",
+            metric_values=[{"metric_id": "met_1", "value_baseline": 1, "value_current": 2}],
+            checkpoints=[],
+        )
+        assert False, "expected DomainNotReadyError"
+    except DomainNotReadyError:
+        assert True
+
+
+def test_load_initial_indicators_forbids_json_fallback_in_production_like(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("SUPABASE_DB_URL", "postgresql://runtime-db")
+    service = IndicatorCargaService(
+        students=_FakeStudentRepository(),
+        organizations=_FakeOrganizationRepository(),
+        enrollments=_FakeEnrollmentRepository(),
+        metrics=_FakeMetricRepository(),
+        measurements=_JsonBackendMeasurementRepository(),
+        checkpoints=_JsonBackendCheckpointRepository(),
+    )
+
+    try:
+        service.load_initial_indicators(
+            student_id="std_1",
+            metric_values=[{"metric_id": "met_1", "value_baseline": 1, "value_current": 2}],
+            checkpoints=[],
+        )
+        assert False, "expected JsonFallbackForbiddenError"
+    except JsonFallbackForbiddenError:
         assert True

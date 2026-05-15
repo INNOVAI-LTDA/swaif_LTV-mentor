@@ -55,6 +55,20 @@ class _FakeEnrollmentRepository:
         return None
 
 
+class _FakeProductAssignmentRepository:
+    def __init__(self) -> None:
+        self.upsert_calls: list[dict] = []
+        self.deactivate_calls: list[dict] = []
+
+    def upsert_from_enrollment(self, enrollment: dict) -> dict:
+        self.upsert_calls.append(enrollment)
+        return {"assignment_id": enrollment["id"]}
+
+    def deactivate(self, assignment_id: str, *, justification: str):
+        self.deactivate_calls.append({"assignment_id": assignment_id, "justification": justification})
+        return {"id": assignment_id, "status": "inactive"}
+
+
 def test_student_create_and_link_to_mentoria() -> None:
     service = StudentVinculoService(
         organizations=_FakeOrganizationRepository(),
@@ -102,3 +116,37 @@ def test_link_rejects_invalid_ranges_and_missing_org() -> None:
         assert False, "expected EntityNotFoundError"
     except EntityNotFoundError:
         assert True
+
+
+def test_link_student_syncs_authoritative_product_assignment_and_deactivates_previous() -> None:
+    organizations = _FakeOrganizationRepository()
+    students = _FakeStudentRepository()
+    enrollments = _FakeEnrollmentRepository()
+    product_assignments = _FakeProductAssignmentRepository()
+
+    service = StudentVinculoService(
+        organizations=organizations,
+        students=students,
+        enrollments=enrollments,
+        product_assignments=product_assignments,
+    )
+
+    student = service.create_student(full_name="Aluno Historico")
+
+    first = service.link_student_to_organization(
+        student_id=student["id"],
+        organization_id="org_1",
+        progress_score=0.2,
+        engagement_score=0.4,
+    )
+    second = service.link_student_to_organization(
+        student_id=student["id"],
+        organization_id="org_1",
+        progress_score=0.6,
+        engagement_score=0.8,
+    )
+
+    assert first["id"] != second["id"]
+    assert len(product_assignments.upsert_calls) == 2
+    assert len(product_assignments.deactivate_calls) == 1
+    assert product_assignments.deactivate_calls[0]["assignment_id"] == first["id"]

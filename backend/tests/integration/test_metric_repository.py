@@ -17,6 +17,9 @@ def test_metric_repository_lists_by_pillar_and_rejects_duplicate_code(tmp_path) 
     assert created["id"] == "met_1"
     assert len(listed) == 1
     assert listed[0]["pillar_id"] == "plr_1"
+    assert created["scoring_rules"]["version"] == 2
+    assert created["score_type"] == "static"
+    assert created["max_basis_score"] == "MAX_VALUE"
 
     try:
         repo.create(
