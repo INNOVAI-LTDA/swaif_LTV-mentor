@@ -1,0 +1,489 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "prt_1",
+      "organization_id": "cli_2",
+      "product_id": "org_1",
+      "name": "Protocolo Trilha 3D",
+      "code": "protocolo-trilha-3d",
+      "metadata": {
+        "cycle_days": 180,
+        "narrative": "demo-base"
+      },
+      "is_active": true
+    },
+    {
+      "id": "prt_2",
+      "organization_id": "cli_1",
+      "product_id": "org_2",
+      "name": "Mentoria Acelerador Médico",
+      "code": "mtn-accmed",
+      "metadata": {
+        "cycle_days": 365,
+        "narrative": "Protocolo focado em acelerar o crescimento de médicos empreendedores, com ênfase em captação, vendas, mentalidade, gestão e repertório, visando resultados tangíveis e desenvolvimento sustentável."
+      },
+      "is_active": true
+    },
+    {
+      "id": "prt_3",
+      "organization_id": "cli_1",
+      "product_id": "org_3",
+      "name": "Master Acelerador Médico",
+      "code": "mstr-accmed",
+      "metadata": {
+        "cycle_days": 365,
+        "narrative": "Mastermind avançado para médicos empreendedores, focado em estratégias de crescimento, inovação e liderança, com ênfase em resultados tangíveis e desenvolvimento sustentável."
+      },
+      "is_active": true
+    },
+    {
+      "id": "prt_4",
+      "organization_id": "org_37",
+      "name": "Metodo Smoke 3eb5141b",
+      "code": "metodo-smoke-3eb5141b",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_5",
+      "organization_id": "org_38",
+      "name": "Metodo Script Story 1.2",
+      "code": "metodo-script-story-1.2",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_6",
+      "organization_id": "org_42",
+      "name": "Metodo Script Story 1.2 721213ba",
+      "code": "metodo-script-story-1.2-721213ba",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_7",
+      "organization_id": "org_43",
+      "name": "Metodo Script Story 1.2 b87df602",
+      "code": "metodo-script-story-1.2-b87df602",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_8",
+      "organization_id": "org_44",
+      "name": "Metodo Script Story 1.2 aaa46cac",
+      "code": "metodo-script-story-1.2-aaa46cac",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_9",
+      "organization_id": "org_45",
+      "name": "Metodo Script Story 1.2 2dddf539",
+      "code": "metodo-script-story-1.2-2dddf539",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_10",
+      "organization_id": "org_46",
+      "name": "Metodo Script Story 1.2 366f07f5",
+      "code": "metodo-script-story-1.2-366f07f5",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_11",
+      "organization_id": "org_47",
+      "name": "Metodo Script Story 1.2 37c2047b",
+      "code": "metodo-script-story-1.2-37c2047b",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_12",
+      "organization_id": "org_48",
+      "name": "Metodo Script Story 1.2 43886402",
+      "code": "metodo-script-story-1.2-43886402",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_13",
+      "organization_id": "org_49",
+      "name": "Metodo Script Story 1.2 e171d4e2",
+      "code": "metodo-script-story-1.2-e171d4e2",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_14",
+      "organization_id": "org_50",
+      "name": "Metodo Script Story 1.2 16d75d33",
+      "code": "metodo-script-story-1.2-16d75d33",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_15",
+      "organization_id": "org_51",
+      "name": "Metodo Script Story 1.2 b5f64cdd",
+      "code": "metodo-script-story-1.2-b5f64cdd",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_16",
+      "organization_id": "org_52",
+      "name": "Metodo Script Story 1.2 84a9339a",
+      "code": "metodo-script-story-1.2-84a9339a",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_17",
+      "organization_id": "org_53",
+      "name": "Metodo Script Story 1.2 22dcdd4e",
+      "code": "metodo-script-story-1.2-22dcdd4e",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_18",
+      "organization_id": "org_54",
+      "name": "Metodo Script Story 1.2 e5b3e77e",
+      "code": "metodo-script-story-1.2-e5b3e77e",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_19",
+      "organization_id": "org_55",
+      "name": "Metodo Script Story 1.2 9fac411f",
+      "code": "metodo-script-story-1.2-9fac411f",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_20",
+      "organization_id": "org_56",
+      "name": "Metodo Script Story 1.2 f4d7505b",
+      "code": "metodo-script-story-1.2-f4d7505b",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_21",
+      "organization_id": "org_57",
+      "name": "Metodo Script Story 1.2 fbf29d00",
+      "code": "metodo-script-story-1.2-fbf29d00",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_22",
+      "organization_id": "org_58",
+      "name": "Metodo Script Story 1.2 05a8363e",
+      "code": "metodo-script-story-1.2-05a8363e",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_23",
+      "organization_id": "org_59",
+      "name": "Metodo Script Story 1.2 894b812e",
+      "code": "metodo-script-story-1.2-894b812e",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_24",
+      "organization_id": "org_60",
+      "name": "Metodo Script Story 1.2 152f7e5c",
+      "code": "metodo-script-story-1.2-152f7e5c",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_25",
+      "organization_id": "org_61",
+      "name": "Metodo Script Story 1.2 fbb2cd3f",
+      "code": "metodo-script-story-1.2-fbb2cd3f",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_26",
+      "organization_id": "org_62",
+      "name": "Metodo Script Story 1.2 400f1270",
+      "code": "metodo-script-story-1.2-400f1270",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_27",
+      "organization_id": "org_63",
+      "name": "Metodo Script Story 1.2 8a386bf1",
+      "code": "metodo-script-story-1.2-8a386bf1",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_28",
+      "organization_id": "org_64",
+      "name": "Metodo Script Story 1.2 9c95baa0",
+      "code": "metodo-script-story-1.2-9c95baa0",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_29",
+      "organization_id": "org_65",
+      "name": "Metodo Script Story 1.2 0d314257",
+      "code": "metodo-script-story-1.2-0d314257",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_30",
+      "organization_id": "org_66",
+      "name": "Metodo Script Story 1.2 2e610009",
+      "code": "metodo-script-story-1.2-2e610009",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_31",
+      "organization_id": "org_67",
+      "name": "Metodo Script Story 1.2 037a7b18",
+      "code": "metodo-script-story-1.2-037a7b18",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_32",
+      "organization_id": "org_68",
+      "name": "Metodo Script Story 1.2 128032a1",
+      "code": "metodo-script-story-1.2-128032a1",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_33",
+      "organization_id": "org_69",
+      "name": "Metodo Script Story 1.2 e383d88d",
+      "code": "metodo-script-story-1.2-e383d88d",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_34",
+      "organization_id": "org_70",
+      "name": "Metodo Script Story 1.2 c4f8cc87",
+      "code": "metodo-script-story-1.2-c4f8cc87",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_35",
+      "organization_id": "org_71",
+      "name": "Metodo Script Story 1.2 6d1e3aff",
+      "code": "metodo-script-story-1.2-6d1e3aff",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_36",
+      "organization_id": "org_72",
+      "name": "Metodo Script Story 1.2 b64aaf88",
+      "code": "metodo-script-story-1.2-b64aaf88",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_37",
+      "organization_id": "org_73",
+      "name": "Metodo Script Story 1.2 b607818d",
+      "code": "metodo-script-story-1.2-b607818d",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_38",
+      "organization_id": "org_74",
+      "name": "Metodo Script Story 1.2 7b084c01",
+      "code": "metodo-script-story-1.2-7b084c01",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_39",
+      "organization_id": "org_75",
+      "name": "Metodo Script Story 1.2 597fe3c5",
+      "code": "metodo-script-story-1.2-597fe3c5",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_40",
+      "organization_id": "org_76",
+      "name": "Metodo Script Story 1.2 5f2dea10",
+      "code": "metodo-script-story-1.2-5f2dea10",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_41",
+      "organization_id": "org_77",
+      "name": "Metodo Script Story 1.2 0683bab7",
+      "code": "metodo-script-story-1.2-0683bab7",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_42",
+      "organization_id": "org_78",
+      "name": "Metodo Script Story 1.2 bc31aa46",
+      "code": "metodo-script-story-1.2-bc31aa46",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_43",
+      "organization_id": "org_79",
+      "name": "Metodo Script Story 1.2 a72a89fe",
+      "code": "metodo-script-story-1.2-a72a89fe",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_44",
+      "organization_id": "org_80",
+      "name": "Metodo Script Story 1.2 f3affd91",
+      "code": "metodo-script-story-1.2-f3affd91",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_45",
+      "organization_id": "org_81",
+      "name": "Metodo Script Story 1.2 81cfb5c6",
+      "code": "metodo-script-story-1.2-81cfb5c6",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_46",
+      "organization_id": "org_82",
+      "name": "Metodo Script Story 1.2 4d464dc9",
+      "code": "metodo-script-story-1.2-4d464dc9",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_47",
+      "organization_id": "org_83",
+      "name": "Metodo Script Story 1.2 1a0f782c",
+      "code": "metodo-script-story-1.2-1a0f782c",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_48",
+      "organization_id": "org_84",
+      "name": "Metodo Script Story 1.2 14efcdd2",
+      "code": "metodo-script-story-1.2-14efcdd2",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_49",
+      "organization_id": "org_85",
+      "name": "Metodo Script Story 1.2 8a7a67e4",
+      "code": "metodo-script-story-1.2-8a7a67e4",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_50",
+      "organization_id": "org_86",
+      "name": "Metodo Script Story 1.2 a7653b69",
+      "code": "metodo-script-story-1.2-a7653b69",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_51",
+      "organization_id": "org_87",
+      "name": "Metodo Script Story 1.2 9a6e6115",
+      "code": "metodo-script-story-1.2-9a6e6115",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_52",
+      "organization_id": "org_88",
+      "name": "Metodo Script Story 1.2 0a6c3ee2",
+      "code": "metodo-script-story-1.2-0a6c3ee2",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_53",
+      "organization_id": "org_89",
+      "name": "Metodo Script Story 1.2 95f52f40",
+      "code": "metodo-script-story-1.2-95f52f40",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_54",
+      "organization_id": "org_90",
+      "name": "Metodo Script Story 1.2 38869874",
+      "code": "metodo-script-story-1.2-38869874",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_55",
+      "organization_id": "org_91",
+      "name": "Metodo Script Story 1.2 caefb80a",
+      "code": "metodo-script-story-1.2-caefb80a",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_56",
+      "organization_id": "org_92",
+      "name": "Metodo Script Story 1.2 7cbf1b55",
+      "code": "metodo-script-story-1.2-7cbf1b55",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_57",
+      "organization_id": "org_93",
+      "name": "Metodo Script Story 1.2 5a3dd8d8",
+      "code": "metodo-script-story-1.2-5a3dd8d8",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_58",
+      "organization_id": "org_94",
+      "name": "Metodo Script Story 1.2 78c5c34a",
+      "code": "metodo-script-story-1.2-78c5c34a",
+      "metadata": {},
+      "is_active": true
+    },
+    {
+      "id": "prt_59",
+      "organization_id": "org_95",
+      "name": "Metodo Script Story 1.2 4d5b3077",
+      "code": "metodo-script-story-1.2-4d5b3077",
+      "metadata": {},
+      "is_active": true
+    }
+  ]
+}

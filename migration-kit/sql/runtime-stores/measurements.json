@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "mea_1",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_17",
+      "value_baseline": 4.0,
+      "value_current": 1.0,
+      "value_projected": 5.0,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_2",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_18",
+      "value_baseline": 9.0,
+      "value_current": 9.0,
+      "value_projected": 9.0,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_3",
+      "enrollment_id": "enr_5",
+      "metric_id": "met_22",
+      "value_baseline": 55.0,
+      "value_current": 68.0,
+      "value_projected": 75.0,
+      "improving_trend": null
+    },
+    {
+      "id": "mea_4",
+      "enrollment_id": "enr_8",
+      "metric_id": "met_25",
+      "value_baseline": 55.0,
+      "value_current": 68.0,
+      "value_projected": 75.0,
+      "improving_trend": null
+    },
+    {
+      "id": "mea_5",
+      "enrollment_id": "enr_11",
+      "metric_id": "met_28",
+      "value_baseline": 55.0,
+      "value_current": 68.0,
+      "value_projected": 75.0,
+      "improving_trend": null
+    },
+    {
+      "id": "mea_6",
+      "enrollment_id": "enr_14",
+      "metric_id": "met_31",
+      "value_baseline": 55.0,
+      "value_current": 68.0,
+      "value_projected": 75.0,
+      "improving_trend": null
+    }
+  ]
+}
