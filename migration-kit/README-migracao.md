@@ -16,6 +16,13 @@ Este pacote isola o núcleo portátil para bootstrap em outro repositório.
 - `contracts/`
   - `backend/`: contratos congelados v1
   - `frontend/`: DTOs de contrato do frontend
+- `frontend-app/`
+  - `src/`: código-fonte React + TypeScript strict
+  - `public/`: estáticos públicos, incluindo `public/branding/*`
+  - `index.html`, `vite.config.ts`, `tsconfig.json`: runtime/build do Vite
+  - `package.json`, `package-lock.json`: dependências e scripts
+  - `.env.example`: template de ambiente alinhado ao contrato atual
+  - `README.md`: guia de setup/build/branding/portabilidade
 - `env.example`: variáveis centralizadas para backend/frontend
 
 ## Ordem recomendada de bootstrap no novo repositório
@@ -25,7 +32,9 @@ Este pacote isola o núcleo portátil para bootstrap em outro repositório.
 3. Importar dados iniciais de `sql/runtime-stores/` conforme a estratégia do destino (seed ou carga de runtime).
 4. Integrar `backend-integration/` no backend destino mantendo a separação rota -> serviço -> repositório.
 5. Integrar `contracts/` para manter compatibilidade de payload e DTO.
-6. Configurar variáveis do `env.example` no ambiente alvo.
+6. Copiar `frontend-app/` para o diretório de frontend do destino e instalar dependências (`npm install`).
+7. Configurar variáveis do `env.example` (backend + frontend) no ambiente alvo.
+8. Executar build client-safe do frontend e smoke tests integrados.
 
 ## Contrato de erros (obrigatório)
 
@@ -63,9 +72,13 @@ Antes de publicar:
 3. **Carga inicial**
    - endpoint de carga inicial persiste dados esperados
    - validação de erro para payload inválido retorna `422` padrão
+4. **Frontend**
+   - `npm run build` com `VITE_DEPLOY_TARGET=client`
+   - frontend sobe sem fallback de localhost em ambiente cliente
+   - assets de `public/branding` resolvem corretamente no base path configurado
 
 ## Publicação no outro repositório
 
 1. Subir o kit como módulo/pasta inicial (`migration-kit/`) na branch de implantação.
-2. Documentar no README do destino a sequência oficial de setup (SQL -> seeds -> integração -> env -> smoke).
+2. Documentar no README do destino a sequência oficial de setup (SQL -> seeds -> backend/contracts -> frontend -> env -> smoke).
 3. Executar smoke tests em ambiente integrado antes de merge para trunk.
