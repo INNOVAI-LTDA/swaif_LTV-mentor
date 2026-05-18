@@ -47,7 +47,7 @@
 .cc-timeline-list button,
 .cc-modal button,
 .cc-tab {
-  border: 1px solid rgba(250, 184, 0, 0.24);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.24);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: #fff2cf;
@@ -70,7 +70,7 @@
 }
 
 .cc-pagination button {
-  border: 1px solid rgba(250, 184, 0, 0.24);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.24);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: #fff2cf;
@@ -89,8 +89,8 @@
 }
 
 .cc-tab.is-active {
-  border-color: rgba(250, 184, 0, 0.48);
-  background: rgba(250, 184, 0, 0.12);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.48);
+  background: rgba(var(--color-accent-primary-rgb), 0.12);
   color: #ffe7a2;
 }
 
@@ -120,8 +120,8 @@
 }
 
 .cc-student-row.is-active {
-  border-color: rgba(250, 184, 0, 0.42);
-  background: rgba(250, 184, 0, 0.08);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.42);
+  background: rgba(var(--color-accent-primary-rgb), 0.08);
 }
 
 .cc-student-main,
@@ -193,7 +193,7 @@
 
 .cc-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #fab800, #f6deb0);
+  background: linear-gradient(90deg, var(--color-accent-primary), #f6deb0);
 }
 
 .cc-row-footer {
@@ -305,15 +305,15 @@
 }
 
 .cc-dot--green {
-  background: #39b56a;
+  background: var(--color-success);
 }
 
 .cc-dot--yellow {
-  background: #d9a100;
+  background: var(--color-warning);
 }
 
 .cc-dot--red {
-  background: #d64545;
+  background: var(--color-danger);
 }
 
 .cc-checkpoints {

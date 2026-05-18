@@ -2,7 +2,7 @@
   position: relative;
   min-height: calc(100vh - 72px);
   background:
-    radial-gradient(circle at 14% 8%, rgba(250, 184, 0, 0.09) 0%, transparent 24%),
+    radial-gradient(circle at 14% 8%, rgba(var(--color-accent-primary-rgb), 0.09) 0%, transparent 24%),
     radial-gradient(circle at 84% 18%, rgba(255, 255, 255, 0.04) 0%, transparent 26%),
     linear-gradient(180deg, #080808 0%, #101010 100%);
 }
@@ -12,7 +12,7 @@
   inset: 0;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%),
-    radial-gradient(circle at 50% 0%, rgba(250, 184, 0, 0.05) 0%, transparent 34%);
+    radial-gradient(circle at 50% 0%, rgba(var(--color-accent-primary-rgb), 0.05) 0%, transparent 34%);
   pointer-events: none;
 }
 
@@ -71,7 +71,7 @@
 }
 
 .student-sidebar__brand p {
-  color: #bfbfbf;
+  color: var(--color-text-secondary);
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -90,7 +90,7 @@
 
 .student-sidebar__label,
 .student-rail__eyebrow {
-  color: #fab800;
+  color: var(--color-accent-primary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -114,13 +114,13 @@
 
 .student-sidebar__link:hover {
   transform: translateY(-1px);
-  border-color: rgba(250, 184, 0, 0.22);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.22);
 }
 
 .student-sidebar__link.is-active,
 .student-sidebar__link.is-secondary-active {
-  border-color: rgba(250, 184, 0, 0.5);
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.5);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
   color: #fff7e0;
 }
 
@@ -130,7 +130,7 @@
 
 .student-sidebar__spotlight {
   border-radius: 18px;
-  background: linear-gradient(155deg, rgba(250, 184, 0, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+  background: linear-gradient(155deg, rgba(var(--color-accent-primary-rgb), 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
   padding: 16px;
 }
 
@@ -166,7 +166,7 @@
 
 .student-header__eyebrow {
   margin: 0 0 8px;
-  color: #fab800;
+  color: var(--color-accent-primary);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -198,7 +198,7 @@
 
 .student-header__actions button,
 .student-header__actions a {
-  border: 1px solid rgba(250, 184, 0, 0.24);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.24);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: #fff6dc;
@@ -224,7 +224,7 @@
 
 .student-metric span {
   display: block;
-  color: #bfbfbf;
+  color: var(--color-text-secondary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -239,7 +239,7 @@
 }
 
 .student-metric--accent strong {
-  color: #fab800;
+  color: var(--color-accent-primary);
 }
 
 .student-metric--success strong {
@@ -307,8 +307,8 @@
 }
 
 .student-rail__list li.is-selected {
-  border-color: rgba(250, 184, 0, 0.42);
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.42);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
 }
 
 .student-rail__list strong,

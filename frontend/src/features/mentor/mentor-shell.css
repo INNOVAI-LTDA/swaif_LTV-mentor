@@ -2,8 +2,8 @@
   position: relative;
   min-height: calc(100vh - 72px);
   background:
-    radial-gradient(circle at 18% 10%, rgba(250, 184, 0, 0.08) 0%, transparent 26%),
-    radial-gradient(circle at 86% 16%, rgba(250, 184, 0, 0.06) 0%, transparent 24%),
+    radial-gradient(circle at 18% 10%, rgba(var(--color-accent-primary-rgb), 0.08) 0%, transparent 26%),
+    radial-gradient(circle at 86% 16%, rgba(var(--color-accent-primary-rgb), 0.06) 0%, transparent 24%),
     linear-gradient(180deg, #090909 0%, #0f0f0f 100%);
 }
 
@@ -79,7 +79,7 @@
 }
 
 .mentor-sidebar__brand p {
-  color: #bfbfbf;
+  color: var(--color-text-secondary);
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -99,7 +99,7 @@
 
 .mentor-sidebar__label,
 .mentor-rail__eyebrow {
-  color: #fab800;
+  color: var(--color-accent-primary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -123,13 +123,13 @@
 
 .mentor-sidebar__link:hover {
   transform: translateY(-1px);
-  border-color: rgba(250, 184, 0, 0.24);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.24);
 }
 
 .mentor-sidebar__link.is-active,
 .mentor-sidebar__link.is-secondary-active {
-  border-color: rgba(250, 184, 0, 0.55);
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.55);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
   color: #fff7dd;
 }
 
@@ -139,7 +139,7 @@
 
 .mentor-sidebar__spotlight {
   border-radius: 18px;
-  background: linear-gradient(155deg, rgba(250, 184, 0, 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
+  background: linear-gradient(155deg, rgba(var(--color-accent-primary-rgb), 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
   padding: 16px;
 }
 
@@ -175,7 +175,7 @@
 
 .mentor-header__eyebrow {
   margin: 0 0 8px;
-  color: #fab800;
+  color: var(--color-accent-primary);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -206,7 +206,7 @@
 
 .mentor-header__actions button,
 .mentor-header__actions a {
-  border: 1px solid rgba(250, 184, 0, 0.24);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.24);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: #fff6dc;
@@ -232,7 +232,7 @@
 
 .mentor-metric span {
   display: block;
-  color: #bfbfbf;
+  color: var(--color-text-secondary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -247,7 +247,7 @@
 }
 
 .mentor-metric--accent strong {
-  color: #fab800;
+  color: var(--color-accent-primary);
 }
 
 .mentor-metric--success strong {
