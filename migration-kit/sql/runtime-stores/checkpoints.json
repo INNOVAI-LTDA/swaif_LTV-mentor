@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "chk_1",
+      "enrollment_id": "enr_1",
+      "week": 1,
+      "status": "green",
+      "label": "Inicio"
+    },
+    {
+      "id": "chk_2",
+      "enrollment_id": "enr_5",
+      "week": 1,
+      "status": "green",
+      "label": "Inicio consistente"
+    },
+    {
+      "id": "chk_3",
+      "enrollment_id": "enr_5",
+      "week": 2,
+      "status": "yellow",
+      "label": "Ajustar rotina"
+    },
+    {
+      "id": "chk_4",
+      "enrollment_id": "enr_8",
+      "week": 1,
+      "status": "green",
+      "label": "Inicio consistente"
+    },
+    {
+      "id": "chk_5",
+      "enrollment_id": "enr_8",
+      "week": 2,
+      "status": "yellow",
+      "label": "Ajustar rotina"
+    },
+    {
+      "id": "chk_6",
+      "enrollment_id": "enr_11",
+      "week": 1,
+      "status": "green",
+      "label": "Inicio consistente"
+    },
+    {
+      "id": "chk_7",
+      "enrollment_id": "enr_11",
+      "week": 2,
+      "status": "yellow",
+      "label": "Ajustar rotina"
+    },
+    {
+      "id": "chk_8",
+      "enrollment_id": "enr_14",
+      "week": 1,
+      "status": "green",
+      "label": "Inicio consistente"
+    },
+    {
+      "id": "chk_9",
+      "enrollment_id": "enr_14",
+      "week": 2,
+      "status": "yellow",
+      "label": "Ajustar rotina"
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "version": 2,
+  "items": [
+    {
+      "id": "usr_admin",
+      "full_name": "admin@swaif.local",
+      "email": "admin@swaif.local",
+      "role": "admin",
+      "is_active": true,
+      "created_at": "2026-05-08T04:09:43.588654Z",
+      "updated_at": "2026-05-08T04:09:43.588654Z",
+      "password_hash": "pbkdf2_sha256$120000$16faa95c49eb54aab8368481f9551f1a$26f9489c2605dd1a1e7ccae8e916455dc696232f7c91adebc39e547ddbf86d17"
+    },
+    {
+      "id": "usr_mentor",
+      "full_name": "mentor@swaif.local",
+      "email": "mentor@swaif.local",
+      "role": "provider",
+      "is_active": true,
+      "created_at": "2026-05-08T04:09:50.428393Z",
+      "updated_at": "2026-05-08T04:09:50.428393Z",
+      "password_hash": "pbkdf2_sha256$120000$fc6972ec149306ecd06a8187e716e520$9ba2cca3d99f0a0a1b660d479e8e5ab111cdf910ab2bd4c7b0976852542dea6a"
+    },
+    {
+      "id": "usr_dup_ctx",
+      "full_name": "dup@swaif.local",
+      "email": "dup@swaif.local",
+      "role": "client",
+      "is_active": true,
+      "created_at": "2026-05-08T04:09:56.881130Z",
+      "updated_at": "2026-05-08T04:09:56.881130Z",
+      "password_hash": "pbkdf2_sha256$120000$4ba5517c7733ffca61baaf7410d434e0$732e7fd79a7cd3936f5a6d6793f5a8fff481a74aa91f3d4e403f6390aa393b3c"
+    },
+    {
+      "id": "usr_aluno_alias",
+      "full_name": "aluno@swaif.local",
+      "email": "aluno@swaif.local",
+      "role": "client",
+      "is_active": true,
+      "created_at": "2026-05-10T02:05:19.533209Z",
+      "updated_at": "2026-05-10T02:05:19.533209Z",
+      "password_hash": "pbkdf2_sha256$120000$cf6f0195730e2fa99c0a04fbb5e77050$f5f97af24f3535ccb1a648838a4b91e2d16cdfc01f09800b2fcf6da5bffc63e8"
+    },
+    {
+      "id": "mtr_1",
+      "full_name": "Ana Mentora",
+      "email": "ana@swaif.local",
+      "role": "mentor",
+      "is_active": true,
+      "created_at": "2026-05-10T02:25:05.836545Z",
+      "updated_at": "2026-05-10T02:25:05.836545Z",
+      "cpf": "12345678900",
+      "phone": "11999999999",
+      "organization_id": "org_1",
+      "notes": null
+    },
+    {
+      "id": "mtr_2",
+      "full_name": "Bea Mentora",
+      "email": "bea@swaif.local",
+      "role": "mentor",
+      "is_active": true,
+      "created_at": "2026-05-10T02:25:31.696456Z",
+      "updated_at": "2026-05-10T02:25:31.696456Z",
+      "cpf": "12345678901",
+      "phone": null,
+      "organization_id": "org_1",
+      "notes": null
+    },
+    {
+      "id": "std_1",
+      "full_name": "Aluno Um",
+      "email": "aluno1@swaif.local",
+      "role": "aluno",
+      "is_active": true,
+      "created_at": "2026-05-10T02:25:46.170794Z",
+      "updated_at": "2026-05-10T02:25:46.170794Z",
+      "cpf": "12345678900",
+      "phone": null,
+      "organization_id": "org_1",
+      "notes": null
+    },
+    {
+      "id": "usr_legacy_client",
+      "full_name": "legacy.client@swaif.local",
+      "email": "legacy.client@swaif.local",
+      "role": "client",
+      "is_active": true,
+      "created_at": "2026-05-10T02:25:50.461091Z",
+      "updated_at": "2026-05-10T02:25:50.461091Z",
+      "password_hash": "pbkdf2_sha256$120000$2bee2155aacfab67290e15e65e729958$c675bfca1c02c0ea027bbecbac65b574bdcb3a41605d0f61691262ca8c839723"
+    },
+    {
+      "id": "usr_std_1",
+      "full_name": "Aluno Provisionado",
+      "email": "aluno.provisionado@swaif.local",
+      "role": "client",
+      "is_active": true,
+      "created_at": "2026-05-10T02:25:52.344804Z",
+      "updated_at": "2026-05-10T02:25:52.344804Z",
+      "cpf": null,
+      "phone": null,
+      "password_hash": "pbkdf2_sha256$120000$1c17bd582fd5bbeeef440c9c978b32c3$096354e7f7bb610d582eee466d45a87a1090be21bb6bd4966238af08888d0e4b"
+    },
+    {
+      "id": "usr_provider",
+      "full_name": "provider@swaif.local",
+      "email": "provider@swaif.local",
+      "role": "provider",
+      "is_active": true,
+      "created_at": "2026-05-10T02:25:55.076427Z",
+      "updated_at": "2026-05-10T02:25:55.076427Z",
+      "password_hash": "pbkdf2_sha256$120000$dc9c4b6e86f56f9e52d0a48bb743053f$77567780bbd61d27133b0d5d10c3b21aec4522b7753543ce26e971bba88f3990"
+    },
+    {
+      "id": "usr_mentor_alias",
+      "full_name": "mentor.alias@swaif.local",
+      "email": "mentor.alias@swaif.local",
+      "role": "provider",
+      "is_active": true,
+      "created_at": "2026-05-10T02:25:55.824165Z",
+      "updated_at": "2026-05-10T02:25:55.824165Z",
+      "password_hash": "pbkdf2_sha256$120000$c0c069f0f728efcd7f1d956ce1cb922e$c829b1a554cc6aec11d64e303a36767d5fddccc9e66dd29c5a8a7034dfad7ee5"
+    },
+    {
+      "id": "usr_mtr_1",
+      "full_name": "mentor2@swaif.local",
+      "email": "mentor2@swaif.local",
+      "role": "provider",
+      "is_active": true,
+      "created_at": "2026-05-10T02:26:33.048325Z",
+      "updated_at": "2026-05-10T02:26:33.048325Z",
+      "password_hash": "pbkdf2_sha256$120000$8c1d0e90343b0f88e4ef99f786f3777a$6a17782ca694deba5931f7f80f1a844b52ca81f0112c3caf4fe8b42128e59d02"
+    },
+    {
+      "id": "usr_aluno_workspace",
+      "full_name": "aluno.workspace@swaif.local",
+      "email": "aluno.workspace@swaif.local",
+      "role": "client",
+      "is_active": true,
+      "created_at": "2026-05-10T02:26:50.336505Z",
+      "updated_at": "2026-05-10T02:26:50.336505Z",
+      "password_hash": "pbkdf2_sha256$120000$2f5645d91827df46ac7911e9e6b3ae6c$30b9e1488b1e85ee1990a9596e5f3872357b95aefa28eac19cdc98595cb633c7"
+    },
+    {
+      "id": "usr_std_255",
+      "full_name": "Aluno Smoke 3eb5141b",
+      "email": "smoke.aluno.3eb5141b@swaif.local",
+      "role": "client",
+      "is_active": true,
+      "created_at": "2026-05-10T03:30:39.118132Z",
+      "updated_at": "2026-05-10T03:30:39.118132Z",
+      "cpf": null,
+      "phone": null,
+      "password_hash": "pbkdf2_sha256$120000$72ba09859cc33568f239bf95152564b4$d493c4cbc855b65bebb1160bf562c02f601e63b621a0e7168cbe301edd5bb535"
+    }
+  ]
+}
