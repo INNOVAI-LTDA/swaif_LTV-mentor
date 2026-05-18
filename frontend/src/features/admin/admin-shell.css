@@ -2,8 +2,8 @@
   position: relative;
   min-height: calc(100vh - 72px);
   background:
-    radial-gradient(circle at 12% 8%, rgba(250, 184, 0, 0.09) 0%, transparent 24%),
-    radial-gradient(circle at 88% 14%, rgba(250, 184, 0, 0.05) 0%, transparent 24%),
+    radial-gradient(circle at 12% 8%, rgba(var(--color-accent-primary-rgb), 0.09) 0%, transparent 24%),
+    radial-gradient(circle at 88% 14%, rgba(var(--color-accent-primary-rgb), 0.05) 0%, transparent 24%),
     linear-gradient(180deg, #070707 0%, #111111 100%);
 }
 
@@ -65,7 +65,7 @@
 }
 
 .admin-sidebar__brand p {
-  color: #bfbfbf;
+  color: var(--color-text-secondary);
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -84,7 +84,7 @@
 
 .admin-sidebar__label,
 .admin-header__eyebrow {
-  color: #fab800;
+  color: var(--color-accent-primary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -108,13 +108,13 @@
 
 .admin-sidebar__link:hover {
   transform: translateY(-1px);
-  border-color: rgba(250, 184, 0, 0.24);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.24);
 }
 
 .admin-sidebar__link.is-active,
 .admin-sidebar__link.is-secondary-active {
-  border-color: rgba(250, 184, 0, 0.55);
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.55);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
   color: #fff7dd;
 }
 
@@ -124,7 +124,7 @@
 
 .admin-sidebar__spotlight {
   border-radius: 18px;
-  background: linear-gradient(155deg, rgba(250, 184, 0, 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
+  background: linear-gradient(155deg, rgba(var(--color-accent-primary-rgb), 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
   padding: 16px;
 }
 
@@ -160,7 +160,7 @@
 
 .admin-header__eyebrow {
   margin: 0 0 8px;
-  color: #fab800;
+  color: var(--color-accent-primary);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -192,7 +192,7 @@
 
 .admin-header__actions button,
 .admin-header__actions a {
-  border: 1px solid rgba(250, 184, 0, 0.24);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.24);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: #fff6dc;
@@ -218,7 +218,7 @@
 
 .admin-metric span {
   display: block;
-  color: #bfbfbf;
+  color: var(--color-text-secondary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -233,7 +233,7 @@
 }
 
 .admin-metric--accent strong {
-  color: #fab800;
+  color: var(--color-accent-primary);
 }
 
 .admin-metric--success strong {

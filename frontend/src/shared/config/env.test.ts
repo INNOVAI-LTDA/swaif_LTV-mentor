@@ -97,6 +97,67 @@ describe("shared env config", () => {
     expect(env.clientCode).toBe("cliente_01");
   });
 
+  it("BrandPack: contrato de marca tem todos os campos obrigatorios preenchidos", async () => {
+    vi.stubEnv("VITE_DEPLOY_TARGET", "client");
+    vi.stubEnv("VITE_API_BASE_URL", "https://api.example.com");
+    vi.stubEnv("VITE_CLIENT_CODE", "testclient");
+    vi.stubEnv("VITE_APP_BASE_PATH", "/");
+    vi.stubEnv("VITE_CLIENT_NAME", "Cliente Teste");
+    vi.stubEnv("VITE_APP_NAME", "Plataforma Teste");
+    vi.stubEnv("VITE_APP_TAGLINE", "Tagline de teste");
+    vi.stubEnv("VITE_SHELL_SUBTITLE", "Subtitulo de teste");
+    vi.stubEnv("VITE_BRANDING_ICON_PATH", "branding/icon.png");
+    vi.stubEnv("VITE_BRANDING_LOGO_PATH", "branding/logo.png");
+    vi.stubEnv("VITE_BRANDING_LOGIN_HERO_PATH", "branding/hero.png");
+    vi.stubEnv("VITE_THEME_ACCENT_PRIMARY", "#0070f3");
+    vi.stubEnv("VITE_THEME_BG_PRIMARY", "#0a0a0a");
+
+    const { env } = await importEnvModule();
+
+    // All BrandPack fields must be present and non-empty
+    expect(env.clientCode).toBe("testclient");
+    expect(env.clientName).toBe("Cliente Teste");
+    expect(env.appName).toBe("Plataforma Teste");
+    expect(env.appTagline).toBe("Tagline de teste");
+    expect(env.shellSubtitle).toBe("Subtitulo de teste");
+    expect(env.brandingIconUrl).toBe("/branding/icon.png");
+    expect(env.brandingLogoUrl).toBe("/branding/logo.png");
+    expect(env.brandingLoginHeroUrl).toBe("/branding/hero.png");
+    // Theme color tokens override correctly
+    expect(env.themeColors.accentPrimary).toBe("#0070f3");
+    expect(env.themeColors.bgPrimary).toBe("#0a0a0a");
+    // Remaining tokens fall back to defaults
+    expect(env.themeColors.textPrimary).toBe("#ffffff");
+    expect(env.themeColors.textSecondary).toBe("#bfbfbf");
+  });
+
+  it("BrandPack: campos de tema tem valores padrao quando env nao define tokens", async () => {
+    vi.stubEnv("VITE_DEPLOY_TARGET", "local");
+
+    const { env } = await importEnvModule();
+
+    expect(env.themeColors.bgPrimary).toBe("#090909");
+    expect(env.themeColors.bgSecondary).toBe("#121212");
+    expect(env.themeColors.accentPrimary).toBe("#fab800");
+    expect(env.themeColors.accentSecondary).toBe("#ffbd00");
+    expect(env.themeColors.success).toBe("#39b56a");
+    expect(env.themeColors.warning).toBe("#d9a100");
+    expect(env.themeColors.danger).toBe("#d64545");
+  });
+
+  it("BrandPack: base path e resolvido corretamente nos asset paths de branding", async () => {
+    vi.stubEnv("VITE_DEPLOY_TARGET", "client");
+    vi.stubEnv("VITE_API_BASE_URL", "https://api.example.com");
+    vi.stubEnv("VITE_CLIENT_CODE", "testclient");
+    vi.stubEnv("VITE_APP_BASE_PATH", "/cliente/");
+    vi.stubEnv("VITE_BRANDING_ICON_PATH", "branding/custom-icon.png");
+
+    const { env } = await importEnvModule();
+
+    expect(env.brandingIconUrl).toBe("/cliente/branding/custom-icon.png");
+    expect(env.appBasePath).toBe("/cliente/");
+  });
+
   it("carrega o runtime com a baseline local quando nao ha stub explicito", async () => {
     vi.unstubAllEnvs();
 

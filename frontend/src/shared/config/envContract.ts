@@ -1,5 +1,34 @@
 export type DeployTarget = "local" | "client";
 
+/**
+ * BrandPack: contrato explícito de todos os campos de marca por cliente.
+ * Extraído de `env` em runtime. Usado como referência para white-label.
+ */
+export interface BrandPack {
+  clientCode: string | null;
+  clientName: string;
+  appName: string;
+  appTagline: string;
+  shellSubtitle: string;
+  brandingIconUrl: string;
+  brandingLogoUrl: string;
+  brandingLoginHeroUrl: string;
+  themeColors: {
+    bgPrimary: string;
+    bgSecondary: string;
+    surfacePrimary: string;
+    surfaceSecondary: string;
+    borderDefault: string;
+    textPrimary: string;
+    textSecondary: string;
+    accentPrimary: string;
+    accentSecondary: string;
+    success: string;
+    warning: string;
+    danger: string;
+  };
+}
+
 export function normalizeDeployTarget(raw: string | undefined): DeployTarget {
   const candidate = (raw || "").trim().toLowerCase();
   if (!candidate) {

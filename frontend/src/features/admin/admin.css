@@ -24,8 +24,8 @@
 
 .admin-notice {
   border-radius: 22px;
-  border: 1px solid rgba(250, 184, 0, 0.2);
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.2);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
   padding: 18px 20px;
 }
 
@@ -58,7 +58,7 @@
 
 .admin-module__eyebrow {
   margin: 0 0 8px;
-  color: #fab800;
+  color: var(--color-accent-primary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -116,7 +116,7 @@
 .admin-priority-list span,
 .admin-opportunity-list span {
   display: block;
-  color: #bfbfbf;
+  color: var(--color-text-secondary);
   font-size: 12px;
 }
 
@@ -163,12 +163,12 @@
 
 .admin-client-card:hover {
   transform: translateY(-1px);
-  border-color: rgba(250, 184, 0, 0.24);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.24);
 }
 
 .admin-client-card.is-selected {
-  border-color: rgba(250, 184, 0, 0.5);
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.5);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
 }
 
 .admin-client-card--spotlight {
@@ -369,8 +369,8 @@
 }
 
 .admin-mentor-card.is-primary {
-  border-color: rgba(250, 184, 0, 0.5);
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.5);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
 }
 
 .admin-student-card {
@@ -442,7 +442,7 @@
 
 .admin-client-form button {
   width: fit-content;
-  border: 1px solid rgba(250, 184, 0, 0.24);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.24);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: #fff6dc;
@@ -483,7 +483,7 @@
 
 .admin-inline-cta {
   width: fit-content;
-  border: 1px solid rgba(250, 184, 0, 0.24);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.24);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: #fff6dc;
@@ -545,7 +545,7 @@
 
 .admin-create-menu__item:hover {
   transform: translateY(-1px);
-  border-color: rgba(250, 184, 0, 0.24);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.24);
 }
 
 .admin-create-menu__message {
@@ -568,12 +568,12 @@
 
 .admin-product-card:hover {
   transform: translateY(-1px);
-  border-color: rgba(250, 184, 0, 0.24);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.24);
 }
 
 .admin-product-card.is-active {
-  border-color: rgba(250, 184, 0, 0.5);
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.5);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
 }
 
 .admin-product-hierarchy {
@@ -627,11 +627,11 @@
 .admin-hierarchy-card--product:hover,
 .admin-hierarchy-card--action:hover {
   transform: translateY(-1px);
-  border-color: rgba(250, 184, 0, 0.24);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.24);
 }
 
 .admin-hierarchy-card--product {
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
 }
 
 .admin-pillar-stack {
@@ -660,8 +660,8 @@
 }
 
 .admin-hierarchy-card--pillar.is-selected {
-  border-color: rgba(250, 184, 0, 0.3);
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.3);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
 }
 
 .admin-pillar-entry {
@@ -693,7 +693,7 @@
 }
 
 .admin-metric-card span {
-  color: #fab800;
+  color: var(--color-accent-primary);
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -853,12 +853,12 @@
 
 .admin-student-card:hover {
   transform: translateY(-1px);
-  border-color: rgba(250, 184, 0, 0.24);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.24);
 }
 
 .admin-student-card.is-selected {
-  border-color: rgba(250, 184, 0, 0.5);
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(var(--color-accent-primary-rgb), 0.5);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
 }
 
 .admin-modal__summary {
@@ -896,7 +896,7 @@
 }
 
 .admin-modal__actions button {
-  border: 1px solid rgba(250, 184, 0, 0.24);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.24);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: #fff6dc;
@@ -945,7 +945,7 @@
 }
 
 .admin-surface-card--amber {
-  background: linear-gradient(180deg, rgba(250, 184, 0, 0.16) 0%, rgba(255, 255, 255, 0.03) 100%);
+  background: linear-gradient(180deg, rgba(var(--color-accent-primary-rgb), 0.16) 0%, rgba(255, 255, 255, 0.03) 100%);
 }
 
 .admin-surface-card--coral {
@@ -978,7 +978,7 @@
 
 .admin-badge {
   border-radius: 999px;
-  border: 1px solid rgba(250, 184, 0, 0.24);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.24);
   background: rgba(255, 255, 255, 0.03);
   color: #fff0be;
   padding: 8px 12px;
@@ -1000,7 +1000,7 @@
 
 .admin-state--error button {
   width: fit-content;
-  border: 1px solid rgba(250, 184, 0, 0.24);
+  border: 1px solid rgba(var(--color-accent-primary-rgb), 0.24);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
   color: #fff6dc;
