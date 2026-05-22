@@ -1,0 +1,6571 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "enrollment_id": "enr_2",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_3",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_4",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_5",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_6",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_7",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_8",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_9",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_10",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_11",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_12",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_13",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_14",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_15",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_16",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_17",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_18",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_19",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_20",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_21",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_22",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_23",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_24",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_25",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_26",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_27",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_28",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_29",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_30",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_31",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_32",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_33",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_34",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_35",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_36",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_37",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_38",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_39",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_40",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_41",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_42",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_43",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_44",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_45",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_46",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_47",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_48",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_49",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_50",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_51",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_52",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_53",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_54",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_55",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_56",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_57",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_58",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_59",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_60",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_61",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_62",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_63",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_64",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_65",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_66",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_67",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_68",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_69",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_70",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_71",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_72",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_73",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_74",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_75",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_76",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_77",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_78",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_79",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_80",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_81",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_82",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_83",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_84",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_85",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_86",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_87",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_88",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_89",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_90",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_91",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_92",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_93",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_94",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_95",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_96",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_97",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_98",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_99",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_100",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_101",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_102",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_103",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_104",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_105",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_106",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_107",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_108",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_109",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_110",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_111",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_112",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_113",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_114",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_115",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_116",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_117",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_118",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_119",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_120",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_121",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_122",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_123",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_124",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_125",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_126",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_127",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_128",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_129",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_130",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_131",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_132",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_133",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_134",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_135",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_136",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_137",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_138",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_139",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_140",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_141",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_142",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_143",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_144",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_145",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_146",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_147",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_148",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_149",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_150",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_151",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_152",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_153",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_154",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_155",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_156",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_157",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_158",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_159",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_160",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_161",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_162",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_163",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_164",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_165",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_166",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_167",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_168",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_169",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_170",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_171",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_172",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_173",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_174",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_175",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_176",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_177",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_178",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_179",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_180",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_181",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_182",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_183",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_184",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_185",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_186",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_187",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_188",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_189",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_190",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_191",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_192",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_193",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_194",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_195",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_196",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_197",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_198",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_199",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_200",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_201",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_202",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_203",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_204",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_205",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_206",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_207",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_208",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_209",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_210",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_211",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_212",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_213",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_214",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_215",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_216",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_217",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_218",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_219",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_220",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_221",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_222",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_223",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_224",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_225",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_226",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_227",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_228",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_229",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_230",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_231",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_232",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_233",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_234",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_235",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_236",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_237",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_238",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_239",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_240",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_241",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_242",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_243",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_244",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_245",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_246",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_247",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_248",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_249",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_250",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_251",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_252",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_253",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_254",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_255",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_256",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_257",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_258",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_259",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_260",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_261",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_262",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_263",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_264",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_265",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_266",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_267",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_268",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_269",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_270",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_271",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_272",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_273",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_274",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_275",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_276",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_277",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_278",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_279",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_280",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_281",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_282",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_283",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_284",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_285",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_286",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_287",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_288",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_289",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_290",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_291",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_292",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_293",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_294",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_295",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_296",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_297",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_298",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_299",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_300",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_301",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_302",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_303",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_304",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_305",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_306",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_307",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_308",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_309",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_310",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_311",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_312",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_313",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_314",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_315",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_316",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_317",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_318",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_319",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_320",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_321",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_322",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_323",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_324",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_325",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_326",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_327",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_328",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_329",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_330",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_331",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_332",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_333",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_334",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_335",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_336",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_337",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_338",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_339",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_340",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_341",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_342",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_343",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_344",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_345",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_346",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_347",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_348",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_349",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_350",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_351",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_352",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_353",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_354",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_355",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_356",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_357",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_358",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_359",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_360",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_361",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_362",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_363",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_364",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_365",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_366",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_367",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_368",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_369",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_370",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_371",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_372",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_373",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_374",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_375",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_376",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_377",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_378",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_379",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_380",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_381",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_382",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_383",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_384",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_385",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_386",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_387",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_388",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_389",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_390",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_391",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_392",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_393",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_394",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_395",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_396",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_397",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_398",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_399",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_400",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_401",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_402",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_403",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_404",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_405",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_406",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_407",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_408",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_409",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_410",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_411",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_412",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_413",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_414",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_415",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_416",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_417",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_418",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_419",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_420",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_421",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_422",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_423",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_424",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_425",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_426",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_427",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_428",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_429",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_430",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_431",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_432",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_433",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_434",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_435",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_436",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_437",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_438",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_439",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_440",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_441",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_442",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_443",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_444",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_445",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_446",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_447",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_448",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_449",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_450",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_451",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_452",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_453",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_454",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_455",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_456",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_457",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_458",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_459",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_460",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_461",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_462",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_463",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_464",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_465",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_466",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_467",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_468",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_469",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    },
+    {
+      "enrollment_id": "enr_1",
+      "protocol_id": "prt_3",
+      "metrics": [],
+      "pillars": [],
+      "decision_matrix": {
+        "product_score": 0.0,
+        "engagement_score": 0.0,
+        "thresholds": {
+          "prd_thr": 0.7,
+          "eng_thr": 0.7
+        }
+      }
+    }
+  ]
+}
