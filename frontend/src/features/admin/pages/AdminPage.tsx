@@ -139,6 +139,8 @@ export function AdminPage() {
 
   const activePanel = searchParams.get("panel");
   const isClientsPanel = activePanel === "clientes";
+  const isProviderPanel = activePanel === "provider";
+  const isClientViewPanel = activePanel === "client";
   const isProductsPanel = activePanel === "produtos";
   const isMentorsPanel = activePanel === "mentores";
   const isStudentsPanel = activePanel === "alunos";
@@ -1115,7 +1117,27 @@ export function AdminPage() {
     >
       <section className="admin-page">
 
+        {isProviderPanel ? (
         <article className="admin-module" aria-label="Provider View">
+          <p className="admin-module__eyebrow">Provider View</p>
+          <div className="admin-provider-view-controls">
+            <label>
+              Provider
+              <select value={selectedProviderId} onChange={(event) => setSelectedProviderId(event.target.value)}>
+                <option value="">Selecione</option>
+                {mentorsResource.data.map((mentor) => (
+                  <option key={mentor.id} value={mentor.id}>{mentor.full_name}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <p className="admin-module__muted">
+            Selecione o Provider e use os paineis de Centro de Comando, Matriz e Radar no modo provider para operar consentimento e atualizacao de metricas.
+          </p>
+        </article>
+        ) : null}
+        {true ? (
+        <article className="admin-module" aria-label="Client View">
           <p className="admin-module__eyebrow">Client View</p>
           <div className="admin-provider-view-controls">
             <label>
@@ -1145,6 +1167,7 @@ export function AdminPage() {
             ))}
           </div>
         </article>
+        ) : null}
         {!isAuthenticated || user?.role !== "admin" ? (
           <section className="admin-notice">
             <strong>Entre com o usuario admin para operar o bloco real.</strong>
