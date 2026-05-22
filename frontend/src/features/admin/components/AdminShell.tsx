@@ -15,6 +15,8 @@ type AdminShellProps = {
 const MAIN_NAV = [{ key: "admin", label: "Centro Institucional", to: "/app/admin" }] as const;
 
 const SUPPORT_PANELS = {
+  provider: { label: "Provider View" },
+  client: { label: "Client" },
   clientes: { label: "Clientes" },
   produtos: { label: "Produtos" },
   mentores: { label: "Mentores" },
@@ -27,7 +29,7 @@ const SUPPORT_PANELS = {
 type SupportPanelKey = keyof typeof SUPPORT_PANELS;
 
 function isSupportPanel(value: string | null): value is SupportPanelKey {
-  return value === "clientes" || value === "produtos" || value === "mentores" || value === "alunos" || value === "governanca" || value === "database" || value === "api";
+  return value === "provider" || value === "client" || value === "clientes" || value === "produtos" || value === "mentores" || value === "alunos" || value === "governanca" || value === "database" || value === "api";
 }
 
 export function AdminShell({ eyebrow, title, description, actions, metrics = [], children }: AdminShellProps) {
