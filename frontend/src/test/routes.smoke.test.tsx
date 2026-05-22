@@ -81,6 +81,10 @@ vi.mock("../features/admin/pages/AdminPage", () => ({
   AdminPage: () => <h1>Centro Institucional</h1>
 }));
 
+vi.mock("../features/admin/pages/AdminMockPage", () => ({
+  AdminMockPage: () => <h1>Centro Institucional (Mock)</h1>
+}));
+
 import { appRoutes } from "../app/routes";
 
 function renderRoute(initialEntries: string[], basename?: string) {
@@ -213,5 +217,11 @@ describe("app routes", () => {
     renderRoute(["/cliente/dashboard"], "/cliente");
 
     expect(await screen.findByRole("heading", { name: "Entrar na nova experiencia" })).toBeInTheDocument();
+  });
+
+  it("renderiza rota publica de mock admin sem exigir autenticacao", async () => {
+    renderRoute(["/mock/admin?panel=provider"]);
+
+    expect(await screen.findByRole("heading", { name: "Centro Institucional (Mock)" })).toBeInTheDocument();
   });
 });

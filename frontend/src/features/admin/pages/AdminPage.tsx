@@ -1002,6 +1002,39 @@ export function AdminPage() {
   }
 
 
+
+
+  async function loadApiCatalog() {
+    setApiCatalogLoading(true);
+    setApiCatalogError(null);
+    try {
+      const items = await listAdminApiOperations();
+      setApiCatalog(items);
+    } catch (error) {
+      setApiCatalogError(toUserErrorMessage(error, "Falha ao carregar catalogo de requests."));
+    } finally {
+      setApiCatalogLoading(false);
+    }
+  }
+
+  async function handleApiOperationRequest(item: AdminApiOperationItem) {
+    const ok = window.confirm(`Confirmar request monitoravel para ${item.method} ${item.endpoint}?`);
+    if (!ok) return;
+    setApiExecutionStatusByEndpoint((current) => ({ ...current, [item.endpoint]: "Processando..." }));
+    try {
+      const response: AdminApiOperationExecution = await executeAdminApiOperation(item.endpoint);
+      setApiExecutionStatusByEndpoint((current) => ({
+        ...current,
+        [item.endpoint]: `${response.status} | solicitado em ${response.requestedAt}`
+      }));
+    } catch (error) {
+      setApiExecutionStatusByEndpoint((current) => ({
+        ...current,
+        [item.endpoint]: toUserErrorMessage(error, "Falha ao solicitar request.")
+      }));
+    }
+  }
+
   async function loadDatabaseTables() {
     setDatabaseError(null);
     const tables = await listDatabaseTables();
@@ -1059,6 +1092,12 @@ export function AdminPage() {
     if (!canLoadAdmin || !isDatabasePanel) return;
     void loadDatabaseTables();
   }, [canLoadAdmin, isDatabasePanel]);
+
+  useEffect(() => {
+    if (!canLoadAdmin || !isApiPanel) return;
+    void loadApiCatalog();
+  }, [canLoadAdmin, isApiPanel]);
+
 
   return (
     <AdminShell
