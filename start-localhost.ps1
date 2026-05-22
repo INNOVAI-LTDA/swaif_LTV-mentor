@@ -40,7 +40,7 @@ function Resolve-Port([string]$Host, [int]$PreferredPort, [string]$Label, [int]$
     $candidate = $PreferredPort + $offset
     if ($candidate -gt 65535) { break }
     if (Test-PortBindable -Host $Host -Port $candidate) {
-      Write-Host "[DEVA] Porta alternativa selecionada para ${Label}: $candidate" -ForegroundColor Yellow
+      Write-Host "[DEVA] Porta alternativa selecionada para $Label: $candidate" -ForegroundColor Yellow
       return $candidate
     }
   }
