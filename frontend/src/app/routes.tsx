@@ -9,6 +9,7 @@ import { RadarPage } from "../features/radar/pages/RadarPage";
 import { MatrixPage } from "../features/matrix/pages/MatrixPage";
 import { StudentPage } from "../features/student/pages/StudentPage";
 import { AdminPage } from "../features/admin/pages/AdminPage";
+import { AdminMockPage } from "../features/admin/pages/AdminMockPage";
 
 import { useAuth } from "./providers/AuthProvider";
 import { getDefaultRouteForRole, isKnownUserRole } from "../shared/auth/roleRouting";
@@ -127,6 +128,7 @@ export const appRoutes: RouteObject[] = [
     children: [
       { index: true, element: <Navigate to="/login" replace /> },
       { path: "login", element: <LoginPage /> },
+      { path: "mock/admin", element: <AdminMockPage /> },
       { path: "dashboard", element: <Navigate to="/app" replace /> },
       {
         path: "app",

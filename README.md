@@ -211,3 +211,25 @@ O DEVA ajuda o Acelerador Médico a:
 ## Status
 
 Projeto em evolução, com base conceitual definida, protótipo visual explorado e processo SDLC/V-Bounce aplicado para guiar implementação progressiva.
+
+## Mockups administrativos (views)
+
+Os mockups/snapshots versionados das quatro views administrativas estao em `docs/admin-mockups/`:
+
+- [Provider View](docs/admin-mockups/admin-provider-view.md)
+- [Client View](docs/admin-mockups/admin-client-view.md)
+- [Database View](docs/admin-mockups/admin-database-view.md)
+- [API View](docs/admin-mockups/admin-api-view.md)
+
+### Preview local das telas admin com mock data
+
+Para validar conteúdo e navegação sem depender da API real, use a rota:
+
+- `/mock/admin`
+
+Nessa rota é possível alternar entre as quatro views por query string `panel`:
+
+- `/mock/admin?panel=provider`
+- `/mock/admin?panel=clientes`
+- `/mock/admin?panel=database`
+- `/mock/admin?panel=api`
