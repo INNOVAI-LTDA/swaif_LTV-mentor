@@ -1060,3 +1060,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+.admin-provider-view-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.admin-provider-view-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.admin-module__muted { color: #c9c9c9; margin-top: 10px; }

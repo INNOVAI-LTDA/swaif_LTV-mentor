@@ -676,3 +676,25 @@ describe("admin client product mentor and student modals", () => {
     await waitForElementToBeRemoved(() => screen.queryByRole("dialog"), { timeout: 2500 });
   }, 10000);
 });
+
+it("bloqueia edição de provider view sem consentimento explícito", () => {
+  clientsMockData = [buildClient()];
+  productsMockData = [buildProduct()];
+  mentorsMockData = [buildMentor()];
+  const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+  vi.stubGlobal("fetch", fetchMock);
+  vi.spyOn(window, "confirm").mockReturnValue(false);
+
+  render(
+    <MemoryRouter initialEntries={["/app/admin?panel=mentores"]}>
+      <AdminPage />
+    </MemoryRouter>
+  );
+
+  const [baselineInput] = screen.getAllByLabelText(/baseline/i) as HTMLInputElement[];
+  expect(baselineInput.disabled).toBe(true);
+  fireEvent.change(screen.getByDisplayValue("Selecione"), { target: { value: "mtr_1" } });
+  fireEvent.click(screen.getByRole("button", { name: /Registrar consentimento/i }));
+  expect(fetchMock).toHaveBeenCalled();
+  expect(baselineInput.disabled).toBe(true);
+});

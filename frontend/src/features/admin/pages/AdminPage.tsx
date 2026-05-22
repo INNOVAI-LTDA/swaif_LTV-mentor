@@ -131,6 +131,10 @@ export function AdminPage() {
   const [createChooserMessage, setCreateChooserMessage] = useState<string | null>(null);
   const [isPillarExpanded, setIsPillarExpanded] = useState(false);
 
+  const [selectedProviderId, setSelectedProviderId] = useState<string>("");
+  const [providerViewMode, setProviderViewMode] = useState<"decision-map" | "command-center" | "evolution-radar">("decision-map");
+  const [consentGranted, setConsentGranted] = useState(false);
+
   const activePanel = searchParams.get("panel");
   const isClientsPanel = activePanel === "clientes";
   const isProductsPanel = activePanel === "produtos";
@@ -1007,6 +1011,56 @@ export function AdminPage() {
       ]}
     >
       <section className="admin-page">
+
+        <article className="admin-module" aria-label="Provider View">
+          <p className="admin-module__eyebrow">Provider View</p>
+          <div className="admin-provider-view-controls">
+            <label>
+              Provider
+              <select value={selectedProviderId} onChange={(event) => {
+                setSelectedProviderId(event.target.value);
+                setConsentGranted(false);
+              }}>
+                <option value="">Selecione</option>
+                {mentorsResource.data.map((mentor) => (
+                  <option key={mentor.id} value={mentor.id}>{`${mentor.full_name} (provider)`}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Modo
+              <select value={providerViewMode} onChange={(event) => setProviderViewMode(event.target.value as "decision-map" | "command-center" | "evolution-radar") }>
+                <option value="decision-map">Mapa de Decisão</option>
+                <option value="command-center">Centro de Comando</option>
+                <option value="evolution-radar">Radar de Evolução</option>
+              </select>
+            </label>
+            <button type="button" disabled={!selectedProviderId} onClick={async () => {
+              const provider = mentorsResource.data.find((item) => item.id === selectedProviderId);
+              const confirmed = window.confirm(`Confirmar consentimento explícito do provider ${provider?.full_name ?? "selecionado"} para operação ${providerViewMode}?`);
+              const response = await fetch('/admin/provider-view/consent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('swaif.auth.token') ?? ''}` },
+                body: JSON.stringify({
+                  provider_id: selectedProviderId,
+                  provider_name: provider?.full_name ?? '',
+                  operation: providerViewMode,
+                  consent_granted: confirmed
+                })
+              });
+              if (response.ok && confirmed) {
+                setConsentGranted(true);
+              }
+            }}>Registrar consentimento</button>
+          </div>
+          <p className="admin-module__muted">Edição absoluta restrita a baseline, target e current; demais campos somente leitura.</p>
+          <div className="admin-provider-view-edit-grid">
+            <label>baseline <input type="number" disabled={!consentGranted} /></label>
+            <label>target <input type="number" disabled={!consentGranted} /></label>
+            <label>current <input type="number" disabled={!consentGranted} /></label>
+            <label>direction <input type="text" readOnly value="higher_better" /></label>
+          </div>
+        </article>
         {!isAuthenticated || user?.role !== "admin" ? (
           <section className="admin-notice">
             <strong>Entre com o usuario admin para operar o bloco real.</strong>
