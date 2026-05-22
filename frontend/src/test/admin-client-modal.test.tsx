@@ -26,6 +26,7 @@ const loadAdminStudentIndicatorsMock = vi.fn();
 const reassignAdminStudentMock = vi.fn();
 const unlinkAdminStudentMock = vi.fn();
 const clientDetailMock = vi.fn();
+let radarAxesMockData: Array<{ axisKey: string; axisLabel: string; baseline: number; current: number; projected: number }> = [];
 
 let clientsMockData: AdminClientDto[] = [];
 let productsMockData: AdminProductDto[] = [];
@@ -127,6 +128,15 @@ vi.mock("../domain/services/adminStudentService", () => ({
   loadAdminStudentIndicators: (...args: unknown[]) => loadAdminStudentIndicatorsMock(...args),
   reassignAdminStudent: (...args: unknown[]) => reassignAdminStudentMock(...args),
   unlinkAdminStudent: (...args: unknown[]) => unlinkAdminStudentMock(...args)
+}));
+
+vi.mock("../domain/hooks/useRadar", () => ({
+  useStudentRadar: () => ({
+    data: { axisScores: radarAxesMockData },
+    error: null,
+    loading: false,
+    refresh: vi.fn()
+  })
 }));
 
 function buildClient(): AdminClientDto {
@@ -232,6 +242,7 @@ describe("admin client product mentor and student modals", () => {
     pillarsMockData = [];
     metricsMockData = [];
     studentsMockData = [];
+    radarAxesMockData = [];
     refreshClientsMock.mockReset();
     refreshProductsMock.mockReset();
     refreshMentorsMock.mockReset();
@@ -283,7 +294,7 @@ describe("admin client product mentor and student modals", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("Clinica Horizonte")).toBeInTheDocument();
+    expect(screen.getAllByText("Clinica Horizonte").length).toBeGreaterThan(0);
     expect(screen.getByText("Programa Premium")).toBeInTheDocument();
   });
 
@@ -677,24 +688,22 @@ describe("admin client product mentor and student modals", () => {
   }, 10000);
 });
 
-it("bloqueia edição de provider view sem consentimento explícito", () => {
+it("mantem Client View em modo somente leitura sem controles de edição", () => {
   clientsMockData = [buildClient()];
-  productsMockData = [buildProduct()];
-  mentorsMockData = [buildMentor()];
-  const fetchMock = vi.fn().mockResolvedValue({ ok: true });
-  vi.stubGlobal("fetch", fetchMock);
-  vi.spyOn(window, "confirm").mockReturnValue(false);
+  radarAxesMockData = [{ axisKey: "engagement", axisLabel: "Engajamento", baseline: 0.4, current: 0.6, projected: 0.65 }];
 
   render(
-    <MemoryRouter initialEntries={["/app/admin?panel=mentores"]}>
+    <MemoryRouter initialEntries={["/app/admin"]}>
       <AdminPage />
     </MemoryRouter>
   );
 
-  const [baselineInput] = screen.getAllByLabelText(/baseline/i) as HTMLInputElement[];
-  expect(baselineInput.disabled).toBe(true);
-  fireEvent.change(screen.getByDisplayValue("Selecione"), { target: { value: "mtr_1" } });
-  fireEvent.click(screen.getByRole("button", { name: /Registrar consentimento/i }));
-  expect(fetchMock).toHaveBeenCalled();
-  expect(baselineInput.disabled).toBe(true);
+  expect(screen.getByText("Client View")).toBeInTheDocument();
+  expect(
+    screen.getByText("Regra de negócio: a edição de métricas do client ocorre no fluxo Client-Provider, não no Admin Client View.")
+  ).toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: /Registrar consentimento/i })).not.toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: /Salvar/i })).not.toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: /Editar/i })).not.toBeInTheDocument();
+  expect(screen.getByTestId("admin-client-view-read-only")).toMatchSnapshot();
 });
