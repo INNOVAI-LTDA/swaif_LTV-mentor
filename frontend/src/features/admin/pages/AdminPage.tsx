@@ -7,6 +7,7 @@ import { useAdminMentors } from "../../../domain/hooks/useAdminMentors";
 import { useAdminPillars } from "../../../domain/hooks/useAdminPillars";
 import { useAdminProducts } from "../../../domain/hooks/useAdminProducts";
 import { useAdminStudents } from "../../../domain/hooks/useAdminStudents";
+import { useStudentRadar } from "../../../domain/hooks/useRadar";
 import { createAdminClient } from "../../../domain/services/adminClientService";
 import { createAdminMetric, listAdminMetricsByProduct } from "../../../domain/services/adminMetricService";
 import { createAdminMentor } from "../../../domain/services/adminMentorService";
@@ -132,8 +133,7 @@ export function AdminPage() {
   const [isPillarExpanded, setIsPillarExpanded] = useState(false);
 
   const [selectedProviderId, setSelectedProviderId] = useState<string>("");
-  const [providerViewMode, setProviderViewMode] = useState<"decision-map" | "command-center" | "evolution-radar">("decision-map");
-  const [consentGranted, setConsentGranted] = useState(false);
+  const [selectedClientViewClientId, setSelectedClientViewClientId] = useState<string>("");
 
   const activePanel = searchParams.get("panel");
   const isClientsPanel = activePanel === "clientes";
@@ -150,6 +150,7 @@ export function AdminPage() {
   const pillarsResource = useAdminPillars(canLoadAdmin && hasProductContextPanel ? selectedProductId : null);
   const metricsResource = useAdminMetrics(canLoadAdmin && isProductsPanel ? selectedPillarId : null);
   const studentsResource = useAdminStudents(canLoadAdmin && isStudentsPanel ? selectedMentorId : null);
+  const clientViewRadarResource = useStudentRadar(selectedStudentId);
 
   const [clientFormState, setClientFormState] = useState(EMPTY_CLIENT_FORM);
   const [clientFormError, setClientFormError] = useState<string | null>(null);
@@ -1013,52 +1014,33 @@ export function AdminPage() {
       <section className="admin-page">
 
         <article className="admin-module" aria-label="Provider View">
-          <p className="admin-module__eyebrow">Provider View</p>
+          <p className="admin-module__eyebrow">Client View</p>
           <div className="admin-provider-view-controls">
             <label>
-              Provider
-              <select value={selectedProviderId} onChange={(event) => {
-                setSelectedProviderId(event.target.value);
-                setConsentGranted(false);
-              }}>
+              Cliente
+              <select value={selectedClientViewClientId} onChange={(event) => setSelectedClientViewClientId(event.target.value)}>
                 <option value="">Selecione</option>
-                {mentorsResource.data.map((mentor) => (
-                  <option key={mentor.id} value={mentor.id}>{`${mentor.full_name} (provider)`}</option>
+                {activeClients.map((client) => (
+                  <option key={client.id} value={client.id}>{client.name}</option>
                 ))}
               </select>
             </label>
-            <label>
-              Modo
-              <select value={providerViewMode} onChange={(event) => setProviderViewMode(event.target.value as "decision-map" | "command-center" | "evolution-radar") }>
-                <option value="decision-map">Mapa de Decisão</option>
-                <option value="command-center">Centro de Comando</option>
-                <option value="evolution-radar">Radar de Evolução</option>
-              </select>
-            </label>
-            <button type="button" disabled={!selectedProviderId} onClick={async () => {
-              const provider = mentorsResource.data.find((item) => item.id === selectedProviderId);
-              const confirmed = window.confirm(`Confirmar consentimento explícito do provider ${provider?.full_name ?? "selecionado"} para operação ${providerViewMode}?`);
-              const response = await fetch('/admin/provider-view/consent', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('swaif.auth.token') ?? ''}` },
-                body: JSON.stringify({
-                  provider_id: selectedProviderId,
-                  provider_name: provider?.full_name ?? '',
-                  operation: providerViewMode,
-                  consent_granted: confirmed
-                })
-              });
-              if (response.ok && confirmed) {
-                setConsentGranted(true);
-              }
-            }}>Registrar consentimento</button>
           </div>
-          <p className="admin-module__muted">Edição absoluta restrita a baseline, target e current; demais campos somente leitura.</p>
-          <div className="admin-provider-view-edit-grid">
-            <label>baseline <input type="number" disabled={!consentGranted} /></label>
-            <label>target <input type="number" disabled={!consentGranted} /></label>
-            <label>current <input type="number" disabled={!consentGranted} /></label>
-            <label>direction <input type="text" readOnly value="higher_better" /></label>
+          <p className="admin-module__muted">
+            Regra de negócio: a edição de métricas do client ocorre no fluxo Client-Provider, não no Admin Client View.
+          </p>
+          {selectedClientViewClientId && !selectedStudentId ? <p className="admin-module__muted">Selecione um aluno no painel de alunos para visualizar o radar em modo leitura.</p> : null}
+          <div className="admin-provider-view-edit-grid" data-testid="admin-client-view-read-only">
+            {clientViewRadarResource.loading ? <p className="admin-state">Carregando radar...</p> : null}
+            {!clientViewRadarResource.loading && clientViewRadarResource.data.axisScores.length === 0 ? (
+              <p className="admin-state">Sem dados de radar para leitura neste contexto.</p>
+            ) : null}
+            {clientViewRadarResource.data.axisScores.map((axis) => (
+              <label key={axis.axisKey}>
+                {axis.axisLabel}
+                <input type="text" readOnly value={`baseline ${axis.baseline} | current ${axis.current} | projected ${axis.projected}`} />
+              </label>
+            ))}
           </div>
         </article>
         {!isAuthenticated || user?.role !== "admin" ? (
