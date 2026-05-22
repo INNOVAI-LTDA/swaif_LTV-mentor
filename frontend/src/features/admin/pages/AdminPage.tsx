@@ -14,6 +14,7 @@ import { createAdminMentor } from "../../../domain/services/adminMentorService";
 import { createAdminPillar } from "../../../domain/services/adminPillarService";
 import { createAdminProduct } from "../../../domain/services/adminProductService";
 import { createAdminStudent, loadAdminStudentIndicators, reassignAdminStudent, unlinkAdminStudent } from "../../../domain/services/adminStudentService";
+import { listDatabaseRecords, listDatabaseTables, updateDatabaseRecord } from "../../../domain/services/adminDatabaseViewService";
 import { toUserErrorMessage } from "../../../shared/api/types";
 import { AdminShell } from "../components/AdminShell";
 import "../admin.css";
@@ -140,7 +141,8 @@ export function AdminPage() {
   const isProductsPanel = activePanel === "produtos";
   const isMentorsPanel = activePanel === "mentores";
   const isStudentsPanel = activePanel === "alunos";
-  const hasContextPanel = isClientsPanel || isProductsPanel || isMentorsPanel || isStudentsPanel;
+  const isDatabasePanel = activePanel === "database";
+  const hasContextPanel = isClientsPanel || isProductsPanel || isMentorsPanel || isStudentsPanel || isDatabasePanel;
   const hasProductContextPanel = isProductsPanel || isMentorsPanel || isStudentsPanel;
   const showClientSectionBar = !hasContextPanel;
 
@@ -210,6 +212,14 @@ export function AdminPage() {
   const [isMetricModalOpen, setIsMetricModalOpen] = useState(false);
   const [metricModalStep, setMetricModalStep] = useState<CreateModalStep>("form");
   const metricCloseTimeoutRef = useRef<number | null>(null);
+
+  const [databaseTables, setDatabaseTables] = useState<string[]>([]);
+  const [selectedDatabaseTable, setSelectedDatabaseTable] = useState<string>("");
+  const [databaseRows, setDatabaseRows] = useState<Array<Record<string, unknown>>>([]);
+  const [databaseOffset, setDatabaseOffset] = useState(0);
+  const [databaseTotal, setDatabaseTotal] = useState(0);
+  const [databaseLoading, setDatabaseLoading] = useState(false);
+  const [databaseError, setDatabaseError] = useState<string | null>(null);
 
   const activeClients = useMemo(() => clientsResource.data.filter((item) => item.is_active), [clientsResource.data]);
   const selectedClient = clientDetailResource.data;
@@ -983,6 +993,46 @@ export function AdminPage() {
     );
   }
 
+
+  async function loadDatabaseTables() {
+    setDatabaseError(null);
+    const tables = await listDatabaseTables();
+    setDatabaseTables(tables);
+  }
+
+  async function loadDatabaseRecords(table: string, offset: number, append = false) {
+    setDatabaseLoading(true);
+    setDatabaseError(null);
+    try {
+      const page = await listDatabaseRecords(table, offset);
+      setSelectedDatabaseTable(table);
+      setDatabaseOffset(page.offset + page.items.length);
+      setDatabaseTotal(page.total);
+      setDatabaseRows((current) => (append ? [...current, ...page.items] : page.items));
+    } catch (error) {
+      setDatabaseError(toUserErrorMessage(error, "Falha ao carregar registros."));
+    } finally {
+      setDatabaseLoading(false);
+    }
+  }
+
+  async function handleDatabaseRecordEdit(table: string, row: Record<string, unknown>) {
+    const recordId = String(row.id ?? "");
+    const field = window.prompt("Campo para editar:", "name");
+    if (!field) return;
+    const value = window.prompt("Novo valor:", String(row[field] ?? ""));
+    if (value === null) return;
+    const ok = window.confirm("Confirmar persistencia da alteracao?");
+    if (!ok) return;
+    try {
+      const updated = await updateDatabaseRecord(table, recordId, { [field]: value });
+      setDatabaseRows((current) => current.map((item) => (String(item.id ?? "") === recordId ? updated : item)));
+      window.alert("Valor atualizado com sucesso.");
+    } catch (error) {
+      window.alert(toUserErrorMessage(error, "Falha ao atualizar valor."));
+    }
+  }
+
   function renderStudentPanelActions() {
     return (
       <div className="admin-panel-actions">
@@ -996,6 +1046,11 @@ export function AdminPage() {
       </div>
     );
   }
+
+  useEffect(() => {
+    if (!canLoadAdmin || !isDatabasePanel) return;
+    void loadDatabaseTables();
+  }, [canLoadAdmin, isDatabasePanel]);
 
   return (
     <AdminShell
@@ -1047,6 +1102,30 @@ export function AdminPage() {
           <section className="admin-notice">
             <strong>Entre com o usuario admin para operar o bloco real.</strong>
             <p>Use credenciais administrativas validas para este ambiente. Sem essa sessao, a API administrativa respondera com erro de autorizacao.</p>
+          </section>
+        ) : null}
+
+
+        {isDatabasePanel ? (
+          <section className="admin-module">
+            <p className="admin-module__eyebrow">Database View</p>
+            <h2>Tabelas permitidas</h2>
+            <ul className="admin-client-grid">
+              {databaseTables.map((table) => (
+                <li key={table}>
+                  <button type="button" className="admin-client-card" onClick={() => void loadDatabaseRecords(table, 0)}>{table} <small>Ver Valores</small></button>
+                </li>
+              ))}
+            </ul>
+            {databaseError ? <p className="admin-form-error">{databaseError}</p> : null}
+            {selectedDatabaseTable ? <h3>{selectedDatabaseTable}</h3> : null}
+            {databaseRows.map((row, index) => (
+              <article key={`${String(row.id ?? index)}`} className="admin-student-card">
+                <pre>{JSON.stringify(row, null, 2)}</pre>
+                <button type="button" className="admin-inline-link admin-inline-link--button" onClick={() => void handleDatabaseRecordEdit(selectedDatabaseTable, row)}>Editar valor</button>
+              </article>
+            ))}
+            {selectedDatabaseTable && databaseOffset < databaseTotal ? <button type="button" className="admin-inline-cta" onClick={() => void loadDatabaseRecords(selectedDatabaseTable, databaseOffset, true)} disabled={databaseLoading}>{databaseLoading ? "Carregando..." : "Carregar +10"}</button> : null}
           </section>
         ) : null}
 
