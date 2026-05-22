@@ -13,6 +13,7 @@ from ops.bmad_operator import (
     execute_command,
     extract_structured_response,
     format_event_summary,
+    format_powershell_copy_safe,
     format_workflow_progress,
     infer_next_command,
     load_command_contract,
@@ -293,6 +294,7 @@ def test_format_event_summary_prefers_structured_event_log_fields():
             "command": "bmad-code-review",
             "status": "changes_requested",
             "summary": "Scope is correct but one regression remains.",
+            "powershell_full_command": "& 'C:/Python313/python.exe' 'ops/bmad_lean.py' 'bmad-code-review' '--execute'",
             "approval_required": True,
             "next_command": "bmad-dev-story",
             "output_artifacts": [
@@ -307,9 +309,27 @@ def test_format_event_summary_prefers_structured_event_log_fields():
 
     assert "command        : bmad-code-review" in summary
     assert "status         : changes_requested" in summary
+    assert "powershell full command : & 'C:/Python313/python.exe' 'ops/bmad_lean.py' 'bmad-code-review' '--execute'" in summary
+    assert "powershell full command (copy-safe) : & 'C:/Python313/python.exe' 'ops/bmad_lean.py' 'bmad-code-review' '--execute'" in summary
     assert "approval_gate  : yes" in summary
     assert "next_command   : bmad-dev-story" in summary
     assert "- review-report: _bmad-output/operator-artifacts/4-6a-review-report.md" in summary
+
+
+def test_format_powershell_copy_safe_wraps_long_commands_with_continuation():
+    command = (
+        "& 'C:/Python313/python.exe' 'ops/bmad_lean.py' 'bmad-code-review' "
+        "'docs/production-release-tracker.md' "
+        "'_bmad-output/implementation-artifacts/4-3-go-no-go-client-pilot-decision.md' "
+        "'_bmad-output/implementation-artifacts/staging-validation-evidence-2026-05-16.md' "
+        "'--execute'"
+    )
+
+    wrapped = format_powershell_copy_safe(command, max_width=90)
+
+    assert len(wrapped) > 1
+    assert wrapped[0].endswith("`")
+    assert wrapped[-1].startswith("  '")
 
 
 def test_format_workflow_progress_renders_task_list_and_percentage():

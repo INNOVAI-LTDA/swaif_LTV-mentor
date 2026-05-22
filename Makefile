@@ -8,7 +8,8 @@
 	bmad-document-project bmad-generate-project-context bmad-quick-spec bmad-quick-dev \
 	bmad-quick-dev-new-preview bmad-correct-course \
 	bmad-flow-agile bmad-flow-batching bmad-flow-greenfield bmad-flow-brownfield \
-	bmad-flow-build-from-pieces bmad-flow-quick bmad-flow-correct-course
+	bmad-flow-build-from-pieces bmad-flow-quick bmad-flow-correct-course \
+	bmad-lean bmad-story-cycle-lean
 
 RUN_MODE = $(if $(EXECUTE),--execute,--dry-run)
 RUN_PROMPT_PROFILE = $(if $(PROFILE),--prompt-profile $(PROFILE),)
@@ -19,6 +20,7 @@ RUN_RESUME_SESSION = $(if $(RESUME),--resume-session $(RESUME),)
 RUN_RESUME_EVENT = $(if $(RESUME_EVENT),--resume-event $(RESUME_EVENT),)
 RUN_COMMAND = python ops/run_bmad_command.py --command $(1) $(if $(CONTEXT),--context-file $(CONTEXT),) $(if $(OUTPUT),--output-last-message $(OUTPUT),) $(if $(INSTRUCTION),--instruction "$(INSTRUCTION)",) $(RUN_PROMPT_PROFILE) $(RUN_EVENT_ROOT) $(RUN_MODE)
 RUN_WORKFLOW = python ops/run_bmad_workflow.py --workflow $(1) $(RUN_RESUME_SESSION) $(RUN_RESUME_EVENT) $(if $(CONTEXT),--context-file $(CONTEXT),) $(if $(INSTRUCTION),--instruction "$(INSTRUCTION)",) $(RUN_PROMPT_PROFILE) $(RUN_EVENT_ROOT) $(RUN_SESSION_ROOT) $(RUN_APPROVAL_MODE) $(RUN_MODE)
+RUN_LEAN = python ops/bmad_lean.py $(CMD) $(if $(CONTEXT),$(CONTEXT),) $(if $(PROFILE),--profile $(PROFILE),) $(if $(INSTRUCTION_FILE),--instruction-file $(INSTRUCTION_FILE),) $(if $(INSTRUCTION),--instruction "$(INSTRUCTION)",) $(RUN_EVENT_ROOT) $(if $(OUTPUT),--output-last-message $(OUTPUT),) $(if $(EXECUTE),--execute,--dry-run)
 
 bmad-smoke:
 	bash ops/preflight_check.sh
@@ -143,3 +145,9 @@ bmad-flow-quick:
 
 bmad-flow-correct-course:
 	$(call RUN_WORKFLOW,correct-course)
+
+bmad-lean:
+	$(RUN_LEAN)
+
+bmad-story-cycle-lean:
+	powershell -NoProfile -ExecutionPolicy Bypass -File ops/Run-BmadLeanStoryCycle.ps1 $(if $(EXECUTE),-Execute,-DryRun)

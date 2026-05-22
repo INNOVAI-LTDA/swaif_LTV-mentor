@@ -1,0 +1,45 @@
+{
+  "timestamp_utc": "2026-05-21T16:17:19.618605+00:00",
+  "command": "bmad-quick-spec",
+  "prompt_profile": "contracted",
+  "execution_mode": "execute",
+  "contract": "bmad-quick-spec",
+  "response_capture_path": "_bmad-output/operator-events/messages/20260521T161255113837Z-bmad-quick-spec.md",
+  "input_artifacts": [
+    {
+      "path": "_bmad-output/project-context.md",
+      "role": "authoritative project constraints and patterns"
+    },
+    {
+      "path": "docs/mvp-mentoria/contracts-freeze-v1.md",
+      "role": "frozen v1 contract and error-envelope constraints"
+    },
+    {
+      "path": "docs/diagnostics/supabase-student-relational-report.md",
+      "role": "runtime coverage diagnostic evidence (sparse measurements/checkpoints)"
+    }
+  ],
+  "powershell_full_command": null,
+  "status": "completed",
+  "summary": "Quick spec created for idempotent startup backfill in Supabase strict runtime to restore mentor center/matrix/radar coverage while preserving v1 contract and standardized error envelope.",
+  "decisions": [
+    "Use startup sync as the single repair entrypoint; no new public endpoints.",
+    "Adopt idempotent insert-missing semantics by natural keys for runtime measurements/checkpoints.",
+    "Preserve frozen v1 contracts and standardized API error envelope without response-shape changes.",
+    "Include acceptance criteria that explicitly validate mentor routes: center, matrix, and radar."
+  ],
+  "risks": [
+    "If natural-key uniqueness is not enforced at repository/table level, idempotence can be bypassed.",
+    "Startup backfill adds DB write work and may increase startup latency for large active-enrollment sets.",
+    "Sparse/invalid source enrollment-product-metric links can reduce effective backfill coverage if not handled defensively."
+  ],
+  "approval_required": false,
+  "next_command": "bmad-quick-dev",
+  "output_artifacts": [
+    {
+      "artifact_type": "quick-spec",
+      "path": "_bmad-output/operator-artifacts/startup-idempotent-backfill-supabase-runtime-coverage-quick-spec.md",
+      "title": null
+    }
+  ]
+}

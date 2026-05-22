@@ -27,7 +27,8 @@ def test_measurements_and_checkpoints_persistence(tmp_path: Path) -> None:
     checkpoints = checkpoint_repo.list_by_enrollment("enr_1")
 
     assert len(measurements) == 2
-    assert measurements[0]["metric_id"] == "met_1"
-    assert measurements[1]["value_projected"] is None
+    measurements_by_metric = {item["metric_id"]: item for item in measurements}
+    assert set(measurements_by_metric.keys()) == {"met_1", "met_2"}
+    assert measurements_by_metric["met_2"]["value_projected"] is None
     assert len(checkpoints) == 2
-    assert checkpoints[0]["week"] == 1
+    assert sorted(item["week"] for item in checkpoints) == [1, 2]

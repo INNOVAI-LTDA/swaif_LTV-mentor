@@ -514,6 +514,7 @@ def execute_bmad_command(
     event_log_root: Path | None = None,
     response_capture_path: Path | None = None,
     repo_root: Path | None = None,
+    powershell_full_command: str | None = None,
 ) -> CommandExecutionResult:
     capture_path = response_capture_path or create_response_capture_path(command_name)
     capture_path.parent.mkdir(parents=True, exist_ok=True)
@@ -553,6 +554,7 @@ def execute_bmad_command(
         response=normalized_response,
         response_capture_path=capture_path,
         event_root=event_log_root,
+        powershell_full_command=powershell_full_command,
     )
 
     return CommandExecutionResult(
@@ -576,6 +578,7 @@ def write_event_log(
     response: dict[str, Any] | None = None,
     response_capture_path: Path | None = None,
     event_root: Path | None = None,
+    powershell_full_command: str | None = None,
 ) -> Path:
     root = event_root or DEFAULT_EVENT_LOG_ROOT
     root.mkdir(parents=True, exist_ok=True)
@@ -590,6 +593,7 @@ def write_event_log(
         "contract": contract.command if contract else None,
         "response_capture_path": response_capture_path.as_posix() if response_capture_path else None,
         "input_artifacts": build_context_artifacts(context_files),
+        "powershell_full_command": powershell_full_command,
     }
 
     if response is not None:
@@ -631,6 +635,19 @@ def format_event_summary(event: dict[str, Any]) -> str:
     if isinstance(summary, str) and summary.strip():
         lines.append(f"summary        : {summary.strip()}")
 
+    powershell_full_command = event.get("powershell_full_command")
+    if isinstance(powershell_full_command, str) and powershell_full_command.strip():
+        formatted_powershell = powershell_full_command.strip()
+        lines.append(f"powershell full command : {formatted_powershell}")
+
+        copy_safe_lines = format_powershell_copy_safe(formatted_powershell)
+        if len(copy_safe_lines) == 1:
+            lines.append(f"powershell full command (copy-safe) : {copy_safe_lines[0]}")
+        else:
+            lines.append("powershell full command (copy-safe) :")
+            for line in copy_safe_lines:
+                lines.append(f"  {line}")
+
     approval_required = event.get("approval_required")
     if approval_required is not None:
         lines.append(f"approval_gate  : {'yes' if approval_required else 'no'}")
@@ -670,3 +687,58 @@ def format_workflow_progress(commands: Sequence[str], current_index: int | None,
         lines.append(f"- {marker} {command_name}")
 
     return "\n".join(lines)
+
+
+def tokenize_powershell_command(command: str) -> list[str]:
+    tokens: list[str] = []
+    current: list[str] = []
+    in_single_quote = False
+    index = 0
+
+    while index < len(command):
+        char = command[index]
+        if char == "'":
+            current.append(char)
+            if in_single_quote and index + 1 < len(command) and command[index + 1] == "'":
+                current.append("'")
+                index += 1
+            else:
+                in_single_quote = not in_single_quote
+        elif char.isspace() and not in_single_quote:
+            if current:
+                tokens.append("".join(current))
+                current = []
+        else:
+            current.append(char)
+        index += 1
+
+    if current:
+        tokens.append("".join(current))
+
+    return tokens
+
+
+def format_powershell_copy_safe(command: str, *, max_width: int = 120) -> list[str]:
+    command = command.strip()
+    if not command:
+        return []
+    if len(command) <= max_width:
+        return [command]
+
+    tokens = tokenize_powershell_command(command)
+    if not tokens:
+        return [command]
+
+    lines: list[str] = []
+    current = tokens[0]
+    for token in tokens[1:]:
+        candidate = f"{current} {token}"
+        if len(candidate) <= max_width:
+            current = candidate
+            continue
+
+        lines.append(f"{current} `")
+        current = f"  {token}"
+
+    lines.append(current)
+    return lines

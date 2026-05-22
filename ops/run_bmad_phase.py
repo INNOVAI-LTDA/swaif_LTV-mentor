@@ -30,6 +30,21 @@ MODEL_MAP = {
 ORDER = ["route", "map", "story", "dev", "review"]
 
 
+def _quote_powershell_arg(value: str) -> str:
+    return "'" + value.replace("'", "''") + "'"
+
+
+def build_powershell_full_command(argv: list[str]) -> str:
+    script_path = Path(__file__).resolve()
+    parts = [
+        "&",
+        _quote_powershell_arg(sys.executable),
+        _quote_powershell_arg(str(script_path)),
+    ]
+    parts.extend(_quote_powershell_arg(arg) for arg in argv[1:])
+    return " ".join(parts)
+
+
 def load_state(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -152,6 +167,7 @@ def main():
     ap.add_argument("--event-log-root", default="_bmad-output/operator-events")
     ap.add_argument("--state-result")
     args = ap.parse_args()
+    powershell_full_command = build_powershell_full_command(sys.argv)
 
     state_path = Path(args.state)
     if not state_path.exists():
@@ -229,6 +245,7 @@ def main():
                 codex_bin=args.codex_bin,
                 event_log_root=Path(args.event_log_root),
                 response_capture_path=response_capture_path,
+                powershell_full_command=powershell_full_command,
             )
         except Exception as exc:
             print("--- Phase Error ---")

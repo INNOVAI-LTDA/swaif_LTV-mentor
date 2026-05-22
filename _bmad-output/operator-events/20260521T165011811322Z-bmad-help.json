@@ -1,0 +1,15 @@
+{
+  "timestamp_utc": "2026-05-21T16:50:11.811322+00:00",
+  "command": "bmad-help",
+  "prompt_profile": "plain",
+  "execution_mode": "execute",
+  "contract": null,
+  "response_capture_path": "_bmad-output/operator-events/messages/20260521T164831930435Z-bmad-help.md",
+  "input_artifacts": [
+    {
+      "path": "_bmad-output/project-context.md",
+      "role": "context"
+    }
+  ],
+  "powershell_full_command": null
+}

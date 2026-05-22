@@ -393,7 +393,9 @@ def detect_frontend_command(frontend_port: int, dev_script: str) -> str:
 
 
 def default_backend_command(backend_port: int) -> str:
-    py = "python"
+    py = sys.executable or "python"
+    if " " in py:
+        py = f'"{py}"'
     return f'{py} -m uvicorn app.main:app --host 127.0.0.1 --port {backend_port}'
 
 
@@ -501,6 +503,15 @@ def stop_process(process: subprocess.Popen[str] | None, label: str) -> None:
             log_handle.close()
 
 
+def stop_processes_listening_on_port(port: int, label: str) -> None:
+    usage = describe_port_usage(port)
+    if not usage:
+        return
+    for pid, name in usage:
+        print_info(f"Encerrando {label} desacoplado (PID {pid} - {name}) na porta {port}...")
+        kill_pid(pid)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Bootstrap local do MVP (backend e frontend opcional).",
@@ -569,6 +580,15 @@ def main() -> int:
     args = parse_args()
     validate_args(args)
 
+    sync_on_startup = os.getenv("SUPABASE_SYNC_ON_STARTUP", "").strip().lower() in {"1", "true", "yes", "on"}
+    runtime_required = os.getenv("SUPABASE_RUNTIME_REQUIRED", "").strip().lower() in {"1", "true", "yes", "on"}
+    if (sync_on_startup or runtime_required) and args.startup_timeout < 90:
+        if runtime_required:
+            print_info("SUPABASE_RUNTIME_REQUIRED ativo; ajustando startup-timeout para 90s.")
+        else:
+            print_info("SUPABASE_SYNC_ON_STARTUP ativo; ajustando startup-timeout para 90s.")
+        args.startup_timeout = 90
+
     if args.ports:
         return print_ports(args)
 
@@ -613,6 +633,8 @@ def main() -> int:
 
     backend_process: subprocess.Popen[str] | None = None
     frontend_process: subprocess.Popen[str] | None = None
+    backend_detached = False
+    frontend_detached = False
     try:
         if start_backend:
             backend_env = build_env(
@@ -678,9 +700,25 @@ def main() -> int:
 
         while True:
             if backend_process and backend_process.poll() is not None:
-                raise RuntimeError("Backend encerrou inesperadamente.")
+                if is_port_open(args.backend_host, args.backend_port):
+                    print_info(
+                        "Supervisor do backend encerrou, mas o servico segue ativo na porta. "
+                        "Continuando monitoramento por porta."
+                    )
+                    backend_process = None
+                    backend_detached = True
+                else:
+                    raise RuntimeError("Backend encerrou inesperadamente.")
             if frontend_process and frontend_process.poll() is not None:
-                raise RuntimeError("Frontend encerrou inesperadamente.")
+                if is_port_open(args.frontend_host, args.frontend_port):
+                    print_info(
+                        "Supervisor do frontend encerrou, mas o servico segue ativo na porta. "
+                        "Continuando monitoramento por porta."
+                    )
+                    frontend_process = None
+                    frontend_detached = True
+                else:
+                    raise RuntimeError("Frontend encerrou inesperadamente.")
             time.sleep(0.7)
 
     except KeyboardInterrupt:
@@ -689,6 +727,10 @@ def main() -> int:
     finally:
         stop_process(frontend_process, "frontend")
         stop_process(backend_process, "backend")
+        if frontend_detached:
+            stop_processes_listening_on_port(args.frontend_port, "frontend")
+        if backend_detached:
+            stop_processes_listening_on_port(args.backend_port, "backend")
 
 
 if __name__ == "__main__":

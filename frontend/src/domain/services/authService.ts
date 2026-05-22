@@ -5,8 +5,21 @@ import { clearAccessToken, getAccessToken, setAccessToken } from "../../shared/a
 import { isKnownUserRole } from "../../shared/auth/roleRouting";
 import type { AuthSession } from "../models";
 
+function normalizeBackendRole(role: string): string {
+  const normalized = role.trim().toLowerCase();
+  if (normalized === "provider") {
+    return "mentor";
+  }
+  if (normalized === "client") {
+    return "aluno";
+  }
+  return normalized;
+}
+
 function normalizeAuthenticatedUser(me: MeResponseDto): NonNullable<AuthSession["user"]> {
-  if (!isKnownUserRole(me.role)) {
+  const role = normalizeBackendRole(me.role);
+
+  if (!isKnownUserRole(role)) {
     throw new AppError({
       message: "Perfil da conta nao reconhecido.",
       code: "AUTH_ROLE_INVALID"
@@ -16,7 +29,7 @@ function normalizeAuthenticatedUser(me: MeResponseDto): NonNullable<AuthSession[
   return {
     id: me.id,
     email: me.email,
-    role: me.role
+    role
   };
 }
 

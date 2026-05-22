@@ -64,6 +64,21 @@ WORKFLOW_COMMANDS = {
 DEFAULT_SESSION_ROOT = Path("_bmad-output/operator-workflows")
 
 
+def _quote_powershell_arg(value: str) -> str:
+    return "'" + value.replace("'", "''") + "'"
+
+
+def build_powershell_full_command(argv: list[str]) -> str:
+    script_path = Path(__file__).resolve()
+    parts = [
+        "&",
+        _quote_powershell_arg(sys.executable),
+        _quote_powershell_arg(str(script_path)),
+    ]
+    parts.extend(_quote_powershell_arg(arg) for arg in argv[1:])
+    return " ".join(parts)
+
+
 def build_context_files(extra_paths: list[str]) -> list[Path]:
     context_files: list[Path] = []
     project_context = Path("_bmad-output/project-context.md")
@@ -266,6 +281,7 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--execute", action="store_true")
     args = ap.parse_args()
+    powershell_full_command = build_powershell_full_command(sys.argv)
 
     if args.workflow is None and not args.resume_session:
         raise SystemExit(
@@ -428,6 +444,7 @@ def main():
                 codex_bin=args.codex_bin,
                 event_log_root=Path(args.event_log_root),
                 response_capture_path=create_response_capture_path(command_name),
+                powershell_full_command=powershell_full_command,
             )
         except Exception as exc:
             session["status"] = "failed"

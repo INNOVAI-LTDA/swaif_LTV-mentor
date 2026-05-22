@@ -291,7 +291,7 @@ Use the published frontend against the real staging backend URL. Record pass or 
    Expected: client branding loads and no demo credentials are exposed.
 2. Authenticate as admin and open `/app/admin`.
    Expected: admin shell loads, protected requests succeed, logout returns to login.
-3. Authenticate as mentor and open `/app/matriz-renovacao`, `/app/hub-interno`, `/app/centro-comando`, and `/app/radar`.
+3. Authenticate as mentor and open `/app`, `/app/matriz-renovacao`, `/app/centro-comando`, and `/app/radar`.
    Expected: the published mentor workspace loads successfully and no `403` is triggered merely because `VITE_ENABLE_INTERNAL_MENTOR_DEMO=false`.
 4. If aluno is in scope, authenticate and open `/app/aluno`.
    Expected: student shell loads and student flow is usable.
@@ -306,6 +306,9 @@ Use the published frontend against the real staging backend URL. Record pass or 
 
 - Confirm `Strict-Transport-Security` is absent unless the custom domain is already attached and TLS is healthy on `https://accmed.innovai-solutions.com.br`.
 - Do not add or approve `preload` during this rollout.
+- Record explicit gate-state conclusion in evidence notes:
+   - `closed` when HSTS is absent in pre-live posture, or when it is present on the verified production host with healthy TLS and no redirect-loop signal.
+   - `open` when header posture conflicts with the current domain/TLS readiness assumptions.
 - If operators later decide to enable HSTS after live verification, treat that as a deliberate follow-up check with its own evidence.
 
 ### 8. Record evidence and blockers

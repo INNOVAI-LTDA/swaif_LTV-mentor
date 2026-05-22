@@ -145,6 +145,7 @@ def bootstrap_user_storage() -> None:
             )
         )
         summary["supabase_sync_written"] = sync_result.counters
+        logger.info("supabase_startup_sync_completed counters=%s", sync_result.counters)
 
     UserRepository().list_users()
     ClientRepository().list_clients()

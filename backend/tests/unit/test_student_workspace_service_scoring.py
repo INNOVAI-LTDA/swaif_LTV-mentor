@@ -4,7 +4,9 @@ from pathlib import Path
 
 import pytest
 
+from app.storage.analytical_history_repository import AnalyticalHistoryRepository
 from app.storage.enrollment_repository import EnrollmentRepository
+from app.storage.measurement_history_repository import MeasurementHistoryRepository
 from app.storage.measurement_overall_repository import MeasurementOverallRepository
 from app.storage.measurement_repository import MeasurementRepository
 from app.storage.metric_repository import MetricRepository
@@ -29,6 +31,8 @@ def _build_workspace(tmp_path: Path) -> dict[str, object]:
     protocols = ProtocolRepository(tmp_path / "protocols.json")
     organizations = OrganizationRepository(tmp_path / "organizations.json")
     overalls = MeasurementOverallRepository(tmp_path / "measurement_overalls.json")
+    measurement_history = MeasurementHistoryRepository(tmp_path / "measurement_history.json")
+    analytical_history = AnalyticalHistoryRepository(tmp_path / "analytical_history.json")
 
     organization = organizations.create(name="Mentoria Teste")
     protocol = protocols.create(organization_id=organization["id"], name="Metodo Teste")
@@ -124,6 +128,8 @@ def _build_workspace(tmp_path: Path) -> dict[str, object]:
         "pillars": pillars,
         "protocols": protocols,
         "overalls": overalls,
+        "measurement_history": measurement_history,
+        "analytical_history": analytical_history,
         "student": student,
         "enrollment": enrollment,
         "pillar": pillar,
@@ -140,6 +146,8 @@ def test_generate_measurement_overall_uses_normalized_metric_scores(tmp_path: Pa
     monkeypatch.setenv("MEASUREMENT_STORE_PATH", str(tmp_path / "measurements.json"))
     monkeypatch.setenv("STUDENT_STORE_PATH", str(tmp_path / "students.json"))
     monkeypatch.setenv("MEASUREMENT_OVERALL_STORE_PATH", str(tmp_path / "measurement_overalls.json"))
+    monkeypatch.setenv("ANALYTICAL_HISTORY_STORE_PATH", str(tmp_path / "analytical_history.json"))
+    monkeypatch.setenv("MEASUREMENT_HISTORY_STORE_PATH", str(tmp_path / "measurement_history.json"))
 
     overalls = workspace["overalls"]
     assert isinstance(overalls, MeasurementOverallRepository)
@@ -175,6 +183,8 @@ def test_update_self_measurement_current_accepts_raw_value_and_recomputes_overal
         pillars=workspace["pillars"],
         measurement_overalls=workspace["overalls"],
         indicator_carga=_FakeIndicatorCargaService(),
+        measurement_history=workspace["measurement_history"],
+        analytical_history=workspace["analytical_history"],
     )
 
     measurements = workspace["measurements"]
@@ -190,7 +200,131 @@ def test_update_self_measurement_current_accepts_raw_value_and_recomputes_overal
 
     assert result["valueCurrent"] == 500000.5
 
+    measurement_history = workspace["measurement_history"]
+    assert isinstance(measurement_history, MeasurementHistoryRepository)
+    history_events = measurement_history.list_by_measurement(measurement["id"])
+    assert len(history_events) == 1
+    history = history_events[0]
+    assert history["metric_id"] == workspace["faturamento"]["id"]
+    assert history["actor_role"] == "client"
+    assert history["value_absolute_before"] == 100000.0
+    assert history["value_absolute_after"] == 500000.5
+    assert float(history["value_relative_before"]) == 0.5
+    assert float(history["value_relative_after"]) == 1.0
+
+    analytical_history = workspace["analytical_history"]
+    assert isinstance(analytical_history, AnalyticalHistoryRepository)
+    analytical_events = analytical_history.list_by_enrollment(workspace["enrollment"]["id"])
+    event_types = {event["event_type"] for event in analytical_events}
+    assert "assignment_score_snapshot" in event_types
+    assert "decision_matrix_snapshot" in event_types
+    assert "radar_axis_snapshot" in event_types
+
+    product_events = analytical_history.list_by_product(workspace["enrollment"]["organization_id"])
+    assert any(event["event_type"] == "product_radar_snapshot" for event in product_events)
+
     overall = overalls.get_by_enrollment(workspace["enrollment"]["id"])
     assert overall is not None
     updated_pillar = next(item for item in overall["pillars"] if item["pillar_id"] == workspace["pillar"]["id"])
     assert float(updated_pillar["metric_average"]["real"]) == 1.0
+
+
+def test_product_radar_snapshot_uses_geometric_mean_across_students(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    workspace = _build_workspace(tmp_path)
+    monkeypatch.setenv("ENROLLMENT_STORE_PATH", str(tmp_path / "enrollments.json"))
+    monkeypatch.setenv("PROTOCOL_STORE_PATH", str(tmp_path / "protocols.json"))
+    monkeypatch.setenv("PILLAR_STORE_PATH", str(tmp_path / "pillars.json"))
+    monkeypatch.setenv("METRIC_STORE_PATH", str(tmp_path / "metrics.json"))
+    monkeypatch.setenv("MEASUREMENT_STORE_PATH", str(tmp_path / "measurements.json"))
+    monkeypatch.setenv("STUDENT_STORE_PATH", str(tmp_path / "students.json"))
+    monkeypatch.setenv("MEASUREMENT_OVERALL_STORE_PATH", str(tmp_path / "measurement_overalls.json"))
+    monkeypatch.setenv("ANALYTICAL_HISTORY_STORE_PATH", str(tmp_path / "analytical_history.json"))
+
+    students = workspace["students"]
+    enrollments = workspace["enrollments"]
+    measurements = workspace["measurements"]
+    metrics = workspace["metrics"]
+    assert isinstance(students, StudentRepository)
+    assert isinstance(enrollments, EnrollmentRepository)
+    assert isinstance(measurements, MeasurementRepository)
+    assert isinstance(metrics, MetricRepository)
+
+    second_student = students.create(full_name="Aluno Dois", email="aluno.dois@swaif.local")
+    second_enrollment = enrollments.create(
+        student_id=second_student["id"],
+        organization_id=workspace["enrollment"]["organization_id"],
+        mentor_id="men_1",
+        progress_score=0.0,
+        engagement_score=0.0,
+        day=11,
+        total_days=100,
+        days_left=89,
+        ltv_cents=10000,
+    )
+
+    measurements.replace_for_enrollment(
+        second_enrollment["id"],
+        [
+            {
+                "metric_id": workspace["faturamento"]["id"],
+                "value_baseline": 100000.0,
+                "value_current": 100000.0,
+                "value_projected": 500000.5,
+                "improving_trend": True,
+            },
+            {
+                "metric_id": next(
+                    metric["id"]
+                    for metric in metrics.list_metrics()
+                    if metric["id"] != workspace["faturamento"]["id"]
+                ),
+                "value_baseline": 1.0,
+                "value_current": 1.0,
+                "value_projected": 1.0,
+                "improving_trend": True,
+            },
+        ],
+    )
+
+    overalls = workspace["overalls"]
+    assert isinstance(overalls, MeasurementOverallRepository)
+    overalls.generate_for_all_enrollments()
+
+    service = StudentWorkspaceService(
+        students=workspace["students"],
+        enrollments=workspace["enrollments"],
+        measurements=workspace["measurements"],
+        metrics=workspace["metrics"],
+        pillars=workspace["pillars"],
+        measurement_overalls=workspace["overalls"],
+        indicator_carga=_FakeIndicatorCargaService(),
+        measurement_history=workspace["measurement_history"],
+        analytical_history=workspace["analytical_history"],
+    )
+
+    measurement = next(
+        item
+        for item in measurements.list_by_enrollment(workspace["enrollment"]["id"])
+        if item["metric_id"] == workspace["faturamento"]["id"]
+    )
+    service.resolve_student_context = lambda *, user: (workspace["student"], workspace["enrollment"])  # type: ignore[method-assign]
+
+    service.update_self_measurement_current(
+        user={"role": "aluno", "email": workspace["student"]["email"]},
+        measurement_id=measurement["id"],
+        value_current=500000.5,
+    )
+
+    analytical_history = workspace["analytical_history"]
+    assert isinstance(analytical_history, AnalyticalHistoryRepository)
+    product_events = [
+        event
+        for event in analytical_history.list_by_product(workspace["enrollment"]["organization_id"])
+        if event["event_type"] == "product_radar_snapshot" and event["pillar_id"] == workspace["pillar"]["id"]
+    ]
+    assert product_events
+
+    latest_product_snapshot = product_events[-1]
+    # Student 1 pillar current = 1.0; Student 2 pillar current = 0.75.
+    # Product default current = geometric mean across students.
+    assert round(float(latest_product_snapshot["payload"]["current_score"]), 6) == 0.866025

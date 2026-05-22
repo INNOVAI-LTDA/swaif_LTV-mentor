@@ -3,6 +3,8 @@ from app.config.runtime import (
     get_app_env,
     get_cors_allow_origin_regex,
     resolve_cors_origins,
+    supabase_runtime_required,
+    supabase_sync_on_startup_enabled,
 )
 
 
@@ -111,3 +113,15 @@ def test_cors_allow_origin_regex_must_be_valid(monkeypatch) -> None:
         assert str(error) == "CORS_ALLOW_ORIGIN_REGEX must be a valid regex pattern."
     else:
         raise AssertionError("Expected invalid regex pattern to fail fast.")
+
+
+def test_supabase_runtime_required_defaults_to_false(monkeypatch) -> None:
+    monkeypatch.delenv("SUPABASE_RUNTIME_REQUIRED", raising=False)
+    assert supabase_runtime_required() is False
+
+
+def test_supabase_runtime_required_forces_startup_sync(monkeypatch) -> None:
+    monkeypatch.setenv("SUPABASE_RUNTIME_REQUIRED", "true")
+    monkeypatch.delenv("SUPABASE_SYNC_ON_STARTUP", raising=False)
+    assert supabase_runtime_required() is True
+    assert supabase_sync_on_startup_enabled() is True

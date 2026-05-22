@@ -5,7 +5,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, status
 
 from app.api.errors import api_error
-from app.config.runtime import get_supabase_db_url
+from app.config.runtime import get_supabase_db_url, supabase_runtime_required
 from app.api.routes.admin_mentoria import require_admin_user
 from app.schemas.enrollment import (
     EnrollmentOut,
@@ -57,6 +57,12 @@ def get_student_vinculo_service() -> StudentVinculoService:
 
 def get_indicator_carga_service() -> IndicatorCargaService:
     database_url = get_supabase_db_url()
+    if supabase_runtime_required() and not database_url:
+        raise api_error(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            code="SUPABASE_DB_URL_REQUIRED",
+            message="SUPABASE_DB_URL obrigatorio para runtime sem fallback JSON.",
+        )
     measurements = PostgresMeasurementRepository(database_url) if database_url else MeasurementRepository()
     checkpoints = PostgresCheckpointRepository(database_url) if database_url else CheckpointRepository()
     return IndicatorCargaService(

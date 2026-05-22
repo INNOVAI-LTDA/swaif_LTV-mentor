@@ -5,64 +5,1751 @@
       "id": "chk_1",
       "enrollment_id": "enr_1",
       "week": 1,
-      "status": "green",
-      "label": "Inicio"
+      "status": "red",
+      "label": "Carga inicial"
     },
     {
       "id": "chk_2",
-      "enrollment_id": "enr_5",
+      "enrollment_id": "enr_2",
       "week": 1,
-      "status": "green",
-      "label": "Inicio consistente"
+      "status": "red",
+      "label": "Carga inicial"
     },
     {
       "id": "chk_3",
-      "enrollment_id": "enr_5",
-      "week": 2,
-      "status": "yellow",
-      "label": "Ajustar rotina"
+      "enrollment_id": "enr_3",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
     },
     {
       "id": "chk_4",
-      "enrollment_id": "enr_8",
+      "enrollment_id": "enr_4",
       "week": 1,
-      "status": "green",
-      "label": "Inicio consistente"
+      "status": "red",
+      "label": "Carga inicial"
     },
     {
       "id": "chk_5",
-      "enrollment_id": "enr_8",
-      "week": 2,
-      "status": "yellow",
-      "label": "Ajustar rotina"
+      "enrollment_id": "enr_5",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
     },
     {
       "id": "chk_6",
-      "enrollment_id": "enr_11",
+      "enrollment_id": "enr_6",
       "week": 1,
-      "status": "green",
-      "label": "Inicio consistente"
+      "status": "red",
+      "label": "Carga inicial"
     },
     {
       "id": "chk_7",
-      "enrollment_id": "enr_11",
-      "week": 2,
-      "status": "yellow",
-      "label": "Ajustar rotina"
+      "enrollment_id": "enr_7",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
     },
     {
       "id": "chk_8",
-      "enrollment_id": "enr_14",
+      "enrollment_id": "enr_8",
       "week": 1,
-      "status": "green",
-      "label": "Inicio consistente"
+      "status": "red",
+      "label": "Carga inicial"
     },
     {
       "id": "chk_9",
+      "enrollment_id": "enr_9",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_10",
+      "enrollment_id": "enr_10",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_11",
+      "enrollment_id": "enr_11",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_12",
+      "enrollment_id": "enr_12",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_13",
+      "enrollment_id": "enr_13",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_14",
       "enrollment_id": "enr_14",
-      "week": 2,
-      "status": "yellow",
-      "label": "Ajustar rotina"
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_15",
+      "enrollment_id": "enr_15",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_16",
+      "enrollment_id": "enr_16",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_17",
+      "enrollment_id": "enr_17",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_18",
+      "enrollment_id": "enr_18",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_19",
+      "enrollment_id": "enr_19",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_20",
+      "enrollment_id": "enr_20",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_21",
+      "enrollment_id": "enr_21",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_22",
+      "enrollment_id": "enr_22",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_23",
+      "enrollment_id": "enr_23",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_24",
+      "enrollment_id": "enr_24",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_25",
+      "enrollment_id": "enr_25",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_26",
+      "enrollment_id": "enr_26",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_27",
+      "enrollment_id": "enr_27",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_28",
+      "enrollment_id": "enr_28",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_29",
+      "enrollment_id": "enr_29",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_30",
+      "enrollment_id": "enr_30",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_31",
+      "enrollment_id": "enr_31",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_32",
+      "enrollment_id": "enr_32",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_33",
+      "enrollment_id": "enr_33",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_34",
+      "enrollment_id": "enr_34",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_35",
+      "enrollment_id": "enr_35",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_36",
+      "enrollment_id": "enr_36",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_37",
+      "enrollment_id": "enr_37",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_38",
+      "enrollment_id": "enr_38",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_39",
+      "enrollment_id": "enr_39",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_40",
+      "enrollment_id": "enr_40",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_41",
+      "enrollment_id": "enr_41",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_42",
+      "enrollment_id": "enr_42",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_43",
+      "enrollment_id": "enr_43",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_44",
+      "enrollment_id": "enr_44",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_45",
+      "enrollment_id": "enr_45",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_46",
+      "enrollment_id": "enr_46",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_47",
+      "enrollment_id": "enr_47",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_48",
+      "enrollment_id": "enr_48",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_49",
+      "enrollment_id": "enr_49",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_50",
+      "enrollment_id": "enr_50",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_51",
+      "enrollment_id": "enr_51",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_52",
+      "enrollment_id": "enr_52",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_53",
+      "enrollment_id": "enr_53",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_54",
+      "enrollment_id": "enr_54",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_55",
+      "enrollment_id": "enr_55",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_56",
+      "enrollment_id": "enr_56",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_57",
+      "enrollment_id": "enr_57",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_58",
+      "enrollment_id": "enr_58",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_59",
+      "enrollment_id": "enr_59",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_60",
+      "enrollment_id": "enr_60",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_61",
+      "enrollment_id": "enr_61",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_62",
+      "enrollment_id": "enr_62",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_63",
+      "enrollment_id": "enr_63",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_64",
+      "enrollment_id": "enr_64",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_65",
+      "enrollment_id": "enr_65",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_66",
+      "enrollment_id": "enr_66",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_67",
+      "enrollment_id": "enr_67",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_68",
+      "enrollment_id": "enr_68",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_69",
+      "enrollment_id": "enr_69",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_70",
+      "enrollment_id": "enr_70",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_71",
+      "enrollment_id": "enr_71",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_72",
+      "enrollment_id": "enr_72",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_73",
+      "enrollment_id": "enr_73",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_74",
+      "enrollment_id": "enr_74",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_75",
+      "enrollment_id": "enr_75",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_76",
+      "enrollment_id": "enr_76",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_77",
+      "enrollment_id": "enr_77",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_78",
+      "enrollment_id": "enr_78",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_79",
+      "enrollment_id": "enr_79",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_80",
+      "enrollment_id": "enr_80",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_81",
+      "enrollment_id": "enr_81",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_82",
+      "enrollment_id": "enr_82",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_83",
+      "enrollment_id": "enr_83",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_84",
+      "enrollment_id": "enr_84",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_85",
+      "enrollment_id": "enr_85",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_86",
+      "enrollment_id": "enr_86",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_87",
+      "enrollment_id": "enr_87",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_88",
+      "enrollment_id": "enr_88",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_89",
+      "enrollment_id": "enr_89",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_90",
+      "enrollment_id": "enr_90",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_91",
+      "enrollment_id": "enr_91",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_92",
+      "enrollment_id": "enr_92",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_93",
+      "enrollment_id": "enr_93",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_94",
+      "enrollment_id": "enr_94",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_95",
+      "enrollment_id": "enr_95",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_96",
+      "enrollment_id": "enr_96",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_97",
+      "enrollment_id": "enr_97",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_98",
+      "enrollment_id": "enr_98",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_99",
+      "enrollment_id": "enr_99",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_100",
+      "enrollment_id": "enr_100",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_101",
+      "enrollment_id": "enr_101",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_102",
+      "enrollment_id": "enr_102",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_103",
+      "enrollment_id": "enr_103",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_104",
+      "enrollment_id": "enr_104",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_105",
+      "enrollment_id": "enr_105",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_106",
+      "enrollment_id": "enr_106",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_107",
+      "enrollment_id": "enr_107",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_108",
+      "enrollment_id": "enr_108",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_109",
+      "enrollment_id": "enr_109",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_110",
+      "enrollment_id": "enr_110",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_111",
+      "enrollment_id": "enr_111",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_112",
+      "enrollment_id": "enr_112",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_113",
+      "enrollment_id": "enr_113",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_114",
+      "enrollment_id": "enr_114",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_115",
+      "enrollment_id": "enr_115",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_116",
+      "enrollment_id": "enr_116",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_117",
+      "enrollment_id": "enr_117",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_118",
+      "enrollment_id": "enr_118",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_119",
+      "enrollment_id": "enr_119",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_120",
+      "enrollment_id": "enr_120",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_121",
+      "enrollment_id": "enr_121",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_122",
+      "enrollment_id": "enr_122",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_123",
+      "enrollment_id": "enr_123",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_124",
+      "enrollment_id": "enr_124",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_125",
+      "enrollment_id": "enr_125",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_126",
+      "enrollment_id": "enr_126",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_127",
+      "enrollment_id": "enr_127",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_128",
+      "enrollment_id": "enr_128",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_129",
+      "enrollment_id": "enr_129",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_130",
+      "enrollment_id": "enr_130",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_131",
+      "enrollment_id": "enr_131",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_132",
+      "enrollment_id": "enr_132",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_133",
+      "enrollment_id": "enr_133",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_134",
+      "enrollment_id": "enr_134",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_135",
+      "enrollment_id": "enr_135",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_136",
+      "enrollment_id": "enr_136",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_137",
+      "enrollment_id": "enr_137",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_138",
+      "enrollment_id": "enr_138",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_139",
+      "enrollment_id": "enr_139",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_140",
+      "enrollment_id": "enr_140",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_141",
+      "enrollment_id": "enr_141",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_142",
+      "enrollment_id": "enr_142",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_143",
+      "enrollment_id": "enr_143",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_144",
+      "enrollment_id": "enr_144",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_145",
+      "enrollment_id": "enr_145",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_146",
+      "enrollment_id": "enr_146",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_147",
+      "enrollment_id": "enr_147",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_148",
+      "enrollment_id": "enr_148",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_149",
+      "enrollment_id": "enr_149",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_150",
+      "enrollment_id": "enr_150",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_151",
+      "enrollment_id": "enr_151",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_152",
+      "enrollment_id": "enr_152",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_153",
+      "enrollment_id": "enr_153",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_154",
+      "enrollment_id": "enr_154",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_155",
+      "enrollment_id": "enr_155",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_156",
+      "enrollment_id": "enr_156",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_157",
+      "enrollment_id": "enr_157",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_158",
+      "enrollment_id": "enr_158",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_159",
+      "enrollment_id": "enr_159",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_160",
+      "enrollment_id": "enr_160",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_161",
+      "enrollment_id": "enr_161",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_162",
+      "enrollment_id": "enr_162",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_163",
+      "enrollment_id": "enr_163",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_164",
+      "enrollment_id": "enr_164",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_165",
+      "enrollment_id": "enr_165",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_166",
+      "enrollment_id": "enr_166",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_167",
+      "enrollment_id": "enr_167",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_168",
+      "enrollment_id": "enr_168",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_169",
+      "enrollment_id": "enr_169",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_170",
+      "enrollment_id": "enr_170",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_171",
+      "enrollment_id": "enr_171",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_172",
+      "enrollment_id": "enr_172",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_173",
+      "enrollment_id": "enr_173",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_174",
+      "enrollment_id": "enr_174",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_175",
+      "enrollment_id": "enr_175",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_176",
+      "enrollment_id": "enr_176",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_177",
+      "enrollment_id": "enr_177",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_178",
+      "enrollment_id": "enr_178",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_179",
+      "enrollment_id": "enr_179",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_180",
+      "enrollment_id": "enr_180",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_181",
+      "enrollment_id": "enr_181",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_182",
+      "enrollment_id": "enr_182",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_183",
+      "enrollment_id": "enr_183",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_184",
+      "enrollment_id": "enr_184",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_185",
+      "enrollment_id": "enr_185",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_186",
+      "enrollment_id": "enr_186",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_187",
+      "enrollment_id": "enr_187",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_188",
+      "enrollment_id": "enr_188",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_189",
+      "enrollment_id": "enr_189",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_190",
+      "enrollment_id": "enr_190",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_191",
+      "enrollment_id": "enr_191",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_192",
+      "enrollment_id": "enr_192",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_193",
+      "enrollment_id": "enr_193",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_194",
+      "enrollment_id": "enr_194",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_195",
+      "enrollment_id": "enr_195",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_196",
+      "enrollment_id": "enr_196",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_197",
+      "enrollment_id": "enr_197",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_198",
+      "enrollment_id": "enr_198",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_199",
+      "enrollment_id": "enr_199",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_200",
+      "enrollment_id": "enr_200",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_201",
+      "enrollment_id": "enr_201",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_202",
+      "enrollment_id": "enr_202",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_203",
+      "enrollment_id": "enr_203",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_204",
+      "enrollment_id": "enr_204",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_205",
+      "enrollment_id": "enr_205",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_206",
+      "enrollment_id": "enr_206",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_207",
+      "enrollment_id": "enr_207",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_208",
+      "enrollment_id": "enr_208",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_209",
+      "enrollment_id": "enr_209",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_210",
+      "enrollment_id": "enr_210",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_211",
+      "enrollment_id": "enr_211",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_212",
+      "enrollment_id": "enr_212",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_213",
+      "enrollment_id": "enr_213",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_214",
+      "enrollment_id": "enr_214",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_215",
+      "enrollment_id": "enr_215",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_216",
+      "enrollment_id": "enr_216",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_217",
+      "enrollment_id": "enr_217",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_218",
+      "enrollment_id": "enr_218",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_219",
+      "enrollment_id": "enr_219",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_220",
+      "enrollment_id": "enr_220",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_221",
+      "enrollment_id": "enr_221",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_222",
+      "enrollment_id": "enr_222",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_223",
+      "enrollment_id": "enr_223",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_224",
+      "enrollment_id": "enr_224",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_225",
+      "enrollment_id": "enr_225",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_226",
+      "enrollment_id": "enr_226",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_227",
+      "enrollment_id": "enr_227",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_228",
+      "enrollment_id": "enr_228",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_229",
+      "enrollment_id": "enr_229",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_230",
+      "enrollment_id": "enr_230",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_231",
+      "enrollment_id": "enr_231",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_232",
+      "enrollment_id": "enr_232",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_233",
+      "enrollment_id": "enr_233",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_234",
+      "enrollment_id": "enr_234",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_235",
+      "enrollment_id": "enr_235",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_236",
+      "enrollment_id": "enr_236",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_237",
+      "enrollment_id": "enr_237",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_238",
+      "enrollment_id": "enr_238",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_239",
+      "enrollment_id": "enr_239",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_240",
+      "enrollment_id": "enr_240",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_241",
+      "enrollment_id": "enr_241",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_242",
+      "enrollment_id": "enr_242",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_243",
+      "enrollment_id": "enr_243",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_244",
+      "enrollment_id": "enr_244",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_245",
+      "enrollment_id": "enr_245",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_246",
+      "enrollment_id": "enr_246",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_247",
+      "enrollment_id": "enr_247",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_248",
+      "enrollment_id": "enr_248",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_249",
+      "enrollment_id": "enr_249",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
+    },
+    {
+      "id": "chk_250",
+      "enrollment_id": "enr_250",
+      "week": 1,
+      "status": "red",
+      "label": "Carga inicial"
     }
   ]
 }

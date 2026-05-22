@@ -1,4 +1,7 @@
 {
-  "backend/tests/unit/test_indicator_carga_service.py": true,
-  "backend/tests/api/test_admin_indicator_load_api.py": true
+  "backend/tests/api/test_admin_indicator_load_api.py::TestClient": true,
+  "backend/tests/integration/test_enrollment_repository.py": true,
+  "backend/tests/integration/test_product_assignment_repository.py": true,
+  "backend/tests/api/test_mentor_api.py": true,
+  "backend/tests/api/test_student_workspace_api.py": true
 }

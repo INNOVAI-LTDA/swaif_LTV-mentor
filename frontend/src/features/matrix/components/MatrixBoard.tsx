@@ -47,6 +47,34 @@ function clampPercent(value01: number) {
   return (padding + safe * (1 - padding * 2)) * 100;
 }
 
+function clampBubblePositionPercent(value: number) {
+  return Math.max(4, Math.min(96, value));
+}
+
+function hashString(value: string) {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+}
+
+function spreadForCollision({ index, total, seed }: { index: number; total: number; seed: number }) {
+  if (total <= 1) {
+    return { x: 0, y: 0 };
+  }
+
+  const goldenAngle = 2.399963229728653;
+  const baseAngle = ((seed % 360) * Math.PI) / 180;
+  const angle = baseAngle + index * goldenAngle;
+  const radius = (Math.sqrt(index + 1) / Math.sqrt(total)) * 12;
+
+  return {
+    x: Math.cos(angle) * radius,
+    y: Math.sin(angle) * radius,
+  };
+}
+
 function resolveVisualQuadrant(item: Pick<MatrixItem, "progress" | "engagement">) {
   const progress = normalizeScore(item.progress);
   const engagement = normalizeScore(item.engagement);
@@ -92,6 +120,30 @@ export function MatrixBoard({ items, selectedId, onSelect }: MatrixBoardProps) {
   const minLtv = ltvs.length > 0 ? Math.min(...ltvs) : 0;
   const maxLtv = ltvs.length > 0 ? Math.max(...ltvs) : 0;
 
+  const collisionGroups = new Map<string, MatrixItem[]>();
+  for (const item of items) {
+    const key = `${normalizeScore(item.progress).toFixed(4)}|${normalizeScore(item.engagement).toFixed(4)}`;
+    const group = collisionGroups.get(key);
+    if (group) {
+      group.push(item);
+    } else {
+      collisionGroups.set(key, [item]);
+    }
+  }
+
+  const collisionMetaById = new Map<string, { index: number; total: number; seed: number }>();
+  for (const group of collisionGroups.values()) {
+    const total = group.length;
+    for (let index = 0; index < total; index += 1) {
+      const item = group[index];
+      collisionMetaById.set(item.id, {
+        index,
+        total,
+        seed: hashString(item.id),
+      });
+    }
+  }
+
   return (
     <article className="mx-board">
       <div className="mx-board-surface">
@@ -111,9 +163,17 @@ export function MatrixBoard({ items, selectedId, onSelect }: MatrixBoardProps) {
           const urgency = URGENCY_META[item.urgency];
           const active = selectedId === item.id;
           const visualQuadrant = resolveVisualQuadrant(item);
+          const collisionMeta = collisionMetaById.get(item.id) || { index: 0, total: 1, seed: hashString(item.id) };
+          const spread = spreadForCollision({
+            index: collisionMeta.index,
+            total: collisionMeta.total,
+            seed: collisionMeta.seed,
+          });
+          const left = clampBubblePositionPercent(clampPercent(item.progress) + spread.x);
+          const bottom = clampBubblePositionPercent(clampPercent(item.engagement) + spread.y);
           const style: CSSProperties = {
-            left: `${clampPercent(item.progress)}%`,
-            bottom: `${clampPercent(item.engagement)}%`,
+            left: `${left}%`,
+            bottom: `${bottom}%`,
             width: bubbleSize(item.ltv, minLtv, maxLtv),
             height: bubbleSize(item.ltv, minLtv, maxLtv)
           };

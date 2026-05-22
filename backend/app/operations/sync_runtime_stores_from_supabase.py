@@ -8,6 +8,10 @@ from pathlib import Path
 from typing import Any
 
 from app.core.security import hash_password
+from app.storage.postgres_indicator_repositories import (
+    PostgresCheckpointRepository,
+    PostgresMeasurementRepository,
+)
 from app.storage.store_registry import resolve_store_path
 
 try:
@@ -456,6 +460,70 @@ def _build_runtime_payloads(source: dict[str, list[dict[str, Any]]], config: Sup
     }
 
 
+def _backfill_runtime_indicator_tables(
+    *,
+    database_url: str,
+    payloads: dict[str, dict[str, Any]],
+    measurements_repo: Any | None = None,
+    checkpoints_repo: Any | None = None,
+) -> dict[str, int]:
+    measurements_store = measurements_repo or PostgresMeasurementRepository(database_url)
+    checkpoints_store = checkpoints_repo or PostgresCheckpointRepository(database_url)
+
+    enrollments = payloads.get("enrollments", {}).get("items", [])
+    measurements = payloads.get("measurements", {}).get("items", [])
+    checkpoints = payloads.get("checkpoints", {}).get("items", [])
+
+    active_enrollment_ids = {
+        str(item.get("id") or "")
+        for item in enrollments
+        if bool(item.get("is_active", False)) and str(item.get("id") or "")
+    }
+
+    measurements_by_enrollment: dict[str, list[dict[str, Any]]] = {}
+    for row in measurements:
+        enrollment_id = str(row.get("enrollment_id") or "")
+        if enrollment_id in active_enrollment_ids:
+            measurements_by_enrollment.setdefault(enrollment_id, []).append(row)
+
+    checkpoints_by_enrollment: dict[str, list[dict[str, Any]]] = {}
+    for row in checkpoints:
+        enrollment_id = str(row.get("enrollment_id") or "")
+        if enrollment_id in active_enrollment_ids:
+            checkpoints_by_enrollment.setdefault(enrollment_id, []).append(row)
+
+    measurement_candidates = 0
+    measurement_inserted = 0
+    measurement_skipped = 0
+    checkpoint_candidates = 0
+    checkpoint_inserted = 0
+    checkpoint_skipped = 0
+
+    for enrollment_id in sorted(active_enrollment_ids):
+        measurement_rows = measurements_by_enrollment.get(enrollment_id, [])
+        checkpoint_rows = checkpoints_by_enrollment.get(enrollment_id, [])
+
+        measurement_result = measurements_store.insert_missing_for_enrollment(enrollment_id, measurement_rows)
+        checkpoint_result = checkpoints_store.insert_missing_for_enrollment(enrollment_id, checkpoint_rows)
+
+        measurement_candidates += int(measurement_result.get("candidates", 0) or 0)
+        measurement_inserted += int(measurement_result.get("inserted", 0) or 0)
+        measurement_skipped += int(measurement_result.get("skipped", 0) or 0)
+        checkpoint_candidates += int(checkpoint_result.get("candidates", 0) or 0)
+        checkpoint_inserted += int(checkpoint_result.get("inserted", 0) or 0)
+        checkpoint_skipped += int(checkpoint_result.get("skipped", 0) or 0)
+
+    return {
+        "active_enrollments": len(active_enrollment_ids),
+        "measurement_candidates": measurement_candidates,
+        "measurement_inserted": measurement_inserted,
+        "measurement_skipped": measurement_skipped,
+        "checkpoint_candidates": checkpoint_candidates,
+        "checkpoint_inserted": checkpoint_inserted,
+        "checkpoint_skipped": checkpoint_skipped,
+    }
+
+
 def _write_payload(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=True, indent=2) + "\n", encoding="utf-8")
@@ -464,6 +532,7 @@ def _write_payload(path: Path, payload: dict[str, Any]) -> None:
 def sync_runtime_stores_from_supabase(config: SupabaseSyncConfig) -> SupabaseSyncResult:
     source_rows = _fetch_source_rows(config.database_url)
     payloads = _build_runtime_payloads(source_rows, config)
+    runtime_backfill = _backfill_runtime_indicator_tables(database_url=config.database_url, payloads=payloads)
 
     stores: dict[str, Path] = {
         "contacts_users_v2": resolve_store_path("CONTACT_USER_STORE_PATH", "contacts_users_v2.json"),
@@ -488,14 +557,28 @@ def sync_runtime_stores_from_supabase(config: SupabaseSyncConfig) -> SupabaseSyn
         report_path,
         {
             **payloads["sync_meta"],
+            "runtime_backfill": runtime_backfill,
             "targets": {name: str(path) for name, path in stores.items()},
             "written_items": {name: len(payloads[name]["items"]) for name in stores},
         },
     )
 
+    counters = {name: len(payloads[name]["items"]) for name in stores}
+    counters.update(
+        {
+            "runtime_backfill_active_enrollments": int(runtime_backfill["active_enrollments"]),
+            "runtime_backfill_measurement_candidates": int(runtime_backfill["measurement_candidates"]),
+            "runtime_backfill_measurement_inserted": int(runtime_backfill["measurement_inserted"]),
+            "runtime_backfill_measurement_skipped": int(runtime_backfill["measurement_skipped"]),
+            "runtime_backfill_checkpoint_candidates": int(runtime_backfill["checkpoint_candidates"]),
+            "runtime_backfill_checkpoint_inserted": int(runtime_backfill["checkpoint_inserted"]),
+            "runtime_backfill_checkpoint_skipped": int(runtime_backfill["checkpoint_skipped"]),
+        }
+    )
+
     return SupabaseSyncResult(
         stores=stores,
-        counters={name: len(payloads[name]["items"]) for name in stores},
+        counters=counters,
     )
 
 
@@ -504,4 +587,5 @@ __all__ = [
     "SupabaseSyncResult",
     "sync_runtime_stores_from_supabase",
     "_build_runtime_payloads",
+    "_backfill_runtime_indicator_tables",
 ]

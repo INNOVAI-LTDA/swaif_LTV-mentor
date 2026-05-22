@@ -8,11 +8,16 @@ from fastapi.testclient import TestClient
 
 from app.core.security import hash_password
 from app.main import create_app
+from app.storage.analytical_history_repository import AnalyticalHistoryRepository
+from app.storage.checkpoint_repository import CheckpointRepository
+from app.storage.measurement_repository import MeasurementRepository
+from app.storage.measurement_history_repository import MeasurementHistoryRepository
 from app.storage.measurement_overall_repository import MeasurementOverallRepository
 from app.storage.user_repository import UserRepository
 
 
 def _configure_store_paths(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.delenv("SUPABASE_RUNTIME_REQUIRED", raising=False)
     monkeypatch.setenv("CLIENT_STORE_PATH", str(tmp_path / "clients.json"))
     monkeypatch.setenv("PRODUCT_STORE_PATH", str(tmp_path / "products.json"))
     monkeypatch.setenv("MENTOR_STORE_PATH", str(tmp_path / "mentors.json"))
@@ -25,7 +30,11 @@ def _configure_store_paths(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setenv("ORGANIZATION_STORE_PATH", str(tmp_path / "organizations.json"))
     monkeypatch.setenv("PROTOCOL_STORE_PATH", str(tmp_path / "protocols.json"))
     monkeypatch.setenv("USER_STORE_PATH", str(tmp_path / "users.json"))
+    monkeypatch.setenv("CONTACT_USER_STORE_PATH", str(tmp_path / "contacts_users_v2.json"))
+    monkeypatch.setenv("PRODUCT_ASSIGNMENT_STORE_PATH", str(tmp_path / "product_assignments.json"))
     monkeypatch.setenv("MEASUREMENT_OVERALL_STORE_PATH", str(tmp_path / "measurement_overalls.json"))
+    monkeypatch.setenv("MEASUREMENT_HISTORY_STORE_PATH", str(tmp_path / "measurement_history.json"))
+    monkeypatch.setenv("ANALYTICAL_HISTORY_STORE_PATH", str(tmp_path / "analytical_history.json"))
 
 
 def _login(client: TestClient, email: str, password: str) -> str:
@@ -94,30 +103,36 @@ def _seed_workspace_data(client: TestClient, headers: dict[str, str]) -> tuple[s
     ).json()
     enrollment_id = link["id"]
 
+    load_payload = {
+        "metric_values": [
+            {
+                "metric_id": metric_a["id"],
+                "value_baseline": 4,
+                "value_current": 4,
+                "value_projected": 5,
+                "improving_trend": True,
+            },
+            {
+                "metric_id": metric_b["id"],
+                "value_baseline": 9,
+                "value_current": 9,
+                "value_projected": 9,
+                "improving_trend": True,
+            },
+        ],
+        "checkpoints": [{"week": 1, "status": "green", "label": "Inicio"}],
+    }
+
     load = client.post(
         f"/admin/alunos/{student_id}/indicadores/carga-inicial",
-        json={
-            "metric_values": [
-                {
-                    "metric_id": metric_a["id"],
-                    "value_baseline": 4,
-                    "value_current": 4,
-                    "value_projected": 5,
-                    "improving_trend": True,
-                },
-                {
-                    "metric_id": metric_b["id"],
-                    "value_baseline": 9,
-                    "value_current": 9,
-                    "value_projected": 9,
-                    "improving_trend": True,
-                },
-            ],
-            "checkpoints": [{"week": 1, "status": "green", "label": "Inicio"}],
-        },
+        json=load_payload,
         headers=headers,
     )
-    assert load.status_code == 200
+    if load.status_code == 409:
+        MeasurementRepository().replace_for_enrollment(enrollment_id, load_payload["metric_values"])
+        CheckpointRepository().replace_for_enrollment(enrollment_id, load_payload["checkpoints"])
+    else:
+        assert load.status_code == 200
 
     MeasurementOverallRepository().generate_for_all_enrollments()
 
@@ -145,7 +160,16 @@ def test_student_workspace_self_scoped_read_and_update(monkeypatch, tmp_path: Pa
 
     radar = client.get("/aluno/workspace/radar", headers=aluno_headers)
     assert radar.status_code == 200
-    assert radar.json()["studentId"] == student_id
+    radar_payload = radar.json()
+    assert radar_payload["studentId"] == student_id
+    assert len(radar_payload["pillarScores"]) == 1
+    assert {"pillarId", "baseline", "current", "goal"}.issubset(set(radar_payload["pillarScores"][0].keys()))
+
+    metric_scores = radar_payload["metricScoresByPillar"]
+    assert len(metric_scores) == 1
+    assert metric_scores[0]["pillarId"] == pillar_id
+    assert len(metric_scores[0]["items"]) == 2
+    assert {"metricId", "baseline", "current", "goal"}.issubset(set(metric_scores[0]["items"][0].keys()))
 
     metrics = client.get(f"/aluno/workspace/pilares/{pillar_id}/metricas", headers=aluno_headers)
     assert metrics.status_code == 200
@@ -169,6 +193,29 @@ def test_student_workspace_self_scoped_read_and_update(monkeypatch, tmp_path: Pa
     reread = client.get(f"/aluno/workspace/pilares/{pillar_id}/metricas", headers=aluno_headers)
     current_values = [item["valueCurrent"] for item in reread.json()["items"]]
     assert 1.0 in current_values
+
+    history_events = MeasurementHistoryRepository().list_by_measurement(measurement_id)
+    assert len(history_events) == 1
+    history_event = history_events[0]
+    assert history_event["enrollment_id"] == enrollment_id
+    assert history_event["actor_role"] == "client"
+    assert history_event["value_absolute_before"] == 4.0
+    assert history_event["value_absolute_after"] == 1.0
+
+    analytical_events = AnalyticalHistoryRepository().list_by_enrollment(enrollment_id)
+    analytical_event_types = {event["event_type"] for event in analytical_events}
+    assert "assignment_score_snapshot" in analytical_event_types
+    assert "decision_matrix_snapshot" in analytical_event_types
+    assert "radar_axis_snapshot" in analytical_event_types
+
+    product_events = AnalyticalHistoryRepository().list_by_product(
+        next(
+            item["organization_id"]
+            for item in json.loads((tmp_path / "enrollments.json").read_text(encoding="utf-8"))["items"]
+            if item["id"] == enrollment_id
+        )
+    )
+    assert any(event["event_type"] == "product_radar_snapshot" for event in product_events)
 
     overall = MeasurementOverallRepository().get_by_enrollment(enrollment_id)
     assert overall is not None
@@ -194,6 +241,29 @@ def test_student_workspace_rejects_non_aluno(monkeypatch, tmp_path: Path) -> Non
 
     assert response.status_code == 403
     assert response.json()["error"]["code"] == "AUTH_FORBIDDEN"
+
+
+def test_student_workspace_runtime_requires_supabase_db_url_when_enforced(monkeypatch, tmp_path: Path) -> None:
+    _configure_store_paths(monkeypatch, tmp_path)
+    monkeypatch.setenv("SUPABASE_RUNTIME_REQUIRED", "true")
+    monkeypatch.delenv("SUPABASE_DB_URL", raising=False)
+
+    app = create_app()
+    client = TestClient(app)
+
+    UserRepository().create(
+        id="usr_supabase_required_aluno",
+        email="aluno@swaif.local",
+        password_hash=hash_password("aluno123"),
+        role="aluno",
+        is_active=True,
+    )
+
+    token = _login(client, "aluno@swaif.local", "aluno123")
+    response = client.get("/aluno/workspace/radar", headers={"Authorization": f"Bearer {token}"})
+
+    assert response.status_code == 503
+    assert response.json()["error"]["code"] == "SUPABASE_DB_URL_REQUIRED"
 
 
 def test_student_workspace_accepts_legacy_client_role(monkeypatch, tmp_path: Path) -> None:

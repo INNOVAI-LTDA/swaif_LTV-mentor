@@ -1,66 +1,100 @@
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\__main__.py", line 4, in <module>
-    uvicorn.main()
-    ~~~~~~~~~~~~^^
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\click\core.py", line 1485, in __call__
-    return self.main(*args, **kwargs)
-           ~~~~~~~~~^^^^^^^^^^^^^^^^^
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\click\core.py", line 1406, in main
-    rv = self.invoke(ctx)
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\click\core.py", line 1269, in invoke
-    return ctx.invoke(self.callback, **ctx.params)
-           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\click\core.py", line 824, in invoke
-    return callback(*args, **kwargs)
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\main.py", line 433, in main
-    run(
-    ~~~^
-        app,
-        ^^^^
-    ...<47 lines>...
-        h11_max_incomplete_event_size=h11_max_incomplete_event_size,
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-05-21 11:05:18,066 INFO swaif.runtime backend_runtime_configured app_env=local client_code=local cors_origins=http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:5175,http://localhost:5175,http://127.0.0.1:5176,http://localhost:5176 cors_origin_regex=none mentor_routes=True mentor_route_policy=explicit-enable storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=backups
+INFO:     Started server process [1064]
+INFO:     Waiting for application startup.
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 237, in __aenter__
+    await self._router._startup()
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 4882, in _startup
+    handler()
+    ~~~~~~~^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\main.py", line 139, in bootstrap_user_storage
+    sync_result = sync_runtime_stores_from_supabase(
+        SupabaseSyncConfig(
+    ...<4 lines>...
+        )
     )
-    ^
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\main.py", line 606, in run
-    server.run()
-    ~~~~~~~~~~^^
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\server.py", line 75, in run
-    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
-  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
-    return runner.run(main)
-           ~~~~~~~~~~^^^^^^
-  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
-  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
-    return future.result()
-           ~~~~~~~~~~~~~^^
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\server.py", line 79, in serve
-    await self._serve(sockets)
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\server.py", line 86, in _serve
-    config.load()
-    ~~~~~~~~~~~^^
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\config.py", line 441, in load
-    self.loaded_app = import_from_string(self.app)
-                      ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\.vendor\uvicorn\importer.py", line 19, in import_from_string
-    module = importlib.import_module(module_str)
-  File "C:\Python313\Lib\importlib\__init__.py", line 88, in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
-  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
-  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
-  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
-  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
-  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\app\main.py", line 113, in <module>
-    app = create_app()
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\app\main.py", line 57, in create_app
-    app_env = get_app_env()
-  File "C:\Users\dmene\Projetos\innovai\repos\swaif_LTV-mentoria\backend\app\config\runtime.py", line 29, in get_app_env
-    raise RuntimeError("APP_ENV is required. Use 'local' for local development or a production-like value for deployment.")
-RuntimeError: APP_ENV is required. Use 'local' for local development or a production-like value for deployment.
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\operations\sync_runtime_stores_from_supabase.py", line 465, in sync_runtime_stores_from_supabase
+    source_rows = _fetch_source_rows(config.database_url)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\operations\sync_runtime_stores_from_supabase.py", line 102, in _fetch_source_rows
+    with psycopg.connect(database_url) as conn:
+         ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\psycopg\connection.py", line 122, in connect
+    raise last_ex.with_traceback(None)
+psycopg.OperationalError: connection failed: connection to server at "2600:1f18:38df:9500:f47f:99c0:93bc:63e0", port 5432 failed: FATAL:  password authentication failed for user "postgres"
+
+ERROR:    Application startup failed. Exiting.

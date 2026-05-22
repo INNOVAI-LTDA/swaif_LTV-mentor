@@ -42,6 +42,7 @@ def main():
     ap.add_argument("--output-last-message")
     ap.add_argument("--prompt-profile", default="auto", choices=["auto", "plain", "contracted"])
     ap.add_argument("--event-log-root", default="_bmad-output/operator-events")
+    ap.add_argument("--powershell-full-command", default="")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--execute", action="store_true")
     args = ap.parse_args()
@@ -99,6 +100,7 @@ def main():
             codex_bin=args.codex_bin,
             event_log_root=Path(args.event_log_root),
             response_capture_path=response_capture_path,
+            powershell_full_command=args.powershell_full_command.strip() or None,
         )
     except Exception as exc:
         print("--- Command Error ---")

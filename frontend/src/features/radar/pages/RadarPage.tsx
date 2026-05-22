@@ -75,6 +75,9 @@ export function RadarPage() {
   }, [selectedPillarId, radarResource.data.axisScores]);
 
   const selectedStudent = studentsResource.data.find((student) => student.id === selectedStudentId) ?? null;
+  const hasStudents = studentsResource.data.length > 0;
+  const hasSelectedStudent = Boolean(selectedStudentId);
+  const hasAxisScores = radarResource.data.axisScores.length > 0;
   const mentorLabel = radarResource.data.context?.mentorName || "Mentor";
   const protocolLabel = radarResource.data.context?.protocolName || selectedStudent?.programName || undefined;
 
@@ -126,129 +129,137 @@ export function RadarPage() {
             </button>
           </div>
         )}
+        {!studentsResource.loading && !studentsResource.error && !hasStudents && (
+          <p className="radar-state">Nenhum aluno vinculado ao mentor para o Radar. Faça o vínculo no painel admin.</p>
+        )}
 
-        <section className="radar-kpi-grid">
-          <article>
-            <span>Média real</span>
-            <strong>{formatPercent01(avgCurrent, 1)}</strong>
-          </article>
-          <article>
-            <span>Delta real vs base</span>
-            <strong>{formatPercentPointDelta(deltaCurrentVsBaseline, 1)}</strong>
-          </article>
-          <article>
-            <span>Gap meta x real</span>
-            <strong>{formatPercentPointDelta(gapGoalVsCurrent, 1)}</strong>
-          </article>
-        </section>
+        {hasStudents && (
+          <>
+            <section className="radar-kpi-grid">
+              <article>
+                <span>Média real</span>
+                <strong>{formatPercent01(avgCurrent, 1)}</strong>
+              </article>
+              <article>
+                <span>Delta real vs base</span>
+                <strong>{formatPercentPointDelta(deltaCurrentVsBaseline, 1)}</strong>
+              </article>
+              <article>
+                <span>Gap meta x real</span>
+                <strong>{formatPercentPointDelta(gapGoalVsCurrent, 1)}</strong>
+              </article>
+            </section>
 
-        <section className="radar-main-grid">
-          <article className="radar-panel radar-panel--chart">
-            {radarResource.loading && radarResource.data.axisScores.length === 0 && <p className="radar-state">Carregando radar...</p>}
-            {!radarResource.loading && radarResource.error && radarResource.data.axisScores.length === 0 && (
-              <div className="radar-state radar-state--error">
-                <p>{radarResource.error}</p>
-                <button type="button" onClick={() => void radarResource.refresh()}>
-                  Tentar novamente
-                </button>
-              </div>
-            )}
-            {!radarResource.loading && !radarResource.error && radarResource.data.axisScores.length === 0 && (
-              <p className="radar-state">Sem dados de radar para este aluno.</p>
-            )}
+            <section className="radar-main-grid">
+              <article className="radar-panel radar-panel--chart">
+                {radarResource.loading && hasSelectedStudent && !hasAxisScores && <p className="radar-state">Carregando radar...</p>}
+                {!radarResource.loading && radarResource.error && hasSelectedStudent && !hasAxisScores && (
+                  <div className="radar-state radar-state--error">
+                    <p>{radarResource.error}</p>
+                    <button type="button" onClick={() => void radarResource.refresh()}>
+                      Tentar novamente
+                    </button>
+                  </div>
+                )}
+                {!radarResource.loading && !radarResource.error && hasSelectedStudent && !hasAxisScores && (
+                  <p className="radar-state">Sem dados de radar para este aluno.</p>
+                )}
 
-            {radarResource.data.axisScores.length > 0 && (
-              <RadarChart points={radarPoints} title="Base, real e meta do primeiro carregamento" />
-            )}
-          </article>
+                {hasAxisScores && (
+                  <RadarChart points={radarPoints} title="Base, real e meta do primeiro carregamento" />
+                )}
+              </article>
 
-          <article className="radar-panel radar-panel--axis-list">
-            <header>
-              <h2>Pilares de transformação</h2>
-              <p>Leitura base, real e meta por pilar</p>
-            </header>
+              <article className="radar-panel radar-panel--axis-list">
+                <header>
+                  <h2>Pilares de transformação</h2>
+                  <p>Leitura base, real e meta por pilar</p>
+                </header>
 
-            {radarResource.data.axisScores.length > 0 ? (
-              <ul className="radar-axis-list">
-                {radarResource.data.axisScores.map((axis) => {
-                  const delta = axis.current - axis.baseline;
-                  return (
-                    <li key={axis.axisKey}>
-                      <button type="button" onClick={() => setSelectedPillarId(axis.axisId ?? axis.axisKey)}>Selecionar pilar</button>
+                {hasAxisScores ? (
+                  <ul className="radar-axis-list">
+                    {radarResource.data.axisScores.map((axis) => {
+                      const delta = axis.current - axis.baseline;
+                      return (
+                        <li key={axis.axisKey}>
+                          <button type="button" onClick={() => setSelectedPillarId(axis.axisId ?? axis.axisKey)}>Selecionar pilar</button>
+                          <div className="radar-axis-top">
+                            <strong>{axis.axisLabel}</strong>
+                            <span>{formatPercentPointDelta(delta, 1)}</span>
+                          </div>
+                          {axis.axisSub && <p className="radar-axis-sub">{axis.axisSub}</p>}
+                          <div className="radar-axis-values">
+                            <span>base {formatPercent01(axis.baseline, 1)}</span>
+                            <span>real {formatPercent01(axis.current, 1)}</span>
+                            <span>meta {formatPercent01(axis.projected, 1)}</span>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <p className="radar-state">Sem eixos para exibir.</p>
+                )}
+              </article>
+            </section>
+
+            <section className="radar-panel radar-panel--axis-list">
+              <header>
+                <h2>Métricas do pilar selecionado</h2>
+                <p>Leitura de base, real e meta por métrica (somente visualização para mentor).</p>
+              </header>
+
+              {metricsResource.loading && <p className="radar-state">Carregando métricas...</p>}
+              {metricsResource.error && (
+                <div className="radar-state radar-state--error">
+                  <p>{metricsResource.error}</p>
+                  <button type="button" onClick={() => void metricsResource.refresh()}>
+                    Tentar novamente
+                  </button>
+                </div>
+              )}
+              {!metricsResource.loading && !metricsResource.error && !selectedPillarId && (
+                <p className="radar-state">Selecione um pilar para ver as métricas.</p>
+              )}
+              {!metricsResource.loading && !metricsResource.error && Boolean(selectedPillarId) && metricsResource.data.items.length === 0 && (
+                <p className="radar-state">Sem métricas para o pilar selecionado.</p>
+              )}
+              {metricsResource.data.items.length > 0 && (
+                <ul className="radar-axis-list">
+                  {metricsResource.data.items.map((metric) => (
+                    <li key={metric.measurementId}>
                       <div className="radar-axis-top">
-                        <strong>{axis.axisLabel}</strong>
-                        <span>{formatPercentPointDelta(delta, 1)}</span>
+                        <strong>{metric.metricLabel}</strong>
+                        <span>{metric.metricId}</span>
                       </div>
-                      {axis.axisSub && <p className="radar-axis-sub">{axis.axisSub}</p>}
                       <div className="radar-axis-values">
-                        <span>base {formatPercent01(axis.baseline, 1)}</span>
-                        <span>real {formatPercent01(axis.current, 1)}</span>
-                        <span>meta {formatPercent01(axis.projected, 1)}</span>
+                        <span>base {metric.valueBaseline}{metric.unit ? ` ${metric.unit}` : ""}</span>
+                        <span>real {metric.valueCurrent}{metric.unit ? ` ${metric.unit}` : ""}</span>
+                        <span>meta {metric.valueProjected ?? "-"}{metric.unit ? ` ${metric.unit}` : ""}</span>
                       </div>
                     </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <p className="radar-state">Sem eixos para exibir.</p>
-            )}
-          </article>
-        </section>
+                  ))}
+                </ul>
+              )}
+            </section>
 
-
-
-        <section className="radar-panel radar-panel--axis-list">
-          <header>
-            <h2>Métricas do pilar selecionado</h2>
-            <p>Leitura de base, real e meta por métrica (somente visualização para mentor).</p>
-          </header>
-
-          {metricsResource.loading && <p className="radar-state">Carregando métricas...</p>}
-          {metricsResource.error && (
-            <div className="radar-state radar-state--error">
-              <p>{metricsResource.error}</p>
-              <button type="button" onClick={() => void metricsResource.refresh()}>
-                Tentar novamente
-              </button>
-            </div>
-          )}
-          {!metricsResource.loading && !metricsResource.error && metricsResource.data.items.length === 0 && (
-            <p className="radar-state">Sem métricas para o pilar selecionado.</p>
-          )}
-          {metricsResource.data.items.length > 0 && (
-            <ul className="radar-axis-list">
-              {metricsResource.data.items.map((metric) => (
-                <li key={metric.measurementId}>
-                  <div className="radar-axis-top">
-                    <strong>{metric.metricLabel}</strong>
-                    <span>{metric.metricId}</span>
-                  </div>
-                  <div className="radar-axis-values">
-                    <span>base {metric.valueBaseline}{metric.unit ? ` ${metric.unit}` : ""}</span>
-                    <span>real {metric.valueCurrent}{metric.unit ? ` ${metric.unit}` : ""}</span>
-                    <span>meta {metric.valueProjected ?? "-"}{metric.unit ? ` ${metric.unit}` : ""}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <section className="radar-insight">
-          <h2>Insight principal do ciclo</h2>
-          {!topGapAxis && <p>Selecione um aluno com dados de radar para gerar insight.</p>}
-          {topGapAxis && (
-            <>
-              <p>
-                O pilar com maior distância até a meta é <strong>{topGapAxis.axisLabel}</strong>, com gap de{" "}
-                <strong>{formatPercentPointDelta(topGapAxis.projected - topGapAxis.current, 1)}</strong>.
-              </p>
-              <p>
-                Mensagem do contrato: <em>{topGapAxis.insight ?? "Sem insight textual para este eixo."}</em>
-              </p>
-            </>
-          )}
-        </section>
+            <section className="radar-insight">
+              <h2>Insight principal do ciclo</h2>
+              {!topGapAxis && <p>Selecione um aluno com dados de radar para gerar insight.</p>}
+              {topGapAxis && (
+                <>
+                  <p>
+                    O pilar com maior distância até a meta é <strong>{topGapAxis.axisLabel}</strong>, com gap de{" "}
+                    <strong>{formatPercentPointDelta(topGapAxis.projected - topGapAxis.current, 1)}</strong>.
+                  </p>
+                  <p>
+                    Mensagem do contrato: <em>{topGapAxis.insight ?? "Sem insight textual para este eixo."}</em>
+                  </p>
+                </>
+              )}
+            </section>
+          </>
+        )}
       </section>
     </MentorShell>
   );

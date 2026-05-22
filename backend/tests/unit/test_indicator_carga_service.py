@@ -50,8 +50,8 @@ class _FakeEnrollmentRepository:
 class _FakeMetricRepository:
     def __init__(self) -> None:
         self.items = {
-            "met_1": {"id": "met_1", "name": "Frequencia", "unit": "%"},
-            "met_2": {"id": "met_2", "name": "Consistencia", "unit": "pts"},
+            "met_1": {"id": "met_1", "name": "Frequencia", "unit": "%", "pillar_id": "plr_1"},
+            "met_2": {"id": "met_2", "name": "Consistencia", "unit": "pts", "pillar_id": "plr_1"},
         }
 
     def get_by_id(self, metric_id: str):
@@ -90,6 +90,39 @@ class _FakeCheckpointRepository:
 
     def list_by_enrollment(self, enrollment_id: str):
         return [item for item in self.items if item["enrollment_id"] == enrollment_id]
+
+
+class _FakePillarRepository:
+    def __init__(self) -> None:
+        self.items = {
+            "plr_1": {"id": "plr_1", "code": "frequencia", "name": "Frequencia", "order_index": 1, "axis_sub": ""}
+        }
+
+    def list_pillars(self):
+        return list(self.items.values())
+
+
+class _FakeMeasurementOverallRepository:
+    def list_all(self):
+        return [{"enrollment_id": "enr_1", "protocol_id": "prt_1", "pillars": []}]
+
+
+class _FakeProductAssignmentRepository:
+    def list_assignments(self):
+        return [
+            {
+                "id": "enr_999",
+                "assignment_id": "enr_999",
+                "student_id": "std_999",
+                "end_user_id": "std_999",
+                "organization_id": "org_1",
+                "product_id": "org_1",
+                "mentor_id": "mtr_2",
+                "provider_id": "mtr_2",
+                "is_active": True,
+                "updated_at": "2026-05-20T20:29:01.552Z",
+            }
+        ]
 
 
 class _JsonBackendMeasurementRepository(_FakeMeasurementRepository):
@@ -179,6 +212,29 @@ def test_load_initial_indicators_fails_without_postgres_url_in_production_like(m
         assert True
 
 
+def test_load_initial_indicators_fails_without_postgres_url_in_local_environment(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "local")
+    monkeypatch.delenv("SUPABASE_DB_URL", raising=False)
+    service = IndicatorCargaService(
+        students=_FakeStudentRepository(),
+        organizations=_FakeOrganizationRepository(),
+        enrollments=_FakeEnrollmentRepository(),
+        metrics=_FakeMetricRepository(),
+        measurements=_FakeMeasurementRepository(),
+        checkpoints=_FakeCheckpointRepository(),
+    )
+
+    try:
+        service.load_initial_indicators(
+            student_id="std_1",
+            metric_values=[{"metric_id": "met_1", "value_baseline": 1, "value_current": 2}],
+            checkpoints=[],
+        )
+        assert False, "expected RuntimeDependencyError"
+    except RuntimeDependencyError:
+        assert True
+
+
 def test_load_initial_indicators_flags_unready_domains_in_production_like(monkeypatch) -> None:
     monkeypatch.setenv("APP_ENV", "production")
     monkeypatch.setenv("SUPABASE_DB_URL", "postgresql://runtime-db")
@@ -230,3 +286,133 @@ def test_load_initial_indicators_forbids_json_fallback_in_production_like(monkey
         assert False, "expected JsonFallbackForbiddenError"
     except JsonFallbackForbiddenError:
         assert True
+
+
+def test_get_student_radar_falls_back_to_measurements_when_overall_has_empty_pillars(monkeypatch) -> None:
+    monkeypatch.setenv("SUPABASE_DB_URL", "postgresql://runtime-db")
+    measurements = _FakeMeasurementRepository()
+    measurements.replace_for_enrollment(
+        "enr_1",
+        [
+            {"metric_id": "met_1", "value_baseline": 50, "value_current": 70, "value_projected": 80, "improving_trend": True},
+            {"metric_id": "met_2", "value_baseline": 4, "value_current": 5, "value_projected": 6, "improving_trend": True},
+        ],
+    )
+
+    service = IndicatorCargaService(
+        students=_FakeStudentRepository(),
+        organizations=_FakeOrganizationRepository(),
+        enrollments=_FakeEnrollmentRepository(),
+        metrics=_FakeMetricRepository(),
+        measurements=measurements,
+        checkpoints=_FakeCheckpointRepository(),
+        pillars=_FakePillarRepository(),
+        measurement_overalls=_FakeMeasurementOverallRepository(),
+    )
+
+    radar = service.get_student_radar(student_id="std_1")
+    assert len(radar["axisScores"]) == 1
+    assert radar["axisScores"][0]["axisId"] == "plr_1"
+    assert radar["axisScores"][0]["current"] > 0
+
+
+def test_list_command_center_students_falls_back_to_enrollments_when_assignments_are_unlinked(monkeypatch) -> None:
+    monkeypatch.setenv("SUPABASE_DB_URL", "postgresql://runtime-db")
+    service = IndicatorCargaService(
+        students=_FakeStudentRepository(),
+        organizations=_FakeOrganizationRepository(),
+        enrollments=_FakeEnrollmentRepository(),
+        metrics=_FakeMetricRepository(),
+        measurements=_FakeMeasurementRepository(),
+        checkpoints=_FakeCheckpointRepository(),
+        product_assignments=_FakeProductAssignmentRepository(),
+    )
+
+    payload = service.list_command_center_students()
+    assert len(payload["items"]) == 1
+    assert payload["items"][0]["id"] == "std_1"
+
+
+def test_list_command_center_students_prioritizes_students_with_radar_data(monkeypatch) -> None:
+    monkeypatch.setenv("SUPABASE_DB_URL", "postgresql://runtime-db")
+
+    class _Students:
+        def list_students(self):
+            return [
+                {"id": "std_no_data", "full_name": "Aluno Sem Radar", "initials": "SR", "is_active": True},
+                {"id": "std_with_data", "full_name": "Aluno Com Radar", "initials": "CR", "is_active": True},
+            ]
+
+    class _Organizations:
+        def list_organizations(self):
+            return [{"id": "org_1", "name": "Mentoria Prime"}]
+
+    class _Enrollments:
+        def list_enrollments(self):
+            return [
+                {
+                    "id": "enr_1",
+                    "student_id": "std_no_data",
+                    "organization_id": "org_1",
+                    "mentor_id": "mtr_2",
+                    "is_active": True,
+                    "day": 10,
+                    "total_days": 100,
+                    "days_left": 90,
+                    "engagement_score": 0.55,
+                    "progress_score": 0.6,
+                    "ltv_cents": 100000,
+                    "updated_at": "2026-05-01T00:00:00Z",
+                },
+                {
+                    "id": "enr_2",
+                    "student_id": "std_with_data",
+                    "organization_id": "org_1",
+                    "mentor_id": "mtr_2",
+                    "is_active": True,
+                    "day": 10,
+                    "total_days": 100,
+                    "days_left": 90,
+                    "engagement_score": 0.55,
+                    "progress_score": 0.6,
+                    "ltv_cents": 100000,
+                    "updated_at": "2026-05-01T00:00:00Z",
+                },
+            ]
+
+    class _Measurements:
+        runtime_backend = "postgres"
+
+        def list_measurements(self):
+            return [{"id": "mea_1", "enrollment_id": "enr_2", "metric_id": "met_1", "value_baseline": 1, "value_current": 2}]
+
+    class _Metrics:
+        def list_metrics(self):
+            return [{"id": "met_1", "pillar_id": "plr_1", "name": "Indicador"}]
+
+    class _Checkpoints:
+        runtime_backend = "postgres"
+
+        def list_by_enrollment(self, enrollment_id: str):
+            return []
+
+    class _Assignments:
+        def list_assignments(self):
+            return []
+
+    service = IndicatorCargaService(
+        students=_Students(),
+        organizations=_Organizations(),
+        enrollments=_Enrollments(),
+        metrics=_Metrics(),
+        measurements=_Measurements(),
+        checkpoints=_Checkpoints(),
+        product_assignments=_Assignments(),
+    )
+
+    payload = service.list_command_center_students(mentor_id="mtr_2")
+    assert len(payload["items"]) == 2
+    assert payload["items"][0]["id"] == "std_with_data"
+    assert payload["items"][0]["hasRadarData"] is True
+    assert payload["items"][1]["id"] == "std_no_data"
+    assert payload["items"][1]["hasRadarData"] is False

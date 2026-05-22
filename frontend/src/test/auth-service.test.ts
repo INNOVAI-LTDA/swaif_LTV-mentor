@@ -66,4 +66,33 @@ describe("auth service hardening", () => {
     });
     expect(getAccessToken()).toBeNull();
   });
+
+  it("normaliza roles canonicas do backend para o dominio do frontend", async () => {
+    const { login, getMe } = await importAuthServiceModule();
+    postMock.mockResolvedValue({
+      access_token: "token-role-map",
+      token_type: "bearer"
+    });
+    getMock
+      .mockResolvedValueOnce({
+        id: "usr_provider",
+        email: "mentor@cliente.test",
+        role: "provider"
+      })
+      .mockResolvedValueOnce({
+        id: "usr_client",
+        email: "aluno@cliente.test",
+        role: "client"
+      });
+
+    await expect(login({ email: "mentor@cliente.test", password: "senha-mentor-segura" })).resolves.toMatchObject({
+      user: {
+        role: "mentor"
+      }
+    });
+
+    await expect(getMe()).resolves.toMatchObject({
+      role: "aluno"
+    });
+  });
 });

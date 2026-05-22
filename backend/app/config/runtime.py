@@ -107,12 +107,19 @@ def get_storage_backup_dir() -> Path:
 
 
 def supabase_sync_on_startup_enabled() -> bool:
+    if supabase_runtime_required():
+        return True
     configured = _get_optional_bool_env("SUPABASE_SYNC_ON_STARTUP")
     return bool(configured)
 
 
 def get_supabase_db_url() -> str:
     return os.getenv("SUPABASE_DB_URL", "").strip()
+
+
+def supabase_runtime_required() -> bool:
+    configured = _get_optional_bool_env("SUPABASE_RUNTIME_REQUIRED")
+    return bool(configured)
 
 
 def get_supabase_sync_default_admin_password() -> str:
@@ -125,6 +132,14 @@ def get_supabase_sync_default_provider_password() -> str:
 
 def get_supabase_sync_default_client_password() -> str:
     return os.getenv("SUPABASE_SYNC_DEFAULT_CLIENT_PASSWORD", os.getenv("APP_DEFAULT_STUDENT_PASSWORD", "aluno_accmed"))
+
+
+def mentor_workspace_backfill_repair_enabled() -> bool:
+    configured = _get_optional_bool_env_alias(
+        "MENTOR_WORKSPACE_BACKFILL_REPAIR_ENABLED",
+        "MENTOR_WORKSPACE_BACKFILL_ON_READ",
+    )
+    return bool(configured)
 
 
 def normalize_cors_origin(origin: str) -> str:

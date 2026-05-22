@@ -177,7 +177,7 @@ export function CommandCenterPage() {
               </div>
             )}
             {!studentsResource.loading && !studentsResource.error && allStudents.length === 0 && (
-              <p>Nenhum aluno encontrado para o Centro de Comando.</p>
+              <p>Nenhum aluno vinculado ao mentor no Centro de Comando. Faça o vínculo no painel admin.</p>
             )}
 
             {visibleStudents.length > 0 && (

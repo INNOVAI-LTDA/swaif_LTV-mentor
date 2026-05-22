@@ -8,17 +8,26 @@ from pydantic import BaseModel
 
 from app.api.errors import api_error
 from app.api.routes.auth import bearer, get_auth_service
+from app.config.runtime import get_supabase_db_url, supabase_runtime_required
 from app.core.security import canonicalize_role
 from app.services.auth_service import AuthService
 from app.services.indicator_carga_service import IndicatorCargaService
 from app.services.student_workspace_service import StudentContextError, StudentWorkspaceService
+from app.storage.analytical_history_repository import AnalyticalHistoryRepository
 from app.storage.checkpoint_repository import CheckpointRepository
 from app.storage.enrollment_repository import EnrollmentRepository
 from app.storage.measurement_overall_repository import MeasurementOverallRepository
+from app.storage.measurement_history_repository import MeasurementHistoryRepository
 from app.storage.measurement_repository import MeasurementRepository
 from app.storage.metric_repository import MetricRepository
 from app.storage.organization_repository import OrganizationRepository
 from app.storage.pillar_repository import PillarRepository
+from app.storage.postgres_indicator_repositories import (
+    PostgresAnalyticalHistoryRepository,
+    PostgresCheckpointRepository,
+    PostgresMeasurementHistoryRepository,
+    PostgresMeasurementRepository,
+)
 from app.storage.product_assignment_repository import ProductAssignmentRepository
 from app.storage.protocol_repository import ProtocolRepository
 from app.storage.student_repository import StudentRepository
@@ -31,15 +40,32 @@ class StudentMeasurementUpdateRequest(BaseModel):
     value_current: float
 
 
+def _resolve_indicator_runtime_repositories() -> tuple[Any, Any, Any, Any]:
+    database_url = get_supabase_db_url()
+    if supabase_runtime_required() and not database_url:
+        raise api_error(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            code="SUPABASE_DB_URL_REQUIRED",
+            message="SUPABASE_DB_URL obrigatorio para runtime sem fallback JSON.",
+        )
+    if database_url:
+        return (
+            PostgresMeasurementRepository(database_url),
+            PostgresCheckpointRepository(database_url),
+            PostgresMeasurementHistoryRepository(database_url),
+            PostgresAnalyticalHistoryRepository(database_url),
+        )
+    return MeasurementRepository(), CheckpointRepository(), MeasurementHistoryRepository(), AnalyticalHistoryRepository()
+
+
 def get_student_workspace_service() -> StudentWorkspaceService:
     students = StudentRepository()
     enrollments = EnrollmentRepository()
-    measurements = MeasurementRepository()
+    measurements, checkpoints, measurement_history, analytical_history = _resolve_indicator_runtime_repositories()
     metrics = MetricRepository()
     pillars = PillarRepository()
     protocols = ProtocolRepository()
     organizations = OrganizationRepository()
-    checkpoints = CheckpointRepository()
     measurement_overalls = MeasurementOverallRepository()
 
     indicator_carga = IndicatorCargaService(
@@ -63,6 +89,8 @@ def get_student_workspace_service() -> StudentWorkspaceService:
         pillars=pillars,
         measurement_overalls=measurement_overalls,
         indicator_carga=indicator_carga,
+        measurement_history=measurement_history,
+        analytical_history=analytical_history,
     )
 
 

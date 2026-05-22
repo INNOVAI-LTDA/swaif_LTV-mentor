@@ -1,4 +1,33 @@
 {
   "version": 1,
-  "items": []
+  "items": [
+    {
+      "id": "cli_1",
+      "name": "Cliente API Teste 105724",
+      "brand_name": "Cliente API Teste 105724",
+      "cnpj": "49534070716879",
+      "slug": "cliente-api-teste-105724",
+      "status": "active",
+      "is_active": true,
+      "timezone": "America/Sao_Paulo",
+      "currency": "BRL",
+      "notes": null,
+      "created_at": "2026-05-21T18:46:11.422853Z",
+      "updated_at": "2026-05-21T18:46:11.422853Z"
+    },
+    {
+      "id": "cli_2",
+      "name": "Cliente Teste API bdaded",
+      "brand_name": "Cliente Teste API bdaded",
+      "cnpj": "02159254679807",
+      "slug": "cliente-teste-api-bdaded",
+      "status": "active",
+      "is_active": true,
+      "timezone": "America/Sao_Paulo",
+      "currency": "BRL",
+      "notes": null,
+      "created_at": "2026-05-21T18:47:00.253986Z",
+      "updated_at": "2026-05-21T18:47:00.253986Z"
+    }
+  ]
 }

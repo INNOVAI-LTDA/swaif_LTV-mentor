@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+import logging
 from datetime import date, datetime, timezone
 from typing import Any
 
-from app.config.runtime import get_supabase_db_url, is_production_like_environment, get_app_env
+from app.config.runtime import (
+    get_app_env,
+    get_supabase_db_url,
+    is_production_like_environment,
+    mentor_workspace_backfill_repair_enabled,
+)
 from app.storage.checkpoint_repository import CheckpointRepository
 from app.storage.enrollment_repository import EnrollmentRepository
 from app.storage.measurement_repository import MeasurementRepository
@@ -14,6 +20,9 @@ from app.storage.product_assignment_repository import ProductAssignmentRepositor
 from app.storage.protocol_repository import ProtocolRepository
 from app.storage.student_repository import StudentRepository
 from app.storage.measurement_overall_repository import MeasurementOverallRepository
+
+
+logger = logging.getLogger("swaif.runtime")
 
 
 class EntityNotFoundError(Exception):
@@ -241,10 +250,91 @@ class IndicatorCargaService:
         if self._product_assignments is not None:
             assignments = self._product_assignments.list_assignments()
             if assignments:
-                return assignments
+                known_student_ids = set(self._students_by_id().keys())
+                linked_assignments = [
+                    row
+                    for row in assignments
+                    if str(row.get("student_id") or row.get("end_user_id") or "") in known_student_ids
+                ]
+                if linked_assignments:
+                    return linked_assignments
+
+                logger.warning(
+                    "indicator_assignments_fallback_to_enrollments assignments=%s reason=no_student_link",
+                    len(assignments),
+                )
         return self._enrollments.list_enrollments()
 
+    def _backfill_workspace_assignment_links(self) -> dict[str, int]:
+        mentor_id_by_organization: dict[str, str] = {}
+        for organization in self._organizations.list_organizations():
+            organization_id = str(organization.get("id") or "").strip()
+            mentor_id = str(organization.get("mentor_id") or "").strip()
+            if organization_id and mentor_id:
+                mentor_id_by_organization[organization_id] = mentor_id
+
+        enrollment_scanned_active = 0
+        enrollment_updated = 0
+        if hasattr(self._enrollments, "backfill_active_mentor_ids"):
+            enrollment_result = self._enrollments.backfill_active_mentor_ids(mentor_id_by_organization)  # type: ignore[attr-defined]
+            if isinstance(enrollment_result, dict):
+                enrollment_scanned_active = int(enrollment_result.get("scanned_active", 0) or 0)
+                enrollment_updated = int(enrollment_result.get("updated", 0) or 0)
+
+        mentor_id_by_assignment: dict[str, str] = {}
+        for enrollment in self._enrollments.list_enrollments():
+            if not bool(enrollment.get("is_active", True)):
+                continue
+            assignment_id = str(enrollment.get("id") or "").strip()
+            mentor_id = str(enrollment.get("mentor_id") or "").strip()
+            if assignment_id and mentor_id:
+                mentor_id_by_assignment[assignment_id] = mentor_id
+
+        assignment_scanned_active = 0
+        assignment_updated = 0
+        assignment_conflicts = 0
+        if self._product_assignments is not None and hasattr(self._product_assignments, "backfill_active_provider_ids"):
+            assignment_result = self._product_assignments.backfill_active_provider_ids(
+                mentor_id_by_assignment=mentor_id_by_assignment,
+                mentor_id_by_organization=mentor_id_by_organization,
+            )  # type: ignore[attr-defined]
+            if isinstance(assignment_result, dict):
+                assignment_scanned_active = int(assignment_result.get("scanned_active", 0) or 0)
+                assignment_updated = int(assignment_result.get("updated", 0) or 0)
+                assignment_conflicts = int(assignment_result.get("conflicts", 0) or 0)
+
+        if assignment_conflicts > 0:
+            logger.warning(
+                "mentor_workspace_backfill_conflicts_detected assignment_conflicts=%s assignment_scanned_active=%s assignment_updated=%s enrollment_scanned_active=%s enrollment_updated=%s",
+                assignment_conflicts,
+                assignment_scanned_active,
+                assignment_updated,
+                enrollment_scanned_active,
+                enrollment_updated,
+            )
+        elif assignment_updated > 0 or enrollment_updated > 0:
+            logger.info(
+                "mentor_workspace_backfill_repair_applied assignment_scanned_active=%s assignment_updated=%s enrollment_scanned_active=%s enrollment_updated=%s",
+                assignment_scanned_active,
+                assignment_updated,
+                enrollment_scanned_active,
+                enrollment_updated,
+            )
+
+        return {
+            "enrollment_scanned_active": enrollment_scanned_active,
+            "enrollment_updated": enrollment_updated,
+            "assignment_scanned_active": assignment_scanned_active,
+            "assignment_updated": assignment_updated,
+            "assignment_conflicts": assignment_conflicts,
+        }
+
+    def repair_workspace_assignment_links(self) -> dict[str, int]:
+        return self._backfill_workspace_assignment_links()
+
     def _iter_active_enrollments(self, *, mentor_id: str | None = None) -> list[dict[str, Any]]:
+        if mentor_workspace_backfill_repair_enabled():
+            self.repair_workspace_assignment_links()
         enrollments = [self._normalize_assignment(row) for row in self._list_assignment_source_rows()]
         if mentor_id:
             enrollments = [
@@ -380,6 +470,20 @@ class IndicatorCargaService:
             "hormoziScore": self._derive_hormozi_score(progress=progress, engagement=engagement),
             "ltv": int(enrollment.get("ltv_cents", 0)),
         }
+
+    def _enrollment_has_radar_data(self, *, enrollment_id: str, overall: dict[str, Any] | None) -> bool:
+        if not enrollment_id:
+            return False
+
+        pillars = (overall or {}).get("pillars") if isinstance(overall, dict) else None
+        if isinstance(pillars, list) and len(pillars) > 0:
+            return True
+
+        measurements = self._measurements_by_enrollment().get(enrollment_id, [])
+        if measurements:
+            return True
+
+        return False
 
     @staticmethod
     def _classify_quadrant(*, progress: float, engagement: float, prd_thr: float = 0.7, eng_thr: float = 0.7) -> str:
@@ -606,6 +710,11 @@ class IndicatorCargaService:
                 protocol_ids_seen.append(protocol_id)
             enrollment_for_summary = dict(enrollment)
             performance_score = 0.0
+            enrollment_id = str(enrollment.get("id") or "")
+            has_radar_data = self._enrollment_has_radar_data(
+                enrollment_id=enrollment_id,
+                overall=overall,
+            )
 
             decision_matrix = (overall or {}).get("decision_matrix") if overall else None
             if isinstance(decision_matrix, dict):
@@ -639,6 +748,8 @@ class IndicatorCargaService:
                 enrollment=enrollment_for_summary,
                 organization=organization,
             )
+            summary["hasRadarData"] = has_radar_data
+            summary["radarAxisCount"] = len((overall or {}).get("pillars") or []) if isinstance((overall or {}).get("pillars"), list) else 0
             if performance_score <= 0.0:
                 performance_score = float(summary.get("hormoziScore", 0)) / 100
 
@@ -657,6 +768,7 @@ class IndicatorCargaService:
 
         ranked_items.sort(
             key=lambda row: (
+                -int(bool(row[0].get("hasRadarData"))),
                 -row[1],
                 -int(row[0].get("hormoziScore", 0)),
                 str(row[0].get("name", "")),
@@ -777,6 +889,102 @@ class IndicatorCargaService:
             return 0.0
         return round(sum(values) / len(values), 2)
 
+    def get_mentor_clients_radar(self, *, mentor_id: str) -> dict[str, Any]:
+        center_payload = self.list_command_center_students(mentor_id=mentor_id)
+        center_items = center_payload.get("items") if isinstance(center_payload.get("items"), list) else []
+
+        clients: list[dict[str, Any]] = []
+        axis_accumulator: dict[str, dict[str, Any]] = {}
+        order_seed = 0
+
+        for item in center_items:
+            if not isinstance(item, dict):
+                continue
+            student_id = str(item.get("id") or "")
+            if not student_id:
+                continue
+
+            clients.append(
+                {
+                    "studentId": student_id,
+                    "studentName": str(item.get("name") or "Aluno"),
+                    "programName": str(item.get("programName") or ""),
+                    "daysLeft": int(item.get("daysLeft") or 0),
+                }
+            )
+
+            radar = self.get_student_radar(student_id=student_id, mentor_id=mentor_id)
+            axis_scores = radar.get("axisScores") if isinstance(radar.get("axisScores"), list) else []
+            for axis in axis_scores:
+                if not isinstance(axis, dict):
+                    continue
+                axis_id = str(axis.get("axisId") or axis.get("axisKey") or "")
+                if not axis_id:
+                    continue
+
+                bucket = axis_accumulator.get(axis_id)
+                if bucket is None:
+                    bucket = {
+                        "axisId": axis_id,
+                        "axisKey": str(axis.get("axisKey") or axis_id),
+                        "axisLabel": str(axis.get("axisLabel") or axis_id),
+                        "axisSub": str(axis.get("axisSub") or ""),
+                        "baseline_sum": 0.0,
+                        "current_sum": 0.0,
+                        "projected_sum": 0.0,
+                        "sampleSize": 0,
+                        "_order": order_seed,
+                    }
+                    order_seed += 1
+                    axis_accumulator[axis_id] = bucket
+
+                bucket["baseline_sum"] = float(bucket["baseline_sum"]) + float(axis.get("baseline") or 0.0)
+                bucket["current_sum"] = float(bucket["current_sum"]) + float(axis.get("current") or 0.0)
+                bucket["projected_sum"] = float(bucket["projected_sum"]) + float(axis.get("projected") or 0.0)
+                bucket["sampleSize"] = int(bucket["sampleSize"]) + 1
+
+        axis_scores: list[dict[str, Any]] = []
+        for bucket in axis_accumulator.values():
+            sample_size = int(bucket.get("sampleSize") or 0)
+            if sample_size <= 0:
+                continue
+            baseline = round(float(bucket.get("baseline_sum") or 0.0) / sample_size, 2)
+            current = round(float(bucket.get("current_sum") or 0.0) / sample_size, 2)
+            projected = round(float(bucket.get("projected_sum") or 0.0) / sample_size, 2)
+            axis_scores.append(
+                {
+                    "axisId": str(bucket.get("axisId") or ""),
+                    "axisKey": str(bucket.get("axisKey") or ""),
+                    "axisLabel": str(bucket.get("axisLabel") or ""),
+                    "axisSub": str(bucket.get("axisSub") or ""),
+                    "baseline": baseline,
+                    "current": current,
+                    "projected": projected,
+                    "sampleSize": sample_size,
+                    "insight": self._build_axis_insight(
+                        axis_label=str(bucket.get("axisLabel") or "Eixo"),
+                        baseline=baseline,
+                        current=current,
+                        projected=projected,
+                    ),
+                    "_order": int(bucket.get("_order") or 999),
+                }
+            )
+
+        axis_scores.sort(key=lambda axis: int(axis.get("_order") or 999))
+        for axis in axis_scores:
+            axis.pop("_order", None)
+
+        context = center_payload.get("context") if isinstance(center_payload.get("context"), dict) else {}
+        return {
+            "clients": clients,
+            "axisScores": axis_scores,
+            "avgBaseline": self._avg([float(axis.get("baseline") or 0.0) for axis in axis_scores]),
+            "avgCurrent": self._avg([float(axis.get("current") or 0.0) for axis in axis_scores]),
+            "avgProjected": self._avg([float(axis.get("projected") or 0.0) for axis in axis_scores]),
+            "context": context,
+        }
+
     def get_student_radar(self, *, student_id: str, mentor_id: str | None = None) -> dict[str, Any]:
         _, enrollment = self._get_student_and_enrollment(student_id, mentor_id=mentor_id)
 
@@ -791,7 +999,7 @@ class IndicatorCargaService:
             "protocolName": str((context_protocol or {}).get("name") or ""),
         }
 
-        if overall and isinstance(overall.get("pillars"), list):
+        if overall and isinstance(overall.get("pillars"), list) and bool(overall.get("pillars")):
             axis_scores: list[dict[str, Any]] = []
             pillars_by_id = self._pillars_by_id()
             for pillar_row in overall.get("pillars", []):

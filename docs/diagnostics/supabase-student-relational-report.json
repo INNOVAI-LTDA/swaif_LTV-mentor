@@ -1,0 +1,347 @@
+{
+  "generated_at_utc": "2026-05-21T13:46:44.987781+00:00",
+  "project_id": "wufkaydwtapebhsvxrxg",
+  "source": "supabase-postgres-api",
+  "student_scope": {
+    "enrollment_id": 1,
+    "status": "active",
+    "days_left": null,
+    "investment": null,
+    "created_at": "2026-05-07 21:11:44.088734+00:00",
+    "updated_at": "2026-05-07 21:11:44.088734+00:00",
+    "student_user_id": 17,
+    "student_email": "marcusviniciusbissiguini@hotmail.com",
+    "student_name": "Marcus Viní­cius Bissiguini (2ª cadeira paga)",
+    "mentor_user_id": 2,
+    "mentor_email": "mentor@accmed.com.br",
+    "mentor_name": "Dr. José Netto",
+    "product_id": 1,
+    "product_name": "Master Acelerador Medico",
+    "product_slug": "mst_accmed",
+    "organization_id": 1,
+    "organization_name": "Acelerador Medico",
+    "brand_name": "Acelerador Medico"
+  },
+  "pillars": [
+    {
+      "id": 1,
+      "product_id": 1,
+      "name": "Captação",
+      "slug": "mst_accmed_plr_cap",
+      "order_index": 1,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "product_id": 1,
+      "name": "Vendas",
+      "slug": "mst_accmed_plr_vendas",
+      "order_index": 2,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "product_id": 1,
+      "name": "Mentalidade",
+      "slug": "mst_accmed_plr_mentalidade",
+      "order_index": 3,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "product_id": 1,
+      "name": "Gestão",
+      "slug": "mst_accmed_plr_gestao",
+      "order_index": 4,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "product_id": 1,
+      "name": "Repertório",
+      "slug": "mst_accmed_plr_repertorio",
+      "order_index": 5,
+      "metadata": {
+        "axis_sub": ""
+      },
+      "is_active": true
+    }
+  ],
+  "metrics": [
+    {
+      "id": 1,
+      "pillar_id": 1,
+      "name": "N° de consultas mensais",
+      "slug": "mtr_consultas-mensais",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "static",
+      "min_score": 5.0,
+      "max_score": 20.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 10.0,
+      "is_active": true
+    },
+    {
+      "id": 2,
+      "pillar_id": 1,
+      "name": "N° de MQLs",
+      "slug": "mtr_mqls",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "static",
+      "min_score": 5.0,
+      "max_score": 20.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 5.0,
+      "is_active": true
+    },
+    {
+      "id": 7,
+      "pillar_id": 2,
+      "name": "Faturamento",
+      "slug": "mtr_faturamento",
+      "direction": "higher_better",
+      "unit": "R$",
+      "score_type": "static",
+      "min_score": 5.0,
+      "max_score": 20.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 10.0,
+      "is_active": true
+    },
+    {
+      "id": 3,
+      "pillar_id": 2,
+      "name": "N° de Leads",
+      "slug": "mtr_leads",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "static",
+      "min_score": 5.0,
+      "max_score": 20.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 5.0,
+      "is_active": true
+    },
+    {
+      "id": 4,
+      "pillar_id": 2,
+      "name": "N° de Ofertas",
+      "slug": "mtr_ofertas",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "static",
+      "min_score": 5.0,
+      "max_score": 20.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 10.0,
+      "is_active": true
+    },
+    {
+      "id": 5,
+      "pillar_id": 2,
+      "name": "Taxa de Conversão",
+      "slug": "mtr_taxa-conversao",
+      "direction": "higher_better",
+      "unit": "%",
+      "score_type": "static",
+      "min_score": 5.0,
+      "max_score": 20.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 5.0,
+      "is_active": true
+    },
+    {
+      "id": 6,
+      "pillar_id": 2,
+      "name": "Ticket médio",
+      "slug": "mtr_ticket-medio",
+      "direction": "higher_better",
+      "unit": "R$",
+      "score_type": "static",
+      "min_score": 5.0,
+      "max_score": 20.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 10.0,
+      "is_active": true
+    },
+    {
+      "id": 8,
+      "pillar_id": 3,
+      "name": "Engajamento",
+      "slug": "mtr_engajamento",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "static",
+      "min_score": 5.0,
+      "max_score": 10.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 10.0,
+      "is_active": true
+    },
+    {
+      "id": 9,
+      "pillar_id": 3,
+      "name": "Gratidão",
+      "slug": "mtr_gratidao",
+      "direction": "higher_better",
+      "unit": "pts",
+      "score_type": "range",
+      "min_score": 0.0,
+      "max_score": 4.0,
+      "max_score_basis": "MAX_RVALUE",
+      "mcv": 4.0,
+      "is_active": true
+    },
+    {
+      "id": 10,
+      "pillar_id": 3,
+      "name": "NED",
+      "slug": "mtr_ned",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "static",
+      "min_score": 1.0,
+      "max_score": 5.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 5.0,
+      "is_active": true
+    },
+    {
+      "id": 14,
+      "pillar_id": 4,
+      "name": "Ferramentas básicas",
+      "slug": "mtr_ferramentas-basicas",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "accumulative",
+      "min_score": 5.0,
+      "max_score": 15.0,
+      "max_score_basis": "MAX_OPT",
+      "mcv": 10.0,
+      "is_active": true
+    },
+    {
+      "id": 12,
+      "pillar_id": 4,
+      "name": "NPS",
+      "slug": "mtr_nps",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "static",
+      "min_score": 0.0,
+      "max_score": 2.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 2.0,
+      "is_active": true
+    },
+    {
+      "id": 13,
+      "pillar_id": 4,
+      "name": "Processos",
+      "slug": "mtr_processos",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "accumulative",
+      "min_score": 5.0,
+      "max_score": 15.0,
+      "max_score_basis": "MAX_OPT",
+      "mcv": 10.0,
+      "is_active": true
+    },
+    {
+      "id": 11,
+      "pillar_id": 4,
+      "name": "Reuniões Semanais?",
+      "slug": "mtr_reunioes-semanais",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "static",
+      "min_score": 0.0,
+      "max_score": 2.0,
+      "max_score_basis": "MAX_VALUE",
+      "mcv": 2.0,
+      "is_active": true
+    },
+    {
+      "id": 16,
+      "pillar_id": 5,
+      "name": "N° de Produtos Digitais",
+      "slug": "mtr_numero-produtos-digitais",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "unrestricted_sum",
+      "min_score": 0.0,
+      "max_score": 10.0,
+      "max_score_basis": "MCV",
+      "mcv": 0.0,
+      "is_active": true
+    },
+    {
+      "id": 15,
+      "pillar_id": 5,
+      "name": "N° de Serviços",
+      "slug": "mtr_numero-servicos",
+      "direction": "higher_better",
+      "unit": "",
+      "score_type": "unrestricted_sum",
+      "min_score": 0.0,
+      "max_score": 10.0,
+      "max_score_basis": "MCV",
+      "mcv": 6.0,
+      "is_active": true
+    }
+  ],
+  "measurement_related_tables": [
+    "deva_accmed_runtime_checkpoints",
+    "deva_accmed_runtime_measurements"
+  ],
+  "runtime_measurements": [
+    {
+      "id": "mea_899bfd3e46274280b9c48a52c56317ba",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_1",
+      "value_baseline": 4.0,
+      "value_current": 4.0,
+      "value_projected": 5.0,
+      "improving_trend": true
+    },
+    {
+      "id": "mea_d0f55cfc9b2b4b20a5fe123c167f2cd2",
+      "enrollment_id": "enr_1",
+      "metric_id": "met_2",
+      "value_baseline": 9.0,
+      "value_current": 9.0,
+      "value_projected": 9.0,
+      "improving_trend": true
+    }
+  ],
+  "runtime_checkpoints": [
+    {
+      "id": "chk_c3510f31a46e44e795213cd34200da97",
+      "enrollment_id": "enr_1",
+      "week": 1,
+      "status": "green",
+      "label": "Inicio"
+    }
+  ],
+  "counts": {
+    "pillars": 5,
+    "metrics": 16,
+    "runtime_measurements": 2,
+    "runtime_checkpoints": 1
+  }
+}

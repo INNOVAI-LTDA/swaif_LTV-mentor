@@ -1,0 +1,71 @@
+```json
+{
+  "status": "completed_with_findings",
+  "summary": "Adversarial review completed for mentor workspace backfill implementation; prior blockers were addressed, but two medium patch-level hardening gaps remain (conflict observability and broader endpoint-level no-write coverage with repair gate disabled). Targeted validation passed with 15 tests.",
+  "decisions": [
+    "Review scope was constrained to mentor workspace backfill and requested mentor endpoints.",
+    "Findings were classified as patch-level (code/test hardening) with no spec-change requirement.",
+    "No architecture refactor recommendation was made; only localized follow-up fixes are required."
+  ],
+  "risks": [
+    {
+      "severity": "medium",
+      "risk": "Backfill conflict rows (`provider_id != mentor_id`) are skipped correctly but conflict count is not surfaced by service flow, reducing operator visibility after repair execution."
+    },
+    {
+      "severity": "medium",
+      "risk": "No-write behavior with repair gate disabled is asserted through Command Center path only; Radar/Matrix explicit endpoint-level non-write assertions are still missing."
+    }
+  ],
+  "input_artifacts": [
+    {
+      "path": "_bmad-output/project-context.md",
+      "role": "project-context"
+    },
+    {
+      "path": "_bmad-output/operator-artifacts/mentor-workspace-backfill-implementation-report.md",
+      "role": "implementation-report"
+    },
+    {
+      "path": "_bmad-output/operator-artifacts/mentor-workspace-backfill-quick-dev-report.md",
+      "role": "story"
+    },
+    {
+      "path": "backend/app/config/runtime.py",
+      "role": "implementation-under-review"
+    },
+    {
+      "path": "backend/app/services/indicator_carga_service.py",
+      "role": "implementation-under-review"
+    },
+    {
+      "path": "backend/app/storage/enrollment_repository.py",
+      "role": "implementation-under-review"
+    },
+    {
+      "path": "backend/app/storage/product_assignment_repository.py",
+      "role": "implementation-under-review"
+    },
+    {
+      "path": "backend/tests/integration/test_enrollment_repository.py",
+      "role": "coverage-under-review"
+    },
+    {
+      "path": "backend/tests/integration/test_product_assignment_repository.py",
+      "role": "coverage-under-review"
+    },
+    {
+      "path": "backend/tests/api/test_mentor_api.py",
+      "role": "coverage-under-review"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "artifact_type": "review-report",
+      "path": "_bmad-output/operator-artifacts/mentor-workspace-backfill-review-report.md",
+      "content": "# Code Review Report - Mentor Workspace Backfill (Adversarial)\n\n## Scope\nAdversarial review of mentor-workspace backfill implementation (`mentor_id` / `provider_id`) focused on regression risk, idempotency, test coverage, and endpoint conformity for:\n- `GET /mentor/centro-comando/alunos`\n- `GET /mentor/radar/alunos/{student_id}`\n- `GET /mentor/matriz-renovacao`\n\nPrimary context artifacts reviewed:\n- `_bmad-output/operator-artifacts/mentor-workspace-backfill-quick-dev-report.md`\n- `_bmad-output/operator-artifacts/mentor-workspace-backfill-implementation-report.md`\n\n## Diff and Validation Summary\n- Targeted implementation files reviewed: 4\n- Targeted test files reviewed: 3\n- Validation executed:\n  - `python -m pytest tests/integration/test_enrollment_repository.py tests/integration/test_product_assignment_repository.py tests/api/test_mentor_api.py -q`\n- Result: `15 passed`\n\n## Findings\n\n### Patch\n\n1. **[MEDIUM] Conflict counter is generated but not surfaced outside repository scope**\n- Location: `backend/app/storage/product_assignment_repository.py:187`, `backend/app/services/indicator_carga_service.py:272`\n- Evidence: `backfill_active_provider_ids(...)` returns `conflicts`, but service path discards return value and exposes no audit/log signal.\n- Risk: Divergent alias rows (`provider_id != mentor_id`) are skipped as intended, but operators have no runtime visibility that unresolved conflicts remain after repair runs.\n- Recommended patch: Capture backfill result in service repair flow and emit structured log/metric (or return a repair summary in an explicit admin-only operation).\n\n2. **[MEDIUM] Missing endpoint-level non-write coverage for Radar and Matrix when repair gate is disabled**\n- Location: `backend/tests/api/test_mentor_api.py:510`\n- Evidence: `test_mentor_workspace_get_does_not_write_without_repair_gate` validates no-write behavior via `/mentor/centro-comando/alunos` only.\n- Risk: Current design suggests shared behavior through `_iter_active_enrollments`, but regression in endpoint-specific call paths for Radar/Matrix could slip without direct assertions.\n- Recommended patch: Extend no-gate API test to hit Radar and Matrix and reassert unchanged `updated_at`/link fields.\n\n## Conformity Check - Requested Mentor Endpoints\n- Endpoint contracts remain preserved in this change set; no direct response-shape mutations in mentor route handlers were introduced.\n- New API test `test_mentor_workspace_repair_gate_backfills_links_and_is_idempotent` exercises all three endpoints and validates successful responses post-repair.\n- Existing regression concern from prior review (silent alias overwrite) is addressed via conflict guard and dedicated coverage.\n\n## Idempotency Assessment\n- Repository-level idempotency is now explicitly covered:\n  - `EnrollmentRepository.backfill_active_mentor_ids(...)` second pass `updated == 0`.\n  - `ProductAssignmentRepository.backfill_active_provider_ids(...)` second pass `updated == 0`.\n- API-level idempotency is covered by stable `updated_at` assertions after second mentor read with repair gate enabled.\n\n## Verdict\n- **Not fully review-clean yet** due to two medium-severity hardening gaps (conflict observability and incomplete endpoint-level no-write coverage when repair gate is off).\n- **Core regression blockers requested by operator were addressed**: silent overwrite guard, controlled repair gate, idempotency coverage, inactive/conflict path tests, and endpoint functional checks."
+    }
+  ],
+  "approval_required": true
+}
+```

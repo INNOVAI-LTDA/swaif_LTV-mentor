@@ -210,7 +210,7 @@ export function MatrixPage() {
           </div>
         )}
         {!resource.loading && !resource.error && items.length === 0 && (
-          <p className="mx-state">Nenhum aluno encontrado para a matriz neste momento.</p>
+          <p className="mx-state">Nenhum aluno vinculado ao mentor para a matriz. Faça o vínculo no painel admin.</p>
         )}
 
         {items.length > 0 && (

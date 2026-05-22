@@ -345,6 +345,26 @@ class _NoJsonCheckpointRepository:
         return []
 
 
+class _FailingPostgresMeasurementRepository:
+    runtime_backend = "postgres"
+
+    def replace_for_enrollment(self, enrollment_id: str, rows: list[dict]) -> list[dict]:
+        raise RuntimeError("simulated postgres write failure")
+
+    def list_measurements(self) -> list[dict]:
+        return []
+
+
+class _PostgresCheckpointNoopRepository:
+    runtime_backend = "postgres"
+
+    def replace_for_enrollment(self, enrollment_id: str, rows: list[dict]) -> list[dict]:
+        return []
+
+    def list_by_enrollment(self, enrollment_id: str) -> list[dict]:
+        return []
+
+
 def test_indicator_load_returns_postgres_domain_not_ready_when_json_fallback_is_not_possible(monkeypatch, tmp_path: Path) -> None:
     _configure_stores(monkeypatch, tmp_path)
     monkeypatch.setenv("APP_ENV", "production")
@@ -383,6 +403,63 @@ def test_indicator_load_returns_postgres_domain_not_ready_when_json_fallback_is_
             status_code=409,
             expected_code="POSTGRES_DOMAIN_NOT_READY",
             expected_message="Dominios Postgres de indicadores ainda nao estao prontos para este fluxo.",
+        )
+    finally:
+        app.dependency_overrides.pop(get_indicator_carga_service, None)
+
+
+def test_indicator_load_returns_postgres_runtime_unavailable_in_local_without_db_url(monkeypatch, tmp_path: Path) -> None:
+    _configure_stores(monkeypatch, tmp_path)
+    monkeypatch.setenv("APP_ENV", "local")
+    monkeypatch.delenv("SUPABASE_DB_URL", raising=False)
+    client = TestClient(app)
+    admin_token = _login(client, "admin@swaif.local", "admin123")
+    headers = {"Authorization": f"Bearer {admin_token}"}
+
+    student_id, metric_id = _prepare_student_and_metric(client, headers)
+    load_response = client.post(
+        f"/admin/alunos/{student_id}/indicadores/carga-inicial",
+        json={
+            "metric_values": [{"metric_id": metric_id, "value_baseline": 10, "value_current": 15}],
+            "checkpoints": [],
+        },
+        headers=headers,
+    )
+    _assert_v1_error_envelope(
+        load_response,
+        status_code=409,
+        expected_code="POSTGRES_RUNTIME_UNAVAILABLE",
+        expected_message="Runtime Postgres indisponivel para carga inicial de indicadores.",
+    )
+
+
+def test_indicator_load_maps_repository_write_failure_to_postgres_runtime_unavailable(monkeypatch, tmp_path: Path) -> None:
+    _configure_stores(monkeypatch, tmp_path)
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("SUPABASE_DB_URL", "postgresql://runtime-db")
+    _override_indicator_service_with_repositories(
+        measurements=_FailingPostgresMeasurementRepository(),
+        checkpoints=_PostgresCheckpointNoopRepository(),
+    )
+    client = TestClient(app)
+    try:
+        admin_token = _login(client, "admin@swaif.local", "admin123")
+        headers = {"Authorization": f"Bearer {admin_token}"}
+
+        student_id, metric_id = _prepare_student_and_metric(client, headers)
+        load_response = client.post(
+            f"/admin/alunos/{student_id}/indicadores/carga-inicial",
+            json={
+                "metric_values": [{"metric_id": metric_id, "value_baseline": 10, "value_current": 15}],
+                "checkpoints": [],
+            },
+            headers=headers,
+        )
+        _assert_v1_error_envelope(
+            load_response,
+            status_code=409,
+            expected_code="POSTGRES_RUNTIME_UNAVAILABLE",
+            expected_message="Runtime Postgres indisponivel para carga inicial de indicadores.",
         )
     finally:
         app.dependency_overrides.pop(get_indicator_carga_service, None)

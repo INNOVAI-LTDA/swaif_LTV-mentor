@@ -101,6 +101,40 @@ class EnrollmentRepository:
             if str(enrollment.get("mentor_id") or "") == mentor_id
         ]
 
+    def backfill_active_mentor_ids(self, mentor_id_by_organization: dict[str, str]) -> dict[str, int]:
+        """
+        Controlled backfill for legacy active enrollments missing mentor linkage.
+        Only fills empty mentor_id using an explicit organization->mentor mapping.
+        """
+        items = self._read_items()
+        updated = 0
+        scanned_active = 0
+
+        for index, enrollment in enumerate(items):
+            if not bool(enrollment.get("is_active", True)):
+                continue
+            scanned_active += 1
+
+            current_mentor_id = str(enrollment.get("mentor_id") or "").strip()
+            if current_mentor_id:
+                continue
+
+            organization_id = str(enrollment.get("organization_id") or "").strip()
+            mapped_mentor_id = str(mentor_id_by_organization.get(organization_id) or "").strip()
+            if not mapped_mentor_id:
+                continue
+
+            patched = dict(enrollment)
+            patched["mentor_id"] = mapped_mentor_id
+            patched["updated_at"] = _now_iso()
+            items[index] = patched
+            updated += 1
+
+        if updated:
+            self._write_items(items)
+
+        return {"scanned_active": scanned_active, "updated": updated}
+
     def list_by_student(self, student_id: str) -> list[dict[str, Any]]:
         return [
             enrollment

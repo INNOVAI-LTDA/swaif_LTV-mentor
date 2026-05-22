@@ -130,6 +130,62 @@ class ProductAssignmentRepository:
             if str(item.get("mentor_id") or "") == mentor_id
         ]
 
+    def backfill_active_provider_ids(
+        self,
+        *,
+        mentor_id_by_assignment: dict[str, str],
+        mentor_id_by_organization: dict[str, str],
+    ) -> dict[str, int]:
+        """
+        Controlled backfill for legacy active assignment rows.
+        Priority:
+        1) Keep existing non-empty provider/mentor values.
+        2) Sync alias when only one of provider_id/mentor_id is populated.
+        3) Fill missing values from assignment->mentor map.
+        4) Fill missing values from organization->mentor map.
+        Divergent non-empty aliases are treated as conflicts and are not rewritten.
+        """
+        items = self._read_items()
+        updated = 0
+        scanned_active = 0
+        conflicts = 0
+
+        for index, item in enumerate(items):
+            if not bool(item.get("is_active", True)):
+                continue
+            scanned_active += 1
+
+            provider_id = self._as_optional_str(item.get("provider_id"))
+            mentor_id = self._as_optional_str(item.get("mentor_id"))
+            if provider_id and mentor_id and provider_id != mentor_id:
+                conflicts += 1
+                continue
+
+            resolved: str | None = provider_id or mentor_id
+            if resolved is None:
+                assignment_id = str(item.get("assignment_id") or item.get("id") or "").strip()
+                resolved = self._as_optional_str(mentor_id_by_assignment.get(assignment_id))
+            if resolved is None:
+                organization_id = str(item.get("product_id") or item.get("organization_id") or "").strip()
+                resolved = self._as_optional_str(mentor_id_by_organization.get(organization_id))
+            if resolved is None:
+                continue
+
+            if provider_id == resolved and mentor_id == resolved:
+                continue
+
+            patched = dict(item)
+            patched["provider_id"] = resolved
+            patched["mentor_id"] = resolved
+            patched["updated_at"] = _now_iso()
+            items[index] = patched
+            updated += 1
+
+        if updated:
+            self._write_items(items)
+
+        return {"scanned_active": scanned_active, "updated": updated, "conflicts": conflicts}
+
     def get_active_by_student(self, student_id: str) -> dict[str, Any] | None:
         for item in self.list_by_student(student_id):
             if bool(item.get("is_active", True)):
