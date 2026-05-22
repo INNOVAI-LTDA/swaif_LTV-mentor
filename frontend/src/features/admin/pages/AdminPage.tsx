@@ -15,6 +15,7 @@ import { createAdminPillar } from "../../../domain/services/adminPillarService";
 import { createAdminProduct } from "../../../domain/services/adminProductService";
 import { createAdminStudent, loadAdminStudentIndicators, reassignAdminStudent, unlinkAdminStudent } from "../../../domain/services/adminStudentService";
 import { listDatabaseRecords, listDatabaseTables, updateDatabaseRecord } from "../../../domain/services/adminDatabaseViewService";
+import { executeAdminApiOperation, listAdminApiOperations, type AdminApiOperationItem, type AdminApiOperationExecution } from "../../../domain/services/adminApiOperationsService";
 import { toUserErrorMessage } from "../../../shared/api/types";
 import { AdminShell } from "../components/AdminShell";
 import "../admin.css";
@@ -142,6 +143,7 @@ export function AdminPage() {
   const isMentorsPanel = activePanel === "mentores";
   const isStudentsPanel = activePanel === "alunos";
   const isDatabasePanel = activePanel === "database";
+  const isApiPanel = activePanel === "api";
   const hasContextPanel = isClientsPanel || isProductsPanel || isMentorsPanel || isStudentsPanel || isDatabasePanel;
   const hasProductContextPanel = isProductsPanel || isMentorsPanel || isStudentsPanel;
   const showClientSectionBar = !hasContextPanel;
@@ -220,6 +222,12 @@ export function AdminPage() {
   const [databaseTotal, setDatabaseTotal] = useState(0);
   const [databaseLoading, setDatabaseLoading] = useState(false);
   const [databaseError, setDatabaseError] = useState<string | null>(null);
+
+  const [apiCatalog, setApiCatalog] = useState<AdminApiOperationItem[]>([]);
+  const [apiCatalogLoading, setApiCatalogLoading] = useState(false);
+  const [apiCatalogError, setApiCatalogError] = useState<string | null>(null);
+  const [apiExecutionStatusByEndpoint, setApiExecutionStatusByEndpoint] = useState<Record<string, string>>({});
+
 
   const activeClients = useMemo(() => clientsResource.data.filter((item) => item.is_active), [clientsResource.data]);
   const selectedClient = clientDetailResource.data;
@@ -1105,6 +1113,29 @@ export function AdminPage() {
           </section>
         ) : null}
 
+
+        {isApiPanel ? (
+          <section className="admin-module">
+            <p className="admin-module__eyebrow">API</p>
+            <h2>Catalogo didatico de requests monitoraveis</h2>
+            <p className="admin-module__muted">Operacoes controladas com confirmacao explicita e trilha critica de auditoria.</p>
+            {apiCatalogLoading ? <p className="admin-state">Carregando catalogo...</p> : null}
+            {apiCatalogError ? <p className="admin-form-error">{apiCatalogError}</p> : null}
+            {!apiCatalogLoading && !apiCatalogError ? (
+              <ul className="admin-student-list" aria-label="Catalogo API">
+                {apiCatalog.map((item) => (
+                  <li key={item.endpoint} className="admin-student-card">
+                    <h3>{item.name}</h3>
+                    <p>{item.description}</p>
+                    <p><strong>{item.method}</strong> {item.endpoint}</p>
+                    <button type="button" className="admin-inline-cta" onClick={() => void handleApiOperationRequest(item)}>Solicitar request</button>
+                    {apiExecutionStatusByEndpoint[item.endpoint] ? <p className="admin-module__muted">{apiExecutionStatusByEndpoint[item.endpoint]}</p> : null}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </section>
+        ) : null}
 
         {isDatabasePanel ? (
           <section className="admin-module">
