@@ -20,13 +20,14 @@ const SUPPORT_PANELS = {
   mentores: { label: "Mentores" },
   alunos: { label: "Alunos" },
   governanca: { label: "Governanca" },
-  database: { label: "Database View" }
+  database: { label: "Database View" },
+  api: { label: "API" }
 } as const;
 
 type SupportPanelKey = keyof typeof SUPPORT_PANELS;
 
 function isSupportPanel(value: string | null): value is SupportPanelKey {
-  return value === "clientes" || value === "produtos" || value === "mentores" || value === "alunos" || value === "governanca" || value === "database";
+  return value === "clientes" || value === "produtos" || value === "mentores" || value === "alunos" || value === "governanca" || value === "database" || value === "api";
 }
 
 export function AdminShell({ eyebrow, title, description, actions, metrics = [], children }: AdminShellProps) {
