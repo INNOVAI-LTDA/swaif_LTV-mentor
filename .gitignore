@@ -1,0 +1,11 @@
+# Backend local artifacts (must not be versioned)
+backend/.tmp_pytest*/
+backend/backups/
+backend/data/
+backend/data_old/
+backend/data_ops/
+
+# Supabase sync/import local reports
+backend/**/supabase_runtime_sync_report.json
+backend/**/contacts_users_v2_supabase_import_report.json
+backend/**/contacts_users_v2_migration_report.json

@@ -16,9 +16,9 @@ class JsonRepository:
     _locks_guard = threading.Lock()
 
     def __init__(self, file_path: str | Path) -> None:
-        self.file_path = Path(file_path)
-        self.file_path.parent.mkdir(parents=True, exist_ok=True)
-        self._lock = self._get_lock(self.file_path.resolve())
+        raise RuntimeError(
+            "JSON storage is disabled. Configure and use Supabase as the only backend data source."
+        )
 
     @classmethod
     def _get_lock(cls, file_path: Path) -> threading.RLock:
