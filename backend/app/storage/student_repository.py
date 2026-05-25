@@ -3,9 +3,15 @@ from __future__ import annotations
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+from threading import RLock
 from typing import Any
 
-from app.storage.json_repository import JsonRepository
+from app.config.runtime import get_supabase_db_url
+
+try:
+    import psycopg
+except ImportError:  # pragma: no cover
+    psycopg = None
 
 
 def default_student_store_path() -> Path:
@@ -35,7 +41,63 @@ def _normalize_cpf(value: str | None) -> str | None:
 
 
 class StudentRepository:
+    _memory_stores: dict[str, list[dict[str, Any]]] = {}
+    _memory_lock = RLock()
+
+    def __init__(self, file_path: str | Path | None = None) -> None:
+        self._namespace = str((Path(file_path) if file_path is not None else default_student_store_path()).resolve())
+        self._database_url = get_supabase_db_url()
+        self._use_postgres = bool(self._database_url)
+        if self._use_postgres and psycopg is None:
+            raise RuntimeError("SUPABASE_DB_URL is configured but psycopg is not installed.")
+        if not self._use_postgres:
+            self._memory_items()
+
+    def _memory_items(self) -> list[dict[str, Any]]:
+        with self._memory_lock:
+            items = self._memory_stores.get(self._namespace)
+            if items is None:
+                items = []
+                self._memory_stores[self._namespace] = items
+            return items
+
+    @staticmethod
+    def _row_to_student(row: dict[str, Any]) -> dict[str, Any]:
+        full_name = str(row.get("full_name") or row.get("email") or "Aluno")
+        return {
+            "id": str(row.get("id") or ""),
+            "full_name": full_name,
+            "initials": _default_initials(full_name),
+            "email": str(row.get("email") or "").strip().lower() or None,
+            "cpf": None,
+            "phone": None,
+            "notes": None,
+            "start_enrollment_date": None,
+            "end_enrollment_date": None,
+            "status": "active" if bool(row.get("is_active", True)) else "inactive",
+            "is_active": bool(row.get("is_active", True)),
+            "created_at": row.get("created_at") or _now_iso(),
+            "updated_at": row.get("updated_at") or _now_iso(),
+        }
+
+    def _list_students_from_postgres(self) -> list[dict[str, Any]]:
+        assert self._database_url
+        with psycopg.connect(self._database_url) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT id, full_name, email, is_active, created_at, updated_at
+                    FROM deva_accmed_users
+                    WHERE lower(role) IN ('client', 'student', 'aluno')
+                    """
+                )
+                columns = [column[0] for column in (cur.description or ())]
+                rows = [dict(zip(columns, row)) for row in cur.fetchall()]
+        return [self._row_to_student(row) for row in rows]
+
     def update(self, **kwargs) -> dict[str, Any]:
+        if self._use_postgres:
+            raise RuntimeError("Student update is not supported in Supabase runtime store mode.")
         student_id = kwargs.get("id")
         if not student_id:
             raise ValueError("Student id is required for update")
@@ -49,24 +111,25 @@ class StudentRepository:
         raise ValueError(f"Student with id {student_id} not found")
 
     def delete(self, student_id: str) -> bool:
+        if self._use_postgres:
+            raise RuntimeError("Student delete is not supported in Supabase runtime store mode.")
         items = self._read_items()
         new_items = [student for student in items if str(student.get("id")) != student_id]
         if len(new_items) == len(items):
             return False
         self._write_items(new_items)
         return True
-    def __init__(self, file_path: str | Path | None = None) -> None:
-        self._store = JsonRepository(file_path or default_student_store_path())
-        if not self._store.file_path.exists():
-            self._store.write({"version": 1, "items": []})
 
     def _read_items(self) -> list[dict[str, Any]]:
-        payload = self._store.read()
-        items = payload.get("items", [])
-        return [item for item in items if isinstance(item, dict)]
+        if self._use_postgres:
+            return self._list_students_from_postgres()
+        return [dict(item) for item in self._memory_items() if isinstance(item, dict)]
 
     def _write_items(self, items: list[dict[str, Any]]) -> None:
-        self._store.write({"version": 1, "items": items})
+        if self._use_postgres:
+            raise RuntimeError("Student write is not supported in Supabase runtime store mode.")
+        with self._memory_lock:
+            self._memory_stores[self._namespace] = [dict(item) for item in items]
 
     def list_students(self) -> list[dict[str, Any]]:
         return self._read_items()
@@ -83,6 +146,8 @@ class StudentRepository:
         start_enrollment_date: str | None = None,
         end_enrollment_date: str | None = None,
     ) -> dict[str, Any]:
+        if self._use_postgres:
+            raise RuntimeError("Student create is not supported in Supabase runtime store mode.")
         items = self._read_items()
         normalized_email = email.strip().lower() if email else None
         normalized_cpf = _normalize_cpf(cpf)

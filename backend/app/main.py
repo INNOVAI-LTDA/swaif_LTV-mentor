@@ -38,16 +38,7 @@ from app.operations.sync_runtime_stores_from_supabase import (
     SupabaseSyncConfig,
     sync_runtime_stores_from_supabase,
 )
-from app.storage.checkpoint_repository import CheckpointRepository
 from app.storage.catalog import resolve_storage_root
-from app.storage.client_repository import ClientRepository
-from app.storage.enrollment_repository import EnrollmentRepository
-from app.storage.measurement_repository import MeasurementRepository
-from app.storage.metric_repository import MetricRepository
-from app.storage.mentor_repository import MentorRepository
-from app.storage.organization_repository import OrganizationRepository
-from app.storage.pillar_repository import PillarRepository
-from app.storage.protocol_repository import ProtocolRepository
 from app.storage.student_repository import StudentRepository
 from app.storage.user_repository import UserRepository
 
@@ -153,17 +144,10 @@ def bootstrap_user_storage() -> None:
         summary["supabase_sync_written"] = sync_result.counters
         logger.info("supabase_startup_sync_completed counters=%s", sync_result.counters)
 
+    # Keep startup resilient while legacy repositories are still being migrated
+    # away from JSON storage: warm only auth-critical stores.
     UserRepository().list_users()
-    ClientRepository().list_clients()
-    OrganizationRepository().list_organizations()
-    MentorRepository().list_mentors()
-    ProtocolRepository().list_protocols()
-    PillarRepository().list_pillars()
-    MetricRepository().list_metrics()
     StudentRepository().list_students()
-    EnrollmentRepository().list_enrollments()
-    MeasurementRepository().list_measurements()
-    CheckpointRepository().list_checkpoints()
 
     logger.info(
         "backend_startup_complete app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_routes=%s mentor_route_policy=%s supabase_sync_on_startup=%s storage_root=%s backup_dir=%s",

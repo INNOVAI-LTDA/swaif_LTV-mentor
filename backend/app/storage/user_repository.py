@@ -2,10 +2,16 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from threading import RLock
 from typing import Any
 
+from app.config.runtime import get_supabase_db_url
 from app.core.security import hash_password
-from app.storage.json_repository import JsonRepository
+
+try:
+    import psycopg
+except ImportError:  # pragma: no cover
+    psycopg = None
 
 
 def default_user_store_path() -> Path:
@@ -16,6 +22,66 @@ def default_user_store_path() -> Path:
 
 
 class UserRepository:
+    _memory_stores: dict[str, list[dict[str, Any]]] = {}
+    _memory_lock = RLock()
+
+    def __init__(self, file_path: str | Path | None = None) -> None:
+        self._namespace = str((Path(file_path) if file_path is not None else default_user_store_path()).resolve())
+        self._database_url = get_supabase_db_url()
+        self._use_postgres = bool(self._database_url)
+        if self._use_postgres and psycopg is None:
+            raise RuntimeError("SUPABASE_DB_URL is configured but psycopg is not installed.")
+        self._bootstrap_seed_users()
+
+    def _memory_items(self) -> list[dict[str, Any]]:
+        with self._memory_lock:
+            items = self._memory_stores.get(self._namespace)
+            if items is None:
+                items = []
+                self._memory_stores[self._namespace] = items
+            return items
+
+    def _has_password_hash_column(self) -> bool:
+        if not self._use_postgres:
+            return False
+        assert self._database_url
+        with psycopg.connect(self._database_url) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT 1
+                    FROM information_schema.columns
+                    WHERE table_schema = 'public' AND table_name = 'deva_accmed_users' AND column_name = 'password_hash'
+                    LIMIT 1
+                    """
+                )
+                return cur.fetchone() is not None
+
+    def _bootstrap_seed_users(self) -> None:
+        if self._use_postgres:
+            return
+        users = self._memory_items()
+        if users:
+            return
+        users.extend(
+            [
+                {
+                    "id": "usr_admin",
+                    "email": "admin@swaif.local",
+                    "password_hash": hash_password("admin123"),
+                    "role": "admin",
+                    "is_active": True,
+                },
+                {
+                    "id": "usr_mentor",
+                    "email": "mentor@swaif.local",
+                    "password_hash": hash_password("mentor123"),
+                    "role": "mentor",
+                    "is_active": True,
+                },
+            ]
+        )
+
     def create(self, *, id: str, email: str, password_hash: str, role: str, is_active: bool = True) -> dict[str, Any]:
         users = self.list_users()
         normalized_email = email.strip().lower()
@@ -30,8 +96,30 @@ class UserRepository:
             "role": role,
             "is_active": is_active,
         }
-        users.append(user)
-        self._store.write({"version": 1, "items": users})
+        if self._use_postgres:
+            assert self._database_url
+            has_password_hash = self._has_password_hash_column()
+            with psycopg.connect(self._database_url) as conn:
+                with conn.cursor() as cur:
+                    if has_password_hash:
+                        cur.execute(
+                            """
+                            INSERT INTO deva_accmed_users (id, email, role, is_active, password_hash)
+                            VALUES (%s, %s, %s, %s, %s)
+                            """,
+                            (id, normalized_email, role, bool(is_active), password_hash),
+                        )
+                    else:
+                        cur.execute(
+                            """
+                            INSERT INTO deva_accmed_users (id, email, role, is_active)
+                            VALUES (%s, %s, %s, %s)
+                            """,
+                            (id, normalized_email, role, bool(is_active)),
+                        )
+                conn.commit()
+        else:
+            self._memory_items().append(user)
         return user
 
     def update(self, **kwargs) -> dict[str, Any]:
@@ -50,41 +138,44 @@ class UserRepository:
                 break
         if not updated:
             raise ValueError(f"User with id {user_id} not found")
-        # Write back to store
-        self._store.write({"version": 1, "items": users})
+        if self._use_postgres:
+            assert self._database_url
+            fields = {k: v for k, v in kwargs.items() if k != "id"}
+            if fields:
+                set_fragments: list[str] = []
+                params: list[Any] = []
+                for field_name, field_value in fields.items():
+                    set_fragments.append(f"{field_name} = %s")
+                    params.append(field_value)
+                params.append(str(user_id))
+                query = f"UPDATE deva_accmed_users SET {', '.join(set_fragments)} WHERE id = %s"
+                with psycopg.connect(self._database_url) as conn:
+                    with conn.cursor() as cur:
+                        cur.execute(query, tuple(params))
+                    conn.commit()
         return user
-    def __init__(self, file_path: str | Path | None = None) -> None:
-        self._store = JsonRepository(file_path or default_user_store_path())
-        self._bootstrap_seed_users()
-
-    def _bootstrap_seed_users(self) -> None:
-        payload = self._store.read()
-        items = payload.get("items", [])
-        if items:
-            return
-
-        seed = [
-            {
-                "id": "usr_admin",
-                "email": "admin@swaif.local",
-                "password_hash": hash_password("admin123"),
-                "role": "admin",
-                "is_active": True,
-            },
-            {
-                "id": "usr_mentor",
-                "email": "mentor@swaif.local",
-                "password_hash": hash_password("mentor123"),
-                "role": "mentor",
-                "is_active": True,
-            },
-        ]
-        self._store.write({"version": 1, "items": seed})
 
     def list_users(self) -> list[dict[str, Any]]:
-        payload = self._store.read()
-        items = payload.get("items", [])
-        return [item for item in items if isinstance(item, dict)]
+        if self._use_postgres:
+            assert self._database_url
+            has_password_hash = self._has_password_hash_column()
+            if has_password_hash:
+                query = """
+                    SELECT id, email, role, is_active, COALESCE(password_hash, '') AS password_hash
+                    FROM deva_accmed_users
+                """
+            else:
+                query = """
+                    SELECT id, email, role, is_active, ''::text AS password_hash
+                    FROM deva_accmed_users
+                """
+            with psycopg.connect(self._database_url) as conn:
+                with conn.cursor() as cur:
+                    cur.execute(query)
+                    columns = [column[0] for column in (cur.description or ())]
+                    return [dict(zip(columns, row)) for row in cur.fetchall()]
+
+        return [dict(item) for item in self._memory_items() if isinstance(item, dict)]
 
     def get_by_email(self, email: str) -> dict[str, Any] | None:
         normalized = email.strip().lower()
