@@ -9,3 +9,7 @@ backend/data_ops/
 backend/**/supabase_runtime_sync_report.json
 backend/**/contacts_users_v2_supabase_import_report.json
 backend/**/contacts_users_v2_migration_report.json
+
+# Python cache artifacts
+__pycache__/
+*.py[cod]
