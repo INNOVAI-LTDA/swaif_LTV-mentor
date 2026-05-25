@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, status
 from app.api.errors import api_error
 from app.api.routes.admin_mentoria import require_admin_user
 from app.schemas.client import ClientCreate, ClientOut
-from app.services.client_admin_service import ClientAdminService, EntityNotFoundError, ValidationError
+from app.services.client_admin_service import ClientAdminService, EntityNotFoundError, RuntimeDependencyError, ValidationError
 from app.storage.client_repository import ClientRepository
 
 
@@ -23,7 +23,14 @@ def list_clients(
     _: dict[str, Any] = Depends(require_admin_user),
     service: ClientAdminService = Depends(get_client_admin_service),
 ) -> list[ClientOut]:
-    return [ClientOut(**item) for item in service.list_clients()]
+    try:
+        return [ClientOut(**item) for item in service.list_clients()]
+    except RuntimeDependencyError as exc:
+        raise api_error(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            code="SUPABASE_CLIENTS_UNAVAILABLE",
+            message="Falha ao carregar clientes do Supabase.",
+        ) from exc
 
 
 @router.post("/clientes", response_model=ClientOut, status_code=status.HTTP_201_CREATED)
@@ -72,6 +79,12 @@ def get_client_detail(
 ) -> ClientOut:
     try:
         return ClientOut(**service.get_client_detail(client_id))
+    except RuntimeDependencyError as exc:
+        raise api_error(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            code="SUPABASE_CLIENTS_UNAVAILABLE",
+            message="Falha ao carregar clientes do Supabase.",
+        ) from exc
     except EntityNotFoundError as exc:
         raise api_error(
             status_code=status.HTTP_404_NOT_FOUND,

@@ -17,16 +17,28 @@ class AdminApiOperation:
 
 OPERATIONS_CATALOG: tuple[AdminApiOperation, ...] = (
     AdminApiOperation(
-        name="Revalidar cache de clientes",
-        description="Executa leitura consolidada de clientes para monitoramento operacional.",
+        name="Provider View",
+        description="Monitoramento operacional da visao de provider no painel administrativo.",
         method="GET",
-        endpoint="/admin/clientes",
+        endpoint="/admin/provider-view",
     ),
     AdminApiOperation(
-        name="Saude do backend",
-        description="Consulta status atual do backend para validacao de disponibilidade.",
+        name="Client View",
+        description="Leitura do radar no contexto de client no painel administrativo.",
         method="GET",
-        endpoint="/health",
+        endpoint="/admin/client-view",
+    ),
+    AdminApiOperation(
+        name="Database View",
+        description="Consulta tabelas e registros permitidos na visao de banco.",
+        method="GET",
+        endpoint="/admin/database-view/tables",
+    ),
+    AdminApiOperation(
+        name="API",
+        description="Catalogo didatico de requests monitoraveis da area administrativa.",
+        method="POST",
+        endpoint="/admin/api-operations/execute",
     ),
 )
 

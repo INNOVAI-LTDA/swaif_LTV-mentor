@@ -1,11 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { AdminShell } from "../components/AdminShell";
 
-type PanelKey = "provider" | "clientes" | "database" | "api";
+type PanelKey = "provider" | "client" | "database" | "api";
 
 const PANELS: Array<{ key: PanelKey; label: string }> = [
   { key: "provider", label: "Provider View" },
-  { key: "clientes", label: "Client View" },
+  { key: "client", label: "Client View" },
   { key: "database", label: "Database View" },
   { key: "api", label: "API View" }
 ];
@@ -75,7 +75,7 @@ export function AdminMockPage() {
           </article>
         ) : null}
 
-        {activePanel === "clientes" ? (
+        {activePanel === "client" ? (
           <article className="admin-module" aria-label="Client View">
             <p className="admin-module__eyebrow">Client View</p>
             <h2>Radar em modo leitura</h2>

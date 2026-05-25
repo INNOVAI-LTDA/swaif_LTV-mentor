@@ -31,7 +31,7 @@ MentorDemoRoutePolicy = MentorRoutePolicy
 
 
 def get_app_env() -> str:
-    app_env = os.getenv("APP_ENV", "").strip().lower()
+    app_env = os.getenv("APP_ENV", "local").strip().lower()
     if not app_env:
         raise RuntimeError("APP_ENV is required. Use 'local' for local development or a production-like value for deployment.")
     return app_env
@@ -200,5 +200,5 @@ def get_client_code(app_env: str | None = None) -> str:
     CLIENT_CODE is required in all startup modes.
     """
     _ = app_env
-    raw_client_code = os.getenv("CLIENT_CODE", "")
+    raw_client_code = os.getenv("CLIENT_CODE", "local")
     return _normalize_client_code(raw_client_code)

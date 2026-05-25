@@ -60,6 +60,28 @@ function formatCpf(value: string) {
   return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
 }
 
+function formatDatabaseCell(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "-";
+  }
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  }
+  return String(value);
+}
+
+function shouldHideDatabaseColumn(tableName: string, columnName: string): boolean {
+  const normalizedTable = tableName.trim().toLowerCase();
+  const normalizedColumn = columnName.trim().toLowerCase();
+  if (normalizedColumn === "hash") {
+    return true;
+  }
+  if ((normalizedTable === "contact_users_v2" || normalizedTable === "users") && normalizedColumn.endsWith("_hash")) {
+    return true;
+  }
+  return false;
+}
+
 const EMPTY_CLIENT_FORM = {
   name: "",
   brand_name: "",
@@ -278,6 +300,14 @@ export function AdminPage() {
       })),
     [pillarsResource.data]
   );
+
+  const databaseColumns = useMemo(() => {
+    const columns = new Set<string>();
+    databaseRows.forEach((row) => {
+      Object.keys(row).forEach((column) => columns.add(column));
+    });
+    return Array.from(columns).filter((column) => !shouldHideDatabaseColumn(selectedDatabaseTable, column));
+  }, [databaseRows, selectedDatabaseTable]);
 
   useEffect(() => {
     if (activeClients.length === 0) {
@@ -1103,70 +1133,61 @@ export function AdminPage() {
 
   return (
     <AdminShell
-      eyebrow="Admin | Operacao administrativa real"
-      title="Centro Institucional"
-      description="Bloco 8 da Fase 2 operando Cliente/Empresa, Produto/Mentoria, Mentor, Aluno, Pilar, Metrica e carga inicial de indicadores com contexto real por aluno."
-      metrics={[
-        { label: "Clientes ativos", value: String(activeClients.length), tone: "accent" },
-        { label: "Produtos do cliente", value: hasContextPanel ? String(productsResource.data.length) : "-", tone: "warning" },
-        { label: "Mentores do produto", value: hasProductContextPanel ? String(mentorsResource.data.length) : "-", tone: "warning" },
-        { label: "Pilares do produto", value: hasProductContextPanel ? String(pillarsResource.data.length) : "-", tone: "warning" },
-        { label: "Metricas do pilar", value: isProductsPanel ? String(metricsResource.data.length) : "-", tone: "warning" },
-        { label: "Bloco em foco", value: isStudentsPanel ? "Ingestao" : "Metrica", tone: "success" }
-      ]}
+      title="Admin"
+      description="Views operacionais de apoio para Provider, Client, Database e API."
     >
       <section className="admin-page">
 
         {isProviderPanel ? (
-        <article className="admin-module" aria-label="Provider View">
-          <p className="admin-module__eyebrow">Provider View</p>
-          <div className="admin-provider-view-controls">
-            <label>
-              Provider
-              <select value={selectedProviderId} onChange={(event) => setSelectedProviderId(event.target.value)}>
-                <option value="">Selecione</option>
-                {mentorsResource.data.map((mentor) => (
-                  <option key={mentor.id} value={mentor.id}>{mentor.full_name}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <p className="admin-module__muted">
-            Selecione o Provider e use os paineis de Centro de Comando, Matriz e Radar no modo provider para operar consentimento e atualizacao de metricas.
-          </p>
-        </article>
+          <article className="admin-module" aria-label="Provider View">
+            <p className="admin-module__eyebrow">Provider View</p>
+            <div className="admin-provider-view-controls">
+              <label>
+                Provider:
+                <select value={selectedProviderId} onChange={(event) => setSelectedProviderId(event.target.value)}>
+                  <option value="">Selecione</option>
+                  {mentorsResource.data.map((mentor) => (
+                    <option key={mentor.id} value={mentor.id}>{mentor.full_name}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <p className="admin-module__muted">
+              Selecione o Provider e use os paineis de Centro de Comando, Matriz e Radar no modo provider para operar consentimento e atualizacao de metricas.
+            </p>
+          </article>
         ) : null}
         {true ? (
-        <article className="admin-module" aria-label="Client View">
-          <p className="admin-module__eyebrow">Client View</p>
-          <div className="admin-provider-view-controls">
-            <label>
-              Cliente
-              <select value={selectedClientViewClientId} onChange={(event) => setSelectedClientViewClientId(event.target.value)}>
-                <option value="">Selecione</option>
-                {activeClients.map((client) => (
-                  <option key={client.id} value={client.id}>{client.name}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <p className="admin-module__muted">
-            Regra de negócio: a edição de métricas do client ocorre no fluxo Client-Provider, não no Admin Client View.
-          </p>
-          {selectedClientViewClientId && !selectedStudentId ? <p className="admin-module__muted">Selecione um aluno no painel de alunos para visualizar o radar em modo leitura.</p> : null}
-          <div className="admin-provider-view-edit-grid" data-testid="admin-client-view-read-only">
-            {clientViewRadarResource.loading ? <p className="admin-state">Carregando radar...</p> : null}
-            {!clientViewRadarResource.loading && clientViewRadarResource.data.axisScores.length === 0 ? (
-              <p className="admin-state">Sem dados de radar para leitura neste contexto.</p>
-            ) : null}
-            {clientViewRadarResource.data.axisScores.map((axis) => (
-              <label key={axis.axisKey}>
-                {axis.axisLabel}
-                <input type="text" readOnly value={`baseline ${axis.baseline} | current ${axis.current} | projected ${axis.projected}`} />
+          <article className="admin-module" aria-label="Client View">
+            <p className="admin-module__eyebrow">Client View</p>
+            <div className="admin-provider-view-controls">
+              <label>
+                Cliente:
+                <select value={selectedClientViewClientId} onChange={(event) => setSelectedClientViewClientId(event.target.value)}>
+                  <option value="">Selecione</option>
+                  {activeClients.map((client) => (
+                    <option key={client.id} value={client.id}>{client.name}</option>
+                  ))}
+                </select>
               </label>
-            ))}
-          </div>
-        </article>
+            </div>
+            <p className="admin-module__muted">
+              Regra de negócio: a edição de métricas do client ocorre no fluxo Client-Provider, não no Admin Client View.
+            </p>
+            {selectedClientViewClientId && !selectedStudentId ? <p className="admin-module__muted">Selecione um aluno no painel de alunos para visualizar o radar em modo leitura.</p> : null}
+            <div className="admin-provider-view-edit-grid" data-testid="admin-client-view-read-only">
+              {clientViewRadarResource.loading ? <p className="admin-state">Carregando radar...</p> : null}
+              {!clientViewRadarResource.loading && clientViewRadarResource.data.axisScores.length === 0 ? (
+                <p className="admin-state">Sem dados de radar para leitura neste contexto.</p>
+              ) : null}
+              {clientViewRadarResource.data.axisScores.map((axis) => (
+                <label key={axis.axisKey}>
+                  {axis.axisLabel}
+                  <input type="text" readOnly value={`baseline ${axis.baseline} | current ${axis.current} | projected ${axis.projected}`} />
+                </label>
+              ))}
+            </div>
+          </article>
         ) : null}
         {!isAuthenticated || user?.role !== "admin" ? (
           <section className="admin-notice">
@@ -1212,360 +1233,385 @@ export function AdminPage() {
             </ul>
             {databaseError ? <p className="admin-form-error">{databaseError}</p> : null}
             {selectedDatabaseTable ? <h3>{selectedDatabaseTable}</h3> : null}
-            {databaseRows.map((row, index) => (
-              <article key={`${String(row.id ?? index)}`} className="admin-student-card">
-                <pre>{JSON.stringify(row, null, 2)}</pre>
-                <button type="button" className="admin-inline-link admin-inline-link--button" onClick={() => void handleDatabaseRecordEdit(selectedDatabaseTable, row)}>Editar valor</button>
-              </article>
-            ))}
+            {selectedDatabaseTable && !databaseLoading && databaseRows.length === 0 ? <p className="admin-state">Sem registros para esta tabela.</p> : null}
+            {databaseRows.length > 0 ? (
+              <div className="admin-data-table-wrapper">
+                <table className="admin-data-table" aria-label={`Registros de ${selectedDatabaseTable}`}>
+                  <thead>
+                    <tr>
+                      {databaseColumns.map((column) => (
+                        <th key={column} scope="col">{column}</th>
+                      ))}
+                      <th scope="col">Acoes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {databaseRows.map((row, index) => (
+                      <tr key={`${String(row.id ?? index)}`}>
+                        {databaseColumns.map((column) => (
+                          <td key={`${String(row.id ?? index)}-${column}`}>{formatDatabaseCell(row[column])}</td>
+                        ))}
+                        <td>
+                          <button type="button" className="admin-inline-link admin-inline-link--button" onClick={() => void handleDatabaseRecordEdit(selectedDatabaseTable, row)}>
+                            Editar valor
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
             {selectedDatabaseTable && databaseOffset < databaseTotal ? <button type="button" className="admin-inline-cta" onClick={() => void loadDatabaseRecords(selectedDatabaseTable, databaseOffset, true)} disabled={databaseLoading}>{databaseLoading ? "Carregando..." : "Carregar +10"}</button> : null}
           </section>
         ) : null}
 
-        <section className="admin-module admin-clients-stage">
-          {showClientSectionBar ? (
-            <div className="admin-section-bar">
-              <div>
-                <p className="admin-module__eyebrow">Cliente/Empresa</p>
-                <h2>Clientes ativos</h2>
+        {false ? (
+          <section className="admin-module admin-clients-stage">
+            {showClientSectionBar ? (
+              <div className="admin-section-bar">
+                <div>
+                  <p className="admin-module__eyebrow">Cliente/Empresa</p>
+                  <h2>Clientes ativos</h2>
+                </div>
+                <div className="admin-section-bar__actions">
+                  <button type="button" className="admin-inline-cta" onClick={openClientCreateModal}>
+                    Cadastrar cliente
+                  </button>
+                </div>
               </div>
-              <div className="admin-section-bar__actions">
-                <button type="button" className="admin-inline-cta" onClick={openClientCreateModal}>
-                  Cadastrar cliente
+            ) : null}
+
+            {clientsResource.loading && clientsResource.data.length === 0 ? <p className="admin-state">Carregando clientes...</p> : null}
+            {clientsResource.error && clientsResource.data.length === 0 ? (
+              <div className="admin-state admin-state--error">
+                <p>{clientsResource.error}</p>
+                <button type="button" onClick={() => void clientsResource.refresh()}>
+                  Tentar novamente
                 </button>
               </div>
-            </div>
-          ) : null}
+            ) : null}
+            {!clientsResource.loading && !clientsResource.error && activeClients.length === 0 ? (
+              <p className="admin-state">Nenhum cliente ativo cadastrado ainda. Use o botao de cadastro para iniciar a operacao.</p>
+            ) : null}
 
-          {clientsResource.loading && clientsResource.data.length === 0 ? <p className="admin-state">Carregando clientes...</p> : null}
-          {clientsResource.error && clientsResource.data.length === 0 ? (
-            <div className="admin-state admin-state--error">
-              <p>{clientsResource.error}</p>
-              <button type="button" onClick={() => void clientsResource.refresh()}>
-                Tentar novamente
-              </button>
-            </div>
-          ) : null}
-          {!clientsResource.loading && !clientsResource.error && activeClients.length === 0 ? (
-            <p className="admin-state">Nenhum cliente ativo cadastrado ainda. Use o botao de cadastro para iniciar a operacao.</p>
-          ) : null}
+            {!hasContextPanel && activeClients.length > 0 ? (
+              <ul className="admin-client-grid" aria-label="Clientes ativos">
+                {activeClients.map((client) => (
+                  <li key={client.id}>
+                    <button type="button" className="admin-client-card" onClick={() => openClientArea(client.id)}>
+                      <span>{formatCnpj(client.cnpj)}</span>
+                      <strong>{client.name}</strong>
+                      <small>{client.brand_name || "Cliente institucional"}</small>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
 
-          {!hasContextPanel && activeClients.length > 0 ? (
-            <ul className="admin-client-grid" aria-label="Clientes ativos">
-              {activeClients.map((client) => (
-                <li key={client.id}>
-                  <button type="button" className="admin-client-card" onClick={() => openClientArea(client.id)}>
-                    <span>{formatCnpj(client.cnpj)}</span>
-                    <strong>{client.name}</strong>
-                    <small>{client.brand_name || "Cliente institucional"}</small>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+            {isClientsPanel && selectedClient ? (
+              <div className="admin-client-panel">
+                {renderCreateChooser()}
+                <div className="admin-client-focus">
+                  <article className="admin-client-card admin-client-card--spotlight">
+                    <span>{formatCnpj(selectedClient.cnpj)}</span>
+                    <strong>{selectedClient.name}</strong>
+                    <small>{selectedClient.brand_name || "Cliente institucional"}</small>
+                  </article>
 
-          {isClientsPanel && selectedClient ? (
-            <div className="admin-client-panel">
-              {renderCreateChooser()}
-              <div className="admin-client-focus">
-                <article className="admin-client-card admin-client-card--spotlight">
-                  <span>{formatCnpj(selectedClient.cnpj)}</span>
-                  <strong>{selectedClient.name}</strong>
-                  <small>{selectedClient.brand_name || "Cliente institucional"}</small>
-                </article>
-
-                <section className="admin-product-stage">
-                  {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
-                  {productsResource.error && productsResource.data.length === 0 ? (
-                    <div className="admin-state admin-state--error">
-                      <p>{productsResource.error}</p>
-                      <button type="button" onClick={() => void productsResource.refresh()}>
-                        Tentar novamente
-                      </button>
-                    </div>
-                  ) : null}
-                  {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
-                    <div className="admin-empty-stack">
-                      <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
-                    </div>
-                  ) : null}
-                  {productsResource.data.length > 0 ? (
-                    <ul className="admin-product-grid" aria-label="Produtos do cliente">
-                      {productsResource.data.map((product) => (
-                        <li key={product.id}>
-                          <button
-                            type="button"
-                            className={product.id === selectedProductId ? "admin-product-card is-active" : "admin-product-card"}
-                            onClick={() => openProductArea(product.id)}
-                          >
-                            <span>{product.code}</span>
-                            <strong>{product.name}</strong>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </section>
+                  <section className="admin-product-stage">
+                    {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
+                    {productsResource.error && productsResource.data.length === 0 ? (
+                      <div className="admin-state admin-state--error">
+                        <p>{productsResource.error}</p>
+                        <button type="button" onClick={() => void productsResource.refresh()}>
+                          Tentar novamente
+                        </button>
+                      </div>
+                    ) : null}
+                    {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
+                      <div className="admin-empty-stack">
+                        <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
+                      </div>
+                    ) : null}
+                    {productsResource.data.length > 0 ? (
+                      <ul className="admin-product-grid" aria-label="Produtos do cliente">
+                        {productsResource.data.map((product) => (
+                          <li key={product.id}>
+                            <button
+                              type="button"
+                              className={product.id === selectedProductId ? "admin-product-card is-active" : "admin-product-card"}
+                              onClick={() => openProductArea(product.id)}
+                            >
+                              <span>{product.code}</span>
+                              <strong>{product.name}</strong>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </section>
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
 
-          {isProductsPanel ? (
-            <div className="admin-product-panel">
-              {renderCreateChooser()}
-              {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
-              {productsResource.error && productsResource.data.length === 0 ? (
-                <div className="admin-state admin-state--error">
-                  <p>{productsResource.error}</p>
-                  <button type="button" onClick={() => void productsResource.refresh()}>
-                    Tentar novamente
-                  </button>
-                </div>
-              ) : null}
-              {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
-                <div className="admin-empty-stack">
-                  <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
-                </div>
-              ) : null}
+            {isProductsPanel ? (
+              <div className="admin-product-panel">
+                {renderCreateChooser()}
+                {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
+                {productsResource.error && productsResource.data.length === 0 ? (
+                  <div className="admin-state admin-state--error">
+                    <p>{productsResource.error}</p>
+                    <button type="button" onClick={() => void productsResource.refresh()}>
+                      Tentar novamente
+                    </button>
+                  </div>
+                ) : null}
+                {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
+                  <div className="admin-empty-stack">
+                    <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
+                  </div>
+                ) : null}
 
-              {selectedProduct ? (
-                <div className="admin-product-hierarchy">
-                  <button
-                    type="button"
-                    className="admin-hierarchy-card admin-hierarchy-card--product"
-                    onClick={() => {
-                      setIsPillarExpanded(false);
-                      setSelectedPillarId(null);
-                    }}
-                  >
-                    <span>{selectedProduct.code}</span>
-                    <strong>{selectedProduct.name}</strong>
-                    <small>{selectedProduct.delivery_model}</small>
-                  </button>
-                  {selectedMentor ? (
-                    <button type="button" className="admin-hierarchy-card admin-hierarchy-card--action" onClick={() => openMentorArea(selectedProduct.id)}>
+                {selectedProduct ? (
+                  <div className="admin-product-hierarchy">
+                    <button
+                      type="button"
+                      className="admin-hierarchy-card admin-hierarchy-card--product"
+                      onClick={() => {
+                        setIsPillarExpanded(false);
+                        setSelectedPillarId(null);
+                      }}
+                    >
+                      <span>{selectedProduct.code}</span>
+                      <strong>{selectedProduct.name}</strong>
+                      <small>{selectedProduct.delivery_model}</small>
+                    </button>
+                    {selectedMentor ? (
+                      <button type="button" className="admin-hierarchy-card admin-hierarchy-card--action" onClick={() => openMentorArea(selectedProduct.id)}>
+                        <span>Mentor</span>
+                        <strong>{selectedMentor.full_name}</strong>
+                        <small>{selectedMentor.email}</small>
+                      </button>
+                    ) : (
+                      <article className="admin-hierarchy-card">
+                        <span>Mentor</span>
+                        <strong>Nenhum Mentor Cadastrado</strong>
+                        <small>Use Cadastrar... para vincular o mentor principal.</small>
+                      </article>
+                    )}
+                    <div className="admin-pillar-stack">
+                      {!isPillarExpanded ? (
+                        <button
+                          type="button"
+                          className={pillarCards.length > 0 ? "admin-hierarchy-card admin-hierarchy-card--action" : "admin-hierarchy-card"}
+                          onClick={togglePillarStack}
+                          disabled={pillarCards.length === 0}
+                        >
+                          <span>Pilar</span>
+                          <strong>
+                            {pillarsResource.loading && pillarCards.length === 0
+                              ? "Carregando pilares..."
+                              : pillarCards.length > 0
+                                ? "Clique para abrir"
+                                : "Nenhum Pilar Cadastrado"}
+                          </strong>
+                          <small>
+                            {pillarsResource.error && pillarCards.length === 0
+                              ? pillarsResource.error
+                              : pillarCards.length > 0
+                                ? `${pillarCards.length} pilares vinculados`
+                                : "Use Cadastrar... para estruturar o produto."}
+                          </small>
+                        </button>
+                      ) : null}
+                      <div className={isPillarExpanded ? "admin-pillar-list is-open" : "admin-pillar-list"}>
+                        {pillarCards.map((pillar) => {
+                          const isMetricOpen = selectedPillarId === pillar.id;
+                          return (
+                            <div key={pillar.id} className="admin-pillar-entry">
+                              <button
+                                type="button"
+                                className={isMetricOpen ? "admin-hierarchy-card admin-hierarchy-card--pillar is-selected" : "admin-hierarchy-card admin-hierarchy-card--pillar"}
+                                onClick={() => toggleMetricStack(pillar.id)}
+                              >
+                                <span>{pillar.label}</span>
+                                <strong>{pillar.title}</strong>
+                                <small>{pillar.detail}</small>
+                              </button>
+                              {isMetricOpen ? (
+                                <div className="admin-metric-stack">
+                                  {metricsResource.loading && metricsResource.data.length === 0 ? <p className="admin-state">Carregando metricas...</p> : null}
+                                  {metricsResource.error && metricsResource.data.length === 0 ? (
+                                    <div className="admin-state admin-state--error">
+                                      <p>{metricsResource.error}</p>
+                                      <button type="button" onClick={() => void metricsResource.refresh()}>
+                                        Tentar novamente
+                                      </button>
+                                    </div>
+                                  ) : null}
+                                  {!metricsResource.loading && !metricsResource.error && metricsResource.data.length === 0 ? (
+                                    <div className="admin-empty-stack">
+                                      <p className="admin-state">Nenhuma metrica cadastrada para {pillar.title}.</p>
+                                    </div>
+                                  ) : null}
+                                  {metricsResource.data.length > 0 ? (
+                                    <ul className="admin-metric-list" aria-label={`Metricas do pilar ${pillar.title}`}>
+                                      {metricsResource.data.map((metric) => (
+                                        <li key={metric.id}>
+                                          <article className="admin-metric-card">
+                                            <span>{metric.direction.replace("_", " ")}</span>
+                                            <strong>{metric.name}</strong>
+                                            <small>{metric.unit || metric.code.toUpperCase()}</small>
+                                          </article>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  ) : null}
+                                </div>
+                              ) : null}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
+            {isMentorsPanel ? (
+              <div className="admin-product-panel">
+                {renderCreateChooser()}
+                {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
+                {productsResource.error && productsResource.data.length === 0 ? (
+                  <div className="admin-state admin-state--error">
+                    <p>{productsResource.error}</p>
+                    <button type="button" onClick={() => void productsResource.refresh()}>
+                      Tentar novamente
+                    </button>
+                  </div>
+                ) : null}
+                {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
+                  <div className="admin-empty-stack">
+                    <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
+                  </div>
+                ) : null}
+
+                {selectedProduct ? (
+                  <div className="admin-mentor-focus">
+                    <article className="admin-hierarchy-card admin-hierarchy-card--product">
+                      <span>{selectedProduct.code}</span>
+                      <strong>{selectedProduct.name}</strong>
+                      <small>{selectedProduct.delivery_model}</small>
+                    </article>
+                    <section className="admin-mentor-stage">
+                      {mentorsResource.loading && mentorsResource.data.length === 0 ? <p className="admin-state">Carregando mentores...</p> : null}
+                      {mentorsResource.error && mentorsResource.data.length === 0 ? (
+                        <div className="admin-state admin-state--error">
+                          <p>{mentorsResource.error}</p>
+                          <button type="button" onClick={() => void mentorsResource.refresh()}>
+                            Tentar novamente
+                          </button>
+                        </div>
+                      ) : null}
+                      {!mentorsResource.loading && !mentorsResource.error && mentorsResource.data.length === 0 ? (
+                        <div className="admin-empty-stack">
+                          <p className="admin-state">Nenhum mentor cadastrado para este produto.</p>
+                        </div>
+                      ) : null}
+                      {mentorsResource.data.length > 0 ? (
+                        <ul className="admin-mentor-grid" aria-label="Mentores do produto">
+                          {mentorsResource.data.map((mentor) => (
+                            <li key={mentor.id}>
+                              <button
+                                type="button"
+                                className={mentor.id === selectedMentor?.id ? "admin-mentor-card is-primary" : "admin-mentor-card"}
+                                onClick={() => openStudentArea(mentor.id)}
+                              >
+                                <span>{mentor.id === selectedProduct.mentor_id ? "Mentor principal" : "Mentor"}</span>
+                                <strong>{mentor.full_name}</strong>
+                                <small>{mentor.email}</small>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </section>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
+            {isStudentsPanel ? (
+              <div className="admin-product-panel">
+                {renderStudentPanelActions()}
+                {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
+                {productsResource.error && productsResource.data.length === 0 ? (
+                  <div className="admin-state admin-state--error">
+                    <p>{productsResource.error}</p>
+                    <button type="button" onClick={() => void productsResource.refresh()}>
+                      Tentar novamente
+                    </button>
+                  </div>
+                ) : null}
+                {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
+                  <div className="admin-empty-stack">
+                    <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
+                  </div>
+                ) : null}
+
+                {selectedProduct && selectedMentor ? (
+                  <div className="admin-student-focus">
+                    <article className="admin-hierarchy-card admin-hierarchy-card--product">
+                      <span>{selectedProduct.code}</span>
+                      <strong>{selectedProduct.name}</strong>
+                      <small>{selectedProduct.delivery_model}</small>
+                    </article>
+                    <article className="admin-hierarchy-card">
                       <span>Mentor</span>
                       <strong>{selectedMentor.full_name}</strong>
                       <small>{selectedMentor.email}</small>
-                    </button>
-                  ) : (
-                    <article className="admin-hierarchy-card">
-                      <span>Mentor</span>
-                      <strong>Nenhum Mentor Cadastrado</strong>
-                      <small>Use Cadastrar... para vincular o mentor principal.</small>
                     </article>
-                  )}
-                  <div className="admin-pillar-stack">
-                    {!isPillarExpanded ? (
-                      <button
-                        type="button"
-                        className={pillarCards.length > 0 ? "admin-hierarchy-card admin-hierarchy-card--action" : "admin-hierarchy-card"}
-                        onClick={togglePillarStack}
-                        disabled={pillarCards.length === 0}
-                      >
-                        <span>Pilar</span>
-                        <strong>
-                          {pillarsResource.loading && pillarCards.length === 0
-                            ? "Carregando pilares..."
-                            : pillarCards.length > 0
-                              ? "Clique para abrir"
-                              : "Nenhum Pilar Cadastrado"}
-                        </strong>
-                        <small>
-                          {pillarsResource.error && pillarCards.length === 0
-                            ? pillarsResource.error
-                            : pillarCards.length > 0
-                              ? `${pillarCards.length} pilares vinculados`
-                              : "Use Cadastrar... para estruturar o produto."}
-                        </small>
-                      </button>
-                    ) : null}
-                    <div className={isPillarExpanded ? "admin-pillar-list is-open" : "admin-pillar-list"}>
-                      {pillarCards.map((pillar) => {
-                        const isMetricOpen = selectedPillarId === pillar.id;
-                        return (
-                          <div key={pillar.id} className="admin-pillar-entry">
-                            <button
-                              type="button"
-                              className={isMetricOpen ? "admin-hierarchy-card admin-hierarchy-card--pillar is-selected" : "admin-hierarchy-card admin-hierarchy-card--pillar"}
-                              onClick={() => toggleMetricStack(pillar.id)}
-                            >
-                              <span>{pillar.label}</span>
-                              <strong>{pillar.title}</strong>
-                              <small>{pillar.detail}</small>
-                            </button>
-                            {isMetricOpen ? (
-                              <div className="admin-metric-stack">
-                                {metricsResource.loading && metricsResource.data.length === 0 ? <p className="admin-state">Carregando metricas...</p> : null}
-                                {metricsResource.error && metricsResource.data.length === 0 ? (
-                                  <div className="admin-state admin-state--error">
-                                    <p>{metricsResource.error}</p>
-                                    <button type="button" onClick={() => void metricsResource.refresh()}>
-                                      Tentar novamente
-                                    </button>
-                                  </div>
-                                ) : null}
-                                {!metricsResource.loading && !metricsResource.error && metricsResource.data.length === 0 ? (
-                                  <div className="admin-empty-stack">
-                                    <p className="admin-state">Nenhuma metrica cadastrada para {pillar.title}.</p>
-                                  </div>
-                                ) : null}
-                                {metricsResource.data.length > 0 ? (
-                                  <ul className="admin-metric-list" aria-label={`Metricas do pilar ${pillar.title}`}>
-                                    {metricsResource.data.map((metric) => (
-                                      <li key={metric.id}>
-                                        <article className="admin-metric-card">
-                                          <span>{metric.direction.replace("_", " ")}</span>
-                                          <strong>{metric.name}</strong>
-                                          <small>{metric.unit || metric.code.toUpperCase()}</small>
-                                        </article>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                ) : null}
-                              </div>
-                            ) : null}
-                          </div>
-                        );
-                      })}
-                    </div>
+                    <section className="admin-student-stage">
+                      {studentsResource.loading && studentsResource.data.length === 0 ? <p className="admin-state">Carregando alunos...</p> : null}
+                      {studentsResource.error && studentsResource.data.length === 0 ? (
+                        <div className="admin-state admin-state--error">
+                          <p>{studentsResource.error}</p>
+                          <button type="button" onClick={() => void studentsResource.refresh()}>
+                            Tentar novamente
+                          </button>
+                        </div>
+                      ) : null}
+                      {!studentsResource.loading && !studentsResource.error && studentsResource.data.length === 0 ? (
+                        <div className="admin-empty-stack">
+                          <p className="admin-state">Nenhum aluno cadastrado para este mentor.</p>
+                        </div>
+                      ) : null}
+                      {studentsResource.data.length > 0 ? (
+                        <ul className="admin-student-grid" aria-label="Alunos do mentor">
+                          {studentsResource.data.map((student) => (
+                            <li key={student.id}>
+                              <button
+                                type="button"
+                                className={student.id === selectedStudent?.id ? "admin-student-card is-selected" : "admin-student-card"}
+                                onClick={() => setSelectedStudentId(student.id)}
+                              >
+                                <span>{student.initials}</span>
+                                <strong>{student.full_name}</strong>
+                                <small>{student.email || formatCpf(student.cpf || "")}</small>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </section>
                   </div>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          {isMentorsPanel ? (
-            <div className="admin-product-panel">
-              {renderCreateChooser()}
-              {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
-              {productsResource.error && productsResource.data.length === 0 ? (
-                <div className="admin-state admin-state--error">
-                  <p>{productsResource.error}</p>
-                  <button type="button" onClick={() => void productsResource.refresh()}>
-                    Tentar novamente
-                  </button>
-                </div>
-              ) : null}
-              {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
-                <div className="admin-empty-stack">
-                  <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
-                </div>
-              ) : null}
-
-              {selectedProduct ? (
-                <div className="admin-mentor-focus">
-                  <article className="admin-hierarchy-card admin-hierarchy-card--product">
-                    <span>{selectedProduct.code}</span>
-                    <strong>{selectedProduct.name}</strong>
-                    <small>{selectedProduct.delivery_model}</small>
-                  </article>
-                  <section className="admin-mentor-stage">
-                    {mentorsResource.loading && mentorsResource.data.length === 0 ? <p className="admin-state">Carregando mentores...</p> : null}
-                    {mentorsResource.error && mentorsResource.data.length === 0 ? (
-                      <div className="admin-state admin-state--error">
-                        <p>{mentorsResource.error}</p>
-                        <button type="button" onClick={() => void mentorsResource.refresh()}>
-                          Tentar novamente
-                        </button>
-                      </div>
-                    ) : null}
-                    {!mentorsResource.loading && !mentorsResource.error && mentorsResource.data.length === 0 ? (
-                      <div className="admin-empty-stack">
-                        <p className="admin-state">Nenhum mentor cadastrado para este produto.</p>
-                      </div>
-                    ) : null}
-                    {mentorsResource.data.length > 0 ? (
-                      <ul className="admin-mentor-grid" aria-label="Mentores do produto">
-                        {mentorsResource.data.map((mentor) => (
-                          <li key={mentor.id}>
-                            <button
-                              type="button"
-                              className={mentor.id === selectedMentor?.id ? "admin-mentor-card is-primary" : "admin-mentor-card"}
-                              onClick={() => openStudentArea(mentor.id)}
-                            >
-                              <span>{mentor.id === selectedProduct.mentor_id ? "Mentor principal" : "Mentor"}</span>
-                              <strong>{mentor.full_name}</strong>
-                              <small>{mentor.email}</small>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </section>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          {isStudentsPanel ? (
-            <div className="admin-product-panel">
-              {renderStudentPanelActions()}
-              {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
-              {productsResource.error && productsResource.data.length === 0 ? (
-                <div className="admin-state admin-state--error">
-                  <p>{productsResource.error}</p>
-                  <button type="button" onClick={() => void productsResource.refresh()}>
-                    Tentar novamente
-                  </button>
-                </div>
-              ) : null}
-              {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
-                <div className="admin-empty-stack">
-                  <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
-                </div>
-              ) : null}
-
-              {selectedProduct && selectedMentor ? (
-                <div className="admin-student-focus">
-                  <article className="admin-hierarchy-card admin-hierarchy-card--product">
-                    <span>{selectedProduct.code}</span>
-                    <strong>{selectedProduct.name}</strong>
-                    <small>{selectedProduct.delivery_model}</small>
-                  </article>
-                  <article className="admin-hierarchy-card">
-                    <span>Mentor</span>
-                    <strong>{selectedMentor.full_name}</strong>
-                    <small>{selectedMentor.email}</small>
-                  </article>
-                  <section className="admin-student-stage">
-                    {studentsResource.loading && studentsResource.data.length === 0 ? <p className="admin-state">Carregando alunos...</p> : null}
-                    {studentsResource.error && studentsResource.data.length === 0 ? (
-                      <div className="admin-state admin-state--error">
-                        <p>{studentsResource.error}</p>
-                        <button type="button" onClick={() => void studentsResource.refresh()}>
-                          Tentar novamente
-                        </button>
-                      </div>
-                    ) : null}
-                    {!studentsResource.loading && !studentsResource.error && studentsResource.data.length === 0 ? (
-                      <div className="admin-empty-stack">
-                        <p className="admin-state">Nenhum aluno cadastrado para este mentor.</p>
-                      </div>
-                    ) : null}
-                    {studentsResource.data.length > 0 ? (
-                      <ul className="admin-student-grid" aria-label="Alunos do mentor">
-                        {studentsResource.data.map((student) => (
-                          <li key={student.id}>
-                            <button
-                              type="button"
-                              className={student.id === selectedStudent?.id ? "admin-student-card is-selected" : "admin-student-card"}
-                              onClick={() => setSelectedStudentId(student.id)}
-                            >
-                              <span>{student.initials}</span>
-                              <strong>{student.full_name}</strong>
-                              <small>{student.email || formatCpf(student.cpf || "")}</small>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </section>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-        </section>
+                ) : null}
+              </div>
+            ) : null}
+          </section>
+        ) : null}
 
         {isClientModalOpen ? (
           <section className="admin-dialog-backdrop" role="presentation">
