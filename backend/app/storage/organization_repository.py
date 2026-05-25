@@ -3,9 +3,15 @@ from __future__ import annotations
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+from threading import RLock
 from typing import Any
 
-from app.storage.json_repository import JsonRepository
+from app.config.runtime import get_supabase_db_url
+
+try:
+    import psycopg
+except ImportError:  # pragma: no cover
+    psycopg = None
 
 
 def default_organization_store_path() -> Path:
@@ -29,11 +35,85 @@ def _now_iso() -> str:
 
 
 class OrganizationRepository:
+    _memory_stores: dict[str, list[dict[str, Any]]] = {}
+    _memory_lock = RLock()
+    _mentor_overrides: dict[str, str] = {}
+    _mentor_overrides_lock = RLock()
+
+    def __init__(self, file_path: str | Path | None = None) -> None:
+        self._namespace = str((Path(file_path) if file_path is not None else default_organization_store_path()).resolve())
+        self._database_url = get_supabase_db_url()
+        self._use_postgres = bool(self._database_url)
+        if self._use_postgres and psycopg is None:
+            raise RuntimeError("SUPABASE_DB_URL is configured but psycopg is not installed.")
+        if not self._use_postgres:
+            self._memory_items()
+
+    def _memory_items(self) -> list[dict[str, Any]]:
+        with self._memory_lock:
+            items = self._memory_stores.get(self._namespace)
+            if items is None:
+                items = []
+                self._memory_stores[self._namespace] = items
+            return items
+
+    def _list_from_postgres(self) -> list[dict[str, Any]]:
+        assert self._database_url
+        with psycopg.connect(self._database_url) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT
+                        p.id,
+                        p.organization_id,
+                        p.name,
+                        p.slug,
+                        p.status,
+                        p.created_at,
+                        p.updated_at,
+                        o.name AS organization_name,
+                        o.brand_name
+                    FROM deva_accmed_products p
+                    LEFT JOIN deva_accmed_organizations o ON o.id = p.organization_id
+                    """
+                )
+                columns = [column[0] for column in (cur.description or ())]
+                rows = [dict(zip(columns, row)) for row in cur.fetchall()]
+
+        with self._mentor_overrides_lock:
+            mentor_overrides = dict(self._mentor_overrides)
+
+        mapped: list[dict[str, Any]] = []
+        for row in rows:
+            product_id = str(row.get("id") or "")
+            organization_id = str(row.get("organization_id") or "")
+            if not product_id:
+                continue
+            slug = _slugify(str(row.get("slug") or row.get("name") or f"produto-{product_id}"))
+            mapped.append(
+                {
+                    "id": f"org_{product_id}",
+                    "name": str(row.get("name") or row.get("organization_name") or f"Produto {product_id}"),
+                    "slug": slug,
+                    "code": _normalize_code(slug),
+                    "client_id": f"cli_{organization_id}" if organization_id else None,
+                    "mentor_id": mentor_overrides.get(f"org_{product_id}"),
+                    "description": None,
+                    "delivery_model": "live",
+                    "status": str(row.get("status") or "active"),
+                    "is_active": str(row.get("status") or "active").lower() == "active",
+                    "created_at": str(row.get("created_at") or _now_iso()),
+                    "updated_at": str(row.get("updated_at") or _now_iso()),
+                }
+            )
+        return mapped
 
     def update(self, **kwargs) -> dict[str, Any]:
         organization_id = kwargs.get("id")
         if not organization_id:
             raise ValueError("Organization id is required for update")
+        if self._use_postgres:
+            raise RuntimeError("Organization update is not supported in Supabase runtime store mode.")
         items = self._read_items()
         for idx, organization in enumerate(items):
             if str(organization.get("id")) == organization_id:
@@ -44,6 +124,8 @@ class OrganizationRepository:
         raise ValueError(f"Organization with id {organization_id} not found")
 
     def delete(self, organization_id: str) -> bool:
+        if self._use_postgres:
+            raise RuntimeError("Organization delete is not supported in Supabase runtime store mode.")
         items = self._read_items()
         new_items = [organization for organization in items if str(organization.get("id")) != organization_id]
         if len(new_items) == len(items):
@@ -51,18 +133,16 @@ class OrganizationRepository:
         self._write_items(new_items)
         return True
 
-    def __init__(self, file_path: str | Path | None = None) -> None:
-        self._store = JsonRepository(file_path or default_organization_store_path())
-        if not self._store.file_path.exists():
-            self._store.write({"version": 1, "items": []})
-
     def _read_items(self) -> list[dict[str, Any]]:
-        payload = self._store.read()
-        items = payload.get("items", [])
-        return [item for item in items if isinstance(item, dict)]
+        if self._use_postgres:
+            return self._list_from_postgres()
+        return [dict(item) for item in self._memory_items() if isinstance(item, dict)]
 
     def _write_items(self, items: list[dict[str, Any]]) -> None:
-        self._store.write({"version": 1, "items": items})
+        if self._use_postgres:
+            raise RuntimeError("Organization write is not supported in Supabase runtime store mode.")
+        with self._memory_lock:
+            self._memory_stores[self._namespace] = [dict(item) for item in items]
 
     def list_organizations(self) -> list[dict[str, Any]]:
         return self._read_items()
@@ -84,6 +164,8 @@ class OrganizationRepository:
         description: str | None = None,
         delivery_model: str | None = None,
     ) -> dict[str, Any]:
+        if self._use_postgres:
+            raise RuntimeError("Organization create is not supported in Supabase runtime store mode.")
         items = self._read_items()
         candidate_slug = _slugify(slug or name)
         candidate_code = _normalize_code(code or candidate_slug or name)
@@ -125,10 +207,16 @@ class OrganizationRepository:
         return None
 
     def set_mentor(self, organization_id: str, mentor_id: str) -> dict[str, Any] | None:
+        if self._use_postgres:
+            with self._mentor_overrides_lock:
+                self._mentor_overrides[organization_id] = mentor_id
+            return self.get_by_id(organization_id)
+
         items = self._read_items()
         for idx, organization in enumerate(items):
             if str(organization.get("id")) == organization_id:
                 organization["mentor_id"] = mentor_id
+                organization["updated_at"] = _now_iso()
                 items[idx] = organization
                 self._write_items(items)
                 return organization
