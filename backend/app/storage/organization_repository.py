@@ -123,20 +123,21 @@ class OrganizationRepository:
                 return updated
         raise ValueError(f"Organization with id {organization_id} not found")
 
-    def delete(self, organization_id: str) -> bool:
+    def soft_delete(self, organization_id: int) -> bool:
         if self._use_postgres:
             raise RuntimeError("Organization delete is not supported in Supabase runtime store mode.")
         items = self._read_items()
-        new_items = [organization for organization in items if str(organization.get("id")) != organization_id]
-        if len(new_items) == len(items):
-            return False
-        self._write_items(new_items)
-        return True
+        for org in items:
+            if int(org.get("id")) == int(organization_id):
+                org["deleted_at"] = _now_iso()
+                self._write_items(items)
+                return True
+        return False
 
     def _read_items(self) -> list[dict[str, Any]]:
         if self._use_postgres:
             return self._list_from_postgres()
-        return [dict(item) for item in self._memory_items() if isinstance(item, dict)]
+        return [dict(item) for item in self._memory_items() if isinstance(item, dict) and item.get("deleted_at") is None]
 
     def _write_items(self, items: list[dict[str, Any]]) -> None:
         if self._use_postgres:
@@ -147,11 +148,11 @@ class OrganizationRepository:
     def list_organizations(self) -> list[dict[str, Any]]:
         return self._read_items()
 
-    def list_by_client(self, client_id: str) -> list[dict[str, Any]]:
+    def list_by_client(self, client_id: int) -> list[dict[str, Any]]:
         return [
             item
             for item in self._read_items()
-            if str(item.get("client_id") or "") == client_id
+            if int(item.get("client_id") or 0) == int(client_id)
         ]
 
     def create(
@@ -159,31 +160,63 @@ class OrganizationRepository:
         *,
         name: str,
         slug: str | None = None,
-        client_id: str | None = None,
+        client_id: int | None = None,
         code: str | None = None,
         description: str | None = None,
         delivery_model: str | None = None,
+        brand_name: str | None = None,
+        cnpj: str | None = None,
+        timezone: str | None = None,
+        currency: str | None = None,
+        status: str | None = None,
     ) -> dict[str, Any]:
-        if self._use_postgres:
-            raise RuntimeError("Organization create is not supported in Supabase runtime store mode.")
-        items = self._read_items()
         candidate_slug = _slugify(slug or name)
         candidate_code = _normalize_code(code or candidate_slug or name)
-
+        now = _now_iso()
+        if self._use_postgres:
+            assert self._database_url
+            with psycopg.connect(self._database_url) as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
+                        INSERT INTO deva_accmed_organizations (
+                            name, brand_name, slug, cnpj, timezone, currency, status, is_active, notes, created_at, updated_at
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        RETURNING id, name, brand_name, slug, cnpj, timezone, currency, status, is_active, notes, created_at, updated_at
+                        """,
+                        (
+                            name,
+                            brand_name,
+                            candidate_slug,
+                            cnpj,
+                            timezone,
+                            currency,
+                            status or "active",
+                            True,
+                            None,
+                            now,
+                            now,
+                        ),
+                    )
+                    row = cur.fetchone()
+                    columns = [desc[0] for desc in cur.description]
+                    organization = dict(zip(columns, row))
+                    organization["mentor_id"] = None
+                    organization["deleted_at"] = None
+                    return organization
+        # modo memória
+        items = self._read_items()
         def _same_scope(item: dict[str, Any]) -> bool:
-            return str(item.get("client_id") or "") == str(client_id or "")
-
+            return int(item.get("client_id") or 0) == int(client_id or 0)
         if any(_same_scope(item) and str(item.get("slug")) == candidate_slug for item in items):
             raise ValueError("organization slug already exists")
         if any(_same_scope(item) and str(item.get("code")) == candidate_code for item in items):
             raise ValueError("organization code already exists")
         if any(_same_scope(item) and str(item.get("name")) == name for item in items):
             raise ValueError("organization name already exists")
-
-        now = _now_iso()
-
+        org_id = max([o["id"] for o in items if "id" in o and isinstance(o["id"], int)] + [0]) + 1
         organization = {
-            "id": f"org_{len(items) + 1}",
+            "id": org_id,
             "name": name,
             "slug": candidate_slug,
             "code": candidate_code,
@@ -195,18 +228,19 @@ class OrganizationRepository:
             "is_active": True,
             "created_at": now,
             "updated_at": now,
+            "deleted_at": None,
         }
         items.append(organization)
         self._write_items(items)
         return organization
 
-    def get_by_id(self, organization_id: str) -> dict[str, Any] | None:
+    def get_by_id(self, organization_id: int) -> dict[str, Any] | None:
         for organization in self._read_items():
-            if str(organization.get("id")) == organization_id:
+            if int(organization.get("id")) == int(organization_id):
                 return organization
         return None
 
-    def set_mentor(self, organization_id: str, mentor_id: str) -> dict[str, Any] | None:
+    def set_mentor(self, organization_id: int, mentor_id: int) -> dict[str, Any] | None:
         if self._use_postgres:
             with self._mentor_overrides_lock:
                 self._mentor_overrides[organization_id] = mentor_id
@@ -214,7 +248,7 @@ class OrganizationRepository:
 
         items = self._read_items()
         for idx, organization in enumerate(items):
-            if str(organization.get("id")) == organization_id:
+            if int(organization.get("id")) == int(organization_id):
                 organization["mentor_id"] = mentor_id
                 organization["updated_at"] = _now_iso()
                 items[idx] = organization

@@ -82,19 +82,17 @@ class UserRepository:
             ]
         )
 
-    def create(self, *, id: str, email: str, password_hash: str, role: str, is_active: bool = True) -> dict[str, Any]:
+    def create(self, *, email: str, password_hash: str, role: str, is_active: bool = True) -> dict[str, Any]:
         users = self.list_users()
         normalized_email = email.strip().lower()
         if any(str(u.get("email", "")).strip().lower() == normalized_email for u in users):
             raise ValueError("user email already exists")
-        if any(str(u.get("id")) == id for u in users):
-            raise ValueError("user id already exists")
         user = {
-            "id": id,
             "email": normalized_email,
             "password_hash": password_hash,
             "role": role,
             "is_active": is_active,
+            "deleted_at": None,
         }
         if self._use_postgres:
             assert self._database_url
@@ -104,22 +102,29 @@ class UserRepository:
                     if has_password_hash:
                         cur.execute(
                             """
-                            INSERT INTO deva_accmed_users (id, email, role, is_active, password_hash)
-                            VALUES (%s, %s, %s, %s, %s)
+                            INSERT INTO deva_accmed_users (email, role, is_active, password_hash)
+                            VALUES (%s, %s, %s, %s)
+                            RETURNING id
                             """,
-                            (id, normalized_email, role, bool(is_active), password_hash),
+                            (normalized_email, role, bool(is_active), password_hash),
                         )
                     else:
                         cur.execute(
                             """
-                            INSERT INTO deva_accmed_users (id, email, role, is_active)
-                            VALUES (%s, %s, %s, %s)
+                            INSERT INTO deva_accmed_users (email, role, is_active)
+                            VALUES (%s, %s, %s)
+                            RETURNING id
                             """,
-                            (id, normalized_email, role, bool(is_active)),
+                            (normalized_email, role, bool(is_active)),
                         )
+                    new_id = cur.fetchone()[0]
                 conn.commit()
+            user["id"] = new_id
         else:
-            self._memory_items().append(user)
+            # Simula autoincremento para memória
+            items = self._memory_items()
+            user["id"] = max([u["id"] for u in items if "id" in u and isinstance(u["id"], int)] + [0]) + 1
+            items.append(user)
         return user
 
     def update(self, **kwargs) -> dict[str, Any]:
@@ -132,7 +137,7 @@ class UserRepository:
         users = self.list_users()
         updated = False
         for user in users:
-            if str(user.get("id")) == str(user_id):
+            if int(user.get("id")) == int(user_id):
                 user.update({k: v for k, v in kwargs.items() if k != "id"})
                 updated = True
                 break
@@ -163,11 +168,13 @@ class UserRepository:
                 query = """
                     SELECT id, email, role, is_active, COALESCE(password_hash, '') AS password_hash
                     FROM deva_accmed_users
+                    WHERE deleted_at IS NULL
                 """
             else:
                 query = """
                     SELECT id, email, role, is_active, ''::text AS password_hash
                     FROM deva_accmed_users
+                    WHERE deleted_at IS NULL
                 """
             with psycopg.connect(self._database_url) as conn:
                 with conn.cursor() as cur:
@@ -175,7 +182,7 @@ class UserRepository:
                     columns = [column[0] for column in (cur.description or ())]
                     return [dict(zip(columns, row)) for row in cur.fetchall()]
 
-        return [dict(item) for item in self._memory_items() if isinstance(item, dict)]
+        return [dict(item) for item in self._memory_items() if isinstance(item, dict) and item.get("deleted_at") is None]
 
     def get_by_email(self, email: str) -> dict[str, Any] | None:
         normalized = email.strip().lower()
@@ -184,8 +191,30 @@ class UserRepository:
                 return user
         return None
 
-    def get_by_id(self, user_id: str) -> dict[str, Any] | None:
+    def get_by_id(self, user_id: int) -> dict[str, Any] | None:
         for user in self.list_users():
-            if str(user.get("id")) == user_id:
+            if int(user.get("id")) == int(user_id):
                 return user
         return None
+
+    def soft_delete(self, user_id: int) -> bool:
+        """Soft delete a user by setting deleted_at."""
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        if self._use_postgres:
+            assert self._database_url
+            with psycopg.connect(self._database_url) as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        "UPDATE deva_accmed_users SET deleted_at = %s WHERE id = %s",
+                        (now, user_id),
+                    )
+                conn.commit()
+            return True
+        else:
+            users = self._memory_items()
+            for user in users:
+                if int(user.get("id")) == int(user_id):
+                    user["deleted_at"] = now
+                    return True
+        return False

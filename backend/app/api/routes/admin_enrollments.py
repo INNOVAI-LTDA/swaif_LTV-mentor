@@ -1,6 +1,8 @@
 # FastAPI route for admin_enrollments
 from fastapi import APIRouter, HTTPException
-from backend.app.services.enrollments_service import get_all_enrollments
+from backend.app.services.enrollments_service import get_all_enrollments, create_enrollment
+from backend.app.schemas.enrollment import EnrollmentOut, EnrollmentCreate
+from fastapi import Body
 
 router = APIRouter()
 
@@ -8,5 +10,13 @@ router = APIRouter()
 def list_enrollments():
     try:
         return get_all_enrollments()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/admin/enrollments", response_model=EnrollmentOut)
+def create_enrollment_api(enrollment: EnrollmentCreate = Body(...)):
+    try:
+        return create_enrollment(enrollment)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -18,10 +18,10 @@ class LinkStudentMentoriaRequest(BaseModel):
 
 
 class EnrollmentOut(BaseModel):
-    id: str
-    student_id: str
-    organization_id: str
-    mentor_id: str | None = None
+    id: int
+    student_id: int
+    organization_id: int
+    mentor_id: int | None = None
     progress_score: float
     engagement_score: float
     urgency_status: str

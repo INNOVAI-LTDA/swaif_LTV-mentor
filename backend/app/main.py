@@ -116,6 +116,19 @@ def create_app() -> FastAPI:
     app.include_router(admin_provider_view_router)
     app.include_router(admin_database_view_router)
     app.include_router(admin_api_operations_router)
+    from app.api.routes.admin_users import router as admin_users_router
+    app.include_router(admin_users_router)
+    # Register admin_organizations router
+    try:
+        from app.api.routes.admin_organizations import router as admin_organizations_router
+        app.include_router(admin_organizations_router)
+    except ImportError:
+        try:
+            from backend.app.api.routes.admin_organizations import router as admin_organizations_router
+            app.include_router(admin_organizations_router)
+        except ImportError:
+            import warnings
+            warnings.warn("admin_organizations router could not be imported; /admin/organizations endpoint will be unavailable.")
     if mentor_routes_enabled:
         app.include_router(mentor_router)
     app.include_router(student_workspace_router)

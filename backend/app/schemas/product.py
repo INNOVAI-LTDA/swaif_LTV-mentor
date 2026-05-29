@@ -12,8 +12,8 @@ class ProductCreate(BaseModel):
 
 
 class ProductOut(BaseModel):
-    id: str
-    client_id: str
+    id: int
+    client_id: int
     name: str
     code: str
     slug: str
@@ -21,6 +21,6 @@ class ProductOut(BaseModel):
     is_active: bool
     description: str | None = None
     delivery_model: str
-    mentor_id: str | None = None
+    mentor_id: int | None = None
     created_at: str
     updated_at: str

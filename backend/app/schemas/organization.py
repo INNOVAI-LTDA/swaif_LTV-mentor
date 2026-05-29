@@ -9,10 +9,10 @@ class OrganizationCreate(BaseModel):
 
 
 class OrganizationOut(BaseModel):
-    id: str
+    id: int
     name: str
     slug: str
-    mentor_id: str | None = None
+    mentor_id: int | None = None
     is_active: bool
 
 

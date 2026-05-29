@@ -9,6 +9,6 @@ RoleType = Literal["admin", "provider", "client"]
 
 
 class UserOut(BaseModel):
-    id: str
+    id: int
     email: str
     role: RoleType

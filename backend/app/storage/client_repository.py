@@ -1,18 +1,17 @@
 from __future__ import annotations
 
-import os
+
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
+from app.config.runtime import get_supabase_db_url
 
-from app.storage.json_repository import JsonRepository
+try:
+    import psycopg
+except ImportError:
+    psycopg = None
 
 
-def default_client_store_path() -> Path:
-    configured = os.getenv("CLIENT_STORE_PATH")
-    if configured:
-        return Path(configured)
-    return Path(__file__).resolve().parents[2] / "data" / "clients.json"
+
 
 
 def _slugify(value: str) -> str:
@@ -24,39 +23,100 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-class ClientRepository:
-    def update(self, **kwargs) -> dict[str, Any]:
-        client_id = kwargs.get("id")
-        if not client_id:
-            raise ValueError("Client id is required for update")
-        items = self._read_items()
-        for idx, client in enumerate(items):
-            if str(client.get("id")) == client_id:
-                updated = {**client, **kwargs, "updated_at": _now_iso()}
-                items[idx] = updated
-                self._write_items(items)
-                return updated
-        raise ValueError(f"Client with id {client_id} not found")
 
-    def delete(self, client_id: str) -> bool:
-        items = self._read_items()
-        new_items = [client for client in items if str(client.get("id")) != client_id]
-        if len(new_items) == len(items):
-            return False
-        self._write_items(new_items)
-        return True
-    def __init__(self, file_path: str | Path | None = None) -> None:
-        self._store = JsonRepository(file_path or default_client_store_path())
-        if not self._store.file_path.exists():
-            self._store.write({"version": 1, "items": []})
+class ClientRepository:
+    def __init__(self) -> None:
+        self._database_url = get_supabase_db_url()
+        self._use_postgres = bool(self._database_url)
+        if self._use_postgres and psycopg is None:
+            raise RuntimeError("SUPABASE_DB_URL is configured but psycopg is not installed.")
+
+    def _list_from_postgres(self) -> list[dict[str, Any]]:
+        assert self._database_url
+        with psycopg.connect(self._database_url) as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT id, name, brand_name, cnpj, slug, status, is_active, timezone, currency, notes, created_at, updated_at
+                    FROM deva_accmed_clients
+                    WHERE deleted_at IS NULL
+                    """
+                )
+                columns = [column[0] for column in (cur.description or ())]
+                rows = [dict(zip(columns, row)) for row in cur.fetchall()]
+        return rows
 
     def _read_items(self) -> list[dict[str, Any]]:
-        payload = self._store.read()
-        items = payload.get("items", [])
-        return [item for item in items if isinstance(item, dict)]
+        if self._use_postgres:
+            return self._list_from_postgres()
+        raise RuntimeError("JSON client storage is disabled. Configure Supabase.")
 
-    def _write_items(self, items: list[dict[str, Any]]) -> None:
-        self._store.write({"version": 1, "items": items})
+    def list_clients(self) -> list[dict[str, Any]]:
+        return self._read_items()
+
+    def create(
+        self,
+        *,
+        name: str,
+        cnpj: str,
+        slug: str | None = None,
+        brand_name: str | None = None,
+        timezone_name: str = "America/Sao_Paulo",
+        currency: str = "BRL",
+        notes: str | None = None,
+    ) -> dict[str, Any]:
+        now = _now_iso()
+        candidate_slug = _slugify(slug or name)
+        if self._use_postgres:
+            assert self._database_url
+            with psycopg.connect(self._database_url) as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
+                        INSERT INTO deva_accmed_clients (
+                            name, cnpj, slug, brand_name, timezone, currency, notes, status, is_active, created_at, updated_at
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        RETURNING id, name, brand_name, cnpj, slug, status, is_active, timezone, currency, notes, created_at, updated_at
+                        """,
+                        (
+                            name,
+                            cnpj,
+                            candidate_slug,
+                            brand_name or name,
+                            timezone_name,
+                            currency,
+                            notes,
+                            "active",
+                            True,
+                            now,
+                            now,
+                        ),
+                    )
+                    row = cur.fetchone()
+                    columns = [desc[0] for desc in cur.description]
+                    client = dict(zip(columns, row))
+                    return client
+        raise RuntimeError("JSON client storage is disabled. Configure Supabase.")
+
+    def get_by_id(self, client_id: str) -> dict[str, Any] | None:
+        if self._use_postgres:
+            assert self._database_url
+            with psycopg.connect(self._database_url) as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
+                        SELECT id, name, brand_name, cnpj, slug, status, is_active, timezone, currency, notes, created_at, updated_at
+                        FROM deva_accmed_clients
+                        WHERE id = %s AND deleted_at IS NULL
+                        """,
+                        (client_id,)
+                    )
+                    row = cur.fetchone()
+                    if not row:
+                        return None
+                    columns = [desc[0] for desc in cur.description]
+                    return dict(zip(columns, row))
+        raise RuntimeError("JSON client storage is disabled. Configure Supabase.")
 
     def list_clients(self) -> list[dict[str, Any]]:
         return self._read_items()

@@ -1,16 +1,10 @@
-from __future__ import annotations
 
-import os
+from datetime import datetime, timezone
 from pathlib import Path
+from threading import RLock
 from typing import Any
 
-from app.storage.json_repository import JsonRepository
-
-
 def default_metric_store_path() -> Path:
-    configured = os.getenv("METRIC_STORE_PATH")
-    if configured:
-        return Path(configured)
     return Path(__file__).resolve().parents[2] / "data" / "metrics.json"
 
 
@@ -35,54 +29,40 @@ def _default_scoring_rules_v2() -> dict[str, Any]:
 
 
 class MetricRepository:
-    def update(self, **kwargs) -> dict[str, Any]:
-        metric_id = kwargs.get("id")
-        if not metric_id:
-            raise ValueError("Metric id is required for update")
-        items = self._read_items()
-        for idx, metric in enumerate(items):
-            if str(metric.get("id")) == metric_id:
-                updated = {**metric, **kwargs}
-                items[idx] = updated
-                self._write_items(items)
-                return updated
-        raise ValueError(f"Metric with id {metric_id} not found")
+    _memory_stores: dict[str, list[dict[str, Any]]] = {}
+    _memory_lock = RLock()
 
-    def delete(self, metric_id: str) -> bool:
-        items = self._read_items()
-        new_items = [metric for metric in items if str(metric.get("id")) != metric_id]
-        if len(new_items) == len(items):
-            return False
-        self._write_items(new_items)
-        return True
     def __init__(self, file_path: str | Path | None = None) -> None:
-        self._store = JsonRepository(file_path or default_metric_store_path())
-        if not self._store.file_path.exists():
-            self._store.write({"version": 1, "items": []})
+        self._namespace = str((file_path or default_metric_store_path()).resolve())
+        if self._namespace not in self._memory_stores:
+            self._memory_stores[self._namespace] = []
 
-    def _read_items(self) -> list[dict[str, Any]]:
-        payload = self._store.read()
-        items = payload.get("items", [])
-        return [item for item in items if isinstance(item, dict)]
+    def _memory_items(self) -> list[dict[str, Any]]:
+        with self._memory_lock:
+            return self._memory_stores.get(self._namespace, [])
 
     def _write_items(self, items: list[dict[str, Any]]) -> None:
-        self._store.write({"version": 1, "items": items})
+        with self._memory_lock:
+            self._memory_stores[self._namespace] = [dict(item) for item in items]
+
+    def _read_items(self) -> list[dict[str, Any]]:
+        return [dict(item) for item in self._memory_items() if isinstance(item, dict) and item.get("deleted_at") is None]
 
     def list_metrics(self) -> list[dict[str, Any]]:
         return self._read_items()
 
-    def list_by_pillar(self, pillar_id: str) -> list[dict[str, Any]]:
+    def list_by_pillar(self, pillar_id: int) -> list[dict[str, Any]]:
         return [
             item
             for item in self._read_items()
-            if str(item.get("pillar_id") or "") == pillar_id
+            if int(item.get("pillar_id") or 0) == int(pillar_id)
         ]
 
     def create(
         self,
         *,
-        protocol_id: str,
-        pillar_id: str,
+        protocol_id: int,
+        pillar_id: int,
         name: str,
         code: str | None = None,
         direction: str = "higher_better",
@@ -96,12 +76,13 @@ class MetricRepository:
     ) -> dict[str, Any]:
         items = self._read_items()
         final_code = _slugify(code or name)
-        if any(str(item.get("pillar_id")) == pillar_id and str(item.get("code")) == final_code for item in items):
+        if any(int(item.get("pillar_id") or 0) == int(pillar_id) and str(item.get("code")) == final_code for item in items):
             raise ValueError("metric code already exists in pillar")
-        if any(str(item.get("pillar_id")) == pillar_id and str(item.get("name")) == name for item in items):
+        if any(int(item.get("pillar_id") or 0) == int(pillar_id) and str(item.get("name")) == name for item in items):
             raise ValueError("metric name already exists in pillar")
+        new_id = max([m["id"] for m in items if "id" in m and isinstance(m["id"], int)] + [0]) + 1
         metric = {
-            "id": f"met_{len(items) + 1}",
+            "id": new_id,
             "protocol_id": protocol_id,
             "pillar_id": pillar_id,
             "name": name,
@@ -115,13 +96,38 @@ class MetricRepository:
             "mcv_score": 1 if mcv_score is None else mcv_score,
             "max_basis_score": max_basis_score or "MAX_VALUE",
             "is_active": True,
+            "created_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "updated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "deleted_at": None,
         }
         items.append(metric)
         self._write_items(items)
         return metric
 
-    def get_by_id(self, metric_id: str) -> dict[str, Any] | None:
+    def get_by_id(self, metric_id: int) -> dict[str, Any] | None:
         for metric in self._read_items():
-            if str(metric.get("id")) == metric_id:
+            if int(metric.get("id") or 0) == int(metric_id):
                 return metric
         return None
+
+    def update(self, **kwargs) -> dict[str, Any]:
+        metric_id = kwargs.get("id")
+        if not metric_id:
+            raise ValueError("Metric id is required for update")
+        items = self._read_items()
+        for idx, metric in enumerate(items):
+            if int(metric.get("id") or 0) == int(metric_id):
+                updated = {**metric, **kwargs}
+                items[idx] = updated
+                self._write_items(items)
+                return updated
+        raise ValueError(f"Metric with id {metric_id} not found")
+
+    def soft_delete(self, metric_id: int) -> bool:
+        items = self._read_items()
+        for metric in items:
+            if int(metric.get("id") or 0) == int(metric_id):
+                metric["deleted_at"] = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+                self._write_items(items)
+                return True
+        return False

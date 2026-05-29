@@ -32,9 +32,9 @@ class AdminMetricCreate(BaseModel):
 
 
 class MetricOut(BaseModel):
-    id: str
-    protocol_id: str
-    pillar_id: str
+    id: int
+    protocol_id: int
+    pillar_id: int
     name: str
     code: str
     direction: MetricDirection
