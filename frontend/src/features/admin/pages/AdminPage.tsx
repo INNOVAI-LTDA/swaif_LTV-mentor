@@ -35,6 +35,28 @@ type IndicatorMetricRow = {
   improving_trend: boolean;
 };
 
+type EditableCommandCenterRow = {
+  progress: string;
+  engagement: string;
+  daysLeft: string;
+};
+
+type EditableMatrixRow = {
+  urgency: "normal" | "watch" | "critical" | "rescue";
+  progress: string;
+  engagement: string;
+  daysLeft: string;
+  ltv: string;
+};
+
+type EditableRadarRow = {
+  baseline: string;
+  current: string;
+  projected: string;
+};
+
+type OperationalViewMode = "provider" | "client";
+
 const CREATE_OPTIONS: Array<{ key: CreateTarget; label: string }> = [
   { key: "cliente", label: "Cliente" },
   { key: "produto", label: "Produto" },
@@ -42,6 +64,13 @@ const CREATE_OPTIONS: Array<{ key: CreateTarget; label: string }> = [
   { key: "pilar", label: "Pilar" },
   { key: "metrica", label: "Metrica" },
   { key: "aluno", label: "Aluno" }
+];
+
+const URGENCY_OPTIONS: Array<{ value: EditableMatrixRow["urgency"]; label: string }> = [
+  { value: "normal", label: "Estável" },
+  { value: "watch", label: "Atenção" },
+  { value: "critical", label: "Crítico" },
+  { value: "rescue", label: "Resgate" }
 ];
 
 function formatCnpj(value: string) {
@@ -80,6 +109,12 @@ function shouldHideDatabaseColumn(tableName: string, columnName: string): boolea
     return true;
   }
   return false;
+}
+
+function toPercentInput(value: number | null | undefined): string {
+  const safe = Number.isFinite(value) ? Number(value) : 0;
+  const normalized = safe > 1 ? safe / 100 : safe;
+  return (Math.max(0, Math.min(1, normalized)) * 100).toFixed(1);
 }
 
 const EMPTY_CLIENT_FORM = {
@@ -158,6 +193,9 @@ export function AdminPage() {
 
   const [selectedProviderId, setSelectedProviderId] = useState<string>("");
   const [selectedClientViewClientId, setSelectedClientViewClientId] = useState<string>("");
+  const [commandCenterDrafts, setCommandCenterDrafts] = useState<Record<string, EditableCommandCenterRow>>({});
+  const [matrixDrafts, setMatrixDrafts] = useState<Record<string, EditableMatrixRow>>({});
+  const [radarDrafts, setRadarDrafts] = useState<Record<string, EditableRadarRow>>({});
 
   const activePanel = searchParams.get("panel");
   const isClientsPanel = activePanel === "clientes";
@@ -168,8 +206,9 @@ export function AdminPage() {
   const isStudentsPanel = activePanel === "alunos";
   const isDatabasePanel = activePanel === "database";
   const isApiPanel = activePanel === "api";
-  const hasContextPanel = isClientsPanel || isProductsPanel || isMentorsPanel || isStudentsPanel || isDatabasePanel;
-  const hasProductContextPanel = isProductsPanel || isMentorsPanel || isStudentsPanel;
+  const hasContextPanel = isClientsPanel || isProductsPanel || isMentorsPanel || isStudentsPanel || isDatabasePanel || isProviderPanel || isClientViewPanel;
+  const hasProductContextPanel = isProductsPanel || isMentorsPanel || isStudentsPanel || isProviderPanel || isClientViewPanel;
+  const shouldLoadStudents = isStudentsPanel || isProviderPanel || isClientViewPanel;
   const showClientSectionBar = !hasContextPanel;
 
   const clientDetailResource = useAdminClientDetail(canLoadAdmin ? selectedClientId : null, canLoadAdmin);
@@ -177,7 +216,7 @@ export function AdminPage() {
   const mentorsResource = useAdminMentors(canLoadAdmin && hasProductContextPanel ? selectedProductId : null);
   const pillarsResource = useAdminPillars(canLoadAdmin && hasProductContextPanel ? selectedProductId : null);
   const metricsResource = useAdminMetrics(canLoadAdmin && isProductsPanel ? selectedPillarId : null);
-  const studentsResource = useAdminStudents(canLoadAdmin && isStudentsPanel ? selectedMentorId : null);
+  const studentsResource = useAdminStudents(canLoadAdmin && shouldLoadStudents ? selectedMentorId : null);
   const clientViewRadarResource = useStudentRadar(selectedStudentId);
 
   const [clientFormState, setClientFormState] = useState(EMPTY_CLIENT_FORM);
@@ -322,6 +361,30 @@ export function AdminPage() {
   }, [activeClients, selectedClientId]);
 
   useEffect(() => {
+    if (!isClientViewPanel) {
+      return;
+    }
+    if (activeClients.length === 0) {
+      if (selectedClientViewClientId) {
+        setSelectedClientViewClientId("");
+      }
+      return;
+    }
+    if (!activeClients.some((item) => item.id === selectedClientViewClientId)) {
+      setSelectedClientViewClientId(selectedClientId ?? activeClients[0].id);
+    }
+  }, [activeClients, isClientViewPanel, selectedClientId, selectedClientViewClientId]);
+
+  useEffect(() => {
+    if (!isClientViewPanel || !selectedClientViewClientId) {
+      return;
+    }
+    if (selectedClientViewClientId !== selectedClientId) {
+      setSelectedClientId(selectedClientViewClientId);
+    }
+  }, [isClientViewPanel, selectedClientId, selectedClientViewClientId]);
+
+  useEffect(() => {
     if (!hasContextPanel || productsResource.data.length === 0) {
       if (selectedProductId !== null) {
         setSelectedProductId(null);
@@ -357,7 +420,31 @@ export function AdminPage() {
   }, [hasProductContextPanel, mentorsResource.data, selectedMentorId, selectedProduct?.mentor_id]);
 
   useEffect(() => {
-    if (!isStudentsPanel || studentsResource.data.length === 0) {
+    if (!isProviderPanel) {
+      return;
+    }
+    if (mentorsResource.data.length === 0) {
+      if (selectedProviderId) {
+        setSelectedProviderId("");
+      }
+      return;
+    }
+    if (!mentorsResource.data.some((item) => item.id === selectedProviderId)) {
+      setSelectedProviderId(selectedMentor?.id ?? mentorsResource.data[0].id);
+    }
+  }, [isProviderPanel, mentorsResource.data, selectedMentor?.id, selectedProviderId]);
+
+  useEffect(() => {
+    if (!isProviderPanel || !selectedProviderId) {
+      return;
+    }
+    if (selectedProviderId !== selectedMentorId) {
+      setSelectedMentorId(selectedProviderId);
+    }
+  }, [isProviderPanel, selectedMentorId, selectedProviderId]);
+
+  useEffect(() => {
+    if (!(isStudentsPanel || isProviderPanel || isClientViewPanel) || studentsResource.data.length === 0) {
       if (selectedStudentId !== null) {
         setSelectedStudentId(null);
       }
@@ -366,7 +453,7 @@ export function AdminPage() {
     if (!studentsResource.data.some((item) => item.id === selectedStudentId)) {
       setSelectedStudentId(studentsResource.data[0].id);
     }
-  }, [isStudentsPanel, selectedStudentId, studentsResource.data]);
+  }, [isClientViewPanel, isProviderPanel, isStudentsPanel, selectedStudentId, studentsResource.data]);
 
   useEffect(() => {
     setIsPillarExpanded(false);
@@ -1120,6 +1207,97 @@ export function AdminPage() {
     );
   }
 
+  function buildOperationalKey(mode: OperationalViewMode, rowId: string) {
+    return `${mode}:${rowId}`;
+  }
+
+  function buildRadarOperationalKey(mode: OperationalViewMode, axisKey: string) {
+    const studentKey = selectedStudentId ?? "sem-aluno";
+    return `${mode}:${studentKey}:${axisKey}`;
+  }
+
+  function getCommandCenterDraft(mode: OperationalViewMode, studentId: string): EditableCommandCenterRow {
+    const key = buildOperationalKey(mode, studentId);
+    return commandCenterDrafts[key] ?? { progress: "0.0", engagement: "0.0", daysLeft: "45" };
+  }
+
+  function setCommandCenterDraftField(
+    mode: OperationalViewMode,
+    studentId: string,
+    field: keyof EditableCommandCenterRow,
+    value: string
+  ) {
+    const key = buildOperationalKey(mode, studentId);
+    setCommandCenterDrafts((current) => ({
+      ...current,
+      [key]: {
+        ...(current[key] ?? { progress: "0.0", engagement: "0.0", daysLeft: "45" }),
+        [field]: value
+      }
+    }));
+  }
+
+  function getMatrixDraft(mode: OperationalViewMode, studentId: string): EditableMatrixRow {
+    const key = buildOperationalKey(mode, studentId);
+    return matrixDrafts[key] ?? {
+      urgency: "watch",
+      progress: "0.0",
+      engagement: "0.0",
+      daysLeft: "45",
+      ltv: "0.00"
+    };
+  }
+
+  function setMatrixDraftField(
+    mode: OperationalViewMode,
+    studentId: string,
+    field: keyof EditableMatrixRow,
+    value: string
+  ) {
+    const key = buildOperationalKey(mode, studentId);
+    setMatrixDrafts((current) => ({
+      ...current,
+      [key]: {
+        ...(current[key] ?? {
+          urgency: "watch",
+          progress: "0.0",
+          engagement: "0.0",
+          daysLeft: "45",
+          ltv: "0.00"
+        }),
+        [field]: value as EditableMatrixRow[typeof field]
+      }
+    }));
+  }
+
+  function getRadarDraft(
+    mode: OperationalViewMode,
+    axis: { axisKey: string; baseline: number; current: number; projected: number }
+  ): EditableRadarRow {
+    const key = buildRadarOperationalKey(mode, axis.axisKey);
+    return radarDrafts[key] ?? {
+      baseline: toPercentInput(axis.baseline),
+      current: toPercentInput(axis.current),
+      projected: toPercentInput(axis.projected)
+    };
+  }
+
+  function setRadarDraftField(
+    mode: OperationalViewMode,
+    axisKey: string,
+    field: keyof EditableRadarRow,
+    value: string
+  ) {
+    const key = buildRadarOperationalKey(mode, axisKey);
+    setRadarDrafts((current) => ({
+      ...current,
+      [key]: {
+        ...current[key],
+        [field]: value
+      }
+    }));
+  }
+
   useEffect(() => {
     if (!canLoadAdmin || !isDatabasePanel) return;
     void loadDatabaseTables();
@@ -1130,6 +1308,280 @@ export function AdminPage() {
     void loadApiCatalog();
   }, [canLoadAdmin, isApiPanel]);
 
+  function renderOperationalView(mode: OperationalViewMode) {
+    const isProviderMode = mode === "provider";
+    const moduleLabel = isProviderMode ? "Provider View" : "Client View";
+    const testId = isProviderMode ? "admin-provider-view-editable" : "admin-client-view-editable";
+
+    return (
+      <article className="admin-module" aria-label={moduleLabel}>
+        <p className="admin-module__eyebrow">{moduleLabel}</p>
+        <div className="admin-provider-view-controls">
+          <label>
+            Cliente:
+            <select value={isProviderMode ? (selectedClientId ?? "") : selectedClientViewClientId} onChange={(event) => {
+              const value = event.target.value;
+              if (isProviderMode) {
+                setSelectedClientId(value || null);
+              } else {
+                setSelectedClientViewClientId(value);
+              }
+            }}>
+              <option value="">Selecione</option>
+              {activeClients.map((client) => (
+                <option key={client.id} value={client.id}>{client.name}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Produto:
+            <select value={selectedProductId ?? ""} onChange={(event) => setSelectedProductId(event.target.value || null)}>
+              <option value="">Selecione</option>
+              {productsResource.data.map((product) => (
+                <option key={product.id} value={product.id}>{product.name}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            {isProviderMode ? "Provider:" : "Mentor:"}
+            <select value={isProviderMode ? selectedProviderId : (selectedMentorId ?? "")} onChange={(event) => {
+              const value = event.target.value;
+              if (isProviderMode) {
+                setSelectedProviderId(value);
+              } else {
+                setSelectedMentorId(value || null);
+              }
+            }}>
+              <option value="">Selecione</option>
+              {mentorsResource.data.map((mentor) => (
+                <option key={mentor.id} value={mentor.id}>{mentor.full_name}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Aluno:
+            <select value={selectedStudentId ?? ""} onChange={(event) => setSelectedStudentId(event.target.value || null)}>
+              <option value="">Selecione</option>
+              {studentsResource.data.map((student) => (
+                <option key={student.id} value={student.id}>{student.full_name}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <p className="admin-module__muted">
+          Edição tabular operacional para Centro de Comando, Matriz de Decisão e Radar.
+        </p>
+
+        {studentsResource.loading && studentsResource.data.length === 0 ? (
+          <p className="admin-state">Carregando alunos do contexto...</p>
+        ) : null}
+        {studentsResource.error && studentsResource.data.length === 0 ? (
+          <p className="admin-form-error">{studentsResource.error}</p>
+        ) : null}
+        {!studentsResource.loading && !studentsResource.error && studentsResource.data.length === 0 ? (
+          <p className="admin-state">Sem alunos vinculados para o contexto selecionado.</p>
+        ) : null}
+
+        {studentsResource.data.length > 0 ? (
+          <div className="admin-provider-view-edit-grid" data-testid={testId}>
+            <section>
+              <h3>Centro de Comando</h3>
+              <div className="admin-data-table-wrapper">
+                <table className="admin-data-table" aria-label={`${moduleLabel} - Centro de Comando`}>
+                  <thead>
+                    <tr>
+                      <th scope="col">Aluno</th>
+                      <th scope="col">Progresso (%)</th>
+                      <th scope="col">Engajamento (%)</th>
+                      <th scope="col">Dias (D)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {studentsResource.data.map((student) => {
+                      const draft = getCommandCenterDraft(mode, student.id);
+                      return (
+                        <tr key={`cc-${student.id}`}>
+                          <td>{student.full_name}</td>
+                          <td>
+                            <input
+                              aria-label={`${moduleLabel} Centro Progresso ${student.full_name}`}
+                              type="number"
+                              step="0.1"
+                              value={draft.progress}
+                              onChange={(event) => setCommandCenterDraftField(mode, student.id, "progress", event.target.value)}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              aria-label={`${moduleLabel} Centro Engajamento ${student.full_name}`}
+                              type="number"
+                              step="0.1"
+                              value={draft.engagement}
+                              onChange={(event) => setCommandCenterDraftField(mode, student.id, "engagement", event.target.value)}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              aria-label={`${moduleLabel} Centro Dias ${student.full_name}`}
+                              type="number"
+                              step="1"
+                              min="0"
+                              value={draft.daysLeft}
+                              onChange={(event) => setCommandCenterDraftField(mode, student.id, "daysLeft", event.target.value)}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section>
+              <h3>Matriz de Decisão</h3>
+              <div className="admin-data-table-wrapper">
+                <table className="admin-data-table" aria-label={`${moduleLabel} - Matriz de Decisão`}>
+                  <thead>
+                    <tr>
+                      <th scope="col">Aluno</th>
+                      <th scope="col">Urgência</th>
+                      <th scope="col">Progresso (%)</th>
+                      <th scope="col">Engajamento (%)</th>
+                      <th scope="col">Dias (D)</th>
+                      <th scope="col">LTV (R$)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {studentsResource.data.map((student) => {
+                      const draft = getMatrixDraft(mode, student.id);
+                      return (
+                        <tr key={`mx-${student.id}`}>
+                          <td>{student.full_name}</td>
+                          <td>
+                            <select
+                              aria-label={`${moduleLabel} Matriz Urgência ${student.full_name}`}
+                              value={draft.urgency}
+                              onChange={(event) => setMatrixDraftField(mode, student.id, "urgency", event.target.value)}
+                            >
+                              {URGENCY_OPTIONS.map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                              ))}
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              aria-label={`${moduleLabel} Matriz Progresso ${student.full_name}`}
+                              type="number"
+                              step="0.1"
+                              value={draft.progress}
+                              onChange={(event) => setMatrixDraftField(mode, student.id, "progress", event.target.value)}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              aria-label={`${moduleLabel} Matriz Engajamento ${student.full_name}`}
+                              type="number"
+                              step="0.1"
+                              value={draft.engagement}
+                              onChange={(event) => setMatrixDraftField(mode, student.id, "engagement", event.target.value)}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              aria-label={`${moduleLabel} Matriz Dias ${student.full_name}`}
+                              type="number"
+                              step="1"
+                              min="0"
+                              value={draft.daysLeft}
+                              onChange={(event) => setMatrixDraftField(mode, student.id, "daysLeft", event.target.value)}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              aria-label={`${moduleLabel} Matriz LTV ${student.full_name}`}
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              value={draft.ltv}
+                              onChange={(event) => setMatrixDraftField(mode, student.id, "ltv", event.target.value)}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section>
+              <h3>Radar</h3>
+              {!selectedStudentId ? (
+                <p className="admin-state">Selecione um aluno para editar os eixos do radar.</p>
+              ) : clientViewRadarResource.loading ? (
+                <p className="admin-state">Carregando radar...</p>
+              ) : clientViewRadarResource.data.axisScores.length === 0 ? (
+                <p className="admin-state">Sem dados de radar para leitura neste contexto.</p>
+              ) : (
+                <div className="admin-data-table-wrapper">
+                  <table className="admin-data-table" aria-label={`${moduleLabel} - Radar`}>
+                    <thead>
+                      <tr>
+                        <th scope="col">Eixo</th>
+                        <th scope="col">Baseline (%)</th>
+                        <th scope="col">Atual (%)</th>
+                        <th scope="col">Projetado (%)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {clientViewRadarResource.data.axisScores.map((axis) => {
+                        const draft = getRadarDraft(mode, axis);
+                        return (
+                          <tr key={`rd-${axis.axisKey}`}>
+                            <td>{axis.axisLabel}</td>
+                            <td>
+                              <input
+                                aria-label={`${moduleLabel} Radar Baseline ${axis.axisLabel}`}
+                                type="number"
+                                step="0.1"
+                                value={draft.baseline}
+                                onChange={(event) => setRadarDraftField(mode, axis.axisKey, "baseline", event.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                aria-label={`${moduleLabel} Radar Atual ${axis.axisLabel}`}
+                                type="number"
+                                step="0.1"
+                                value={draft.current}
+                                onChange={(event) => setRadarDraftField(mode, axis.axisKey, "current", event.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                aria-label={`${moduleLabel} Radar Projetado ${axis.axisLabel}`}
+                                type="number"
+                                step="0.1"
+                                value={draft.projected}
+                                onChange={(event) => setRadarDraftField(mode, axis.axisKey, "projected", event.target.value)}
+                              />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+          </div>
+        ) : null}
+      </article>
+    );
+  }
+
 
   return (
     <AdminShell
@@ -1138,57 +1590,8 @@ export function AdminPage() {
     >
       <section className="admin-page">
 
-        {isProviderPanel ? (
-          <article className="admin-module" aria-label="Provider View">
-            <p className="admin-module__eyebrow">Provider View</p>
-            <div className="admin-provider-view-controls">
-              <label>
-                Provider:
-                <select value={selectedProviderId} onChange={(event) => setSelectedProviderId(event.target.value)}>
-                  <option value="">Selecione</option>
-                  {mentorsResource.data.map((mentor) => (
-                    <option key={mentor.id} value={mentor.id}>{mentor.full_name}</option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <p className="admin-module__muted">
-              Selecione o Provider e use os paineis de Centro de Comando, Matriz e Radar no modo provider para operar consentimento e atualizacao de metricas.
-            </p>
-          </article>
-        ) : null}
-        {true ? (
-          <article className="admin-module" aria-label="Client View">
-            <p className="admin-module__eyebrow">Client View</p>
-            <div className="admin-provider-view-controls">
-              <label>
-                Cliente:
-                <select value={selectedClientViewClientId} onChange={(event) => setSelectedClientViewClientId(event.target.value)}>
-                  <option value="">Selecione</option>
-                  {activeClients.map((client) => (
-                    <option key={client.id} value={client.id}>{client.name}</option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <p className="admin-module__muted">
-              Regra de negócio: a edição de métricas do client ocorre no fluxo Client-Provider, não no Admin Client View.
-            </p>
-            {selectedClientViewClientId && !selectedStudentId ? <p className="admin-module__muted">Selecione um aluno no painel de alunos para visualizar o radar em modo leitura.</p> : null}
-            <div className="admin-provider-view-edit-grid" data-testid="admin-client-view-read-only">
-              {clientViewRadarResource.loading ? <p className="admin-state">Carregando radar...</p> : null}
-              {!clientViewRadarResource.loading && clientViewRadarResource.data.axisScores.length === 0 ? (
-                <p className="admin-state">Sem dados de radar para leitura neste contexto.</p>
-              ) : null}
-              {clientViewRadarResource.data.axisScores.map((axis) => (
-                <label key={axis.axisKey}>
-                  {axis.axisLabel}
-                  <input type="text" readOnly value={`baseline ${axis.baseline} | current ${axis.current} | projected ${axis.projected}`} />
-                </label>
-              ))}
-            </div>
-          </article>
-        ) : null}
+        {isProviderPanel ? renderOperationalView("provider") : null}
+        {isClientViewPanel ? renderOperationalView("client") : null}
         {!isAuthenticated || user?.role !== "admin" ? (
           <section className="admin-notice">
             <strong>Entre com o usuario admin para operar o bloco real.</strong>
@@ -1263,353 +1666,6 @@ export function AdminPage() {
               </div>
             ) : null}
             {selectedDatabaseTable && databaseOffset < databaseTotal ? <button type="button" className="admin-inline-cta" onClick={() => void loadDatabaseRecords(selectedDatabaseTable, databaseOffset, true)} disabled={databaseLoading}>{databaseLoading ? "Carregando..." : "Carregar +10"}</button> : null}
-          </section>
-        ) : null}
-
-        {false ? (
-          <section className="admin-module admin-clients-stage">
-            {showClientSectionBar ? (
-              <div className="admin-section-bar">
-                <div>
-                  <p className="admin-module__eyebrow">Cliente/Empresa</p>
-                  <h2>Clientes ativos</h2>
-                </div>
-                <div className="admin-section-bar__actions">
-                  <button type="button" className="admin-inline-cta" onClick={openClientCreateModal}>
-                    Cadastrar cliente
-                  </button>
-                </div>
-              </div>
-            ) : null}
-
-            {clientsResource.loading && clientsResource.data.length === 0 ? <p className="admin-state">Carregando clientes...</p> : null}
-            {clientsResource.error && clientsResource.data.length === 0 ? (
-              <div className="admin-state admin-state--error">
-                <p>{clientsResource.error}</p>
-                <button type="button" onClick={() => void clientsResource.refresh()}>
-                  Tentar novamente
-                </button>
-              </div>
-            ) : null}
-            {!clientsResource.loading && !clientsResource.error && activeClients.length === 0 ? (
-              <p className="admin-state">Nenhum cliente ativo cadastrado ainda. Use o botao de cadastro para iniciar a operacao.</p>
-            ) : null}
-
-            {!hasContextPanel && activeClients.length > 0 ? (
-              <ul className="admin-client-grid" aria-label="Clientes ativos">
-                {activeClients.map((client) => (
-                  <li key={client.id}>
-                    <button type="button" className="admin-client-card" onClick={() => openClientArea(client.id)}>
-                      <span>{formatCnpj(client.cnpj)}</span>
-                      <strong>{client.name}</strong>
-                      <small>{client.brand_name || "Cliente institucional"}</small>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-
-            {isClientsPanel && selectedClient ? (
-              <div className="admin-client-panel">
-                {renderCreateChooser()}
-                <div className="admin-client-focus">
-                  <article className="admin-client-card admin-client-card--spotlight">
-                    <span>{formatCnpj(selectedClient.cnpj)}</span>
-                    <strong>{selectedClient.name}</strong>
-                    <small>{selectedClient.brand_name || "Cliente institucional"}</small>
-                  </article>
-
-                  <section className="admin-product-stage">
-                    {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
-                    {productsResource.error && productsResource.data.length === 0 ? (
-                      <div className="admin-state admin-state--error">
-                        <p>{productsResource.error}</p>
-                        <button type="button" onClick={() => void productsResource.refresh()}>
-                          Tentar novamente
-                        </button>
-                      </div>
-                    ) : null}
-                    {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
-                      <div className="admin-empty-stack">
-                        <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
-                      </div>
-                    ) : null}
-                    {productsResource.data.length > 0 ? (
-                      <ul className="admin-product-grid" aria-label="Produtos do cliente">
-                        {productsResource.data.map((product) => (
-                          <li key={product.id}>
-                            <button
-                              type="button"
-                              className={product.id === selectedProductId ? "admin-product-card is-active" : "admin-product-card"}
-                              onClick={() => openProductArea(product.id)}
-                            >
-                              <span>{product.code}</span>
-                              <strong>{product.name}</strong>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </section>
-                </div>
-              </div>
-            ) : null}
-
-            {isProductsPanel ? (
-              <div className="admin-product-panel">
-                {renderCreateChooser()}
-                {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
-                {productsResource.error && productsResource.data.length === 0 ? (
-                  <div className="admin-state admin-state--error">
-                    <p>{productsResource.error}</p>
-                    <button type="button" onClick={() => void productsResource.refresh()}>
-                      Tentar novamente
-                    </button>
-                  </div>
-                ) : null}
-                {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
-                  <div className="admin-empty-stack">
-                    <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
-                  </div>
-                ) : null}
-
-                {selectedProduct ? (
-                  <div className="admin-product-hierarchy">
-                    <button
-                      type="button"
-                      className="admin-hierarchy-card admin-hierarchy-card--product"
-                      onClick={() => {
-                        setIsPillarExpanded(false);
-                        setSelectedPillarId(null);
-                      }}
-                    >
-                      <span>{selectedProduct.code}</span>
-                      <strong>{selectedProduct.name}</strong>
-                      <small>{selectedProduct.delivery_model}</small>
-                    </button>
-                    {selectedMentor ? (
-                      <button type="button" className="admin-hierarchy-card admin-hierarchy-card--action" onClick={() => openMentorArea(selectedProduct.id)}>
-                        <span>Mentor</span>
-                        <strong>{selectedMentor.full_name}</strong>
-                        <small>{selectedMentor.email}</small>
-                      </button>
-                    ) : (
-                      <article className="admin-hierarchy-card">
-                        <span>Mentor</span>
-                        <strong>Nenhum Mentor Cadastrado</strong>
-                        <small>Use Cadastrar... para vincular o mentor principal.</small>
-                      </article>
-                    )}
-                    <div className="admin-pillar-stack">
-                      {!isPillarExpanded ? (
-                        <button
-                          type="button"
-                          className={pillarCards.length > 0 ? "admin-hierarchy-card admin-hierarchy-card--action" : "admin-hierarchy-card"}
-                          onClick={togglePillarStack}
-                          disabled={pillarCards.length === 0}
-                        >
-                          <span>Pilar</span>
-                          <strong>
-                            {pillarsResource.loading && pillarCards.length === 0
-                              ? "Carregando pilares..."
-                              : pillarCards.length > 0
-                                ? "Clique para abrir"
-                                : "Nenhum Pilar Cadastrado"}
-                          </strong>
-                          <small>
-                            {pillarsResource.error && pillarCards.length === 0
-                              ? pillarsResource.error
-                              : pillarCards.length > 0
-                                ? `${pillarCards.length} pilares vinculados`
-                                : "Use Cadastrar... para estruturar o produto."}
-                          </small>
-                        </button>
-                      ) : null}
-                      <div className={isPillarExpanded ? "admin-pillar-list is-open" : "admin-pillar-list"}>
-                        {pillarCards.map((pillar) => {
-                          const isMetricOpen = selectedPillarId === pillar.id;
-                          return (
-                            <div key={pillar.id} className="admin-pillar-entry">
-                              <button
-                                type="button"
-                                className={isMetricOpen ? "admin-hierarchy-card admin-hierarchy-card--pillar is-selected" : "admin-hierarchy-card admin-hierarchy-card--pillar"}
-                                onClick={() => toggleMetricStack(pillar.id)}
-                              >
-                                <span>{pillar.label}</span>
-                                <strong>{pillar.title}</strong>
-                                <small>{pillar.detail}</small>
-                              </button>
-                              {isMetricOpen ? (
-                                <div className="admin-metric-stack">
-                                  {metricsResource.loading && metricsResource.data.length === 0 ? <p className="admin-state">Carregando metricas...</p> : null}
-                                  {metricsResource.error && metricsResource.data.length === 0 ? (
-                                    <div className="admin-state admin-state--error">
-                                      <p>{metricsResource.error}</p>
-                                      <button type="button" onClick={() => void metricsResource.refresh()}>
-                                        Tentar novamente
-                                      </button>
-                                    </div>
-                                  ) : null}
-                                  {!metricsResource.loading && !metricsResource.error && metricsResource.data.length === 0 ? (
-                                    <div className="admin-empty-stack">
-                                      <p className="admin-state">Nenhuma metrica cadastrada para {pillar.title}.</p>
-                                    </div>
-                                  ) : null}
-                                  {metricsResource.data.length > 0 ? (
-                                    <ul className="admin-metric-list" aria-label={`Metricas do pilar ${pillar.title}`}>
-                                      {metricsResource.data.map((metric) => (
-                                        <li key={metric.id}>
-                                          <article className="admin-metric-card">
-                                            <span>{metric.direction.replace("_", " ")}</span>
-                                            <strong>{metric.name}</strong>
-                                            <small>{metric.unit || metric.code.toUpperCase()}</small>
-                                          </article>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  ) : null}
-                                </div>
-                              ) : null}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
-
-            {isMentorsPanel ? (
-              <div className="admin-product-panel">
-                {renderCreateChooser()}
-                {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
-                {productsResource.error && productsResource.data.length === 0 ? (
-                  <div className="admin-state admin-state--error">
-                    <p>{productsResource.error}</p>
-                    <button type="button" onClick={() => void productsResource.refresh()}>
-                      Tentar novamente
-                    </button>
-                  </div>
-                ) : null}
-                {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
-                  <div className="admin-empty-stack">
-                    <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
-                  </div>
-                ) : null}
-
-                {selectedProduct ? (
-                  <div className="admin-mentor-focus">
-                    <article className="admin-hierarchy-card admin-hierarchy-card--product">
-                      <span>{selectedProduct.code}</span>
-                      <strong>{selectedProduct.name}</strong>
-                      <small>{selectedProduct.delivery_model}</small>
-                    </article>
-                    <section className="admin-mentor-stage">
-                      {mentorsResource.loading && mentorsResource.data.length === 0 ? <p className="admin-state">Carregando mentores...</p> : null}
-                      {mentorsResource.error && mentorsResource.data.length === 0 ? (
-                        <div className="admin-state admin-state--error">
-                          <p>{mentorsResource.error}</p>
-                          <button type="button" onClick={() => void mentorsResource.refresh()}>
-                            Tentar novamente
-                          </button>
-                        </div>
-                      ) : null}
-                      {!mentorsResource.loading && !mentorsResource.error && mentorsResource.data.length === 0 ? (
-                        <div className="admin-empty-stack">
-                          <p className="admin-state">Nenhum mentor cadastrado para este produto.</p>
-                        </div>
-                      ) : null}
-                      {mentorsResource.data.length > 0 ? (
-                        <ul className="admin-mentor-grid" aria-label="Mentores do produto">
-                          {mentorsResource.data.map((mentor) => (
-                            <li key={mentor.id}>
-                              <button
-                                type="button"
-                                className={mentor.id === selectedMentor?.id ? "admin-mentor-card is-primary" : "admin-mentor-card"}
-                                onClick={() => openStudentArea(mentor.id)}
-                              >
-                                <span>{mentor.id === selectedProduct.mentor_id ? "Mentor principal" : "Mentor"}</span>
-                                <strong>{mentor.full_name}</strong>
-                                <small>{mentor.email}</small>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : null}
-                    </section>
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
-
-            {isStudentsPanel ? (
-              <div className="admin-product-panel">
-                {renderStudentPanelActions()}
-                {productsResource.loading && productsResource.data.length === 0 ? <p className="admin-state">Carregando produtos...</p> : null}
-                {productsResource.error && productsResource.data.length === 0 ? (
-                  <div className="admin-state admin-state--error">
-                    <p>{productsResource.error}</p>
-                    <button type="button" onClick={() => void productsResource.refresh()}>
-                      Tentar novamente
-                    </button>
-                  </div>
-                ) : null}
-                {!productsResource.loading && !productsResource.error && productsResource.data.length === 0 ? (
-                  <div className="admin-empty-stack">
-                    <p className="admin-state">Nenhum produto cadastrado para este cliente.</p>
-                  </div>
-                ) : null}
-
-                {selectedProduct && selectedMentor ? (
-                  <div className="admin-student-focus">
-                    <article className="admin-hierarchy-card admin-hierarchy-card--product">
-                      <span>{selectedProduct.code}</span>
-                      <strong>{selectedProduct.name}</strong>
-                      <small>{selectedProduct.delivery_model}</small>
-                    </article>
-                    <article className="admin-hierarchy-card">
-                      <span>Mentor</span>
-                      <strong>{selectedMentor.full_name}</strong>
-                      <small>{selectedMentor.email}</small>
-                    </article>
-                    <section className="admin-student-stage">
-                      {studentsResource.loading && studentsResource.data.length === 0 ? <p className="admin-state">Carregando alunos...</p> : null}
-                      {studentsResource.error && studentsResource.data.length === 0 ? (
-                        <div className="admin-state admin-state--error">
-                          <p>{studentsResource.error}</p>
-                          <button type="button" onClick={() => void studentsResource.refresh()}>
-                            Tentar novamente
-                          </button>
-                        </div>
-                      ) : null}
-                      {!studentsResource.loading && !studentsResource.error && studentsResource.data.length === 0 ? (
-                        <div className="admin-empty-stack">
-                          <p className="admin-state">Nenhum aluno cadastrado para este mentor.</p>
-                        </div>
-                      ) : null}
-                      {studentsResource.data.length > 0 ? (
-                        <ul className="admin-student-grid" aria-label="Alunos do mentor">
-                          {studentsResource.data.map((student) => (
-                            <li key={student.id}>
-                              <button
-                                type="button"
-                                className={student.id === selectedStudent?.id ? "admin-student-card is-selected" : "admin-student-card"}
-                                onClick={() => setSelectedStudentId(student.id)}
-                              >
-                                <span>{student.initials}</span>
-                                <strong>{student.full_name}</strong>
-                                <small>{student.email || formatCpf(student.cpf || "")}</small>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : null}
-                    </section>
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
           </section>
         ) : null}
 

@@ -688,22 +688,25 @@ describe("admin client product mentor and student modals", () => {
   }, 10000);
 });
 
-it("mantem Client View em modo somente leitura sem controles de edição", () => {
+it("renderiza Client View com tabelas editaveis para centro, matriz e radar", () => {
   clientsMockData = [buildClient()];
+  productsMockData = [buildProduct()];
+  mentorsMockData = [buildMentor()];
+  studentsMockData = [buildStudent()];
   radarAxesMockData = [{ axisKey: "engagement", axisLabel: "Engajamento", baseline: 0.4, current: 0.6, projected: 0.65 }];
 
   render(
-    <MemoryRouter initialEntries={["/app/admin"]}>
+    <MemoryRouter initialEntries={["/app/admin?panel=client"]}>
       <AdminPage />
     </MemoryRouter>
   );
 
-  expect(screen.getByText("Client View")).toBeInTheDocument();
-  expect(
-    screen.getByText("Regra de negócio: a edição de métricas do client ocorre no fluxo Client-Provider, não no Admin Client View.")
-  ).toBeInTheDocument();
-  expect(screen.queryByRole("button", { name: /Registrar consentimento/i })).not.toBeInTheDocument();
-  expect(screen.queryByRole("button", { name: /Salvar/i })).not.toBeInTheDocument();
-  expect(screen.queryByRole("button", { name: /Editar/i })).not.toBeInTheDocument();
-  expect(screen.getByTestId("admin-client-view-read-only")).toMatchSnapshot();
+  expect(screen.getAllByText("Client View").length).toBeGreaterThan(0);
+  expect(screen.getByRole("table", { name: "Client View - Centro de Comando" })).toBeInTheDocument();
+  expect(screen.getByRole("table", { name: "Client View - Matriz de Decisão" })).toBeInTheDocument();
+  expect(screen.getByRole("table", { name: "Client View - Radar" })).toBeInTheDocument();
+  expect(screen.getByTestId("admin-client-view-editable")).toBeInTheDocument();
+  expect(screen.getByLabelText("Client View Centro Progresso Aluno Teste")).toBeInTheDocument();
+  expect(screen.getByLabelText("Client View Matriz Urgência Aluno Teste")).toBeInTheDocument();
+  expect(screen.getByLabelText("Client View Radar Atual Engajamento")).toBeInTheDocument();
 });
