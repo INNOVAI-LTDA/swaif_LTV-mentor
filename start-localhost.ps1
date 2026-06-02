@@ -3,12 +3,17 @@ param(
   [int]$FrontendPort = 5173,
   [string]$BackendHost = "127.0.0.1",
   [int]$PortSearchAttempts = 20,
+  [int]$BackendStartupTimeoutSeconds = 180,
+  [int]$FrontendStartupTimeoutSeconds = 60,
   [switch]$NoInstall
 )
 
 $ErrorActionPreference = "Stop"
 $BackendJobName = "deva-backend"
 $FrontendJobName = "deva-frontend"
+$RuntimeLogDir = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) ".logs/runtime"
+$BackendLogFile = Join-Path $RuntimeLogDir "backend.log"
+$FrontendLogFile = Join-Path $RuntimeLogDir "frontend.log"
 
 function Ensure-Command([string]$Name) {
   if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
@@ -70,12 +75,55 @@ function Get-EnvFileValue([string]$EnvFilePath, [string]$Key) {
   return $parts[1].Trim()
 }
 
+function Ensure-RuntimeLogDir() {
+  if (-not (Test-Path $RuntimeLogDir)) {
+    New-Item -ItemType Directory -Path $RuntimeLogDir -Force | Out-Null
+  }
+}
+
+function Reset-RuntimeLogFiles() {
+  Ensure-RuntimeLogDir
+  foreach ($path in @($BackendLogFile, $FrontendLogFile)) {
+    if (-not (Test-Path $path)) {
+      Set-Content -Path $path -Value "" -Encoding utf8
+      continue
+    }
+
+    $cleared = $false
+    for ($attempt = 1; $attempt -le 5; $attempt++) {
+      try {
+        Set-Content -Path $path -Value "" -Encoding utf8 -Force -ErrorAction Stop
+        $cleared = $true
+        break
+      } catch {
+        Start-Sleep -Milliseconds 250
+      }
+    }
+    if (-not $cleared) {
+      Write-Host "[DEVA] Aviso: nao foi possivel limpar log em uso ($path). Mantendo arquivo atual para append." -ForegroundColor Yellow
+    }
+  }
+}
+
+function Get-JobOutputText([string]$JobName) {
+  $job = Get-Job -Name $JobName -ErrorAction SilentlyContinue
+  if ($null -eq $job) {
+    return ""
+  }
+  $output = Receive-Job -Job $job -Keep -ErrorAction SilentlyContinue
+  if ($null -eq $output -or $output.Count -eq 0) {
+    return ""
+  }
+  return ($output | ForEach-Object { "$_" }) -join "`n"
+}
+
 function Stop-RuntimeJobs() {
   foreach ($jobName in @($BackendJobName, $FrontendJobName)) {
     $job = Get-Job -Name $jobName -ErrorAction SilentlyContinue
     if ($null -ne $job) {
       if ($job.State -eq "Running") {
         Stop-Job -Job $job -ErrorAction SilentlyContinue
+        Wait-Job -Job $job -Timeout 5 -ErrorAction SilentlyContinue | Out-Null
       }
       Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
     }
@@ -86,16 +134,36 @@ function Start-BackendJob(
   [string]$Dir,
   [string]$BackendBindHost,
   [int]$Port,
-  [string]$SupabaseDbUrl
+  [string]$SupabaseDbUrl,
+  [string]$LogFile
 ) {
   Start-Job -Name $BackendJobName -ScriptBlock {
-    param($WorkingDir, $BackendBindHost, $BackendBindPort, $SupabaseUrl)
+    param($WorkingDir, $BackendBindHost, $BackendBindPort, $SupabaseUrl, $BackendRuntimeLogFile)
+    $ErrorActionPreference = "Continue"
     Set-Location $WorkingDir
+    $env:PYTHONPATH = ".vendor"
+    $env:PYTHONUNBUFFERED = "1"
     if ($SupabaseUrl) {
       $env:SUPABASE_DB_URL = $SupabaseUrl
     }
-    py -m uvicorn app.main:app --host $BackendBindHost --port $BackendBindPort --reload
-  } -ArgumentList $Dir, $BackendBindHost, $Port, $SupabaseDbUrl | Out-Null
+    Add-Content -Path $BackendRuntimeLogFile -Encoding utf8 -Value ("[DEVA] backend start: host={0} port={1} cwd={2}" -f $BackendBindHost, $BackendBindPort, $WorkingDir)
+    $exitCode = 1
+    try {
+      & py -m uvicorn app.main:app --host $BackendBindHost --port $BackendBindPort --log-level info 2>&1 |
+        ForEach-Object { Add-Content -Path $BackendRuntimeLogFile -Encoding utf8 -Value "$_" }
+      if ($null -ne $LASTEXITCODE) {
+        $exitCode = [int]$LASTEXITCODE
+      } else {
+        $exitCode = 0
+      }
+    } catch {
+      $message = $_ | Out-String
+      Add-Content -Path $BackendRuntimeLogFile -Encoding utf8 -Value "[DEVA] backend launcher exception:"
+      Add-Content -Path $BackendRuntimeLogFile -Encoding utf8 -Value $message
+      $exitCode = 1
+    }
+    Add-Content -Path $BackendRuntimeLogFile -Encoding utf8 -Value ("[DEVA] backend process exit code: {0}" -f $exitCode)
+  } -ArgumentList $Dir, $BackendBindHost, $Port, $SupabaseDbUrl, $LogFile | Out-Null
 }
 
 function Start-FrontendJob(
@@ -103,15 +171,32 @@ function Start-FrontendJob(
   [string]$FrontendBindHost,
   [int]$Port,
   [string]$ApiBaseUrl,
-  [string]$ViteCliPath
+  [string]$ViteCliPath,
+  [string]$LogFile
 ) {
   Start-Job -Name $FrontendJobName -ScriptBlock {
-    param($WorkingDir, $FrontendBindHost, $FrontendBindPort, $BackendApiBaseUrl, $ViteCli)
+    param($WorkingDir, $FrontendBindHost, $FrontendBindPort, $BackendApiBaseUrl, $ViteCli, $FrontendRuntimeLogFile)
     Set-Location $WorkingDir
     $env:VITE_DEPLOY_TARGET = "local"
     $env:VITE_API_BASE_URL = $BackendApiBaseUrl
-    node $ViteCli --host $FrontendBindHost --port $FrontendBindPort
-  } -ArgumentList $Dir, $FrontendBindHost, $Port, $ApiBaseUrl, $ViteCliPath | Out-Null
+    Add-Content -Path $FrontendRuntimeLogFile -Encoding utf8 -Value ("[DEVA] frontend start: host={0} port={1} cwd={2}" -f $FrontendBindHost, $FrontendBindPort, $WorkingDir)
+    $exitCode = 1
+    try {
+      & node $ViteCli --host $FrontendBindHost --port $FrontendBindPort 2>&1 |
+        ForEach-Object { Add-Content -Path $FrontendRuntimeLogFile -Encoding utf8 -Value "$_" }
+      if ($null -ne $LASTEXITCODE) {
+        $exitCode = [int]$LASTEXITCODE
+      } else {
+        $exitCode = 0
+      }
+    } catch {
+      $message = $_ | Out-String
+      Add-Content -Path $FrontendRuntimeLogFile -Encoding utf8 -Value "[DEVA] frontend launcher exception:"
+      Add-Content -Path $FrontendRuntimeLogFile -Encoding utf8 -Value $message
+      $exitCode = 1
+    }
+    Add-Content -Path $FrontendRuntimeLogFile -Encoding utf8 -Value ("[DEVA] frontend process exit code: {0}" -f $exitCode)
+  } -ArgumentList $Dir, $FrontendBindHost, $Port, $ApiBaseUrl, $ViteCliPath, $LogFile | Out-Null
 }
 
 function Show-RuntimeStatus() {
@@ -131,10 +216,49 @@ function Show-RuntimeLogs([int]$Tail = 25) {
     $output = Receive-Job -Job $job -Keep -ErrorAction SilentlyContinue
     if ($null -eq $output -or $output.Count -eq 0) {
       Write-Host "[DEVA] (sem output ainda)" -ForegroundColor DarkGray
+      $fallbackPath = if ($jobName -eq $BackendJobName) { $BackendLogFile } else { $FrontendLogFile }
+      if (Test-Path $fallbackPath) {
+        Write-Host "[DEVA] logs arquivo ($fallbackPath):" -ForegroundColor DarkGray
+        Get-Content $fallbackPath -Tail $Tail | ForEach-Object { Write-Host $_ }
+      }
       continue
     }
     $output | Select-Object -Last $Tail | ForEach-Object { Write-Host $_ }
   }
+}
+
+function Test-HttpReachable([string]$Url) {
+  try {
+    $null = Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 2
+    return $true
+  } catch {
+    if ($_.Exception.Response -ne $null) {
+      return $true
+    }
+    return $false
+  }
+}
+
+function Wait-HttpReachable(
+  [string]$Url,
+  [string]$Label,
+  [int]$TimeoutSeconds = 60
+) {
+  $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+  while ((Get-Date) -lt $deadline) {
+    if ($Label -eq "Backend") {
+      $backendJob = Get-Job -Name $BackendJobName -ErrorAction SilentlyContinue
+      if ($null -eq $backendJob -or $backendJob.State -eq "Failed" -or $backendJob.State -eq "Stopped" -or $backendJob.State -eq "Completed") {
+        return $false
+      }
+    }
+    if (Test-HttpReachable -Url $Url) {
+      Write-Host "[DEVA] $Label pronto em $Url" -ForegroundColor Green
+      return $true
+    }
+    Start-Sleep -Seconds 1
+  }
+  return $false
 }
 
 function Start-Runtime(
@@ -144,29 +268,77 @@ function Start-Runtime(
   [string]$RuntimeHost,
   [int]$RequestedBackendPort,
   [int]$RequestedFrontendPort,
-  [int]$Attempts
+  [int]$Attempts,
+  [int]$BackendTimeoutSeconds,
+  [int]$FrontendTimeoutSeconds
 ) {
   $effectiveBackendPort = Resolve-Port -BindHost $RuntimeHost -PreferredPort $RequestedBackendPort -Label "backend" -Attempts $Attempts
   $effectiveFrontendPort = Resolve-Port -BindHost "127.0.0.1" -PreferredPort $RequestedFrontendPort -Label "frontend" -Attempts $Attempts
+  $script:BackendLogFile = Join-Path $RuntimeLogDir ("backend-{0}.log" -f $effectiveBackendPort)
+  $script:FrontendLogFile = Join-Path $RuntimeLogDir ("frontend-{0}.log" -f $effectiveFrontendPort)
 
   Write-Host "[DEVA] Backend: http://$RuntimeHost`:$effectiveBackendPort" -ForegroundColor Cyan
   Write-Host "[DEVA] Frontend: http://127.0.0.1:$effectiveFrontendPort" -ForegroundColor Cyan
 
   $backendEnvFile = Join-Path $BackendPath ".env"
-  $supabaseDbUrl = Get-EnvFileValue -EnvFilePath $backendEnvFile -Key "SUPABASE_DB_URL"
+  $supabaseDbUrl = ""
+  if ($null -ne $env:SUPABASE_DB_URL) {
+    $supabaseDbUrl = $env:SUPABASE_DB_URL.Trim()
+  }
+  if (-not $supabaseDbUrl) {
+    $supabaseDbUrl = Get-EnvFileValue -EnvFilePath $backendEnvFile -Key "SUPABASE_DB_URL"
+  }
+  $secondarySupabaseDbUrl = Get-EnvFileValue -EnvFilePath $backendEnvFile -Key "TEST_POSTGRES_DB_URL"
   if ($supabaseDbUrl) {
-    Write-Host "[DEVA] SUPABASE_DB_URL carregado de backend/.env para o backend local." -ForegroundColor DarkGray
+    Write-Host "[DEVA] SUPABASE_DB_URL carregado para o backend local." -ForegroundColor DarkGray
   }
 
   $viteCli = Join-Path $FrontendPath "node_modules/vite/bin/vite.js"
   $apiBaseUrl = "http://$RuntimeHost`:$effectiveBackendPort"
 
   Stop-RuntimeJobs
-  Start-BackendJob -Dir $BackendPath -BackendBindHost $RuntimeHost -Port $effectiveBackendPort -SupabaseDbUrl $supabaseDbUrl
-  Start-FrontendJob -Dir $FrontendPath -FrontendBindHost "127.0.0.1" -Port $effectiveFrontendPort -ApiBaseUrl $apiBaseUrl -ViteCliPath $viteCli
+  Reset-RuntimeLogFiles
+  Start-BackendJob -Dir $BackendPath -BackendBindHost $RuntimeHost -Port $effectiveBackendPort -SupabaseDbUrl $supabaseDbUrl -LogFile $BackendLogFile
+  Start-FrontendJob -Dir $FrontendPath -FrontendBindHost "127.0.0.1" -Port $effectiveFrontendPort -ApiBaseUrl $apiBaseUrl -ViteCliPath $viteCli -LogFile $FrontendLogFile
+
+  $backendReady = Wait-HttpReachable -Url "$apiBaseUrl/openapi.json" -Label "Backend" -TimeoutSeconds $BackendTimeoutSeconds
+  $frontendReady = Wait-HttpReachable -Url "http://127.0.0.1:$effectiveFrontendPort" -Label "Frontend" -TimeoutSeconds $FrontendTimeoutSeconds
+
+  if (-not $backendReady -or -not $frontendReady) {
+    $backendLogs = Get-JobOutputText -JobName $BackendJobName
+    $canRetryWithSecondaryDb =
+      (-not $backendReady) -and
+      ($secondarySupabaseDbUrl) -and
+      ($secondarySupabaseDbUrl -ne $supabaseDbUrl) -and
+      ($backendLogs -match "password authentication failed")
+
+    if ($canRetryWithSecondaryDb) {
+      Write-Host "[DEVA] Falha de autenticacao no banco detectada. Tentando fallback com TEST_POSTGRES_DB_URL..." -ForegroundColor Yellow
+      Stop-RuntimeJobs
+      Reset-RuntimeLogFiles
+      Start-BackendJob -Dir $BackendPath -BackendBindHost $RuntimeHost -Port $effectiveBackendPort -SupabaseDbUrl $secondarySupabaseDbUrl -LogFile $BackendLogFile
+      Start-FrontendJob -Dir $FrontendPath -FrontendBindHost "127.0.0.1" -Port $effectiveFrontendPort -ApiBaseUrl $apiBaseUrl -ViteCliPath $viteCli -LogFile $FrontendLogFile
+      $backendReady = Wait-HttpReachable -Url "$apiBaseUrl/openapi.json" -Label "Backend" -TimeoutSeconds $BackendTimeoutSeconds
+      $frontendReady = Wait-HttpReachable -Url "http://127.0.0.1:$effectiveFrontendPort" -Label "Frontend" -TimeoutSeconds $FrontendTimeoutSeconds
+    }
+  }
+
+  if (-not $backendReady -or -not $frontendReady) {
+    $backendLogs = Get-JobOutputText -JobName $BackendJobName
+    if ((-not $backendReady) -and $backendLogs -match "Waiting for application startup") {
+      Write-Host "[DEVA] Backend ainda em startup (FastAPI lifespan). Isso costuma indicar sync inicial com banco ainda em andamento." -ForegroundColor Yellow
+      Write-Host "[DEVA] Considere aumentar -BackendStartupTimeoutSeconds ou revisar conectividade/latencia com Supabase." -ForegroundColor Yellow
+    }
+    Write-Host "[DEVA] Falha ao iniciar runtime. Status/logs atuais:" -ForegroundColor Red
+    Show-RuntimeStatus
+    Show-RuntimeLogs -Tail 60
+    throw "Runtime nao respondeu dentro do timeout. Revise logs acima."
+  }
 
   Write-Host "[DEVA] Execucao silenciosa ativa no terminal atual (sem abrir novas janelas)." -ForegroundColor Green
   Write-Host "[DEVA] Abra: http://127.0.0.1:$effectiveFrontendPort" -ForegroundColor Green
+  Write-Host "[DEVA] API base usada pelo frontend: $apiBaseUrl" -ForegroundColor DarkGray
+  Write-Host "[DEVA] Arquivos de log: $BackendLogFile | $FrontendLogFile" -ForegroundColor DarkGray
   if ($effectiveBackendPort -ne $RequestedBackendPort) {
     Write-Host "[DEVA] Aviso: backend iniciou em porta alternativa ($effectiveBackendPort) para evitar erro de permissao/uso da porta $RequestedBackendPort." -ForegroundColor Yellow
   }
@@ -200,17 +372,40 @@ if (-not $NoInstall) {
   Pop-Location
 }
 
-Start-Runtime -RepoPath $repoRoot -BackendPath $backendDir -FrontendPath $frontendDir -RuntimeHost $BackendHost -RequestedBackendPort $BackendPort -RequestedFrontendPort $FrontendPort -Attempts $PortSearchAttempts
+Start-Runtime `
+  -RepoPath $repoRoot `
+  -BackendPath $backendDir `
+  -FrontendPath $frontendDir `
+  -RuntimeHost $BackendHost `
+  -RequestedBackendPort $BackendPort `
+  -RequestedFrontendPort $FrontendPort `
+  -Attempts $PortSearchAttempts `
+  -BackendTimeoutSeconds $BackendStartupTimeoutSeconds `
+  -FrontendTimeoutSeconds $FrontendStartupTimeoutSeconds
 
 Write-Host "[DEVA] Login admin local (documentado): admin@swaif.local / admin123" -ForegroundColor DarkGray
 Write-Host "[DEVA] Comandos: [R] reiniciar | [Q] encerrar | [S] status | [L] logs" -ForegroundColor DarkGray
 
 while ($true) {
-  $action = (Read-Host "[DEVA] Escolha (R/Q/S/L)").Trim().ToUpperInvariant()
+  $rawAction = Read-Host "[DEVA] Escolha (R/Q/S/L)"
+  if ($null -eq $rawAction) {
+    Start-Sleep -Milliseconds 300
+    continue
+  }
+  $action = $rawAction.Trim().ToUpperInvariant()
   switch ($action) {
     "R" {
       Write-Host "[DEVA] Reiniciando runtime..." -ForegroundColor Yellow
-      Start-Runtime -RepoPath $repoRoot -BackendPath $backendDir -FrontendPath $frontendDir -RuntimeHost $BackendHost -RequestedBackendPort $BackendPort -RequestedFrontendPort $FrontendPort -Attempts $PortSearchAttempts
+      Start-Runtime `
+        -RepoPath $repoRoot `
+        -BackendPath $backendDir `
+        -FrontendPath $frontendDir `
+        -RuntimeHost $BackendHost `
+        -RequestedBackendPort $BackendPort `
+        -RequestedFrontendPort $FrontendPort `
+        -Attempts $PortSearchAttempts `
+        -BackendTimeoutSeconds $BackendStartupTimeoutSeconds `
+        -FrontendTimeoutSeconds $FrontendStartupTimeoutSeconds
     }
     "S" {
       Show-RuntimeStatus

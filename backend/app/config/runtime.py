@@ -42,6 +42,18 @@ def is_production_like_environment(app_env: str | None = None) -> bool:
     return normalized not in LOCAL_ENV_NAMES
 
 
+def get_auth_secret(app_env: str | None = None) -> str:
+    configured = os.getenv("APP_AUTH_SECRET", "").strip()
+    if configured:
+        return configured
+
+    normalized_env = app_env or get_app_env()
+    if normalized_env in LOCAL_ENV_NAMES:
+        return "dev-auth-secret"
+
+    raise RuntimeError("APP_AUTH_SECRET is required when APP_ENV is production-like.")
+
+
 def _parse_optional_bool(value: str, *, env_name: str) -> bool:
     normalized = value.strip().lower()
     if normalized in {"1", "true", "yes", "on"}:
@@ -117,9 +129,31 @@ def get_supabase_db_url() -> str:
     return os.getenv("SUPABASE_DB_URL", "").strip()
 
 
+def get_supabase_db_connect_timeout_seconds() -> int:
+    raw = os.getenv("SUPABASE_DB_CONNECT_TIMEOUT_SECONDS", "").strip()
+    if not raw:
+        return 15
+    try:
+        value = int(raw)
+    except ValueError as exc:
+        raise RuntimeError("SUPABASE_DB_CONNECT_TIMEOUT_SECONDS must be an integer.") from exc
+    if value <= 0:
+        raise RuntimeError("SUPABASE_DB_CONNECT_TIMEOUT_SECONDS must be greater than zero.")
+    return value
+
+
 def supabase_runtime_required() -> bool:
     configured = _get_optional_bool_env("SUPABASE_RUNTIME_REQUIRED")
     return bool(configured)
+
+
+def require_supabase_runtime_database_url(*, flow_name: str) -> str:
+    database_url = get_supabase_db_url()
+    if supabase_runtime_required() and not database_url:
+        raise RuntimeError(
+            f"SUPABASE_DB_URL is required for {flow_name} when SUPABASE_RUNTIME_REQUIRED=true."
+        )
+    return database_url
 
 
 def get_supabase_sync_default_admin_password() -> str:

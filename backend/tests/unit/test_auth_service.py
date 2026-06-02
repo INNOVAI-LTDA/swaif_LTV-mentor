@@ -3,48 +3,41 @@ from pathlib import Path
 from app.core.security import hash_password, verify_access_token
 from app.services.auth_service import AuthService
 from app.storage.contact_user_repository import ContactUserRepository
-from app.storage.student_repository import StudentRepository
 from app.storage.user_repository import UserRepository
 
 
-def _build_service(tmp_path: Path) -> tuple[AuthService, UserRepository, StudentRepository]:
+def _build_service(tmp_path: Path) -> tuple[AuthService, UserRepository]:
     users = UserRepository(tmp_path / "users.json")
-    students = StudentRepository(tmp_path / "students.json")
     contacts = ContactUserRepository(tmp_path / "contacts.json")
-    service = AuthService(users=users, students=students, contacts=contacts, secret="test-secret")
-    return service, users, students
+    service = AuthService(users=users, contacts=contacts, secret="test-secret")
+    return service, users
 
 
-def test_provisions_client_role_from_active_student(tmp_path: Path) -> None:
-    service, users, students = _build_service(tmp_path)
-    students.create(full_name="Aluno X", initials="AX", email="aluno.x@swaif.local")
+def test_does_not_provision_client_from_student_email(tmp_path: Path) -> None:
+    service, users = _build_service(tmp_path)
 
     token = service.login("aluno.x@swaif.local", "aluno_accmed")
 
-    assert token is not None
+    assert token is None
     user = users.get_by_email("aluno.x@swaif.local")
-    assert user is not None
-    assert user["role"] == "client"
+    assert user is None
 
 
 def test_login_accepts_legacy_aliases_and_emits_canonical_claim_roles(tmp_path: Path) -> None:
-    service, users, _ = _build_service(tmp_path)
+    service, users = _build_service(tmp_path)
     users.create(
-        id="usr_aluno",
         email="legacy.aluno@swaif.local",
         password_hash=hash_password("legacy123"),
         role="aluno",
         is_active=True,
     )
     users.create(
-        id="usr_student",
         email="legacy.student@swaif.local",
         password_hash=hash_password("legacy123"),
         role="student",
         is_active=True,
     )
     users.create(
-        id="usr_mentor_alias",
         email="legacy.mentor@swaif.local",
         password_hash=hash_password("legacy123"),
         role="mentor",
@@ -61,3 +54,17 @@ def test_login_accepts_legacy_aliases_and_emits_canonical_claim_roles(tmp_path: 
     assert verify_access_token(aluno_token, "test-secret")["role"] == "client"
     assert verify_access_token(student_token, "test-secret")["role"] == "client"
     assert verify_access_token(mentor_token, "test-secret")["role"] == "provider"
+
+
+def test_login_with_status_returns_password_not_configured_for_existing_user_without_hash(tmp_path: Path) -> None:
+    service, users = _build_service(tmp_path)
+    users.create(
+        email="sem.hash@swaif.local",
+        password_hash="",
+        role="provider",
+        is_active=True,
+    )
+
+    token, error_code = service.login_with_status("sem.hash@swaif.local", "qualquer")
+    assert token is None
+    assert error_code == "AUTH_PASSWORD_NOT_CONFIGURED"

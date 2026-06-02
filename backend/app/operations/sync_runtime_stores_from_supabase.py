@@ -2,11 +2,15 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
+import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
+from app.config.runtime import get_supabase_db_connect_timeout_seconds
 from app.core.security import hash_password
 from app.storage.postgres_indicator_repositories import (
     PostgresCheckpointRepository,
@@ -18,6 +22,8 @@ try:
     import psycopg
 except ImportError:  # pragma: no cover
     psycopg = None
+
+logger = logging.getLogger("swaif.runtime")
 
 
 @dataclass(frozen=True)
@@ -99,11 +105,21 @@ def _column_exists(cursor: Any, *, table_name: str, column_name: str) -> bool:
     return cursor.fetchone() is not None
 
 
-def _fetch_source_rows(database_url: str) -> dict[str, list[dict[str, Any]]]:
+def _connect(database_url: str) -> Any:
     if psycopg is None:
         raise RuntimeError("psycopg is not installed. Install dependency before syncing runtime stores.")
+    # Supabase shared pooler (transaction mode) is not compatible with prepared statements.
+    return psycopg.connect(
+        database_url,
+        prepare_threshold=None,
+        connect_timeout=get_supabase_db_connect_timeout_seconds(),
+    )
 
-    with psycopg.connect(database_url) as conn:
+
+def _fetch_source_rows(database_url: str) -> dict[str, list[dict[str, Any]]]:
+    started = time.perf_counter()
+    logger.info("supabase_sync_fetch_begin")
+    with _connect(database_url) as conn:
         with conn.cursor() as cur:
             has_password_hash = _column_exists(cur, table_name="deva_accmed_users", column_name="password_hash")
             users_query = (
@@ -118,7 +134,7 @@ def _fetch_source_rows(database_url: str) -> dict[str, list[dict[str, Any]]]:
                 """
             )
 
-            return {
+            result = {
                 "users": _query_rows(cur, users_query),
                 "organizations": _query_rows(
                     cur,
@@ -156,6 +172,17 @@ def _fetch_source_rows(database_url: str) -> dict[str, list[dict[str, Any]]]:
                     """,
                 ),
             }
+            logger.info(
+                "supabase_sync_fetch_completed users=%s organizations=%s products=%s pillars=%s metrics=%s enrollments=%s elapsed_ms=%s",
+                len(result["users"]),
+                len(result["organizations"]),
+                len(result["products"]),
+                len(result["pillars"]),
+                len(result["metrics"]),
+                len(result["enrollments"]),
+                int((time.perf_counter() - started) * 1000),
+            )
+            return result
 
 
 def _build_runtime_payloads(source: dict[str, list[dict[str, Any]]], config: SupabaseSyncConfig) -> dict[str, dict[str, Any]]:
@@ -265,6 +292,11 @@ def _build_runtime_payloads(source: dict[str, list[dict[str, Any]]], config: Sup
     runtime_users: list[dict[str, Any]] = []
     runtime_mentors: list[dict[str, Any]] = []
     runtime_students: list[dict[str, Any]] = []
+    default_password_hash_by_role = {
+        "admin": hash_password(config.default_admin_password),
+        "provider": hash_password(config.default_provider_password),
+        "client": hash_password(config.default_client_password),
+    }
 
     for row in users:
         source_user_id = str(row.get("id") or "")
@@ -280,11 +312,11 @@ def _build_runtime_payloads(source: dict[str, list[dict[str, Any]]], config: Sup
         if source_hash:
             password_hash = source_hash
         elif internal_role == "admin":
-            password_hash = hash_password(config.default_admin_password)
+            password_hash = default_password_hash_by_role["admin"]
         elif internal_role == "provider":
-            password_hash = hash_password(config.default_provider_password)
+            password_hash = default_password_hash_by_role["provider"]
         else:
-            password_hash = hash_password(config.default_client_password)
+            password_hash = default_password_hash_by_role["client"]
 
         runtime_contacts.append(
             {
@@ -467,6 +499,11 @@ def _backfill_runtime_indicator_tables(
     measurements_repo: Any | None = None,
     checkpoints_repo: Any | None = None,
 ) -> dict[str, int]:
+    started = time.perf_counter()
+    logger.info("supabase_sync_backfill_begin")
+    if measurements_repo is None and checkpoints_repo is None:
+        return _backfill_runtime_indicator_tables_bulk(database_url=database_url, payloads=payloads)
+
     measurements_store = measurements_repo or PostgresMeasurementRepository(database_url)
     checkpoints_store = checkpoints_repo or PostgresCheckpointRepository(database_url)
 
@@ -499,7 +536,10 @@ def _backfill_runtime_indicator_tables(
     checkpoint_inserted = 0
     checkpoint_skipped = 0
 
-    for enrollment_id in sorted(active_enrollment_ids):
+    enrollment_ids = sorted(active_enrollment_ids)
+    total_enrollments = len(enrollment_ids)
+
+    for idx, enrollment_id in enumerate(enrollment_ids, start=1):
         measurement_rows = measurements_by_enrollment.get(enrollment_id, [])
         checkpoint_rows = checkpoints_by_enrollment.get(enrollment_id, [])
 
@@ -512,8 +552,16 @@ def _backfill_runtime_indicator_tables(
         checkpoint_candidates += int(checkpoint_result.get("candidates", 0) or 0)
         checkpoint_inserted += int(checkpoint_result.get("inserted", 0) or 0)
         checkpoint_skipped += int(checkpoint_result.get("skipped", 0) or 0)
+        if idx % 25 == 0 or idx == total_enrollments:
+            logger.info(
+                "supabase_sync_backfill_progress processed=%s total=%s measurement_inserted=%s checkpoint_inserted=%s",
+                idx,
+                total_enrollments,
+                measurement_inserted,
+                checkpoint_inserted,
+            )
 
-    return {
+    result = {
         "active_enrollments": len(active_enrollment_ids),
         "measurement_candidates": measurement_candidates,
         "measurement_inserted": measurement_inserted,
@@ -522,6 +570,153 @@ def _backfill_runtime_indicator_tables(
         "checkpoint_inserted": checkpoint_inserted,
         "checkpoint_skipped": checkpoint_skipped,
     }
+    logger.info(
+        "supabase_sync_backfill_completed active_enrollments=%s measurement_inserted=%s checkpoint_inserted=%s elapsed_ms=%s",
+        result["active_enrollments"],
+        result["measurement_inserted"],
+        result["checkpoint_inserted"],
+        int((time.perf_counter() - started) * 1000),
+    )
+    return result
+
+
+def _backfill_runtime_indicator_tables_bulk(*, database_url: str, payloads: dict[str, dict[str, Any]]) -> dict[str, int]:
+    started = time.perf_counter()
+    measurements_store = PostgresMeasurementRepository(database_url)
+    checkpoints_store = PostgresCheckpointRepository(database_url)
+
+    enrollments = payloads.get("enrollments", {}).get("items", [])
+    measurements = payloads.get("measurements", {}).get("items", [])
+    checkpoints = payloads.get("checkpoints", {}).get("items", [])
+
+    active_enrollment_ids = sorted(
+        {
+            str(item.get("id") or "")
+            for item in enrollments
+            if bool(item.get("is_active", False)) and str(item.get("id") or "")
+        }
+    )
+    active_enrollment_set = set(active_enrollment_ids)
+
+    measurement_params: list[tuple[Any, ...]] = []
+    for row in measurements:
+        enrollment_id = str(row.get("enrollment_id") or "")
+        if enrollment_id not in active_enrollment_set:
+            continue
+        measurement_params.append(
+            (
+                str(row.get("id") or f"mea_{uuid4().hex}"),
+                enrollment_id,
+                str(row["metric_id"]),
+                float(row["value_baseline"]),
+                float(row["value_current"]),
+                None if row.get("value_projected") is None else float(row["value_projected"]),
+                row.get("improving_trend"),
+            )
+        )
+
+    checkpoint_params: list[tuple[Any, ...]] = []
+    for row in checkpoints:
+        enrollment_id = str(row.get("enrollment_id") or "")
+        if enrollment_id not in active_enrollment_set:
+            continue
+        checkpoint_params.append(
+            (
+                str(row.get("id") or f"chk_{uuid4().hex}"),
+                enrollment_id,
+                int(row["week"]),
+                str(row["status"]),
+                row.get("label"),
+            )
+        )
+
+    measurement_candidates = len(measurement_params)
+    checkpoint_candidates = len(checkpoint_params)
+    measurement_inserted = 0
+    checkpoint_inserted = 0
+
+    with _connect(database_url) as conn:
+        with conn.cursor() as cur:
+            measurements_store._ensure_table(cur)
+            checkpoints_store._ensure_table(cur)
+
+            # Fast-path: when runtime tables are already fully backfilled for active enrollments.
+            if active_enrollment_ids:
+                cur.execute(
+                    f"SELECT COUNT(*) FROM {PostgresMeasurementRepository._TABLE} WHERE enrollment_id = ANY(%s)",
+                    (active_enrollment_ids,),
+                )
+                existing_measurements = int((cur.fetchone() or [0])[0] or 0)
+                cur.execute(
+                    f"SELECT COUNT(*) FROM {PostgresCheckpointRepository._TABLE} WHERE enrollment_id = ANY(%s)",
+                    (active_enrollment_ids,),
+                )
+                existing_checkpoints = int((cur.fetchone() or [0])[0] or 0)
+                if (
+                    existing_measurements >= measurement_candidates
+                    and existing_checkpoints >= checkpoint_candidates
+                ):
+                    conn.commit()
+                    elapsed_ms = int((time.perf_counter() - started) * 1000)
+                    logger.info(
+                        "supabase_sync_backfill_fastpath active_enrollments=%s existing_measurements=%s existing_checkpoints=%s elapsed_ms=%s",
+                        len(active_enrollment_ids),
+                        existing_measurements,
+                        existing_checkpoints,
+                        elapsed_ms,
+                    )
+                    return {
+                        "active_enrollments": len(active_enrollment_ids),
+                        "measurement_candidates": measurement_candidates,
+                        "measurement_inserted": 0,
+                        "measurement_skipped": measurement_candidates,
+                        "checkpoint_candidates": checkpoint_candidates,
+                        "checkpoint_inserted": 0,
+                        "checkpoint_skipped": checkpoint_candidates,
+                    }
+
+            if measurement_params:
+                cur.executemany(
+                    f"""
+                    INSERT INTO {PostgresMeasurementRepository._TABLE} (
+                        id, enrollment_id, metric_id, value_baseline, value_current, value_projected, improving_trend
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (enrollment_id, metric_id) DO NOTHING
+                    """,
+                    measurement_params,
+                )
+                measurement_inserted = int(cur.rowcount or 0)
+
+            if checkpoint_params:
+                cur.executemany(
+                    f"""
+                    INSERT INTO {PostgresCheckpointRepository._TABLE} (id, enrollment_id, week, status, label)
+                    VALUES (%s, %s, %s, %s, %s)
+                    ON CONFLICT (enrollment_id, week) DO NOTHING
+                    """,
+                    checkpoint_params,
+                )
+                checkpoint_inserted = int(cur.rowcount or 0)
+
+        conn.commit()
+
+    result = {
+        "active_enrollments": len(active_enrollment_ids),
+        "measurement_candidates": measurement_candidates,
+        "measurement_inserted": measurement_inserted,
+        "measurement_skipped": max(measurement_candidates - measurement_inserted, 0),
+        "checkpoint_candidates": checkpoint_candidates,
+        "checkpoint_inserted": checkpoint_inserted,
+        "checkpoint_skipped": max(checkpoint_candidates - checkpoint_inserted, 0),
+    }
+    logger.info(
+        "supabase_sync_backfill_completed_bulk active_enrollments=%s measurement_inserted=%s checkpoint_inserted=%s elapsed_ms=%s",
+        result["active_enrollments"],
+        result["measurement_inserted"],
+        result["checkpoint_inserted"],
+        int((time.perf_counter() - started) * 1000),
+    )
+    return result
 
 
 def _write_payload(path: Path, payload: dict[str, Any]) -> None:
@@ -530,8 +725,25 @@ def _write_payload(path: Path, payload: dict[str, Any]) -> None:
 
 
 def sync_runtime_stores_from_supabase(config: SupabaseSyncConfig) -> SupabaseSyncResult:
+    started = time.perf_counter()
+    logger.info("supabase_sync_begin")
     source_rows = _fetch_source_rows(config.database_url)
+    logger.info("supabase_sync_build_payloads_begin")
     payloads = _build_runtime_payloads(source_rows, config)
+    logger.info(
+        "supabase_sync_build_payloads_completed contacts=%s users=%s organizations=%s mentors=%s students=%s protocols=%s pillars=%s metrics=%s enrollments=%s measurements=%s checkpoints=%s",
+        len(payloads["contacts_users_v2"]["items"]),
+        len(payloads["users"]["items"]),
+        len(payloads["organizations"]["items"]),
+        len(payloads["mentors"]["items"]),
+        len(payloads["students"]["items"]),
+        len(payloads["protocols"]["items"]),
+        len(payloads["pillars"]["items"]),
+        len(payloads["metrics"]["items"]),
+        len(payloads["enrollments"]["items"]),
+        len(payloads["measurements"]["items"]),
+        len(payloads["checkpoints"]["items"]),
+    )
     runtime_backfill = _backfill_runtime_indicator_tables(database_url=config.database_url, payloads=payloads)
 
     stores: dict[str, Path] = {
@@ -576,10 +788,16 @@ def sync_runtime_stores_from_supabase(config: SupabaseSyncConfig) -> SupabaseSyn
         }
     )
 
-    return SupabaseSyncResult(
+    result = SupabaseSyncResult(
         stores=stores,
         counters=counters,
     )
+    logger.info(
+        "supabase_sync_completed total_elapsed_ms=%s runtime_backfill_active_enrollments=%s",
+        int((time.perf_counter() - started) * 1000),
+        counters["runtime_backfill_active_enrollments"],
+    )
+    return result
 
 
 __all__ = [

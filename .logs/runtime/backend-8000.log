@@ -1,0 +1,274 @@
+﻿
+[DEVA] backend start: host=127.0.0.1 port=8000 cwd=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend
+2026-05-30 00:33:32,290 INFO swaif.runtime backend_runtime_configured app_env=local client_code=local cors_origins=http://localhost:5173,http://127.0.0.1:5173,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:4173,http://127.0.0.1:4173,http://localhost:3000,http://127.0.0.1:3000 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
+INFO:     Started server process [22908]
+INFO:     Waiting for application startup.
+2026-05-30 00:33:32,389 INFO swaif.runtime supabase_startup_sync_begin
+2026-05-30 00:33:32,389 INFO swaif.runtime supabase_sync_begin
+2026-05-30 00:33:32,389 INFO swaif.runtime supabase_sync_fetch_begin
+2026-05-30 00:33:35,524 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=3134
+2026-05-30 00:33:35,722 INFO swaif.runtime supabase_sync_build_payloads_begin
+2026-05-30 00:33:36,045 INFO swaif.runtime supabase_sync_build_payloads_completed contacts=253 users=253 organizations=2 mentors=1 students=250 protocols=2 pillars=5 metrics=16 enrollments=250 measurements=4000 checkpoints=250
+2026-05-30 00:33:36,045 INFO swaif.runtime supabase_sync_backfill_begin
+2026-05-30 00:33:39,307 INFO swaif.runtime supabase_sync_backfill_fastpath active_enrollments=250 existing_measurements=4002 existing_checkpoints=250 elapsed_ms=3261
+2026-05-30 00:33:39,336 INFO swaif.runtime supabase_sync_completed total_elapsed_ms=6946 runtime_backfill_active_enrollments=250
+2026-05-30 00:33:39,337 INFO swaif.runtime supabase_startup_sync_completed counters={'contacts_users_v2': 253, 'users': 253, 'organizations': 2, 'mentors': 1, 'students': 250, 'protocols': 2, 'pillars': 5, 'metrics': 16, 'enrollments': 250, 'measurements': 4000, 'checkpoints': 250, 'measurement_overalls': 0, 'runtime_backfill_active_enrollments': 250, 'runtime_backfill_measurement_candidates': 4000, 'runtime_backfill_measurement_inserted': 0, 'runtime_backfill_measurement_skipped': 4000, 'runtime_backfill_checkpoint_candidates': 250, 'runtime_backfill_checkpoint_inserted': 0, 'runtime_backfill_checkpoint_skipped': 250}
+2026-05-30 00:33:39,337 INFO swaif.runtime startup_warmup_begin target=user_repository
+2026-05-30 00:33:44,487 INFO swaif.runtime startup_warmup_completed target=user_repository
+2026-05-30 00:33:44,488 INFO swaif.runtime startup_warmup_begin target=student_repository
+2026-05-30 00:33:46,087 INFO swaif.runtime startup_warmup_completed target=student_repository
+2026-05-30 00:33:46,087 INFO swaif.runtime backend_startup_complete app_env=local client_code=local cors_origins=http://localhost:5173,http://127.0.0.1:5173,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:4173,http://127.0.0.1:4173,http://localhost:3000,http://127.0.0.1:3000 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled supabase_sync_on_startup=True storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
+2026-05-30 00:33:46,088 WARNING swaif.runtime mentor_routes_enabled=true; keep this restricted to local-only validation environments.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56104 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61462 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61462 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61462 - "OPTIONS /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61462 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61462 - "OPTIONS /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61462 - "OPTIONS /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57478 - "GET /me HTTP/1.1" 200 OK
+2026-05-30 00:35:00,509 INFO swaif.runtime supabase_sync_fetch_begin
+2026-05-30 00:35:02,906 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2396
+INFO:     127.0.0.1:50653 - "GET /admin/clientes HTTP/1.1" 200 OK
+2026-05-30 00:35:06,109 INFO swaif.runtime supabase_sync_fetch_begin
+2026-05-30 00:35:08,518 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2409
+INFO:     127.0.0.1:50653 - "GET /admin/clientes HTTP/1.1" 200 OK
+2026-05-30 00:35:12,174 INFO swaif.runtime supabase_sync_fetch_begin
+2026-05-30 00:35:15,011 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2837
+INFO:     127.0.0.1:50653 - "GET /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62812 - "OPTIONS /admin/clientes/cli_1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59762 - "OPTIONS /admin/clientes/cli_1/produtos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59762 - "OPTIONS /admin/database-view/tables HTTP/1.1" 200 OK
+2026-05-30 00:35:18,159 INFO swaif.runtime supabase_sync_fetch_begin
+2026-05-30 00:35:18,190 INFO swaif.runtime supabase_sync_fetch_begin
+2026-05-30 00:35:18,727 INFO swaif.runtime supabase_sync_fetch_begin
+INFO:     127.0.0.1:58028 - "GET /admin/clientes/cli_1/produtos HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\uvicorn\protocols\http\httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\applications.py", line 1160, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 130, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 116, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 670, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 326, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\api\routes\admin_products.py", line 29, in list_products_by_client
+    return [ProductOut(**item) for item in service.list_products_by_client(client_id)]
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\services\admin_product_service.py", line 29, in list_products_by_client
+    self._get_active_client(client_id)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\services\admin_product_service.py", line 23, in _get_active_client
+    client = self._clients.get_by_id(client_id)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\storage\client_repository.py", line 163, in get_by_id
+    for client in self._read_items():
+                  ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\storage\client_repository.py", line 51, in _read_items
+    return self._list_from_postgres()
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\storage\client_repository.py", line 38, in _list_from_postgres
+    cur.execute(
+    ~~~~~~~~~~~^
+        """
+        ^^^
+    ...<3 lines>...
+        """
+        ^^^
+    )
+    ^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedTable: relation "deva_accmed_clients" does not exist
+LINE 3:                     FROM deva_accmed_clients
+                                 ^
+2026-05-30 00:35:20,514 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2354
+2026-05-30 00:35:20,550 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2360
+INFO:     127.0.0.1:62812 - "GET /admin/clientes/cli_1 HTTP/1.1" 200 OK
+2026-05-30 00:35:21,107 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2380
+INFO:     127.0.0.1:59762 - "GET /admin/database-view/tables HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61117 - "OPTIONS /admin/database-view/tables/contacts_users_v2/records?limit=10&offset=0 HTTP/1.1" 200 OK
+2026-05-30 00:35:40,142 INFO swaif.runtime supabase_sync_fetch_begin
+INFO:     127.0.0.1:50061 - "GET /admin/clientes/cli_1/produtos HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\uvicorn\protocols\http\httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\applications.py", line 1160, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 130, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 116, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 670, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 326, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\api\routes\admin_products.py", line 29, in list_products_by_client
+    return [ProductOut(**item) for item in service.list_products_by_client(client_id)]
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\services\admin_product_service.py", line 29, in list_products_by_client
+    self._get_active_client(client_id)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\services\admin_product_service.py", line 23, in _get_active_client
+    client = self._clients.get_by_id(client_id)
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\storage\client_repository.py", line 163, in get_by_id
+        """
+        ^^^
+    ...<3 lines>...
+        """
+        ^^^
+    )
+    ^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.UndefinedTable: relation "deva_accmed_clients" does not exist
+LINE 3:                     FROM deva_accmed_clients
+                                 ^
+2026-05-30 00:35:42,351 INFO swaif.runtime supabase_sync_fetch_begin
+2026-05-30 00:35:42,669 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2526
+INFO:     127.0.0.1:52189 - "GET /admin/database-view/tables HTTP/1.1" 200 OK
+2026-05-30 00:35:44,722 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2371
+INFO:     127.0.0.1:61117 - "GET /admin/database-view/tables/contacts_users_v2/records?limit=10&offset=0 HTTP/1.1" 200 OK
+2026-05-30 00:35:48,744 INFO swaif.runtime supabase_sync_fetch_begin
+2026-05-30 00:35:51,203 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2459
+INFO:     127.0.0.1:61117 - "GET /admin/database-view/tables/contacts_users_v2/records?limit=10&offset=0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50906 - "OPTIONS /admin/database-view/tables/users/records?limit=10&offset=0 HTTP/1.1" 200 OK
+2026-05-30 00:36:07,968 INFO swaif.runtime supabase_sync_fetch_begin
+2026-05-30 00:36:10,761 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2793
+INFO:     127.0.0.1:50906 - "GET /admin/database-view/tables/users/records?limit=10&offset=0 HTTP/1.1" 200 OK
+2026-05-30 00:36:15,015 INFO swaif.runtime supabase_sync_fetch_begin
+2026-05-30 00:36:17,525 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2509
+INFO:     127.0.0.1:50906 - "GET /admin/database-view/tables/users/records?limit=10&offset=0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50906 - "OPTIONS /admin/api-operations/catalog HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50906 - "GET /admin/api-operations/catalog HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62414 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:54796 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52263 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:60021 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:51843 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51843 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51843 - "OPTIONS /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52728 - "GET /me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51843 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51843 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51843 - "GET /mentor/matriz-renovacao?filter=all HTTP/1.1" 200 OK

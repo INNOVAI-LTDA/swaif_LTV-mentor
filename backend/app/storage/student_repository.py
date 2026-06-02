@@ -6,12 +6,22 @@ from pathlib import Path
 from threading import RLock
 from typing import Any
 
-from app.config.runtime import get_supabase_db_url
+from app.config.runtime import get_supabase_db_connect_timeout_seconds, get_supabase_db_url
 
 try:
     import psycopg
 except ImportError:  # pragma: no cover
     psycopg = None
+
+
+def _connect(database_url: str) -> Any:
+    if psycopg is None:
+        raise RuntimeError("SUPABASE_DB_URL is configured but psycopg is not installed.")
+    return psycopg.connect(
+        database_url,
+        prepare_threshold=None,
+        connect_timeout=get_supabase_db_connect_timeout_seconds(),
+    )
 
 
 def default_student_store_path() -> Path:
@@ -82,7 +92,7 @@ class StudentRepository:
 
     def _list_students_from_postgres(self) -> list[dict[str, Any]]:
         assert self._database_url
-        with psycopg.connect(self._database_url) as conn:
+        with _connect(self._database_url) as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
