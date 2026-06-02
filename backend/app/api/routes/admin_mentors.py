@@ -17,7 +17,12 @@ router = APIRouter(prefix="/admin", tags=["admin-mentores"])
 
 
 def get_admin_mentor_service() -> AdminMentorService:
-    return AdminMentorService(OrganizationRepository(), MentorRepository(), ContactUserRepository())
+    mentors_repository = None
+    try:
+        mentors_repository = MentorRepository()
+    except RuntimeError:
+        mentors_repository = None
+    return AdminMentorService(OrganizationRepository(), mentors_repository, ContactUserRepository())
 
 
 @router.get("/produtos/{product_id}/mentores", response_model=list[MentorOut])
@@ -73,4 +78,12 @@ def create_mentor(
             code="MENTOR_CONFLICT",
             message=message,
         ) from exc
+    except RuntimeError as exc:
+        if str(exc) == "mentor_write_not_supported_in_supabase_runtime":
+            raise api_error(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                code="SUPABASE_MENTOR_WRITE_UNAVAILABLE",
+                message="Cadastro de mentor indisponivel no runtime Supabase atual.",
+            ) from exc
+        raise
     return MentorOut(**mentor)

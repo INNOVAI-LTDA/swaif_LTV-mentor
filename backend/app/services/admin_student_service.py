@@ -26,7 +26,7 @@ class AdminStudentService:
     def __init__(
         self,
         organizations: OrganizationRepository,
-        mentors: MentorRepository,
+        mentors: MentorRepository | None,
         students: StudentRepository,
         enrollments: EnrollmentRepository,
         contacts: ContactUserRepository,
@@ -46,10 +46,33 @@ class AdminStudentService:
         return product
 
     def _get_active_mentor(self, mentor_id: str) -> dict[str, Any]:
-        mentor = self._mentors.get_by_id(mentor_id)
-        if not mentor or not bool(mentor.get("is_active", True)):
-            raise EntityNotFoundError("mentor not found")
-        return mentor
+        mentor = None
+        if self._mentors is not None:
+            try:
+                mentor = self._mentors.get_by_id(mentor_id)
+            except RuntimeError:
+                mentor = None
+
+        if mentor and bool(mentor.get("is_active", True)):
+            return mentor
+
+        for contact in self._contacts.list_items():
+            if str(contact.get("id") or "") != str(mentor_id):
+                continue
+            role = str(contact.get("role") or "").strip().lower()
+            if role not in {"mentor", "provider"}:
+                continue
+            if not bool(contact.get("is_active", True)):
+                continue
+            return {
+                "id": str(contact.get("id") or ""),
+                "full_name": str(contact.get("full_name") or ""),
+                "email": str(contact.get("email") or ""),
+                "organization_id": str(contact.get("organization_id") or ""),
+                "is_active": bool(contact.get("is_active", True)),
+            }
+
+        raise EntityNotFoundError("mentor not found")
 
     def list_students_by_product(self, product_id: str) -> list[dict[str, Any]]:
         self._get_active_product(product_id)

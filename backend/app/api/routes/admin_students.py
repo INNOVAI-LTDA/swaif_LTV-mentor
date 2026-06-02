@@ -79,12 +79,23 @@ def get_indicator_carga_service() -> IndicatorCargaService:
 
 
 def get_admin_student_service() -> AdminStudentService:
+    mentors_repository = None
+    product_assignments_repository = None
+    try:
+        mentors_repository = MentorRepository()
+    except RuntimeError:
+        mentors_repository = None
+    try:
+        product_assignments_repository = ProductAssignmentRepository()
+    except RuntimeError:
+        product_assignments_repository = None
+
     return AdminStudentService(
         organizations=OrganizationRepository(),
-        mentors=MentorRepository(),
+        mentors=mentors_repository,
         students=StudentRepository(),
         enrollments=EnrollmentRepository(),
-        product_assignments=ProductAssignmentRepository(),
+        product_assignments=product_assignments_repository,
         contacts=ContactUserRepository(),
     )
 

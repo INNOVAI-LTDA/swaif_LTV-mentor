@@ -34,6 +34,14 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _normalize_prefixed_id(value: str | int | None, prefix: str) -> str:
+    raw = str(value or "").strip()
+    expected = f"{prefix}_"
+    if raw.startswith(expected):
+        return raw[len(expected):]
+    return raw
+
+
 class OrganizationRepository:
     _memory_stores: dict[str, list[dict[str, Any]]] = {}
     _memory_lock = RLock()
@@ -148,11 +156,12 @@ class OrganizationRepository:
     def list_organizations(self) -> list[dict[str, Any]]:
         return self._read_items()
 
-    def list_by_client(self, client_id: int) -> list[dict[str, Any]]:
+    def list_by_client(self, client_id: int | str) -> list[dict[str, Any]]:
+        normalized_client_id = _normalize_prefixed_id(client_id, "cli")
         return [
             item
             for item in self._read_items()
-            if int(item.get("client_id") or 0) == int(client_id)
+            if _normalize_prefixed_id(item.get("client_id"), "cli") == normalized_client_id
         ]
 
     def create(
@@ -234,21 +243,23 @@ class OrganizationRepository:
         self._write_items(items)
         return organization
 
-    def get_by_id(self, organization_id: int) -> dict[str, Any] | None:
+    def get_by_id(self, organization_id: int | str) -> dict[str, Any] | None:
+        normalized_organization_id = _normalize_prefixed_id(organization_id, "org")
         for organization in self._read_items():
-            if int(organization.get("id")) == int(organization_id):
+            if _normalize_prefixed_id(organization.get("id"), "org") == normalized_organization_id:
                 return organization
         return None
 
-    def set_mentor(self, organization_id: int, mentor_id: int) -> dict[str, Any] | None:
+    def set_mentor(self, organization_id: int | str, mentor_id: int | str) -> dict[str, Any] | None:
         if self._use_postgres:
             with self._mentor_overrides_lock:
-                self._mentor_overrides[organization_id] = mentor_id
+                self._mentor_overrides[str(organization_id)] = str(mentor_id)
             return self.get_by_id(organization_id)
 
         items = self._read_items()
+        normalized_organization_id = _normalize_prefixed_id(organization_id, "org")
         for idx, organization in enumerate(items):
-            if int(organization.get("id")) == int(organization_id):
+            if _normalize_prefixed_id(organization.get("id"), "org") == normalized_organization_id:
                 organization["mentor_id"] = mentor_id
                 organization["updated_at"] = _now_iso()
                 items[idx] = organization

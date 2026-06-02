@@ -23,6 +23,13 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _normalize_client_id(value: str | int | None) -> str:
+    raw = str(value or "").strip()
+    if raw.startswith("cli_"):
+        return raw[4:]
+    return raw
+
+
 
 class ClientRepository:
     def __init__(self) -> None:
@@ -38,13 +45,35 @@ class ClientRepository:
                 cur.execute(
                     """
                     SELECT id, name, brand_name, cnpj, slug, status, is_active, timezone, currency, notes, created_at, updated_at
-                    FROM deva_accmed_clients
-                    WHERE deleted_at IS NULL
+                    FROM deva_accmed_organizations
                     """
                 )
                 columns = [column[0] for column in (cur.description or ())]
                 rows = [dict(zip(columns, row)) for row in cur.fetchall()]
-        return rows
+
+        mapped: list[dict[str, Any]] = []
+        for row in rows:
+            raw_id = str(row.get("id") or "").strip()
+            if not raw_id:
+                continue
+            mapped.append(
+                {
+                    "id": f"cli_{raw_id}",
+                    "name": str(row.get("name") or "").strip() or f"Cliente {raw_id}",
+                    "brand_name": str(row.get("brand_name") or row.get("name") or "").strip() or f"Cliente {raw_id}",
+                    "cnpj": str(row.get("cnpj") or ""),
+                    "slug": str(row.get("slug") or "").strip() or f"cliente-{raw_id}",
+                    "status": str(row.get("status") or "active"),
+                    "is_active": bool(row.get("is_active", True)),
+                    "timezone": str(row.get("timezone") or "America/Sao_Paulo"),
+                    "currency": str(row.get("currency") or "BRL"),
+                    "notes": row.get("notes"),
+                    "created_at": str(row.get("created_at") or _now_iso()),
+                    "updated_at": str(row.get("updated_at") or _now_iso()),
+                }
+            )
+
+        return mapped
 
     def _read_items(self) -> list[dict[str, Any]]:
         if self._use_postgres:
@@ -73,7 +102,7 @@ class ClientRepository:
                 with conn.cursor() as cur:
                     cur.execute(
                         """
-                        INSERT INTO deva_accmed_clients (
+                        INSERT INTO deva_accmed_organizations (
                             name, cnpj, slug, brand_name, timezone, currency, notes, status, is_active, created_at, updated_at
                         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         RETURNING id, name, brand_name, cnpj, slug, status, is_active, timezone, currency, notes, created_at, updated_at
@@ -94,73 +123,29 @@ class ClientRepository:
                     )
                     row = cur.fetchone()
                     columns = [desc[0] for desc in cur.description]
-                    client = dict(zip(columns, row))
-                    return client
+                    record = dict(zip(columns, row))
+                    raw_id = str(record.get("id") or "").strip()
+                    return {
+                        "id": f"cli_{raw_id}" if raw_id else "",
+                        "name": str(record.get("name") or "").strip(),
+                        "brand_name": str(record.get("brand_name") or record.get("name") or "").strip(),
+                        "cnpj": str(record.get("cnpj") or ""),
+                        "slug": str(record.get("slug") or "").strip(),
+                        "status": str(record.get("status") or "active"),
+                        "is_active": bool(record.get("is_active", True)),
+                        "timezone": str(record.get("timezone") or "America/Sao_Paulo"),
+                        "currency": str(record.get("currency") or "BRL"),
+                        "notes": record.get("notes"),
+                        "created_at": str(record.get("created_at") or now),
+                        "updated_at": str(record.get("updated_at") or now),
+                    }
         raise RuntimeError("JSON client storage is disabled. Configure Supabase.")
 
     def get_by_id(self, client_id: str) -> dict[str, Any] | None:
         if self._use_postgres:
-            assert self._database_url
-            with psycopg.connect(self._database_url) as conn:
-                with conn.cursor() as cur:
-                    cur.execute(
-                        """
-                        SELECT id, name, brand_name, cnpj, slug, status, is_active, timezone, currency, notes, created_at, updated_at
-                        FROM deva_accmed_clients
-                        WHERE id = %s AND deleted_at IS NULL
-                        """,
-                        (client_id,)
-                    )
-                    row = cur.fetchone()
-                    if not row:
-                        return None
-                    columns = [desc[0] for desc in cur.description]
-                    return dict(zip(columns, row))
+            normalized = _normalize_client_id(client_id)
+            for client in self._read_items():
+                if _normalize_client_id(client.get("id")) == normalized:
+                    return client
+            return None
         raise RuntimeError("JSON client storage is disabled. Configure Supabase.")
-
-    def list_clients(self) -> list[dict[str, Any]]:
-        return self._read_items()
-
-    def create(
-        self,
-        *,
-        name: str,
-        cnpj: str,
-        slug: str | None = None,
-        brand_name: str | None = None,
-        timezone_name: str = "America/Sao_Paulo",
-        currency: str = "BRL",
-        notes: str | None = None,
-    ) -> dict[str, Any]:
-        items = self._read_items()
-        candidate_slug = _slugify(slug or name)
-
-        if any(str(item.get("cnpj")) == cnpj for item in items):
-            raise ValueError("client cnpj already exists")
-        if any(str(item.get("slug")) == candidate_slug for item in items):
-            raise ValueError("client slug already exists")
-
-        now = _now_iso()
-        client = {
-            "id": f"cli_{len(items) + 1}",
-            "name": name,
-            "brand_name": brand_name or name,
-            "cnpj": cnpj,
-            "slug": candidate_slug,
-            "status": "active",
-            "is_active": True,
-            "timezone": timezone_name,
-            "currency": currency,
-            "notes": notes,
-            "created_at": now,
-            "updated_at": now,
-        }
-        items.append(client)
-        self._write_items(items)
-        return client
-
-    def get_by_id(self, client_id: str) -> dict[str, Any] | None:
-        for client in self._read_items():
-            if str(client.get("id")) == client_id:
-                return client
-        return None
