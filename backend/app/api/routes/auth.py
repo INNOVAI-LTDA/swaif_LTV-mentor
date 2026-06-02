@@ -6,11 +6,11 @@ from fastapi import APIRouter, Depends, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.api.errors import api_error
+from app.config.runtime import get_auth_secret
 from app.core.security import canonicalize_role
 from app.schemas.auth import LoginRequest, LoginResponse, MeResponse
 from app.services.auth_service import AuthService
 from app.storage.contact_user_repository import ContactUserRepository
-from app.storage.student_repository import StudentRepository
 from app.storage.user_repository import UserRepository
 
 
@@ -22,36 +22,41 @@ def get_user_repository() -> UserRepository:
     return UserRepository()
 
 
-def get_student_repository() -> StudentRepository:
-    return StudentRepository()
-
-
 def get_contact_user_repository() -> ContactUserRepository:
     return ContactUserRepository()
 
 
 def get_auth_service(
     users: UserRepository = Depends(get_user_repository),
-    students: StudentRepository = Depends(get_student_repository),
     contacts: ContactUserRepository = Depends(get_contact_user_repository),
 ) -> AuthService:
-    secret = os.getenv("APP_AUTH_SECRET", "dev-auth-secret")
+    try:
+        secret = get_auth_secret()
+    except RuntimeError as error:
+        raise api_error(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            code="AUTH_SECRET_NOT_CONFIGURED",
+            message=str(error),
+        ) from error
     ttl_seconds = int(os.getenv("APP_AUTH_TTL_SECONDS", "3600"))
-    default_student_password = os.getenv("APP_DEFAULT_STUDENT_PASSWORD", "aluno_accmed")
     return AuthService(
         users=users,
-        students=students,
         contacts=contacts,
         secret=secret,
         ttl_seconds=ttl_seconds,
-        default_student_password=default_student_password,
     )
 
 
 @router.post("/auth/login", response_model=LoginResponse)
 def login(payload: LoginRequest, auth: AuthService = Depends(get_auth_service)) -> LoginResponse:
-    token = auth.login(payload.email, payload.password)
+    token, error_code = auth.login_with_status(payload.email, payload.password)
     if not token:
+        if error_code == "AUTH_PASSWORD_NOT_CONFIGURED":
+            raise api_error(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                code="AUTH_PASSWORD_NOT_CONFIGURED",
+                message="Senha nao configurada para este usuario.",
+            )
         raise api_error(
             status_code=status.HTTP_401_UNAUTHORIZED,
             code="AUTH_INVALID_CREDENTIALS",

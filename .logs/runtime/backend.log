@@ -1,0 +1,12 @@
+﻿
+[DEVA] backend start: host=127.0.0.1 port=8000 cwd=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend
+[DEVA] backend launcher exception:
+Tee-Object : Não é possível localizar um parâmetro que coincida com o nome de parâmetro 'Encoding'.
+No linha:14 caractere:61
++ ... Tee-Object -FilePath $BackendRuntimeLogFile -Append -Encoding utf8 |  ...
++                                                         ~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Tee-Object], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Microsoft.PowerShell.Commands.TeeObjectCommand
+ 
+
+[DEVA] backend process exit code: 1

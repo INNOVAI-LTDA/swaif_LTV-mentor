@@ -34,6 +34,26 @@ def get_service() -> AdminDatabaseViewService:
     )
 
 
+@router.get("")
+def get_database_view(
+    _: dict[str, Any] = Depends(require_admin_user),
+    service: AdminDatabaseViewService = Depends(get_service),
+) -> dict[str, Any]:
+    try:
+        return service.get_database_view_snapshot()
+    except SupabaseDatabaseViewUnavailableError as exc:
+        message = (
+            "SUPABASE_DB_URL obrigatorio para carregamento da Database View."
+            if str(exc) == "supabase_db_url_required"
+            else "Falha de conexao/autenticacao com Supabase. Revise SUPABASE_DB_URL."
+        )
+        raise api_error(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            code="SUPABASE_DB_URL_REQUIRED",
+            message=message,
+        ) from exc
+
+
 @router.get("/tables")
 def list_tables(_: dict[str, Any] = Depends(require_admin_user), service: AdminDatabaseViewService = Depends(get_service)) -> dict[str, Any]:
     try:

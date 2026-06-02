@@ -1,5 +1,6 @@
 from app.config.runtime import (
     LOCAL_CORS_ORIGINS,
+    get_auth_secret,
     get_app_env,
     get_cors_allow_origin_regex,
     resolve_cors_origins,
@@ -17,6 +18,25 @@ def test_get_app_env_requires_explicit_value(monkeypatch) -> None:
         assert str(error) == "APP_ENV is required. Use 'local' for local development or a production-like value for deployment."
     else:
         raise AssertionError("Expected missing APP_ENV to fail fast.")
+
+
+def test_get_auth_secret_uses_local_fallback_when_missing(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "local")
+    monkeypatch.delenv("APP_AUTH_SECRET", raising=False)
+
+    assert get_auth_secret() == "dev-auth-secret"
+
+
+def test_get_auth_secret_requires_explicit_value_in_production_like_env(monkeypatch) -> None:
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.delenv("APP_AUTH_SECRET", raising=False)
+
+    try:
+        get_auth_secret()
+    except RuntimeError as error:
+        assert str(error) == "APP_AUTH_SECRET is required when APP_ENV is production-like."
+    else:
+        raise AssertionError("Expected production-like auth secret configuration to fail without APP_AUTH_SECRET.")
 
 
 def test_resolve_cors_origins_uses_local_defaults_when_app_env_is_local(monkeypatch) -> None:

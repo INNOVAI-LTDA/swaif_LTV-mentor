@@ -64,6 +64,9 @@ class AdminDatabaseViewRepository:
             tables.append(TableRef(name=name, items=normalized_items))
         return tables
 
+    def snapshot_payloads(self) -> dict[str, dict[str, Any]]:
+        return self._runtime_payloads()
+
     def list_tables(self) -> list[str]:
         return [table.name for table in self._tables()]
 

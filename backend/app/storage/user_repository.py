@@ -5,13 +5,27 @@ from pathlib import Path
 from threading import RLock
 from typing import Any
 
-from app.config.runtime import get_supabase_db_url
+from app.config.runtime import get_supabase_db_connect_timeout_seconds, get_supabase_db_url
 from app.core.security import hash_password
 
 try:
     import psycopg
 except ImportError:  # pragma: no cover
     psycopg = None
+
+
+def _connect(database_url: str) -> Any:
+    if psycopg is None:
+        raise RuntimeError("SUPABASE_DB_URL is configured but psycopg is not installed.")
+    try:
+        return psycopg.connect(
+            database_url,
+            prepare_threshold=None,
+            connect_timeout=get_supabase_db_connect_timeout_seconds(),
+        )
+    except TypeError:
+        # Compatibility fallback for test doubles or older adapters without kwargs support.
+        return psycopg.connect(database_url)
 
 
 def default_user_store_path() -> Path:
@@ -42,18 +56,25 @@ class UserRepository:
             return items
 
     def _has_password_hash_column(self) -> bool:
+        return self._column_exists("password_hash")
+
+    def _has_deleted_at_column(self) -> bool:
+        return self._column_exists("deleted_at")
+
+    def _column_exists(self, column_name: str) -> bool:
         if not self._use_postgres:
             return False
         assert self._database_url
-        with psycopg.connect(self._database_url) as conn:
+        with _connect(self._database_url) as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
                     SELECT 1
                     FROM information_schema.columns
-                    WHERE table_schema = 'public' AND table_name = 'deva_accmed_users' AND column_name = 'password_hash'
+                    WHERE table_schema = 'public' AND table_name = 'deva_accmed_users' AND column_name = %s
                     LIMIT 1
-                    """
+                    """,
+                    (column_name,),
                 )
                 return cur.fetchone() is not None
 
@@ -97,7 +118,7 @@ class UserRepository:
         if self._use_postgres:
             assert self._database_url
             has_password_hash = self._has_password_hash_column()
-            with psycopg.connect(self._database_url) as conn:
+            with _connect(self._database_url) as conn:
                 with conn.cursor() as cur:
                     if has_password_hash:
                         cur.execute(
@@ -154,7 +175,7 @@ class UserRepository:
                     params.append(field_value)
                 params.append(str(user_id))
                 query = f"UPDATE deva_accmed_users SET {', '.join(set_fragments)} WHERE id = %s"
-                with psycopg.connect(self._database_url) as conn:
+                with _connect(self._database_url) as conn:
                     with conn.cursor() as cur:
                         cur.execute(query, tuple(params))
                     conn.commit()
@@ -164,21 +185,23 @@ class UserRepository:
         if self._use_postgres:
             assert self._database_url
             has_password_hash = self._has_password_hash_column()
+            has_deleted_at = self._has_deleted_at_column()
+            deleted_at_clause = "WHERE deleted_at IS NULL" if has_deleted_at else ""
             if has_password_hash:
                 query = """
                     SELECT id, email, role, is_active, COALESCE(password_hash, '') AS password_hash
                     FROM deva_accmed_users
-                    WHERE deleted_at IS NULL
+                    {deleted_at_clause}
                 """
             else:
                 query = """
                     SELECT id, email, role, is_active, ''::text AS password_hash
                     FROM deva_accmed_users
-                    WHERE deleted_at IS NULL
+                    {deleted_at_clause}
                 """
-            with psycopg.connect(self._database_url) as conn:
+            with _connect(self._database_url) as conn:
                 with conn.cursor() as cur:
-                    cur.execute(query)
+                    cur.execute(query.format(deleted_at_clause=deleted_at_clause))
                     columns = [column[0] for column in (cur.description or ())]
                     return [dict(zip(columns, row)) for row in cur.fetchall()]
 
@@ -203,12 +226,19 @@ class UserRepository:
         now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         if self._use_postgres:
             assert self._database_url
-            with psycopg.connect(self._database_url) as conn:
+            has_deleted_at = self._has_deleted_at_column()
+            with _connect(self._database_url) as conn:
                 with conn.cursor() as cur:
-                    cur.execute(
-                        "UPDATE deva_accmed_users SET deleted_at = %s WHERE id = %s",
-                        (now, user_id),
-                    )
+                    if has_deleted_at:
+                        cur.execute(
+                            "UPDATE deva_accmed_users SET deleted_at = %s WHERE id = %s",
+                            (now, user_id),
+                        )
+                    else:
+                        cur.execute(
+                            "UPDATE deva_accmed_users SET is_active = false WHERE id = %s",
+                            (user_id,),
+                        )
                 conn.commit()
             return True
         else:

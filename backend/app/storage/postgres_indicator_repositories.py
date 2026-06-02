@@ -5,10 +5,23 @@ from contextlib import contextmanager
 from typing import Any
 from uuid import uuid4
 
+from app.config.runtime import get_supabase_db_connect_timeout_seconds
+
 try:
     import psycopg
 except ImportError:  # pragma: no cover
     psycopg = None
+
+
+def _connect(database_url: str) -> Any:
+    if psycopg is None:
+        raise RuntimeError("psycopg is not installed.")
+    # Supabase shared pooler (transaction mode) is not compatible with prepared statements.
+    return psycopg.connect(
+        database_url,
+        prepare_threshold=None,
+        connect_timeout=get_supabase_db_connect_timeout_seconds(),
+    )
 
 
 def _rows_from_cursor(cursor: Any) -> list[dict[str, Any]]:
@@ -24,9 +37,7 @@ class _PostgresBaseRepository:
 
     @contextmanager
     def _cursor(self) -> Any:
-        if psycopg is None:
-            raise RuntimeError("psycopg is not installed.")
-        with psycopg.connect(self._database_url) as conn:
+        with _connect(self._database_url) as conn:
             with conn.cursor() as cur:
                 yield cur
             conn.commit()

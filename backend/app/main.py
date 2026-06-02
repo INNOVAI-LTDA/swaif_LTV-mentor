@@ -20,6 +20,7 @@ from app.api.routes.admin_mentoria import router as admin_mentoria_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.health import router as health_router
 from app.api.routes.mentor import router as mentor_router
+from app.api.routes.provider import router as provider_router
 from app.api.routes.student_workspace import router as student_workspace_router
 from app.config.runtime import (
     get_app_env,
@@ -131,6 +132,7 @@ def create_app() -> FastAPI:
             warnings.warn("admin_organizations router could not be imported; /admin/organizations endpoint will be unavailable.")
     if mentor_routes_enabled:
         app.include_router(mentor_router)
+    app.include_router(provider_router)
     app.include_router(student_workspace_router)
     return app
 
@@ -142,6 +144,7 @@ app = create_app()
 def bootstrap_user_storage() -> None:
     summary = app.state.runtime_summary
     if summary["supabase_sync_on_startup"]:
+        logger.info("supabase_startup_sync_begin")
         database_url = get_supabase_db_url()
         if not database_url:
             raise RuntimeError("SUPABASE_SYNC_ON_STARTUP is enabled but SUPABASE_DB_URL is missing.")
@@ -159,8 +162,12 @@ def bootstrap_user_storage() -> None:
 
     # Keep startup resilient while legacy repositories are still being migrated
     # away from JSON storage: warm only auth-critical stores.
+    logger.info("startup_warmup_begin target=user_repository")
     UserRepository().list_users()
+    logger.info("startup_warmup_completed target=user_repository")
+    logger.info("startup_warmup_begin target=student_repository")
     StudentRepository().list_students()
+    logger.info("startup_warmup_completed target=student_repository")
 
     logger.info(
         "backend_startup_complete app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_routes=%s mentor_route_policy=%s supabase_sync_on_startup=%s storage_root=%s backup_dir=%s",
