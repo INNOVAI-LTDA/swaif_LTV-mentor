@@ -233,7 +233,7 @@ The contract for hosted deploys is in `DEPLOY.md`; the operational release gate 
 
 ## Working rules (read before editing)
 
-The `AGENTS.md` startup rule is mandatory: read in order `project-context.md` (not present in this tree — use `AGENTS.md` and the most recent frozen docs in its place), then `docs/architecture/platform_architecture_operational_model.md`, then the relevant MVP-mentoria contract, then the deployment-readiness checklist.
+The `AGENTS.md` startup rule is mandatory: read in order `_bmad-output/project-context.md` (the 56-rule coordination artifact, listed first by `AGENTS.md`'s priority order), then `docs/architecture/platform_architecture_operational_model.md`, then the relevant MVP-mentoria contract, then the deployment-readiness checklist.
 
 - **Smallest safe change.** Localize edits to the nearest module. No broad refactors. No parallel paths. No speculative improvements.
 - **Test at the nearest layer.** Frontend tests in `frontend/src/test`. Backend tests under `backend/tests/{api,unit,e2e,integration}`. For API changes, preserve `tests/api/test_error_payload_api.py`. For service rules, update the service-layer test. For repository behavior, prefer tests that exercise the JSON-backed layer (and acknowledge that JSON is now a fallback).
@@ -252,6 +252,7 @@ The `AGENTS.md` startup rule is mandatory: read in order `project-context.md` (n
 - Frozen API contract and guard tests: `docs/mvp-mentoria/contracts-freeze-v1.md`.
 - Frontend integration architecture: `docs/mvp-mentoria/frontend-integration-architecture.md`.
 - Deployment / Vercel / Railway contract: `DEPLOY.md` and `frontend/vercel.json` / `backend/railway.json`.
+- **Deploy contract source of truth.** `DEPLOY.md` is the single source of truth for the hosted Vercel + Railway contract: env vars (Vercel project + Railway service), security headers (`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, `Content-Security-Policy-Report-Only`, no HSTS until the custom-domain HTTPS gate is signed off), `trailingSlash=false`, base path `/`, and the CSP/HSTS rollout policy. `frontend/vercel.json` and `backend/railway.json` must remain consistent with it.
 - Release gate: `docs/mvp-mentoria/frontend-deployment-readiness-checklist.md`.
 - Admin panel mockups and content: `docs/admin-mockups/admin-{provider,client,database,api}-view.md`.
 - Operating model and loop selection: `docs/01_OPERATING_MODEL.md`, `docs/02_LOOP_MAP.md`, `docs/03_TROUBLESHOOTING.md`, `docs/04_TEST_MATRIX.md`.
