@@ -40,6 +40,10 @@ from app.operations.sync_runtime_stores_from_supabase import (
     sync_runtime_stores_from_supabase,
 )
 from app.storage.catalog import resolve_storage_root
+from app.storage.client_repository import ClientRepository
+from app.storage.contact_user_repository import ContactUserRepository
+from app.storage.mentor_repository import MentorRepository
+from app.storage.organization_repository import OrganizationRepository
 from app.storage.student_repository import StudentRepository
 from app.storage.user_repository import UserRepository
 
@@ -160,14 +164,39 @@ def bootstrap_user_storage() -> None:
         summary["supabase_sync_written"] = sync_result.counters
         logger.info("supabase_startup_sync_completed counters=%s", sync_result.counters)
 
-    # Keep startup resilient while legacy repositories are still being migrated
-    # away from JSON storage: warm only auth-critical stores.
-    logger.info("startup_warmup_begin target=user_repository")
-    UserRepository().list_users()
-    logger.info("startup_warmup_completed target=user_repository")
-    logger.info("startup_warmup_begin target=student_repository")
-    StudentRepository().list_students()
-    logger.info("startup_warmup_completed target=student_repository")
+    # Prime Supabase-backed repositories so the first request after boot does
+    # not pay the cold TCP+TLS handshake to the shared pooler. Each
+    # `list_*` call below opens exactly one connection and reads a small
+    # amount of data; the cost is paid once at startup so the SLA chain
+    # (admin_clientes -> .../produtos -> .../mentores -> .../alunos) is
+    # warm by the time start-localhost.ps1 runs the acceptance test.
+    #
+    # Each warmup is wrapped in try/except so a repository that is still
+    # on the legacy JSON path (and raises "JSON storage is disabled") does
+    # not abort boot. The first request for that endpoint will pay the
+    # connect cost on demand instead.
+    #
+    # When adding a new Supabase-backed admin endpoint to the SLA chain,
+    # append its repository here.
+    def _warm(target: str, factory) -> None:
+        logger.info("startup_warmup_begin target=%s", target)
+        try:
+            factory()
+        except Exception as exc:  # noqa: BLE001 - boot must stay resilient
+            logger.warning(
+                "startup_warmup_skipped target=%s reason=%s",
+                target,
+                exc.__class__.__name__,
+            )
+        else:
+            logger.info("startup_warmup_completed target=%s", target)
+
+    _warm("user_repository", lambda: UserRepository().list_users())
+    _warm("student_repository", lambda: StudentRepository().list_students())
+    _warm("client_repository", lambda: ClientRepository().list_clients())
+    _warm("organization_repository", lambda: OrganizationRepository().list_organizations())
+    _warm("mentor_repository", lambda: MentorRepository().list_mentors())
+    _warm("contact_user_repository", lambda: ContactUserRepository().list_items())
 
     logger.info(
         "backend_startup_complete app_env=%s client_code=%s cors_origins=%s cors_origin_regex=%s mentor_routes=%s mentor_route_policy=%s supabase_sync_on_startup=%s storage_root=%s backup_dir=%s",

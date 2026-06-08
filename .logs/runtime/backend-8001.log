@@ -1,34 +1,145 @@
 ﻿
 [DEVA] backend start: host=127.0.0.1 port=8001 cwd=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend
-2026-06-02 14:01:52,176 INFO swaif.runtime backend_runtime_configured app_env=local client_code=local cors_origins=http://localhost:5173,http://127.0.0.1:5173,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:4173,http://127.0.0.1:4173,http://localhost:3000,http://127.0.0.1:3000 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
-INFO:     Started server process [24292]
+2026-06-08 16:44:21,817 INFO swaif.runtime backend_runtime_configured app_env=local client_code=local cors_origins=http://localhost:5173,http://127.0.0.1:5173,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:4173,http://127.0.0.1:4173,http://localhost:3000,http://127.0.0.1:3000 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
+INFO:     Started server process [12228]
 INFO:     Waiting for application startup.
-2026-06-02 14:01:52,258 INFO swaif.runtime supabase_startup_sync_begin
-2026-06-02 14:01:52,258 INFO swaif.runtime supabase_sync_begin
-2026-06-02 14:01:52,258 INFO swaif.runtime supabase_sync_fetch_begin
-2026-06-02 14:01:54,610 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2351
-2026-06-02 14:01:54,765 INFO swaif.runtime supabase_sync_build_payloads_begin
-2026-06-02 14:01:55,122 INFO swaif.runtime supabase_sync_build_payloads_completed contacts=253 users=253 organizations=2 mentors=1 students=250 protocols=2 pillars=5 metrics=16 enrollments=250 measurements=4000 checkpoints=250
-2026-06-02 14:01:55,122 INFO swaif.runtime supabase_sync_backfill_begin
-2026-06-02 14:01:57,624 INFO swaif.runtime supabase_sync_backfill_fastpath active_enrollments=250 existing_measurements=4002 existing_checkpoints=250 elapsed_ms=2501
-2026-06-02 14:01:57,699 INFO swaif.runtime supabase_sync_completed total_elapsed_ms=5441 runtime_backfill_active_enrollments=250
-2026-06-02 14:01:57,700 INFO swaif.runtime supabase_startup_sync_completed counters={'contacts_users_v2': 253, 'users': 253, 'organizations': 2, 'mentors': 1, 'students': 250, 'protocols': 2, 'pillars': 5, 'metrics': 16, 'enrollments': 250, 'measurements': 4000, 'checkpoints': 250, 'measurement_overalls': 0, 'runtime_backfill_active_enrollments': 250, 'runtime_backfill_measurement_candidates': 4000, 'runtime_backfill_measurement_inserted': 0, 'runtime_backfill_measurement_skipped': 4000, 'runtime_backfill_checkpoint_candidates': 250, 'runtime_backfill_checkpoint_inserted': 0, 'runtime_backfill_checkpoint_skipped': 250}
-2026-06-02 14:01:57,701 INFO swaif.runtime startup_warmup_begin target=user_repository
-2026-06-02 14:02:02,214 INFO swaif.runtime startup_warmup_completed target=user_repository
-2026-06-02 14:02:02,214 INFO swaif.runtime startup_warmup_begin target=student_repository
-2026-06-02 14:02:03,975 INFO swaif.runtime startup_warmup_completed target=student_repository
-2026-06-02 14:02:03,975 INFO swaif.runtime backend_startup_complete app_env=local client_code=local cors_origins=http://localhost:5173,http://127.0.0.1:5173,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:4173,http://127.0.0.1:4173,http://localhost:3000,http://127.0.0.1:3000 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled supabase_sync_on_startup=True storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
-2026-06-02 14:02:03,975 WARNING swaif.runtime mentor_routes_enabled=true; keep this restricted to local-only validation environments.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
-INFO:     127.0.0.1:50067 - "GET /openapi.json HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58888 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58888 - "POST /auth/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58888 - "GET /admin/mentores/2/alunos HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59108 - "POST /auth/login HTTP/1.1" 200 OK
-2026-06-02 14:57:04,027 INFO swaif.runtime supabase_sync_fetch_begin
-2026-06-02 14:57:06,385 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2358
-INFO:     127.0.0.1:59108 - "GET /admin/clientes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59108 - "GET /admin/clientes//produtos HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:59121 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51343 - "GET /openapi.json HTTP/1.1" 200 OK
+2026-06-08 16:44:21,901 INFO swaif.runtime startup_warmup_begin target=user_repository
+2026-06-08 16:44:27,060 INFO swaif.runtime startup_warmup_completed target=user_repository
+2026-06-08 16:44:27,060 INFO swaif.runtime startup_warmup_begin target=student_repository
+2026-06-08 16:44:27,069 INFO swaif.runtime startup_warmup_completed target=student_repository
+2026-06-08 16:44:27,070 INFO swaif.runtime startup_warmup_begin target=client_repository
+2026-06-08 16:44:29,005 INFO swaif.runtime startup_warmup_completed target=client_repository
+2026-06-08 16:44:29,005 INFO swaif.runtime startup_warmup_begin target=organization_repository
+2026-06-08 16:44:29,007 INFO swaif.runtime startup_warmup_completed target=organization_repository
+2026-06-08 16:44:29,007 INFO swaif.runtime startup_warmup_begin target=mentor_repository
+ERROR:    Traceback (most recent call last):
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 212, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 237, in __aenter__
+    await self._router._startup()
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 4882, in _startup
+    handler()
+    ~~~~~~~^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\main.py", line 189, in bootstrap_user_storage
+    MentorRepository().list_mentors()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\storage\mentor_repository.py", line 31, in __init__
+    self._store = JsonRepository(file_path or default_mentor_store_path())
+                  ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\storage\json_repository.py", line 19, in __init__
+    raise RuntimeError(
+        "JSON storage is disabled. Configure and use Supabase as the only backend data source."
+    )
+RuntimeError: JSON storage is disabled. Configure and use Supabase as the only backend data source.
+System.Management.Automation.RemoteException
+ERROR:    Application startup failed. Exiting.
+[DEVA] backend process exit code: 3
