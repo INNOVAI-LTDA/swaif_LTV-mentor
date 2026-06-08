@@ -1,0 +1,12 @@
+[DEVA] Repo: C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor
+[DEVA] Backend: http://127.0.0.1:8000
+[DEVA] Frontend: http://127.0.0.1:5173
+[DEVA] SUPABASE_DB_URL carregado para o backend local.
+[DEVA] Backend pronto em http://127.0.0.1:8000/openapi.json
+[DEVA] Frontend pronto em http://127.0.0.1:5173
+[DEVA] Execucao silenciosa ativa no terminal atual (sem abrir novas janelas).
+[DEVA] Abra: http://127.0.0.1:5173
+[DEVA] API base usada pelo frontend: http://127.0.0.1:8000
+[DEVA] Arquivos de log: C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\.logs\runtime\backend-8000.log | C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\.logs\runtime\frontend-5173.log
+[DEVA] Login admin local (documentado): admin@swaif.local / admin123
+[DEVA] Comandos: [R] reiniciar | [Q] encerrar | [S] status | [L] logs | [T] teste SLA

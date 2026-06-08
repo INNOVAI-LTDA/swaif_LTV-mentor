@@ -724,14 +724,43 @@ def _write_payload(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=True, indent=2) + "\n", encoding="utf-8")
 
 
+def _build_runtime_clients_payload(source_rows: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
+    clients: list[dict[str, Any]] = []
+    for organization in source_rows.get("organizations", []):
+        organization_id = str(organization.get("id") or "").strip()
+        if not organization_id:
+            continue
+        name = str(organization.get("name") or "").strip() or f"Cliente {organization_id}"
+        brand_name = str(organization.get("brand_name") or "").strip() or name
+        clients.append(
+            {
+                "id": f"cli_{organization_id}",
+                "name": name,
+                "brand_name": brand_name,
+                "cnpj": "",
+                "slug": str(organization.get("slug") or "").strip() or f"cliente-{organization_id}",
+                "status": str(organization.get("status") or "active"),
+                "is_active": bool(organization.get("is_active", True)),
+                "timezone": "America/Sao_Paulo",
+                "currency": "BRL",
+                "notes": None,
+                "created_at": _iso(organization.get("created_at")),
+                "updated_at": _iso(organization.get("updated_at")),
+            }
+        )
+    return {"version": 1, "items": clients}
+
+
 def sync_runtime_stores_from_supabase(config: SupabaseSyncConfig) -> SupabaseSyncResult:
     started = time.perf_counter()
     logger.info("supabase_sync_begin")
     source_rows = _fetch_source_rows(config.database_url)
     logger.info("supabase_sync_build_payloads_begin")
     payloads = _build_runtime_payloads(source_rows, config)
+    payloads["clients"] = _build_runtime_clients_payload(source_rows)
     logger.info(
-        "supabase_sync_build_payloads_completed contacts=%s users=%s organizations=%s mentors=%s students=%s protocols=%s pillars=%s metrics=%s enrollments=%s measurements=%s checkpoints=%s",
+        "supabase_sync_build_payloads_completed clients=%s contacts=%s users=%s organizations=%s mentors=%s students=%s protocols=%s pillars=%s metrics=%s enrollments=%s measurements=%s checkpoints=%s",
+        len(payloads["clients"]["items"]),
         len(payloads["contacts_users_v2"]["items"]),
         len(payloads["users"]["items"]),
         len(payloads["organizations"]["items"]),
@@ -747,6 +776,7 @@ def sync_runtime_stores_from_supabase(config: SupabaseSyncConfig) -> SupabaseSyn
     runtime_backfill = _backfill_runtime_indicator_tables(database_url=config.database_url, payloads=payloads)
 
     stores: dict[str, Path] = {
+        "clients": resolve_store_path("CLIENT_STORE_PATH", "clients.json"),
         "contacts_users_v2": resolve_store_path("CONTACT_USER_STORE_PATH", "contacts_users_v2.json"),
         "users": resolve_store_path("USER_STORE_PATH", "users.json"),
         "organizations": resolve_store_path("ORG_STORE_PATH", "organizations.json"),

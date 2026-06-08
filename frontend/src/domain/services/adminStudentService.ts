@@ -7,7 +7,9 @@ import type {
   AdminStudentReassignDto,
   AdminStudentUnlinkDto
 } from "../../contracts/adminStudent";
+import type { StudentRadar } from "../models";
 import { httpClient } from "../../shared/api/httpClient";
+import { adaptRadarPayload } from "../adapters/radarAdapter";
 
 export async function listAdminStudentsByProduct(productId: string): Promise<AdminStudentDto[]> {
   return httpClient.get<AdminStudentDto[]>(`/admin/produtos/${encodeURIComponent(productId)}/alunos`);
@@ -31,4 +33,15 @@ export async function unlinkAdminStudent(studentId: string, payload: AdminStuden
 
 export async function loadAdminStudentIndicators(studentId: string, payload: AdminIndicatorLoadDto): Promise<AdminIndicatorLoadResultDto> {
   return httpClient.post<AdminIndicatorLoadResultDto>(`/admin/alunos/${encodeURIComponent(studentId)}/indicadores/carga-inicial`, payload);
+}
+
+export async function getAdminStudentRadar(mentorId: string, studentId: string): Promise<StudentRadar> {
+  if (!mentorId || !studentId) {
+    return adaptRadarPayload({});
+  }
+
+  const payload = await httpClient.get<unknown>(
+    `/admin/mentores/${encodeURIComponent(mentorId)}/alunos/${encodeURIComponent(studentId)}/radar`
+  );
+  return adaptRadarPayload(payload);
 }

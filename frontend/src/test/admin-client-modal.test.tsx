@@ -99,6 +99,12 @@ vi.mock("../domain/hooks/useAdminStudents", () => ({
     error: null,
     loading: false,
     refresh: refreshStudentsMock
+  }),
+  useAdminStudentRadar: () => ({
+    data: { axisScores: radarAxesMockData },
+    error: null,
+    loading: false,
+    refresh: vi.fn()
   })
 }));
 

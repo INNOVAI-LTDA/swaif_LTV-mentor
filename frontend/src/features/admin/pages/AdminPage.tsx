@@ -6,8 +6,7 @@ import { useAdminMetrics } from "../../../domain/hooks/useAdminMetrics";
 import { useAdminMentors } from "../../../domain/hooks/useAdminMentors";
 import { useAdminPillars } from "../../../domain/hooks/useAdminPillars";
 import { useAdminProducts } from "../../../domain/hooks/useAdminProducts";
-import { useAdminStudents } from "../../../domain/hooks/useAdminStudents";
-import { useStudentRadar } from "../../../domain/hooks/useRadar";
+import { useAdminStudentRadar, useAdminStudents } from "../../../domain/hooks/useAdminStudents";
 import { createAdminClient } from "../../../domain/services/adminClientService";
 import { createAdminMetric, listAdminMetricsByProduct } from "../../../domain/services/adminMetricService";
 import { createAdminMentor } from "../../../domain/services/adminMentorService";
@@ -16,6 +15,7 @@ import { createAdminProduct } from "../../../domain/services/adminProductService
 import { createAdminStudent, loadAdminStudentIndicators, reassignAdminStudent, unlinkAdminStudent } from "../../../domain/services/adminStudentService";
 import { listDatabaseRecords, listDatabaseTables, updateDatabaseRecord } from "../../../domain/services/adminDatabaseViewService";
 import { executeAdminApiOperation, listAdminApiOperations, type AdminApiOperationItem, type AdminApiOperationExecution } from "../../../domain/services/adminApiOperationsService";
+import type { AdminMetricDirection, AdminMetricDto } from "../../../contracts/adminMetric";
 import { toUserErrorMessage } from "../../../shared/api/types";
 import { AdminShell } from "../components/AdminShell";
 import "../admin.css";
@@ -55,7 +55,15 @@ type EditableRadarRow = {
   projected: string;
 };
 
+type EditableProviderMetricRow = {
+  name: string;
+  code: string;
+  unit: string;
+  direction: AdminMetricDirection;
+};
+
 type OperationalViewMode = "provider" | "client";
+type ProviderRadarTab = "pillars" | "metrics";
 
 const CREATE_OPTIONS: Array<{ key: CreateTarget; label: string }> = [
   { key: "cliente", label: "Cliente" },
@@ -71,6 +79,12 @@ const URGENCY_OPTIONS: Array<{ value: EditableMatrixRow["urgency"]; label: strin
   { value: "watch", label: "Atenção" },
   { value: "critical", label: "Crítico" },
   { value: "rescue", label: "Resgate" }
+];
+
+const METRIC_DIRECTION_OPTIONS: Array<{ value: AdminMetricDirection; label: string }> = [
+  { value: "higher_better", label: "Maior melhor" },
+  { value: "lower_better", label: "Menor melhor" },
+  { value: "target_range", label: "Faixa alvo" }
 ];
 
 function formatCnpj(value: string) {
@@ -192,10 +206,14 @@ export function AdminPage() {
   const [isPillarExpanded, setIsPillarExpanded] = useState(false);
 
   const [selectedProviderId, setSelectedProviderId] = useState<string>("");
+  const [providerSearchMentorId, setProviderSearchMentorId] = useState<string | null>(null);
+  const [providerStudentsPage, setProviderStudentsPage] = useState(1);
   const [selectedClientViewClientId, setSelectedClientViewClientId] = useState<string>("");
   const [commandCenterDrafts, setCommandCenterDrafts] = useState<Record<string, EditableCommandCenterRow>>({});
   const [matrixDrafts, setMatrixDrafts] = useState<Record<string, EditableMatrixRow>>({});
   const [radarDrafts, setRadarDrafts] = useState<Record<string, EditableRadarRow>>({});
+  const [providerRadarTab, setProviderRadarTab] = useState<ProviderRadarTab>("pillars");
+  const [providerMetricDrafts, setProviderMetricDrafts] = useState<Record<string, EditableProviderMetricRow>>({});
 
   const activePanel = searchParams.get("panel");
   const isClientsPanel = activePanel === "clientes";
@@ -215,9 +233,20 @@ export function AdminPage() {
   const productsResource = useAdminProducts(canLoadAdmin && hasContextPanel ? selectedClientId : null);
   const mentorsResource = useAdminMentors(canLoadAdmin && hasProductContextPanel ? selectedProductId : null);
   const pillarsResource = useAdminPillars(canLoadAdmin && hasProductContextPanel ? selectedProductId : null);
-  const metricsResource = useAdminMetrics(canLoadAdmin && isProductsPanel ? selectedPillarId : null);
-  const studentsResource = useAdminStudents(canLoadAdmin && shouldLoadStudents ? selectedMentorId : null);
-  const clientViewRadarResource = useStudentRadar(selectedStudentId);
+  const shouldLoadAdminMetrics = canLoadAdmin && (isProductsPanel || (isProviderPanel && providerRadarTab === "metrics"));
+  const metricsResource = useAdminMetrics(shouldLoadAdminMetrics ? selectedPillarId : null);
+  const studentsMentorId = canLoadAdmin && shouldLoadStudents
+    ? (isProviderPanel ? providerSearchMentorId : selectedMentorId)
+    : null;
+  const studentsResource = useAdminStudents(studentsMentorId);
+  const clientViewRadarResource = useAdminStudentRadar(selectedMentorId, selectedStudentId);
+
+  const providerStudentsPageSize = 10;
+  const providerStudentsTotalPages = Math.max(1, Math.ceil(studentsResource.data.length / providerStudentsPageSize));
+  const providerVisibleStudents = useMemo(() => {
+    const start = (providerStudentsPage - 1) * providerStudentsPageSize;
+    return studentsResource.data.slice(start, start + providerStudentsPageSize);
+  }, [providerStudentsPage, studentsResource.data]);
 
   const [clientFormState, setClientFormState] = useState(EMPTY_CLIENT_FORM);
   const [clientFormError, setClientFormError] = useState<string | null>(null);
@@ -444,6 +473,30 @@ export function AdminPage() {
   }, [isProviderPanel, selectedMentorId, selectedProviderId]);
 
   useEffect(() => {
+    if (!isProviderPanel) {
+      if (providerSearchMentorId !== null) {
+        setProviderSearchMentorId(null);
+      }
+      return;
+    }
+    if (!selectedClientId || !selectedProductId || !selectedProviderId) {
+      if (providerSearchMentorId !== null) {
+        setProviderSearchMentorId(null);
+      }
+      return;
+    }
+    if (providerSearchMentorId && providerSearchMentorId !== selectedProviderId) {
+      setProviderSearchMentorId(null);
+    }
+  }, [isProviderPanel, providerSearchMentorId, selectedClientId, selectedProductId, selectedProviderId]);
+
+  useEffect(() => {
+    if (providerStudentsPage > providerStudentsTotalPages) {
+      setProviderStudentsPage(providerStudentsTotalPages);
+    }
+  }, [providerStudentsPage, providerStudentsTotalPages]);
+
+  useEffect(() => {
     if (!(isStudentsPanel || isProviderPanel || isClientViewPanel) || studentsResource.data.length === 0) {
       if (selectedStudentId !== null) {
         setSelectedStudentId(null);
@@ -454,6 +507,18 @@ export function AdminPage() {
       setSelectedStudentId(studentsResource.data[0].id);
     }
   }, [isClientViewPanel, isProviderPanel, isStudentsPanel, selectedStudentId, studentsResource.data]);
+
+  function handleProviderSearchStudents() {
+    if (!selectedClientId || !selectedProductId || !selectedProviderId) {
+      return;
+    }
+    setProviderStudentsPage(1);
+    if (providerSearchMentorId === selectedProviderId) {
+      void studentsResource.refresh();
+      return;
+    }
+    setProviderSearchMentorId(selectedProviderId);
+  }
 
   useEffect(() => {
     setIsPillarExpanded(false);
@@ -470,6 +535,24 @@ export function AdminPage() {
       setSelectedPillarId(pillarsResource.data[0].id);
     }
   }, [hasProductContextPanel, pillarsResource.data, selectedPillarId]);
+
+  useEffect(() => {
+    if (!isProviderPanel) {
+      if (providerRadarTab !== "pillars") {
+        setProviderRadarTab("pillars");
+      }
+      return;
+    }
+    const radarPillarIds = clientViewRadarResource.data.axisScores
+      .map((axis) => axis.axisId)
+      .filter((axisId): axisId is string => Boolean(axisId));
+    if (radarPillarIds.length === 0) {
+      return;
+    }
+    if (!selectedPillarId || !radarPillarIds.includes(selectedPillarId)) {
+      setSelectedPillarId(radarPillarIds[0]);
+    }
+  }, [clientViewRadarResource.data.axisScores, isProviderPanel, providerRadarTab, selectedPillarId]);
 
   useEffect(() => {
     setIsCreateChooserOpen(false);
@@ -1298,6 +1381,34 @@ export function AdminPage() {
     }));
   }
 
+  function getProviderMetricDraft(metric: AdminMetricDto): EditableProviderMetricRow {
+    return providerMetricDrafts[metric.id] ?? {
+      name: metric.name,
+      code: metric.code,
+      unit: metric.unit ?? "",
+      direction: metric.direction
+    };
+  }
+
+  function setProviderMetricDraftField<Field extends keyof EditableProviderMetricRow>(
+    metric: AdminMetricDto,
+    field: Field,
+    value: EditableProviderMetricRow[Field]
+  ) {
+    setProviderMetricDrafts((current) => ({
+      ...current,
+      [metric.id]: {
+        ...(current[metric.id] ?? {
+          name: metric.name,
+          code: metric.code,
+          unit: metric.unit ?? "",
+          direction: metric.direction
+        }),
+        [field]: value
+      }
+    }));
+  }
+
   useEffect(() => {
     if (!canLoadAdmin || !isDatabasePanel) return;
     void loadDatabaseTables();
@@ -1312,13 +1423,17 @@ export function AdminPage() {
     const isProviderMode = mode === "provider";
     const moduleLabel = isProviderMode ? "Provider View" : "Client View";
     const testId = isProviderMode ? "admin-provider-view-editable" : "admin-client-view-editable";
+    const selectedMentorLabel = isProviderMode ? selectedProviderId : selectedMentorId;
+    const providerCanSearch = Boolean(selectedClientId && selectedProductId && selectedProviderId);
+    const providerHasSearch = Boolean(providerSearchMentorId);
+    const studentsToRender = isProviderMode ? providerVisibleStudents : studentsResource.data;
 
     return (
       <article className="admin-module" aria-label={moduleLabel}>
         <p className="admin-module__eyebrow">{moduleLabel}</p>
         <div className="admin-provider-view-controls">
-          <label>
-            Cliente:
+          <label className="admin-provider-view-control">
+            <span>Cliente</span>
             <select value={isProviderMode ? (selectedClientId ?? "") : selectedClientViewClientId} onChange={(event) => {
               const value = event.target.value;
               if (isProviderMode) {
@@ -1333,8 +1448,8 @@ export function AdminPage() {
               ))}
             </select>
           </label>
-          <label>
-            Produto:
+          <label className="admin-provider-view-control">
+            <span>Produto</span>
             <select value={selectedProductId ?? ""} onChange={(event) => setSelectedProductId(event.target.value || null)}>
               <option value="">Selecione</option>
               {productsResource.data.map((product) => (
@@ -1342,9 +1457,9 @@ export function AdminPage() {
               ))}
             </select>
           </label>
-          <label>
-            {isProviderMode ? "Provider:" : "Mentor:"}
-            <select value={isProviderMode ? selectedProviderId : (selectedMentorId ?? "")} onChange={(event) => {
+          <label className="admin-provider-view-control">
+            <span>Mentor</span>
+            <select value={selectedMentorLabel ?? ""} onChange={(event) => {
               const value = event.target.value;
               if (isProviderMode) {
                 setSelectedProviderId(value);
@@ -1358,33 +1473,51 @@ export function AdminPage() {
               ))}
             </select>
           </label>
-          <label>
-            Aluno:
-            <select value={selectedStudentId ?? ""} onChange={(event) => setSelectedStudentId(event.target.value || null)}>
-              <option value="">Selecione</option>
-              {studentsResource.data.map((student) => (
-                <option key={student.id} value={student.id}>{student.full_name}</option>
-              ))}
-            </select>
-          </label>
+          {!isProviderMode && (
+            <label className="admin-provider-view-control">
+              <span>Aluno</span>
+              <select value={selectedStudentId ?? ""} onChange={(event) => setSelectedStudentId(event.target.value || null)}>
+                <option value="">Selecione</option>
+                {studentsResource.data.map((student) => (
+                  <option key={student.id} value={student.id}>{student.full_name}</option>
+                ))}
+              </select>
+            </label>
+          )}
         </div>
 
-        <p className="admin-module__muted">
+        {isProviderMode && (
+          <div className="admin-provider-view-actions">
+            <button type="button" onClick={handleProviderSearchStudents} disabled={!providerCanSearch}>
+              Buscar Alunos
+            </button>
+          </div>
+        )}
+
+        <p className="admin-module__muted" hidden={isProviderMode}>
           Edição tabular operacional para Centro de Comando, Matriz de Decisão e Radar.
         </p>
 
-        {studentsResource.loading && studentsResource.data.length === 0 ? (
+        {isProviderMode ? (
+          <p className="admin-module__muted">Leitura operacional para distribuição da Matriz de Decisão e Radar por abas.</p>
+        ) : null}
+
+        {isProviderMode && !providerHasSearch ? (
+          <p className="admin-state">Selecione Cliente, Produto e Mentor e clique em Buscar Alunos.</p>
+        ) : null}
+        {studentsResource.loading && studentsResource.data.length === 0 && (!isProviderMode || providerHasSearch) ? (
           <p className="admin-state">Carregando alunos do contexto...</p>
         ) : null}
-        {studentsResource.error && studentsResource.data.length === 0 ? (
+        {studentsResource.error && studentsResource.data.length === 0 && (!isProviderMode || providerHasSearch) ? (
           <p className="admin-form-error">{studentsResource.error}</p>
         ) : null}
-        {!studentsResource.loading && !studentsResource.error && studentsResource.data.length === 0 ? (
+        {!studentsResource.loading && !studentsResource.error && studentsResource.data.length === 0 && (!isProviderMode || providerHasSearch) ? (
           <p className="admin-state">Sem alunos vinculados para o contexto selecionado.</p>
         ) : null}
 
-        {studentsResource.data.length > 0 ? (
+        {studentsToRender.length > 0 ? (
           <div className="admin-provider-view-edit-grid" data-testid={testId}>
+            {!isProviderMode ? (
             <section>
               <h3>Centro de Comando</h3>
               <div className="admin-data-table-wrapper">
@@ -1398,7 +1531,7 @@ export function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {studentsResource.data.map((student) => {
+                    {studentsToRender.map((student) => {
                       const draft = getCommandCenterDraft(mode, student.id);
                       return (
                         <tr key={`cc-${student.id}`}>
@@ -1438,7 +1571,30 @@ export function AdminPage() {
                 </table>
               </div>
             </section>
+            ) : null}
 
+            {isProviderMode ? (
+            <section>
+              <h3>Matriz de Decisão</h3>
+              <p className="admin-module__muted">Distribuição dos alunos por quadrante no contexto selecionado.</p>
+              <div className="admin-matrix-distribution" aria-label={`${moduleLabel} - Distribuição por quadrante`}>
+                {URGENCY_OPTIONS.map((option) => {
+                  const count = studentsResource.data.filter((student) => getMatrixDraft(mode, student.id).urgency === option.value).length;
+                  const percentage = studentsResource.data.length === 0 ? 0 : (count / studentsResource.data.length) * 100;
+                  return (
+                    <article key={option.value} className="admin-matrix-distribution-card">
+                      <span>{option.label}</span>
+                      <strong>{count}</strong>
+                      <small>{percentage.toFixed(1)}% dos alunos</small>
+                      <div className="admin-matrix-distribution-card__bar" aria-hidden="true">
+                        <span style={{ width: `${percentage}%` }} />
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+            ) : (
             <section>
               <h3>Matriz de Decisão</h3>
               <div className="admin-data-table-wrapper">
@@ -1454,7 +1610,7 @@ export function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {studentsResource.data.map((student) => {
+                    {studentsToRender.map((student) => {
                       const draft = getMatrixDraft(mode, student.id);
                       return (
                         <tr key={`mx-${student.id}`}>
@@ -1515,13 +1671,160 @@ export function AdminPage() {
                 </table>
               </div>
             </section>
+            )}
 
             <section>
               <h3>Radar</h3>
+              {isProviderMode ? (
+                <>
+                  <div className="admin-radar-controls">
+                    <label className="admin-provider-view-control">
+                      <span>Aluno do Radar</span>
+                      <select value={selectedStudentId ?? ""} onChange={(event) => setSelectedStudentId(event.target.value || null)}>
+                        <option value="">Selecione</option>
+                        {studentsResource.data.map((student) => (
+                          <option key={student.id} value={student.id}>{student.full_name}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <div className="admin-radar-tabs" role="tablist" aria-label="Abas do Radar Provider">
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={providerRadarTab === "pillars"}
+                      className={providerRadarTab === "pillars" ? "is-active" : ""}
+                      onClick={() => setProviderRadarTab("pillars")}
+                    >
+                      Pilares
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={providerRadarTab === "metrics"}
+                      className={providerRadarTab === "metrics" ? "is-active" : ""}
+                      onClick={() => setProviderRadarTab("metrics")}
+                    >
+                      Métricas
+                    </button>
+                  </div>
+                  {!selectedStudentId ? (
+                    <p className="admin-state">Selecione um aluno para visualizar o radar.</p>
+                  ) : clientViewRadarResource.loading ? (
+                    <p className="admin-state">Carregando radar...</p>
+                  ) : clientViewRadarResource.error ? (
+                    <p className="admin-state">{clientViewRadarResource.error}</p>
+                  ) : clientViewRadarResource.data.axisScores.length === 0 ? (
+                    <p className="admin-state">Sem dados de radar para leitura neste contexto.</p>
+                  ) : providerRadarTab === "pillars" ? (
+                    <div className="admin-data-table-wrapper">
+                      <table className="admin-data-table" aria-label={`${moduleLabel} - Radar Pilares`}>
+                        <thead>
+                          <tr>
+                            <th scope="col">Pilar</th>
+                            <th scope="col">Baseline (%)</th>
+                            <th scope="col">Atual (%)</th>
+                            <th scope="col">Projetado (%)</th>
+                            <th scope="col">Leitura</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {clientViewRadarResource.data.axisScores.map((axis) => (
+                            <tr key={`rd-provider-pillar-${axis.axisKey}`}>
+                              <td>{axis.axisLabel}</td>
+                              <td><span className="admin-readonly-value">{toPercentInput(axis.baseline)}</span></td>
+                              <td><span className="admin-readonly-value">{toPercentInput(axis.current)}</span></td>
+                              <td><span className="admin-readonly-value">{toPercentInput(axis.projected)}</span></td>
+                              <td>{axis.insight ?? "-"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="admin-radar-controls">
+                        <label className="admin-provider-view-control">
+                          <span>Pilar</span>
+                          <select value={selectedPillarId ?? ""} onChange={(event) => setSelectedPillarId(event.target.value || null)}>
+                            {clientViewRadarResource.data.axisScores.map((axis) => (
+                              <option key={axis.axisKey} value={axis.axisId ?? ""}>{axis.axisLabel}</option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+                      {metricsResource.loading ? (
+                        <p className="admin-state">Carregando métricas...</p>
+                      ) : metricsResource.error ? (
+                        <p className="admin-state">{metricsResource.error}</p>
+                      ) : metricsResource.data.length === 0 ? (
+                        <p className="admin-state">Sem métricas cadastradas para o pilar selecionado.</p>
+                      ) : (
+                        <div className="admin-data-table-wrapper">
+                          <table className="admin-data-table" aria-label={`${moduleLabel} - Radar Métricas`}>
+                            <thead>
+                              <tr>
+                                <th scope="col">Métrica</th>
+                                <th scope="col">Código</th>
+                                <th scope="col">Unidade</th>
+                                <th scope="col">Direção</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {metricsResource.data.map((metric) => {
+                                const draft = getProviderMetricDraft(metric);
+                                return (
+                                  <tr key={`rd-provider-metric-${metric.id}`}>
+                                    <td>
+                                      <input
+                                        aria-label={`${moduleLabel} Radar Métrica Nome ${metric.name}`}
+                                        value={draft.name}
+                                        onChange={(event) => setProviderMetricDraftField(metric, "name", event.target.value)}
+                                      />
+                                    </td>
+                                    <td>
+                                      <input
+                                        aria-label={`${moduleLabel} Radar Métrica Código ${metric.name}`}
+                                        value={draft.code}
+                                        onChange={(event) => setProviderMetricDraftField(metric, "code", event.target.value)}
+                                      />
+                                    </td>
+                                    <td>
+                                      <input
+                                        aria-label={`${moduleLabel} Radar Métrica Unidade ${metric.name}`}
+                                        value={draft.unit}
+                                        onChange={(event) => setProviderMetricDraftField(metric, "unit", event.target.value)}
+                                      />
+                                    </td>
+                                    <td>
+                                      <select
+                                        aria-label={`${moduleLabel} Radar Métrica Direção ${metric.name}`}
+                                        value={draft.direction}
+                                        onChange={(event) => setProviderMetricDraftField(metric, "direction", event.target.value as AdminMetricDirection)}
+                                      >
+                                        {METRIC_DIRECTION_OPTIONS.map((option) => (
+                                          <option key={option.value} value={option.value}>{option.label}</option>
+                                        ))}
+                                      </select>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
               {!selectedStudentId ? (
                 <p className="admin-state">Selecione um aluno para editar os eixos do radar.</p>
               ) : clientViewRadarResource.loading ? (
                 <p className="admin-state">Carregando radar...</p>
+              ) : clientViewRadarResource.error ? (
+                <p className="admin-state">{clientViewRadarResource.error}</p>
               ) : clientViewRadarResource.data.axisScores.length === 0 ? (
                 <p className="admin-state">Sem dados de radar para leitura neste contexto.</p>
               ) : (
@@ -1575,7 +1878,26 @@ export function AdminPage() {
                   </table>
                 </div>
               )}
+                </>
+              )}
             </section>
+            {isProviderMode && studentsResource.data.length > providerStudentsPageSize ? (
+              <div className="admin-pagination" aria-label="Paginação de alunos da Provider View">
+                <button type="button" onClick={() => setProviderStudentsPage((current) => Math.max(1, current - 1))} disabled={providerStudentsPage === 1}>
+                  Anterior
+                </button>
+                <span>
+                  Página {providerStudentsPage} de {providerStudentsTotalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setProviderStudentsPage((current) => Math.min(providerStudentsTotalPages, current + 1))}
+                  disabled={providerStudentsPage === providerStudentsTotalPages}
+                >
+                  Próxima
+                </button>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </article>

@@ -149,3 +149,90 @@ def test_calculate_metric_score_legacy_v1_static_remains_supported() -> None:
 
     assert result.score == 20.0
     assert result.normalized_score == 1.0
+
+
+def test_calculate_metric_score_v2_lower_better_inverts_normalized_only() -> None:
+    """`lower_better` flips the normalized score (1 - score / basis) but leaves
+    the pre-normalization `score` untouched. This is the byte-for-byte
+    contract for the direction policy.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 1.0,
+        "direction": "lower_better",
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"op": "gte", "value": 100}, "then": {"assign": 1.0}},
+                    {"when": {"op": "gte", "value": 0}, "then": {"assign": 0.0}},
+                ],
+            },
+            "normalization": {"basis": "explicit", "value": 1.0},
+        },
+    }
+
+    # high raw input → score=1.0 → inverted to 0.0
+    high = calculate_metric_score(metric, 200)
+    assert high.score == pytest.approx(1.0, abs=1e-6)
+    assert high.normalized_score == pytest.approx(0.0, abs=1e-6)
+
+    # low raw input → score=0.0 → inverted to 1.0
+    low = calculate_metric_score(metric, 0)
+    assert low.score == pytest.approx(0.0, abs=1e-6)
+    assert low.normalized_score == pytest.approx(1.0, abs=1e-6)
+
+
+def test_calculate_metric_score_v2_higher_better_unaffected_by_direction_fix() -> None:
+    """The auto-inversion must be a no-op for `higher_better` and missing
+    `direction` (defaults to higher_better). This is the byte-for-byte
+    compatibility guard for the live corpus.
+    """
+    base_metric = {
+        "score_type": "static",
+        "max_score": 20,
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"range": {"min": 15, "max": 30}}, "then": {"assign": 10}},
+                ],
+            },
+            "normalization": {"basis": "max_score", "value": 20},
+        },
+    }
+
+    higher = dict(base_metric, direction="higher_better")
+    missing = dict(base_metric)  # no direction key
+
+    assert calculate_metric_score(higher, 20).normalized_score == pytest.approx(10 / 20, abs=1e-6)
+    assert calculate_metric_score(missing, 20).normalized_score == pytest.approx(10 / 20, abs=1e-6)
+
+
+def test_calculate_metric_score_v2_multiply_input_action_supported() -> None:
+    """The v2 `multiply_input` action returns raw * factor as the score."""
+    metric = {
+        "score_type": "static",
+        "max_score": 50,
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"op": "gte", "value": 0}, "then": {"multiply_input": 0.5}},
+                ],
+            },
+            "normalization": {"basis": "explicit", "value": 50},
+        },
+    }
+
+    result = calculate_metric_score(metric, 80)
+
+    assert result.score == pytest.approx(40.0, abs=1e-6)  # 80 * 0.5
+    assert result.normalization_basis == pytest.approx(50.0, abs=1e-6)
+    assert result.normalized_score == pytest.approx(0.8, abs=1e-6)

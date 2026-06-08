@@ -28,6 +28,7 @@ from app.services.indicator_carga_service import IndicatorCargaService
 from app.services.indicator_carga_service import DomainNotReadyError as IndicatorDomainNotReadyError
 from app.services.indicator_carga_service import JsonFallbackForbiddenError as IndicatorJsonFallbackForbiddenError
 from app.services.indicator_carga_service import RuntimeDependencyError as IndicatorRuntimeDependencyError
+from app.services.provider_workspace_service import ProviderWorkspaceService
 from app.services.student_vinculo_service import ConsistencyError, EntityNotFoundError, StudentVinculoService
 from app.storage.checkpoint_repository import CheckpointRepository
 from app.storage.contact_user_repository import ContactUserRepository
@@ -41,6 +42,9 @@ from app.storage.pillar_repository import PillarRepository
 from app.storage.postgres_indicator_repositories import PostgresCheckpointRepository, PostgresMeasurementRepository
 from app.storage.product_assignment_repository import ProductAssignmentRepository
 from app.storage.student_repository import StudentRepository
+from app.storage.supabase_provider_hierarchy_repository import SupabaseProviderHierarchyRepository
+from app.storage.supabase_product_metric_repository import SupabaseProductMetricRepository
+from app.storage.supabase_runtime_measurement_repository import SupabaseRuntimeMeasurementRepository
 
 
 router = APIRouter(prefix="/admin", tags=["admin-alunos"])
@@ -98,6 +102,28 @@ def get_admin_student_service() -> AdminStudentService:
         product_assignments=product_assignments_repository,
         contacts=ContactUserRepository(),
     )
+
+
+def get_admin_provider_workspace_service() -> ProviderWorkspaceService:
+    if not get_supabase_db_url():
+        raise api_error(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            code="SUPABASE_DB_URL_REQUIRED",
+            message="SUPABASE_DB_URL obrigatorio para runtime Supabase no workspace administrativo.",
+        )
+    return ProviderWorkspaceService(
+        SupabaseProviderHierarchyRepository(),
+        product_metric_repository=SupabaseProductMetricRepository(),
+        runtime_measurement_repository=SupabaseRuntimeMeasurementRepository(),
+    )
+
+
+def _normalize_runtime_user_id(value: str) -> str:
+    normalized = str(value or "").strip()
+    for prefix in ("usr_", "mtr_", "std_"):
+        if normalized.startswith(prefix):
+            return normalized[len(prefix):]
+    return normalized
 
 
 def get_admin_student_link_service() -> AdminStudentLinkService:
@@ -439,6 +465,28 @@ def get_student_radar(
     except IndicatorEntityNotFoundError as exc:
         error_code, message = _map_indicator_not_found(exc)
         raise api_error(status_code=status.HTTP_404_NOT_FOUND, code=error_code, message=message) from exc
+
+
+@router.get("/mentores/{mentor_id}/alunos/{student_id}/radar")
+def get_mentor_student_radar(
+    mentor_id: str,
+    student_id: str,
+    _: dict[str, Any] = Depends(require_admin_user),
+    service: ProviderWorkspaceService = Depends(get_admin_provider_workspace_service),
+) -> dict[str, Any]:
+    try:
+        return service.get_student_radar(
+            provider_user_id=_normalize_runtime_user_id(mentor_id),
+            client_user_id=_normalize_runtime_user_id(student_id),
+        )
+    except ValueError as error:
+        if str(error) == "enrollment_not_found":
+            raise api_error(
+                status_code=status.HTTP_404_NOT_FOUND,
+                code="ALUNO_NOT_FOUND",
+                message="Aluno nao encontrado na carteira do mentor.",
+            ) from error
+        raise
 
 
 @router.get("/matriz-renovacao")

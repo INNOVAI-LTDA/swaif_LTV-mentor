@@ -65,8 +65,42 @@ def test_login_success_and_me_flow(monkeypatch, tmp_path: Path) -> None:
     )
     assert authorized_me.status_code == 200
     me_body = authorized_me.json()
+    assert me_body["id"] == "1"
     assert me_body["email"] == "admin@swaif.local"
     assert me_body["role"] == "admin"
+
+
+def test_me_accepts_string_user_ids(monkeypatch, tmp_path: Path) -> None:
+    users_file = tmp_path / "users.json"
+    contacts_file = tmp_path / "contacts_users_v2.json"
+    _prepare_user_store(users_file)
+    monkeypatch.setenv("USER_STORE_PATH", str(users_file))
+    monkeypatch.setenv("CONTACT_USER_STORE_PATH", str(contacts_file))
+    monkeypatch.setenv("APP_AUTH_SECRET", "test-secret")
+    contacts = ContactUserRepository(contacts_file)
+    contacts.create(
+        id="usr_admin_runtime",
+        full_name="Admin",
+        email="admin.runtime@swaif.local",
+        role="admin",
+        is_active=True,
+        password_hash=hash_password("admin123"),
+    )
+
+    client = TestClient(app)
+    login_response = client.post(
+        "/auth/login",
+        json={"email": "admin.runtime@swaif.local", "password": "admin123"},
+    )
+    assert login_response.status_code == 200
+
+    me_response = client.get(
+        "/me",
+        headers={"Authorization": f"Bearer {login_response.json()['access_token']}"},
+    )
+
+    assert me_response.status_code == 200
+    assert me_response.json()["id"] == "usr_admin_runtime"
 
 
 def test_me_normalizes_legacy_aluno_and_student_roles_to_client(monkeypatch, tmp_path: Path) -> None:

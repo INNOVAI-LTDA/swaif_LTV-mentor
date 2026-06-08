@@ -5,6 +5,10 @@ param(
   [int]$PortSearchAttempts = 20,
   [int]$BackendStartupTimeoutSeconds = 180,
   [int]$FrontendStartupTimeoutSeconds = 60,
+  [int]$ResponseSlaMs = 1000,
+  [string]$AdminEmail = "admin@innovai-solutions.com.br",
+  [string]$AdminPassword = "admin123",
+  [bool]$EnforceResponseSla = $true,
   [switch]$NoInstall
 )
 
@@ -14,6 +18,8 @@ $FrontendJobName = "deva-frontend"
 $RuntimeLogDir = Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) ".logs/runtime"
 $BackendLogFile = Join-Path $RuntimeLogDir "backend.log"
 $FrontendLogFile = Join-Path $RuntimeLogDir "frontend.log"
+$script:EffectiveBackendPort = $BackendPort
+$script:EffectiveFrontendPort = $FrontendPort
 
 function Ensure-Command([string]$Name) {
   if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
@@ -261,6 +267,112 @@ function Wait-HttpReachable(
   return $false
 }
 
+function Measure-ApiGet(
+  [string]$Name,
+  [string]$Uri,
+  [hashtable]$Headers,
+  [int]$SlaMs
+) {
+  $sw = [System.Diagnostics.Stopwatch]::StartNew()
+  $response = Invoke-RestMethod -Method Get -Uri $Uri -Headers $Headers -TimeoutSec 30
+  $sw.Stop()
+  $elapsed = [int]$sw.ElapsedMilliseconds
+  $count = 0
+  if ($response -is [System.Array]) {
+    $count = $response.Count
+  } elseif ($response -is [hashtable] -and $response.ContainsKey("items") -and $response.items -is [System.Array]) {
+    $count = $response.items.Count
+  } elseif ($response -is [pscustomobject] -and $null -ne $response.PSObject.Properties["items"] -and $response.items -is [System.Array]) {
+    $count = $response.items.Count
+  } elseif ($null -ne $response) {
+    $count = 1
+  }
+
+  if ($elapsed -gt $SlaMs) {
+    throw "[SLA] endpoint '$Name' excedeu o limite: ${elapsed}ms > ${SlaMs}ms (uri=$Uri)"
+  }
+
+  Write-Host ("[SLA] {0}: {1}ms (ok <= {2}ms) count={3}" -f $Name, $elapsed, $SlaMs, $count) -ForegroundColor Green
+  return $response
+}
+
+function Convert-ToApiList([object]$Response) {
+  if ($Response -is [System.Array]) {
+    return @($Response)
+  }
+  if ($Response -is [hashtable]) {
+    if ($Response.ContainsKey("items") -and $Response.items -is [System.Array]) {
+      return @($Response.items)
+    }
+    if ($Response.ContainsKey("data") -and $Response.data -is [System.Array]) {
+      return @($Response.data)
+    }
+    if ($Response.ContainsKey("id")) {
+      return @($Response)
+    }
+  }
+  if ($Response -is [pscustomobject]) {
+    if ($null -ne $Response.PSObject.Properties["items"] -and $Response.items -is [System.Array]) {
+      return @($Response.items)
+    }
+    if ($null -ne $Response.PSObject.Properties["data"] -and $Response.data -is [System.Array]) {
+      return @($Response.data)
+    }
+    if ($null -ne $Response.PSObject.Properties["id"]) {
+      return @($Response)
+    }
+  }
+  return @()
+}
+
+function Invoke-ResponseSlaAcceptance(
+  [string]$RuntimeHost,
+  [int]$RuntimeBackendPort,
+  [int]$SlaMs,
+  [string]$Email,
+  [string]$Password
+) {
+  $baseUrl = "http://$RuntimeHost`:$RuntimeBackendPort"
+  Write-Host "[SLA] Validando criterio de aceite (<= ${SlaMs}ms por endpoint)..." -ForegroundColor Cyan
+
+  $health = Invoke-WebRequest -Uri "$baseUrl/health" -UseBasicParsing -TimeoutSec 10
+  if ($health.StatusCode -ne 200) {
+    throw "[SLA] backend indisponivel para validacao de desempenho: $baseUrl/health"
+  }
+
+  $loginPayload = @{ email = $Email; password = $Password } | ConvertTo-Json
+  $login = Invoke-RestMethod -Method Post -Uri "$baseUrl/auth/login" -ContentType "application/json" -Body $loginPayload -TimeoutSec 30
+  $token = $login.access_token
+  if (-not $token) {
+    throw "[SLA] falha ao obter token de acesso para validacao de desempenho."
+  }
+
+  $headers = @{ Authorization = "Bearer $token" }
+  $clientsResponse = Measure-ApiGet -Name "admin_clientes" -Uri "$baseUrl/admin/clientes" -Headers $headers -SlaMs $SlaMs
+  $clients = Convert-ToApiList -Response $clientsResponse
+  if ($clients.Count -eq 0) {
+    throw "[SLA] sem clientes para validar cadeia de dropdowns."
+  }
+
+  $clientId = $clients[0].id
+  $productsResponse = Measure-ApiGet -Name "admin_produtos_por_cliente" -Uri ("$baseUrl/admin/clientes/{0}/produtos" -f $clientId) -Headers $headers -SlaMs $SlaMs
+  $products = Convert-ToApiList -Response $productsResponse
+  if ($products.Count -eq 0) {
+    throw "[SLA] sem produtos para validar cadeia de dropdowns (clientId=$clientId)."
+  }
+
+  $productId = $products[0].id
+  $mentorsResponse = Measure-ApiGet -Name "admin_mentores_por_produto" -Uri ("$baseUrl/admin/produtos/{0}/mentores" -f $productId) -Headers $headers -SlaMs $SlaMs
+  $mentors = Convert-ToApiList -Response $mentorsResponse
+  if ($mentors.Count -eq 0) {
+    throw "[SLA] sem mentores para validar cadeia de dropdowns (productId=$productId)."
+  }
+
+  $mentorId = $mentors[0].id
+  $null = Measure-ApiGet -Name "admin_alunos_por_mentor" -Uri ("$baseUrl/admin/mentores/{0}/alunos" -f $mentorId) -Headers $headers -SlaMs $SlaMs
+  Write-Host "[SLA] Criterio de aceite atendido: todos endpoints <= ${SlaMs}ms." -ForegroundColor Green
+}
+
 function Start-Runtime(
   [string]$RepoPath,
   [string]$BackendPath,
@@ -274,6 +386,8 @@ function Start-Runtime(
 ) {
   $effectiveBackendPort = Resolve-Port -BindHost $RuntimeHost -PreferredPort $RequestedBackendPort -Label "backend" -Attempts $Attempts
   $effectiveFrontendPort = Resolve-Port -BindHost "127.0.0.1" -PreferredPort $RequestedFrontendPort -Label "frontend" -Attempts $Attempts
+  $script:EffectiveBackendPort = $effectiveBackendPort
+  $script:EffectiveFrontendPort = $effectiveFrontendPort
   $script:BackendLogFile = Join-Path $RuntimeLogDir ("backend-{0}.log" -f $effectiveBackendPort)
   $script:FrontendLogFile = Join-Path $RuntimeLogDir ("frontend-{0}.log" -f $effectiveFrontendPort)
 
@@ -345,6 +459,15 @@ function Start-Runtime(
   if ($effectiveFrontendPort -ne $RequestedFrontendPort) {
     Write-Host "[DEVA] Aviso: frontend iniciou em porta alternativa ($effectiveFrontendPort) por indisponibilidade da porta $RequestedFrontendPort." -ForegroundColor Yellow
   }
+
+  if ($EnforceResponseSla) {
+    Invoke-ResponseSlaAcceptance `
+      -RuntimeHost $RuntimeHost `
+      -RuntimeBackendPort $effectiveBackendPort `
+      -SlaMs $ResponseSlaMs `
+      -Email $AdminEmail `
+      -Password $AdminPassword
+  }
 }
 
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -384,7 +507,7 @@ Start-Runtime `
   -FrontendTimeoutSeconds $FrontendStartupTimeoutSeconds
 
 Write-Host "[DEVA] Login admin local (documentado): admin@swaif.local / admin123" -ForegroundColor DarkGray
-Write-Host "[DEVA] Comandos: [R] reiniciar | [Q] encerrar | [S] status | [L] logs" -ForegroundColor DarkGray
+Write-Host "[DEVA] Comandos: [R] reiniciar | [Q] encerrar | [S] status | [L] logs | [T] teste SLA" -ForegroundColor DarkGray
 
 while ($true) {
   $rawAction = Read-Host "[DEVA] Escolha (R/Q/S/L)"
@@ -412,6 +535,14 @@ while ($true) {
     }
     "L" {
       Show-RuntimeLogs
+    }
+    "T" {
+      Invoke-ResponseSlaAcceptance `
+        -RuntimeHost $BackendHost `
+        -RuntimeBackendPort $script:EffectiveBackendPort `
+        -SlaMs $ResponseSlaMs `
+        -Email $AdminEmail `
+        -Password $AdminPassword
     }
     "Q" {
       Write-Host "[DEVA] Encerrando runtime..." -ForegroundColor Yellow

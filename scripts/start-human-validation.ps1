@@ -4,6 +4,9 @@ param(
   [string]$BackendHost = "127.0.0.1",
   [int]$BackendStartupTimeoutSeconds = 600,
   [int]$FrontendStartupTimeoutSeconds = 60,
+  [int]$ResponseSlaMs = 1000,
+  [string]$AdminEmail = "admin@innovai-solutions.com.br",
+  [string]$AdminPassword = "admin123",
   [switch]$Install,
   [switch]$StrictTcpPrecheck
 )
@@ -223,6 +226,10 @@ $runtimeArgs = @{
   FrontendPort                 = $FrontendPort
   BackendStartupTimeoutSeconds = $BackendStartupTimeoutSeconds
   FrontendStartupTimeoutSeconds = $FrontendStartupTimeoutSeconds
+  ResponseSlaMs                = $ResponseSlaMs
+  AdminEmail                   = $AdminEmail
+  AdminPassword                = $AdminPassword
+  EnforceResponseSla           = $true
 }
 
 if (-not $Install) {

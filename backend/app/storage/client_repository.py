@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+import os
+from pathlib import Path
 
 from datetime import datetime, timezone
 from typing import Any
@@ -35,8 +38,23 @@ class ClientRepository:
     def __init__(self) -> None:
         self._database_url = get_supabase_db_url()
         self._use_postgres = bool(self._database_url)
+        configured_store = os.getenv("CLIENT_STORE_PATH")
+        if configured_store:
+            self._client_store_path = Path(configured_store)
+        else:
+            self._client_store_path = Path(__file__).resolve().parents[2] / "data" / "clients.json"
         if self._use_postgres and psycopg is None:
             raise RuntimeError("SUPABASE_DB_URL is configured but psycopg is not installed.")
+
+    def _list_from_snapshot(self) -> list[dict[str, Any]]:
+        if not self._client_store_path.exists():
+            return []
+        try:
+            payload = json.loads(self._client_store_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return []
+        items = payload.get("items", []) if isinstance(payload, dict) else []
+        return [dict(item) for item in items if isinstance(item, dict)]
 
     def _list_from_postgres(self) -> list[dict[str, Any]]:
         assert self._database_url
@@ -77,6 +95,9 @@ class ClientRepository:
 
     def _read_items(self) -> list[dict[str, Any]]:
         if self._use_postgres:
+            snapshot = self._list_from_snapshot()
+            if snapshot:
+                return snapshot
             return self._list_from_postgres()
         raise RuntimeError("JSON client storage is disabled. Configure Supabase.")
 

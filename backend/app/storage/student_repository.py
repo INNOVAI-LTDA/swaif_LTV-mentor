@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
@@ -43,6 +44,17 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _as_iso(value: Any) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+    text = str(value).strip()
+    return text or None
+
+
 def _normalize_cpf(value: str | None) -> str | None:
     if value is None:
         return None
@@ -74,6 +86,8 @@ class StudentRepository:
     @staticmethod
     def _row_to_student(row: dict[str, Any]) -> dict[str, Any]:
         full_name = str(row.get("full_name") or row.get("email") or "Aluno")
+        created_at = _as_iso(row.get("created_at")) or _now_iso()
+        updated_at = _as_iso(row.get("updated_at")) or _now_iso()
         return {
             "id": str(row.get("id") or ""),
             "full_name": full_name,
@@ -86,8 +100,8 @@ class StudentRepository:
             "end_enrollment_date": None,
             "status": "active" if bool(row.get("is_active", True)) else "inactive",
             "is_active": bool(row.get("is_active", True)),
-            "created_at": row.get("created_at") or _now_iso(),
-            "updated_at": row.get("updated_at") or _now_iso(),
+            "created_at": created_at,
+            "updated_at": updated_at,
         }
 
     def _list_students_from_postgres(self) -> list[dict[str, Any]]:
@@ -104,6 +118,21 @@ class StudentRepository:
                 columns = [column[0] for column in (cur.description or ())]
                 rows = [dict(zip(columns, row)) for row in cur.fetchall()]
         return [self._row_to_student(row) for row in rows]
+
+    def _list_students_from_snapshot(self) -> list[dict[str, Any]]:
+        snapshot_path = Path(self._namespace)
+        if not snapshot_path.exists():
+            return []
+        try:
+            payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return []
+
+        raw_items = payload.get("items", []) if isinstance(payload, dict) else []
+        students = [dict(item) for item in raw_items if isinstance(item, dict)]
+        if students:
+            return students
+        return []
 
     def update(self, **kwargs) -> dict[str, Any]:
         if self._use_postgres:
@@ -132,6 +161,9 @@ class StudentRepository:
 
     def _read_items(self) -> list[dict[str, Any]]:
         if self._use_postgres:
+            snapshot_students = self._list_students_from_snapshot()
+            if snapshot_students:
+                return snapshot_students
             return self._list_students_from_postgres()
         return [dict(item) for item in self._memory_items() if isinstance(item, dict)]
 

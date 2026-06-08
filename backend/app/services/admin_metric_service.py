@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.services.metric_rule_validator import validate_v2_scoring_rules
 from app.storage.metric_repository import MetricRepository
 from app.storage.pillar_repository import PillarRepository
 from app.storage.protocol_repository import ProtocolRepository
@@ -90,6 +91,7 @@ class AdminMetricService:
         code: str | None = None,
         direction: str = "higher_better",
         unit: str | None = None,
+        scoring_rules: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         pillar = self._get_active_pillar(pillar_id)
         protocol_id = str(pillar.get("protocol_id"))
@@ -103,6 +105,18 @@ class AdminMetricService:
         if normalized_direction not in VALID_DIRECTIONS:
             raise ValidationError("direction is invalid")
 
+        # Validate the ruleset the new metric will be created with. Today the
+        # default ruleset is the v2 factory and is always well-formed; this
+        # check is a safety net for when callers start passing custom
+        # scoring_rules. The route at /admin/pilares/{id}/metricas does not
+        # yet pass them, so a refusal would currently be unreachable — but the
+        # failure mode would be a 422 with a clear code, never a silent 500.
+        if scoring_rules is not None:
+            issues = validate_v2_scoring_rules(scoring_rules, strict=True)
+            blocking = [code for code in issues if code.startswith("[ERROR]")]
+            if blocking:
+                raise ValidationError("scoring_rules: " + "; ".join(blocking))
+
         return self._metrics.create(
             protocol_id=protocol_id,
             pillar_id=pillar_id,
@@ -110,4 +124,5 @@ class AdminMetricService:
             code=code.strip() if code else None,
             direction=normalized_direction,
             unit=normalized_unit,
+            scoring_rules=scoring_rules,
         )

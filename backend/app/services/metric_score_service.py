@@ -351,6 +351,8 @@ def _calculate_metric_score_v2(metric: dict[str, Any], raw_value: Any, definitio
 
     basis = _resolve_v2_normalization_basis(metric, normalization=normalization, matched_rules=matched_rules, score=score)
     normalized_score = 0.0 if basis <= 0 else _clamp01(score / basis)
+    if _normalize_text(metric.get("direction") or "higher_better") == "lower_better":
+        normalized_score = 1.0 - normalized_score
     return MetricScoreResult(
         raw_value=raw_value,
         score=round(float(score), 6),
@@ -494,6 +496,8 @@ def calculate_metric_score(metric: dict[str, Any], raw_value: Any) -> MetricScor
 
     basis = _resolve_normalization_basis(metric, matched_rules=matched_rules, score=score)
     normalized_score = 0.0 if basis <= 0 else _clamp01(score / basis)
+    if _normalize_text(metric.get("direction") or "higher_better") == "lower_better":
+        normalized_score = 1.0 - normalized_score
     return MetricScoreResult(
         raw_value=raw_value,
         score=round(float(score), 6),

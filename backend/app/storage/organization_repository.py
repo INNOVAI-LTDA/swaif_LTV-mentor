@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
@@ -116,6 +117,29 @@ class OrganizationRepository:
             )
         return mapped
 
+    def _list_from_snapshot(self) -> list[dict[str, Any]]:
+        snapshot_path = Path(self._namespace)
+        if not snapshot_path.exists():
+            return []
+        try:
+            payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return []
+
+        raw_items = payload.get("items", []) if isinstance(payload, dict) else []
+        items = [dict(item) for item in raw_items if isinstance(item, dict)]
+        if not items:
+            return []
+
+        with self._mentor_overrides_lock:
+            mentor_overrides = dict(self._mentor_overrides)
+
+        for item in items:
+            item_id = str(item.get("id") or "")
+            if item_id in mentor_overrides:
+                item["mentor_id"] = mentor_overrides[item_id]
+        return items
+
     def update(self, **kwargs) -> dict[str, Any]:
         organization_id = kwargs.get("id")
         if not organization_id:
@@ -144,6 +168,9 @@ class OrganizationRepository:
 
     def _read_items(self) -> list[dict[str, Any]]:
         if self._use_postgres:
+            snapshot_items = self._list_from_snapshot()
+            if snapshot_items:
+                return snapshot_items
             return self._list_from_postgres()
         return [dict(item) for item in self._memory_items() if isinstance(item, dict) and item.get("deleted_at") is None]
 

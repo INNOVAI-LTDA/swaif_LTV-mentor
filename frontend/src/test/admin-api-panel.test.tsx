@@ -14,7 +14,10 @@ vi.mock("../domain/hooks/useAdminProducts", () => ({ useAdminProducts: () => emp
 vi.mock("../domain/hooks/useAdminMentors", () => ({ useAdminMentors: () => emptyResource }));
 vi.mock("../domain/hooks/useAdminPillars", () => ({ useAdminPillars: () => emptyResource }));
 vi.mock("../domain/hooks/useAdminMetrics", () => ({ useAdminMetrics: () => emptyResource }));
-vi.mock("../domain/hooks/useAdminStudents", () => ({ useAdminStudents: () => emptyResource }));
+vi.mock("../domain/hooks/useAdminStudents", () => ({
+  useAdminStudents: () => emptyResource,
+  useAdminStudentRadar: () => ({ data: { axisScores: [] }, error: null, loading: false, refresh: vi.fn() })
+}));
 vi.mock("../domain/hooks/useRadar", () => ({ useStudentRadar: () => ({ data: { axisScores: [] }, error: null, loading: false, refresh: vi.fn() }) }));
 vi.mock("../domain/services/adminDatabaseViewService", () => ({ listDatabaseTables: vi.fn(), listDatabaseRecords: vi.fn(), updateDatabaseRecord: vi.fn() }));
 vi.mock("../domain/services/adminClientService", () => ({ createAdminClient: vi.fn() }));

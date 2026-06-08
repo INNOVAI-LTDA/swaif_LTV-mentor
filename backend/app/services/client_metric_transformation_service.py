@@ -186,6 +186,13 @@ def _evaluate_action(action: dict[str, Any], raw_value: Any) -> float:
     if "assign_range" in action and isinstance(action.get("assign_range"), dict):
         return _evaluate_assign_range(action["assign_range"], raw_value)
 
+    if "multiply_input" in action:
+        factor = _to_numeric_or_none(action.get("multiply_input"))
+        numeric_raw = _coerce_float(raw_value)
+        if factor is None or numeric_raw is None:
+            raise ScoreCalculationError("multiply_input requires numeric factor and raw value")
+        return numeric_raw * factor
+
     raise ScoreCalculationError("unsupported action for python rule scoring")
 
 
@@ -249,8 +256,17 @@ def score_relative_python_from_metric(metric: dict[str, Any], absolute_value: An
         points_per_unit = _to_numeric_or_none(scoring.get("points_per_unit"))
         if points_per_unit is None:
             raise ScoreCalculationError("per_unit mode requires points_per_unit")
-        quantity = _coerce_float(absolute_value)
-        score = max(0.0, quantity) * points_per_unit
+        if isinstance(absolute_value, dict):
+            quantity = max(
+                sum(float(value) for value in absolute_value.values() if isinstance(value, (int, float))),
+                0.0,
+            )
+        else:
+            numeric = _coerce_float(absolute_value)
+            if numeric is None:
+                raise ScoreCalculationError("per_unit requires numeric or count_map raw value")
+            quantity = max(0.0, numeric)
+        score = quantity * points_per_unit
     else:
         rules = scoring.get("rules") if isinstance(scoring.get("rules"), list) else []
         matched_rules = [
@@ -287,6 +303,8 @@ def score_relative_python_from_metric(metric: dict[str, Any], absolute_value: An
         score=float(score),
     )
     normalized = 0.0 if basis <= 0 else _clamp01(float(score) / basis)
+    if _normalize_text(metric.get("direction") or "higher_better") == "lower_better":
+        normalized = 1.0 - normalized
     return round(float(normalized), 6)
 
 

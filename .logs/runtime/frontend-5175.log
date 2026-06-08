@@ -1,6 +1,155 @@
 ﻿
 [DEVA] frontend start: host=127.0.0.1 port=5175 cwd=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend
 
-  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m445[22m[2m[0m ms[22m
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m526[22m[2m[0m ms[22m
 
   [32mÔ×£[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5175[22m/[39m
+[2m21:01:40[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:01:51[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:02:16[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:02:26[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:02:57[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:03:13[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:03:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:04:15[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:04:15[22m [31m[1m[vite][22m[39m [31mInternal server error: C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\src\features\admin\pages\AdminPage.tsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (1671:12)
+System.Management.Automation.RemoteException
+[0m [90m 1669 |[31m             [33m<[31m[33m/[31m[33msection[31m[33m>[31m
+ [90m 1670 |[31m
+[31m[1m>[22m[31m[90m 1671 |[31m             [33m<[31m[33msection[31m[33m>[31m
+ [90m      |[31m             [31m[1m^[22m[31m
+ [90m 1672 |[31m               [33m<[31m[33mh3[31m[33m>[31m[33mRadar[31m[33m<[31m[33m/[31m[33mh3[31m[33m>[31m
+ [90m 1673 |[31m               {[33m![31mselectedStudentId [33m?[31m (
+ [90m 1674 |[31m                 [33m<[31m[33mp[31m className[33m=[31m[32m"admin-state"[31m[33m>[31m[33mSelecione[31m um aluno para editar os eixos [36mdo[31m radar[33m.[31m[33m<[31m[33m/[31m[33mp[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/Users/dmene/Projetos/innovai/git/swaif_LTV-mentor/frontend/src/features/admin/pages/AdminPage.tsx[39m:1671:12
+[33m  1698|                              <td>
+  1699|                                <input
+  1700|                                  aria-label={`${moduleLabel} Radar Baseline ${axis.axisLabel}`}
+     |                                          ^
+  1701|                                  type="number"
+  1702|                                  step="0.1"[39m
+      at constructor (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.jsxParseElementAt (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4742:18)
+      at TypeScriptParserMixin.jsxParseElement (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9775:39
+      at TypeScriptParserMixin.tryParse (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:6907:20)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9775:18)
+      at C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at TypeScriptParserMixin.allowInAnd (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseConditional (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10893:29)
+      at TypeScriptParserMixin.parseConditional (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9603:18)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10885:17)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10784:23)
+      at C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at TypeScriptParserMixin.parseExpression (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.jsxParseExpressionContainer (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4632:31)
+      at TypeScriptParserMixin.jsxParseElementAt (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4711:36)
+      at TypeScriptParserMixin.jsxParseElement (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+[2m21:04:21[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:05:25[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:05:26[22m [31m[1m[vite][22m[39m [31mInternal server error: C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\src\features\admin\pages\AdminPage.tsx: Unexpected token (1817:15)
+System.Management.Automation.RemoteException
+[0m [90m 1815 |[31m                 [33m<[31m[33m/[31m[33m>[31m
+ [90m 1816 |[31m               ) [33m:[31m (
+[31m[1m>[22m[31m[90m 1817 |[31m               {[33m![31mselectedStudentId [33m?[31m (
+ [90m      |[31m                [31m[1m^[22m[31m
+ [90m 1818 |[31m                 [33m<[31m[33mp[31m className[33m=[31m[32m"admin-state"[31m[33m>[31m[33mSelecione[31m um aluno para editar os eixos [36mdo[31m radar[33m.[31m[33m<[31m[33m/[31m[33mp[31m[33m>[31m
+ [90m 1819 |[31m               ) [33m:[31m clientViewRadarResource[33m.[31mloading [33m?[31m (
+ [90m 1820 |[31m                 [33m<[31m[33mp[31m className[33m=[31m[32m"admin-state"[31m[33m>[31m[33mCarregando[31m radar[33m...[31m[33m<[31m[33m/[31m[33mp[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/Users/dmene/Projetos/innovai/git/swaif_LTV-mentor/frontend/src/features/admin/pages/AdminPage.tsx[39m:1817:15
+[33m  1842|                              <td>
+  1843|                                <input
+  1844|                                  aria-label={`${moduleLabel} Radar Baseline ${axis.axisLabel}`}
+     |                                                                                             ^
+  1845|                                  type="number"
+  1846|                                  step="0.1"[39m
+      at constructor (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parsePropertyName (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:12024:18)
+      at TypeScriptParserMixin.parsePropertyDefinition (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11889:10)
+      at TypeScriptParserMixin.parseObjectLike (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11832:21)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11339:23)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9786:20)
+      at C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10800:39
+      at TypeScriptParserMixin.allowInAnd (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10800:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:12493:17)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11675:28)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11331:23)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseConditional (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10893:29)
+      at TypeScriptParserMixin.parseConditional (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9603:18)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10885:17)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10784:23)
+      at C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:12426:12)
+      at TypeScriptParserMixin.parseExpression (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.jsxParseExpressionContainer (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4632:31)
+      at TypeScriptParserMixin.jsxParseElementAt (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4711:36)
+      at TypeScriptParserMixin.jsxParseElementAt (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElement (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4749:17)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:4759:19)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\frontend\node_modules\@babel\parser\lib\index.js:11046:23)
+[2m21:05:54[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:06:38[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:06:48[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m
+[2m21:07:07[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/admin.css[22m
+[2m21:11:06[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/features/admin/pages/AdminPage.tsx[22m

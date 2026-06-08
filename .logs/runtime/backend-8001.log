@@ -1,112 +1,34 @@
 ﻿
 [DEVA] backend start: host=127.0.0.1 port=8001 cwd=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend
-2026-06-02 13:20:30,747 INFO swaif.runtime backend_runtime_configured app_env=local client_code=local cors_origins=http://localhost:5173,http://127.0.0.1:5173,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:4173,http://127.0.0.1:4173,http://localhost:3000,http://127.0.0.1:3000 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
-INFO:     Started server process [28040]
+2026-06-02 14:01:52,176 INFO swaif.runtime backend_runtime_configured app_env=local client_code=local cors_origins=http://localhost:5173,http://127.0.0.1:5173,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:4173,http://127.0.0.1:4173,http://localhost:3000,http://127.0.0.1:3000 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
+INFO:     Started server process [24292]
 INFO:     Waiting for application startup.
-2026-06-02 13:20:30,845 INFO swaif.runtime supabase_startup_sync_begin
-2026-06-02 13:20:30,845 INFO swaif.runtime supabase_sync_begin
-2026-06-02 13:20:30,845 INFO swaif.runtime supabase_sync_fetch_begin
-2026-06-02 13:20:33,116 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2270
-2026-06-02 13:20:33,269 INFO swaif.runtime supabase_sync_build_payloads_begin
-2026-06-02 13:20:35,177 INFO swaif.runtime supabase_sync_build_payloads_completed contacts=253 users=253 organizations=2 mentors=1 students=250 protocols=2 pillars=5 metrics=16 enrollments=250 measurements=4000 checkpoints=250
-2026-06-02 13:20:35,177 INFO swaif.runtime supabase_sync_backfill_begin
-2026-06-02 13:20:38,024 INFO swaif.runtime supabase_sync_backfill_fastpath active_enrollments=250 existing_measurements=4002 existing_checkpoints=250 elapsed_ms=2846
-2026-06-02 13:20:38,054 INFO swaif.runtime supabase_sync_completed total_elapsed_ms=7209 runtime_backfill_active_enrollments=250
-2026-06-02 13:20:38,056 INFO swaif.runtime supabase_startup_sync_completed counters={'contacts_users_v2': 253, 'users': 253, 'organizations': 2, 'mentors': 1, 'students': 250, 'protocols': 2, 'pillars': 5, 'metrics': 16, 'enrollments': 250, 'measurements': 4000, 'checkpoints': 250, 'measurement_overalls': 0, 'runtime_backfill_active_enrollments': 250, 'runtime_backfill_measurement_candidates': 4000, 'runtime_backfill_measurement_inserted': 0, 'runtime_backfill_measurement_skipped': 4000, 'runtime_backfill_checkpoint_candidates': 250, 'runtime_backfill_checkpoint_inserted': 0, 'runtime_backfill_checkpoint_skipped': 250}
-2026-06-02 13:20:38,056 INFO swaif.runtime startup_warmup_begin target=user_repository
-2026-06-02 13:20:42,206 INFO swaif.runtime startup_warmup_completed target=user_repository
-2026-06-02 13:20:42,207 INFO swaif.runtime startup_warmup_begin target=student_repository
-2026-06-02 13:20:43,659 INFO swaif.runtime startup_warmup_completed target=student_repository
-2026-06-02 13:20:43,659 INFO swaif.runtime backend_startup_complete app_env=local client_code=local cors_origins=http://localhost:5173,http://127.0.0.1:5173,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:4173,http://127.0.0.1:4173,http://localhost:3000,http://127.0.0.1:3000 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled supabase_sync_on_startup=True storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
-2026-06-02 13:20:43,659 WARNING swaif.runtime mentor_routes_enabled=true; keep this restricted to local-only validation environments.
+2026-06-02 14:01:52,258 INFO swaif.runtime supabase_startup_sync_begin
+2026-06-02 14:01:52,258 INFO swaif.runtime supabase_sync_begin
+2026-06-02 14:01:52,258 INFO swaif.runtime supabase_sync_fetch_begin
+2026-06-02 14:01:54,610 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2351
+2026-06-02 14:01:54,765 INFO swaif.runtime supabase_sync_build_payloads_begin
+2026-06-02 14:01:55,122 INFO swaif.runtime supabase_sync_build_payloads_completed contacts=253 users=253 organizations=2 mentors=1 students=250 protocols=2 pillars=5 metrics=16 enrollments=250 measurements=4000 checkpoints=250
+2026-06-02 14:01:55,122 INFO swaif.runtime supabase_sync_backfill_begin
+2026-06-02 14:01:57,624 INFO swaif.runtime supabase_sync_backfill_fastpath active_enrollments=250 existing_measurements=4002 existing_checkpoints=250 elapsed_ms=2501
+2026-06-02 14:01:57,699 INFO swaif.runtime supabase_sync_completed total_elapsed_ms=5441 runtime_backfill_active_enrollments=250
+2026-06-02 14:01:57,700 INFO swaif.runtime supabase_startup_sync_completed counters={'contacts_users_v2': 253, 'users': 253, 'organizations': 2, 'mentors': 1, 'students': 250, 'protocols': 2, 'pillars': 5, 'metrics': 16, 'enrollments': 250, 'measurements': 4000, 'checkpoints': 250, 'measurement_overalls': 0, 'runtime_backfill_active_enrollments': 250, 'runtime_backfill_measurement_candidates': 4000, 'runtime_backfill_measurement_inserted': 0, 'runtime_backfill_measurement_skipped': 4000, 'runtime_backfill_checkpoint_candidates': 250, 'runtime_backfill_checkpoint_inserted': 0, 'runtime_backfill_checkpoint_skipped': 250}
+2026-06-02 14:01:57,701 INFO swaif.runtime startup_warmup_begin target=user_repository
+2026-06-02 14:02:02,214 INFO swaif.runtime startup_warmup_completed target=user_repository
+2026-06-02 14:02:02,214 INFO swaif.runtime startup_warmup_begin target=student_repository
+2026-06-02 14:02:03,975 INFO swaif.runtime startup_warmup_completed target=student_repository
+2026-06-02 14:02:03,975 INFO swaif.runtime backend_startup_complete app_env=local client_code=local cors_origins=http://localhost:5173,http://127.0.0.1:5173,http://localhost:5175,http://127.0.0.1:5175,http://localhost:5176,http://127.0.0.1:5176,http://localhost:4173,http://127.0.0.1:4173,http://localhost:3000,http://127.0.0.1:3000 cors_origin_regex=none mentor_routes=True mentor_route_policy=default-enabled supabase_sync_on_startup=True storage_root=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\data backup_dir=C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\backups
+2026-06-02 14:02:03,975 WARNING swaif.runtime mentor_routes_enabled=true; keep this restricted to local-only validation environments.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
-INFO:     127.0.0.1:56907 - "GET /openapi.json HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56909 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51283 - "POST /auth/login HTTP/1.1" 200 OK
-2026-06-02 13:21:05,127 INFO swaif.runtime supabase_sync_fetch_begin
-2026-06-02 13:21:07,616 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2489
-INFO:     127.0.0.1:51283 - "GET /admin/clientes HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51283 - "GET /admin/clientes/cli_1/produtos HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51283 - "GET /admin/produtos/org_1/mentores HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51283 - "GET /admin/mentores/2/alunos HTTP/1.1" 500 Internal Server Error
-ERROR:    Exception in ASGI application
-Traceback (most recent call last):
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\uvicorn\protocols\http\httptools_impl.py", line 416, in run_asgi
-    result = await app(  # type: ignore[func-returns-value]
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        self.scope, self.receive, self.send
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\uvicorn\middleware\proxy_headers.py", line 60, in __call__
-    return await self.app(scope, receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\applications.py", line 1160, in __call__
-    await super().__call__(scope, receive, send)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\applications.py", line 107, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\errors.py", line 186, in __call__
-    raise exc
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\errors.py", line 164, in __call__
-    await self.app(scope, receive, _send)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\cors.py", line 87, in __call__
-    await self.app(scope, receive, send)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\middleware\exceptions.py", line 63, in __call__
-    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\middleware\asyncexitstack.py", line 18, in __call__
-    await self.app(scope, receive, send)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 716, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 736, in app
-    await route.handle(scope, receive, send)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\routing.py", line 290, in handle
-    await self.app(scope, receive, send)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 130, in app
-    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 116, in app
-    response = await f(request)
-               ^^^^^^^^^^^^^^^^
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\routing.py", line 453, in app
-    solved_result = await solve_dependencies(
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<6 lines>...
-    )
-    ^
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\fastapi\dependencies\utils.py", line 677, in solve_dependencies
-    solved = await run_in_threadpool(call, **solved_result.values)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\starlette\concurrency.py", line 32, in run_in_threadpool
-    return await anyio.to_thread.run_sync(func)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\anyio\to_thread.py", line 63, in run_sync
-    return await get_async_backend().run_sync_in_worker_thread(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
-    return await future
-           ^^^^^^^^^^^^
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\.vendor\anyio\_backends\_asyncio.py", line 986, in run
-    result = context.run(func, *args)
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\api\routes\admin_students.py", line 93, in get_admin_student_service
-    product_assignments=ProductAssignmentRepository(),
-                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\storage\product_assignment_repository.py", line 34, in __init__
-    self._store = JsonRepository(file_path or default_product_assignment_store_path())
-                  ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\dmene\Projetos\innovai\git\swaif_LTV-mentor\backend\app\storage\json_repository.py", line 19, in __init__
-    raise RuntimeError(
-        "JSON storage is disabled. Configure and use Supabase as the only backend data source."
-    )
-RuntimeError: JSON storage is disabled. Configure and use Supabase as the only backend data source.
+INFO:     127.0.0.1:50067 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58888 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58888 - "POST /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58888 - "GET /admin/mentores/2/alunos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59108 - "POST /auth/login HTTP/1.1" 200 OK
+2026-06-02 14:57:04,027 INFO swaif.runtime supabase_sync_fetch_begin
+2026-06-02 14:57:06,385 INFO swaif.runtime supabase_sync_fetch_completed users=253 organizations=2 products=2 pillars=5 metrics=16 enrollments=250 elapsed_ms=2358
+INFO:     127.0.0.1:59108 - "GET /admin/clientes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59108 - "GET /admin/clientes//produtos HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59121 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51343 - "GET /openapi.json HTTP/1.1" 200 OK

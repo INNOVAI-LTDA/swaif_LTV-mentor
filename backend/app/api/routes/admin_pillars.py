@@ -17,9 +17,15 @@ router = APIRouter(prefix="/admin", tags=["admin-pilares"])
 
 
 def get_admin_pillar_service() -> AdminPillarService:
+    protocols_repository = None
+    try:
+        protocols_repository = ProtocolRepository()
+    except RuntimeError:
+        protocols_repository = None
+
     return AdminPillarService(
         organizations=OrganizationRepository(),
-        protocols=ProtocolRepository(),
+        protocols=protocols_repository,
         pillars=PillarRepository(),
     )
 

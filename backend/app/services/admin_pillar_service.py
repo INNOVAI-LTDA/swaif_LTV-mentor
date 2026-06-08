@@ -19,7 +19,7 @@ class AdminPillarService:
     def __init__(
         self,
         organizations: OrganizationRepository,
-        protocols: ProtocolRepository,
+        protocols: ProtocolRepository | None,
         pillars: PillarRepository,
     ) -> None:
         self._organizations = organizations
@@ -33,12 +33,16 @@ class AdminPillarService:
         return product
 
     def _get_active_protocol(self, product_id: str) -> dict[str, Any] | None:
+        if self._protocols is None:
+            return None
         for protocol in self._protocols.list_by_organization(product_id):
             if bool(protocol.get("is_active", True)):
                 return protocol
         return None
 
     def _get_or_create_protocol(self, product: dict[str, Any]) -> dict[str, Any]:
+        if self._protocols is None:
+            raise RuntimeError("protocol_repository_unavailable")
         current = self._get_active_protocol(str(product.get("id")))
         if current:
             return current

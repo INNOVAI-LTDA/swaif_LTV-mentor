@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
@@ -67,6 +68,17 @@ class ContactUserRepository:
 
     def _read_items(self) -> list[dict[str, Any]]:
         if self._use_postgres:
+            snapshot_path = Path(self._namespace)
+            if snapshot_path.exists():
+                try:
+                    payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
+                    raw_items = payload.get("items", []) if isinstance(payload, dict) else []
+                    snapshot_items = [dict(item) for item in raw_items if isinstance(item, dict)]
+                    if snapshot_items:
+                        return snapshot_items
+                except (OSError, json.JSONDecodeError):
+                    pass
+
             assert self._database_url
             has_password_hash = self._has_password_hash_column()
             if has_password_hash:

@@ -39,6 +39,14 @@ class AdminStudentService:
         self._contacts = contacts
         self._product_assignments = product_assignments
 
+    @staticmethod
+    def _normalize_prefixed_id(value: Any, prefix: str) -> str:
+        raw = str(value or "").strip()
+        expected = f"{prefix}_"
+        if raw.startswith(expected):
+            return raw[len(expected):]
+        return raw
+
     def _get_active_product(self, product_id: str) -> dict[str, Any]:
         product = self._organizations.get_by_id(product_id)
         if not product or not bool(product.get("is_active", True)):
@@ -64,19 +72,43 @@ class AdminStudentService:
                 continue
             if not bool(contact.get("is_active", True)):
                 continue
+            organization_id = str(contact.get("organization_id") or "")
+            canonical_mentor_id = ""
+            if organization_id:
+                product = self._organizations.get_by_id(organization_id)
+                if product:
+                    canonical_mentor_id = str(product.get("mentor_id") or "")
             return {
-                "id": str(contact.get("id") or ""),
+                "id": canonical_mentor_id or str(contact.get("id") or ""),
                 "full_name": str(contact.get("full_name") or ""),
                 "email": str(contact.get("email") or ""),
-                "organization_id": str(contact.get("organization_id") or ""),
+                "organization_id": organization_id,
                 "is_active": bool(contact.get("is_active", True)),
+            }
+
+        # Supabase snapshots may expose mentor relationships only through products.
+        for product in self._organizations.list_organizations():
+            if not bool(product.get("is_active", True)):
+                continue
+            if str(product.get("mentor_id") or "") != str(mentor_id):
+                continue
+            return {
+                "id": str(product.get("mentor_id") or ""),
+                "full_name": "",
+                "email": "",
+                "organization_id": str(product.get("id") or ""),
+                "is_active": True,
             }
 
         raise EntityNotFoundError("mentor not found")
 
     def list_students_by_product(self, product_id: str) -> list[dict[str, Any]]:
         self._get_active_product(product_id)
-        items = [self._build_student_row(enrollment) for enrollment in self._enrollments.list_by_organization(product_id)]
+        students_by_id = self._build_active_students_index()
+        items = [
+            self._build_student_row(enrollment, students_by_id)
+            for enrollment in self._enrollments.list_by_organization(product_id)
+        ]
         return sorted(
             [item for item in items if item is not None],
             key=lambda item: (str(item.get("full_name") or "").lower(), str(item.get("id") or "")),
@@ -84,7 +116,11 @@ class AdminStudentService:
 
     def list_students_by_mentor(self, mentor_id: str) -> list[dict[str, Any]]:
         mentor = self._get_active_mentor(mentor_id)
-        items = [self._build_student_row(enrollment) for enrollment in self._list_enrollments_for_mentor(mentor)]
+        students_by_id = self._build_active_students_index()
+        items = [
+            self._build_student_row(enrollment, students_by_id)
+            for enrollment in self._list_enrollments_for_mentor(mentor)
+        ]
         return sorted(
             [item for item in items if item is not None],
             key=lambda item: (str(item.get("full_name") or "").lower(), str(item.get("id") or "")),
@@ -148,10 +184,35 @@ class AdminStudentService:
             pass
         return {**student, "mentor_id": mentor_id, "organization_id": product_id, "enrollment_id": enrollment["id"]}
 
-    def _build_student_row(self, enrollment: dict[str, Any]) -> dict[str, Any] | None:
+    def _build_active_students_index(self) -> dict[str, dict[str, Any]]:
+        index: dict[str, dict[str, Any]] = {}
+        for student in self._students.list_students():
+            if not bool(student.get("is_active", True)):
+                continue
+            raw_id = str(student.get("id") or "")
+            if not raw_id:
+                continue
+            index[raw_id] = student
+            normalized = self._normalize_prefixed_id(raw_id, "std")
+            if normalized:
+                index[normalized] = student
+        return index
+
+    def _build_student_row(
+        self,
+        enrollment: dict[str, Any],
+        students_by_id: dict[str, dict[str, Any]] | None = None,
+    ) -> dict[str, Any] | None:
         if not bool(enrollment.get("is_active", True)):
             return None
-        student = self._students.get_by_id(str(enrollment.get("student_id")))
+        student_id = str(enrollment.get("student_id") or "")
+        student = None
+        if students_by_id is not None:
+            student = students_by_id.get(student_id) or students_by_id.get(self._normalize_prefixed_id(student_id, "std"))
+        if student is None:
+            student = self._students.get_by_id(student_id)
+            if student is None:
+                student = self._students.get_by_id(self._normalize_prefixed_id(student_id, "std"))
         if not student or not bool(student.get("is_active", True)):
             return None
         return {
@@ -168,10 +229,21 @@ class AdminStudentService:
         if not mentor_id or not organization_id:
             return enrollments
 
-        # Legacy seeds may have enrollments created before mentor_id became mandatory.
         product = self._organizations.get_by_id(organization_id)
-        if not product or str(product.get("mentor_id") or "") != mentor_id:
+        if not product:
             return enrollments
+
+        canonical_mentor_id = str(product.get("mentor_id") or "")
+        if canonical_mentor_id and canonical_mentor_id != mentor_id:
+            for enrollment in self._enrollments.list_by_mentor(canonical_mentor_id):
+                if any(str(existing.get("id") or "") == str(enrollment.get("id") or "") for existing in enrollments):
+                    continue
+                enrollments.append(enrollment)
+
+        if canonical_mentor_id not in {"", mentor_id}:
+            return enrollments
+
+        # Legacy seeds may have enrollments created before mentor_id became mandatory.
 
         for enrollment in self._enrollments.list_by_organization(organization_id):
             if str(enrollment.get("mentor_id") or "").strip():

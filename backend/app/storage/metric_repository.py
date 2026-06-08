@@ -4,6 +4,13 @@ from pathlib import Path
 from threading import RLock
 from typing import Any
 
+import logging
+
+from app.services.metric_rule_validator import summarize_validation_warnings
+
+logger = logging.getLogger("swaif.metrics")
+
+
 def default_metric_store_path() -> Path:
     return Path(__file__).resolve().parents[2] / "data" / "metrics.json"
 
@@ -31,6 +38,7 @@ def _default_scoring_rules_v2() -> dict[str, Any]:
 class MetricRepository:
     _memory_stores: dict[str, list[dict[str, Any]]] = {}
     _memory_lock = RLock()
+    _validation_done: set[str] = set()
 
     def __init__(self, file_path: str | Path | None = None) -> None:
         self._namespace = str((file_path or default_metric_store_path()).resolve())
@@ -48,8 +56,26 @@ class MetricRepository:
     def _read_items(self) -> list[dict[str, Any]]:
         return [dict(item) for item in self._memory_items() if isinstance(item, dict) and item.get("deleted_at") is None]
 
+    def _emit_validation_warnings_once(self, metrics: list[dict[str, Any]]) -> None:
+        """Run the v2 rule-author validator on the loaded metrics the first
+        time this namespace is read. Surface blocking findings as warnings so
+        operators see them in the boot log without breaking the server.
+        """
+        with self._memory_lock:
+            if self._namespace in MetricRepository._validation_done:
+                return
+            MetricRepository._validation_done.add(self._namespace)
+        for metric_id, issue in summarize_validation_warnings(metrics):
+            logger.warning(
+                "metric_rule_validation_warning metric_id=%s issue=%s",
+                metric_id,
+                issue,
+            )
+
     def list_metrics(self) -> list[dict[str, Any]]:
-        return self._read_items()
+        items = self._read_items()
+        self._emit_validation_warnings_once(items)
+        return items
 
     def list_by_pillar(self, pillar_id: int) -> list[dict[str, Any]]:
         return [
