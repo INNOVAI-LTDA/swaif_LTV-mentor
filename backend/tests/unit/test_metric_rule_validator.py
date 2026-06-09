@@ -232,3 +232,159 @@ def test_metric_repository_list_metrics_emits_validation_warnings_on_first_read(
 
     # Cleanup so the test does not leak the flag to other tests in the same process.
     MetricRepository._validation_done.discard(repo._namespace)
+
+
+# ---------- Commit 2: validator branch coverage ----------
+
+
+def test_validator_flags_unsupported_input_kind() -> None:
+    """`input.kind` outside the known set triggers
+    `unsupported_input_kind`. The issue code is listed in the
+    module docstring's catalog but had no dedicated test.
+    """
+    rules = {
+        "version": 2,
+        "input": {"kind": "weird_kind"},
+        "scoring": {
+            "mode": "first_match",
+            "rules": [{"when": {"op": "gte", "value": 0}, "then": {"assign": 1}}],
+        },
+        "normalization": {"basis": "max_score", "value": 1},
+    }
+    issues = validate_v2_scoring_rules(rules, strict=True)
+    assert any("unsupported_input_kind" in issue and "weird_kind" in issue for issue in issues)
+
+
+def test_validator_strict_false_demotes_errors_to_warnings() -> None:
+    """With `strict=False`, blocking issues are returned as `[WARN]`
+    rather than `[ERROR]`. This is the mode used for non-blocking
+    previews; the boot-log hook only surfaces `[ERROR]` so the
+    distinction is what the caller cares about.
+    """
+    rules = {
+        "version": 2,
+        "scoring": {
+            "mode": "weighted_average",
+            "rules": [{"when": {"op": "gte", "value": 0}, "then": {"assign": 1}}],
+        },
+        "normalization": {"basis": "max_score", "value": 1},
+    }
+    issues = validate_v2_scoring_rules(rules, strict=False)
+    # The unknown_mode is now a warning, not an error.
+    assert any("[WARN] unknown_mode" in issue for issue in issues)
+    assert not any("[ERROR]" in issue for issue in issues)
+
+
+def test_validator_flags_unknown_action_in_fallback() -> None:
+    """Unknown action keys inside `scoring.fallback` are flagged with
+    `unknown_action source=fallback`. The existing
+    `test_validator_rejects_unknown_action` only exercises the
+    invalid key inside a rule's `then`, not inside the fallback.
+    """
+    rules = {
+        "version": 2,
+        "scoring": {
+            "mode": "first_match",
+            "rules": [{"when": {"op": "gte", "value": 0}, "then": {"assign": 1}}],
+            "fallback": {"percentile": 0.5},
+        },
+        "normalization": {"basis": "max_score", "value": 1},
+    }
+    issues = validate_v2_scoring_rules(rules, strict=True)
+    assert any(
+        "unknown_action" in issue and "source=fallback" in issue and "percentile" in issue
+        for issue in issues
+    )
+
+
+def test_validator_flags_v1_only_key_inside_all_composition() -> None:
+    """A v1-only predicate key (`description`, `operator` without `op`,
+    `points`, `points_range`) nested inside an `all` composition is
+    detected by the recursive `_iter_predicates_for_v1_legacy_check`
+    walk. The existing top-level test only covers the case where the
+    v1 key sits at the root of `when`.
+    """
+    rules = {
+        "version": 2,
+        "scoring": {
+            "mode": "first_match",
+            "rules": [
+                {
+                    "when": {
+                        "all": [
+                            {"description": "high"},   # v1-only key, nested in `all`
+                            {"op": "gte", "value": 0},
+                        ]
+                    },
+                    "then": {"assign": 1},
+                }
+            ],
+        },
+        "normalization": {"basis": "max_score", "value": 1},
+    }
+    issues = validate_v2_scoring_rules(rules, strict=True)
+    assert any("v1_predicate_in_v2_rules" in issue for issue in issues)
+
+
+def test_validator_returns_multiple_issues_for_one_metric() -> None:
+    """A single metric with 3 distinct problems produces 3 issue
+    entries; the validator does not short-circuit on the first error.
+    """
+    rules = {
+        "version": 2,
+        "input": {"kind": "weird_kind"},  # unsupported_input_kind
+        "scoring": {
+            "mode": "weighted_average",  # unknown_mode
+            "rules": [
+                {"when": {"op": "gte", "value": 0}, "then": {"weird_action": 1}}  # unknown_action
+            ],
+        },
+        "normalization": {"basis": "max_score", "value": 1},
+    }
+    issues = validate_v2_scoring_rules(rules, strict=True)
+
+    assert sum(1 for issue in issues if "unsupported_input_kind" in issue) == 1
+    assert sum(1 for issue in issues if "unknown_mode" in issue) == 1
+    assert sum(1 for issue in issues if "unknown_action" in issue) == 1
+    assert len(issues) == 3
+
+
+def test_summarize_validation_warnings_skips_non_dict_and_idless_metrics() -> None:
+    """`summarize_validation_warnings` skips metrics that are not
+    dicts (e.g. malformed records) and dicts that lack an `id`. Only
+    well-formed dict metrics with bad v2 rules produce findings.
+    """
+    metrics = [
+        "not a dict",  # non-dict → skipped
+        None,  # non-dict → skipped
+        # dict with no `id` → skipped
+        {
+            "scoring_rules": {
+                "version": 2,
+                "scoring": {
+                    "mode": "weighted_average",
+                    "rules": [{"when": {"op": "gte", "value": 0}, "then": {"assign": 1}}],
+                },
+                "normalization": {"basis": "max_score", "value": 1},
+            },
+        },
+        # the only metric that should produce a finding
+        {
+            "id": "met_bad_3",
+            "scoring_rules": {
+                "version": 2,
+                "scoring": {
+                    "mode": "weighted_average",
+                    "rules": [{"when": {"op": "gte", "value": 0}, "then": {"assign": 1}}],
+                },
+                "normalization": {"basis": "max_score", "value": 1},
+            },
+        },
+    ]
+
+    findings = summarize_validation_warnings(metrics)
+    ids = [pair[0] for pair in findings]
+
+    assert ids == ["met_bad_3"]
+    # The [ERROR] tag was stripped; the bare issue code remains.
+    assert "unknown_mode" in findings[0][1]
