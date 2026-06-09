@@ -236,3 +236,300 @@ def test_calculate_metric_score_v2_multiply_input_action_supported() -> None:
     assert result.score == pytest.approx(40.0, abs=1e-6)  # 80 * 0.5
     assert result.normalization_basis == pytest.approx(50.0, abs=1e-6)
     assert result.normalized_score == pytest.approx(0.8, abs=1e-6)
+
+
+# ---------- Commit 1: isolated v2 branch coverage ----------
+
+
+def test_calculate_metric_score_v2_max_match_picks_largest_match() -> None:
+    """v2 `max_match` mode returns the largest action score among all
+    matching rules, not the first. Three rules, two or three match —
+    the largest of the matched ones must win. Direct test of the
+    `max_match` branch in `_calculate_metric_score_v2` that the
+    parity sweep exercises but the unit file did not.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 20,
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "max_match",
+                "rules": [
+                    {"when": {"op": "gte", "value": 0}, "then": {"assign": 3}},
+                    {"when": {"op": "lt", "value": 50}, "then": {"assign": 7}},
+                    {"when": {"op": "lt", "value": 10}, "then": {"assign": 9}},
+                ],
+            },
+            "normalization": {"basis": "explicit", "value": 9},
+        },
+    }
+
+    # raw=25 matches rules 0 and 1; max(3, 7) = 7.
+    result = calculate_metric_score(metric, 25)
+    assert result.score == pytest.approx(7.0, abs=1e-6)
+    assert result.normalized_score == pytest.approx(7 / 9, abs=1e-6)
+
+    # raw=5 matches all three; max(3, 7, 9) = 9.
+    result_low = calculate_metric_score(metric, 5)
+    assert result_low.score == pytest.approx(9.0, abs=1e-6)
+    assert result_low.normalized_score == pytest.approx(1.0, abs=1e-6)
+
+
+def test_calculate_metric_score_v2_fallback_fires_when_no_rule_matches() -> None:
+    """When no rule matches and a `fallback` action is configured, the
+    fallback is evaluated instead of raising ScoreCalculationError.
+    Regression guard for the fallback branch in
+    `_calculate_metric_score_v2`.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 10,
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"op": "gt", "value": 1000}, "then": {"assign": 1}},
+                ],
+                "fallback": {"assign": 5},
+            },
+            "normalization": {"basis": "max_score", "value": 10},
+        },
+    }
+
+    result = calculate_metric_score(metric, 0)
+
+    assert result.score == pytest.approx(5.0, abs=1e-6)
+    assert result.normalized_score == pytest.approx(0.5, abs=1e-6)
+    assert result.matched_rule_indexes == ()
+
+
+def test_calculate_metric_score_v2_assign_range_policy_min_returns_lower_bound() -> None:
+    """`assign_range` with `policy: "min"` returns the smaller of the
+    two bounds, ignoring the raw value. Symmetric twin of the default
+    `policy: "max"`. Untouched by the parity sweep.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 10,
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"op": "gte", "value": 0}, "then": {"assign_range": {"min": 2, "max": 8, "policy": "min"}}},
+                ],
+            },
+            "normalization": {"basis": "explicit", "value": 8},
+        },
+    }
+
+    # raw=100 is above max, but policy=min ignores raw and returns the lower bound.
+    result = calculate_metric_score(metric, 100)
+    assert result.score == pytest.approx(2.0, abs=1e-6)
+    assert result.normalization_basis == pytest.approx(8.0, abs=1e-6)
+    assert result.normalized_score == pytest.approx(0.25, abs=1e-6)
+
+
+def test_calculate_metric_score_v2_assign_range_clamp_input_raises_on_non_numeric_raw() -> None:
+    """`assign_range` with `policy: "clamp_input"` requires a numeric
+    raw value; a list that does not coerce to float must raise
+    `ScoreCalculationError` rather than silently returning a bound.
+
+    The rule's `contains` predicate is what lets the list reach the
+    action layer; without it, the rule would never match and the
+    engine would raise 'no scoring rule matched' instead.
+    """
+    from app.services.metric_score_service import ScoreCalculationError
+
+    metric = {
+        "score_type": "static",
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "set"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"contains": "trigger"}, "then": {"assign_range": {"min": 0, "max": 100, "policy": "clamp_input"}}},
+                ],
+            },
+            "normalization": {"basis": "explicit", "value": 100},
+        },
+    }
+
+    with pytest.raises(ScoreCalculationError, match="clamp_input requires numeric raw value"):
+        calculate_metric_score(metric, ["trigger"])
+
+
+def test_calculate_metric_score_v2_contains_singular_matches_list_member() -> None:
+    """`contains` (singular) on a list raw value should match if any
+    element of the list equals the expected value (after normalization).
+    Distinct from `contains_any` which iterates the expected list.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 10,
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "set"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"contains": "medical_record"}, "then": {"assign": 10}},
+                ],
+            },
+            "normalization": {"basis": "max_score", "value": 10},
+        },
+    }
+
+    result = calculate_metric_score(metric, ["other", "medical_record", "third"])
+    assert result.score == pytest.approx(10.0, abs=1e-6)
+    assert result.normalized_score == pytest.approx(1.0, abs=1e-6)
+    assert result.matched_rule_indexes == (0,)
+
+
+def test_calculate_metric_score_v2_range_exclusive_inclusive_min() -> None:
+    """`range` with `inclusive_min: False` excludes the lower bound.
+    A raw value equal to min must NOT match; min+1 must.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 10,
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"range": {"min": 10, "max": 20, "inclusive_min": False}}, "then": {"assign": 5}},
+                ],
+                "fallback": {"assign": 0},
+            },
+            "normalization": {"basis": "max_score", "value": 10},
+        },
+    }
+
+    boundary = calculate_metric_score(metric, 10)
+    assert boundary.matched_rule_indexes == ()
+    assert boundary.score == pytest.approx(0.0, abs=1e-6)
+
+    inside = calculate_metric_score(metric, 11)
+    assert inside.score == pytest.approx(5.0, abs=1e-6)
+    assert inside.matched_rule_indexes == (0,)
+
+
+def test_calculate_metric_score_v2_range_with_only_min_bound() -> None:
+    """A `range` with only `min` (no `max`) accepts any value >= min.
+    A value below min does not match (and falls through to the
+    fallback). Regression guard for the
+    `minimum is not None or maximum is not None` final return in
+    `_matches_range`.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 10,
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"range": {"min": 10}}, "then": {"assign": 4}},
+                ],
+                "fallback": {"assign": 0},
+            },
+            "normalization": {"basis": "max_score", "value": 10},
+        },
+    }
+
+    assert calculate_metric_score(metric, 15).matched_rule_indexes == (0,)
+    assert calculate_metric_score(metric, 10).matched_rule_indexes == (0,)  # boundary inclusive
+    assert calculate_metric_score(metric, 5).matched_rule_indexes == ()    # below min → fallback
+
+
+def test_calculate_metric_score_v2_field_extraction_falls_back_when_raw_is_not_dict() -> None:
+    """When `field` is set in the predicate but the raw value is not
+    a dict, `_extract_subject` returns the raw value itself. This is
+    the regression guard for the `isinstance(raw_value, dict)` check
+    in `_extract_subject`.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 10,
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"field": "presencas", "op": "gt", "value": 4}, "then": {"assign": 5}},
+                ],
+                "fallback": {"assign": 0},
+            },
+            "normalization": {"basis": "max_score", "value": 10},
+        },
+    }
+
+    # 5 > 4 → match (the `field` is set but the raw is not a dict; subject falls back to 5).
+    assert calculate_metric_score(metric, 5).matched_rule_indexes == (0,)
+    # 3 > 4 → no match → fallback
+    assert calculate_metric_score(metric, 3).matched_rule_indexes == ()
+
+
+def test_calculate_metric_score_v2_basis_explicit_with_zero_value_falls_through() -> None:
+    """`normalization.basis: "explicit"` with `value: 0` does NOT
+    short-circuit; the resolver falls through to the metric's
+    `max_score`. Guards the `> 0` guard on the explicit branch in
+    `_resolve_v2_normalization_basis`.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 20,
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"op": "gte", "value": 0}, "then": {"assign": 5}},
+                ],
+            },
+            "normalization": {"basis": "explicit", "value": 0},
+        },
+    }
+
+    result = calculate_metric_score(metric, 1)
+    assert result.normalization_basis == pytest.approx(20.0, abs=1e-6)
+    assert result.normalized_score == pytest.approx(5 / 20, abs=1e-6)
+
+
+def test_calculate_metric_score_v2_basis_mcv_with_missing_mcv_falls_through_to_max_score() -> None:
+    """`normalization.basis: "mcv"` with no `mcv` on the metric falls
+    through to the v1-style `_resolve_normalization_basis` and
+    ultimately returns `max_score`. Guards the
+    `mcv is not None and mcv > 0` short-circuit on the mcv branch.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 30,
+        # intentionally no mcv / mcv_score on the metric
+        "scoring_rules": {
+            "version": 2,
+            "input": {"kind": "number"},
+            "scoring": {
+                "mode": "first_match",
+                "rules": [
+                    {"when": {"op": "gte", "value": 0}, "then": {"assign": 6}},
+                ],
+            },
+            "normalization": {"basis": "mcv", "value": 0},
+        },
+    }
+
+    result = calculate_metric_score(metric, 1)
+    assert result.normalization_basis == pytest.approx(30.0, abs=1e-6)
+    assert result.normalized_score == pytest.approx(6 / 30, abs=1e-6)
