@@ -13,3 +13,6 @@ backend/**/contacts_users_v2_migration_report.json
 # Python cache artifacts
 __pycache__/
 *.py[cod]
+
+# Runtime logs (start-localhost, dev tools)
+.logs/
