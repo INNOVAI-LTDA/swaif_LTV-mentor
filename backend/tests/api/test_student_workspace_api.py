@@ -149,7 +149,6 @@ def test_student_workspace_self_scoped_read_and_update(monkeypatch, tmp_path: Pa
 
     user_repo = UserRepository()
     user_repo.create(
-        id="usr_aluno_workspace",
         email="aluno.workspace@swaif.local",
         password_hash=hash_password("aluno123"),
         role="aluno",
@@ -252,7 +251,6 @@ def test_student_workspace_runtime_requires_supabase_db_url_when_enforced(monkey
     client = TestClient(app)
 
     UserRepository().create(
-        id="usr_supabase_required_aluno",
         email="aluno@swaif.local",
         password_hash=hash_password("aluno123"),
         role="aluno",
@@ -276,7 +274,6 @@ def test_student_workspace_accepts_legacy_client_role(monkeypatch, tmp_path: Pat
 
     user_repo = UserRepository()
     user_repo.create(
-        id="usr_legacy_client_workspace",
         email="aluno.workspace@swaif.local",
         password_hash=hash_password("legacy123"),
         role="client",
@@ -312,7 +309,6 @@ def test_student_workspace_fails_closed_for_ambiguous_student_context(monkeypatc
 
     user_repo = UserRepository()
     user_repo.create(
-        id="usr_dup_ctx",
         email="dup@swaif.local",
         password_hash=hash_password("dup123"),
         role="aluno",
@@ -356,7 +352,6 @@ def test_student_workspace_rejects_pillar_out_of_scope(monkeypatch, tmp_path: Pa
 
     user_repo = UserRepository()
     user_repo.create(
-        id="usr_scope_ctx",
         email="aluno.workspace@swaif.local",
         password_hash=hash_password("scope123"),
         role="aluno",
@@ -395,7 +390,6 @@ def test_student_workspace_allows_empty_metrics_for_in_scope_pillar(monkeypatch,
 
     user_repo = UserRepository()
     user_repo.create(
-        id="usr_empty_scope",
         email="aluno.workspace@swaif.local",
         password_hash=hash_password("scope-empty123"),
         role="aluno",
