@@ -533,3 +533,176 @@ def test_calculate_metric_score_v2_basis_mcv_with_missing_mcv_falls_through_to_m
     result = calculate_metric_score(metric, 1)
     assert result.normalization_basis == pytest.approx(30.0, abs=1e-6)
     assert result.normalized_score == pytest.approx(6 / 30, abs=1e-6)
+
+
+# ---------- Commit 3: v1 unrestricted_sum and v1 static edge cases ----------
+
+
+def test_calculate_metric_score_v1_unrestricted_sum_with_dict_count_map() -> None:
+    """v1 `score_type: unrestricted_sum` with a dict raw value treats
+    each key as a quantity and matches rules by their
+    `condition.description`. The total is `Σ quantity * points` for
+    each matched rule, leaving rules with empty/missing descriptions
+    or zero quantities out of the sum.
+    """
+    metric = {
+        "score_type": "unrestricted_sum",
+        "max_score": 100,
+        "scoring_rules": [
+            {"points": 2, "condition": {"description": "presencas"}},
+            {"points": 3, "condition": {"description": "feedback"}},
+            # rule whose description is absent from the raw → skipped
+            {"points": 5, "condition": {"description": "extra"}},
+        ],
+    }
+
+    result = calculate_metric_score(metric, {"presencas": 4, "feedback": 2})
+    # 4 * 2 + 2 * 3 = 14
+    assert result.score == pytest.approx(14.0, abs=1e-6)
+    assert result.matched_rule_indexes == (0, 1)
+    assert result.normalization_basis == pytest.approx(100.0, abs=1e-6)
+
+
+def test_calculate_metric_score_v1_unrestricted_sum_with_list_raw() -> None:
+    """v1 `unrestricted_sum` with a list raw value iterates each
+    item and matches rules per item. Each match adds the rule's
+    `points` to the total. The same `isinstance(raw_value, (list,
+    tuple, set))` branch covers tuple and set inputs.
+    """
+    metric = {
+        "score_type": "unrestricted_sum",
+        "max_score": 100,
+        "scoring_rules": [
+            {"points": 5, "condition": {"operator": "eq", "value": "presencial"}},
+            {"points": 5, "condition": {"operator": "eq", "value": "online"}},
+            {"points": 5, "condition": {"operator": "eq", "value": "feedback"}},
+        ],
+    }
+
+    result = calculate_metric_score(metric, ["presencial", "feedback"])
+    # presencial matches rule 0 (+5); feedback matches rule 2 (+5); online absent.
+    assert result.score == pytest.approx(10.0, abs=1e-6)
+    assert result.matched_rule_indexes == (0, 2)
+
+
+def test_calculate_metric_score_v1_unrestricted_sum_raises_on_string_raw() -> None:
+    """v1 `unrestricted_sum` with a non-numeric, non-list, non-dict
+    raw value raises `ScoreCalculationError`. Strings are not
+    supported as raw inputs to this scoring mode.
+    """
+    from app.services.metric_score_service import ScoreCalculationError
+
+    metric = {
+        "score_type": "unrestricted_sum",
+        "scoring_rules": [
+            {"points": 2, "condition": {"description": "x"}},
+        ],
+    }
+
+    with pytest.raises(ScoreCalculationError, match="unsupported raw value for unrestricted_sum"):
+        calculate_metric_score(metric, "raw string")
+
+
+def test_calculate_metric_score_v1_unrestricted_sum_raises_when_rule_lacks_points() -> None:
+    """v1 `unrestricted_sum` with numeric raw value but a rule
+    missing `points` raises — the unit multiplier is undefined.
+    """
+    from app.services.metric_score_service import ScoreCalculationError
+
+    metric = {
+        "score_type": "unrestricted_sum",
+        "scoring_rules": [
+            # no `points` key
+            {"condition": {"description": "x"}},
+        ],
+    }
+
+    with pytest.raises(ScoreCalculationError, match="unrestricted_sum rule requires points"):
+        calculate_metric_score(metric, 5)
+
+
+def test_calculate_metric_score_v1_static_uses_max_among_matching_rules() -> None:
+    """v1 `static` with multiple matching rules selects the largest
+    `points` among the matches. The engine does not pick the first
+    match — it picks the max. This is the regression guard for the
+    `else: score = max(...)` branch in `calculate_metric_score`.
+    The pre-existing v1 test (`test_calculate_metric_score_legacy_v1_static_remains_supported`)
+    only exercises the single-match case; this one forces three
+    matches to actually hit the `max` branch.
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 30,
+        "scoring_rules": [
+            {"points": 10, "condition": {"operator": "gte", "value": 0}},
+            {"points": 20, "condition": {"operator": "gte", "value": 10}},
+            {"points": 15, "condition": {"operator": "gte", "value": 50}},
+        ],
+    }
+
+    # raw=60 satisfies all three thresholds; max(10, 20, 15) = 20.
+    result = calculate_metric_score(metric, 60)
+    assert result.score == pytest.approx(20.0, abs=1e-6)
+    assert result.matched_rule_indexes == (0, 1, 2)
+    assert result.normalization_basis == pytest.approx(30.0, abs=1e-6)
+
+
+def test_calculate_metric_score_v1_no_rules_with_numeric_raw_uses_raw_as_score() -> None:
+    """v1 metric with empty `scoring_rules` and a numeric raw value
+    uses the raw value as the score directly. The basis is whatever
+    `_resolve_normalization_basis` returns (here `max_score`).
+    """
+    metric = {
+        "score_type": "static",
+        "max_score": 100,
+        "scoring_rules": [],
+    }
+
+    result = calculate_metric_score(metric, 42)
+    assert result.score == pytest.approx(42.0, abs=1e-6)
+    assert result.normalization_basis == pytest.approx(100.0, abs=1e-6)
+    assert result.normalized_score == pytest.approx(0.42, abs=1e-6)
+    assert result.matched_rule_indexes == ()
+
+
+def test_calculate_metric_score_v1_no_rules_with_non_numeric_raw_raises() -> None:
+    """v1 metric with empty `scoring_rules` and a non-numeric raw
+    value cannot infer a score, so it raises `ScoreCalculationError`.
+    """
+    from app.services.metric_score_service import ScoreCalculationError
+
+    metric = {
+        "score_type": "static",
+        "scoring_rules": [],
+    }
+
+    with pytest.raises(ScoreCalculationError, match="metric has no scoring rules"):
+        calculate_metric_score(metric, "raw string")
+
+
+def test_calculate_metric_score_v1_and_operator_matches_inside_and_raises_outside() -> None:
+    """v1 `operator: "and"` (interval match) returns True when the raw
+    is inside the `[min, max]` interval and False otherwise. When
+    no rule matches and there is no fallback, the engine raises
+    `ScoreCalculationError("no scoring rule matched")`. The existing
+    v1 test only exercises the "outside" path implicitly; this one
+    covers both sides explicitly.
+    """
+    from app.services.metric_score_service import ScoreCalculationError
+
+    metric = {
+        "score_type": "static",
+        "max_score": 20,
+        "scoring_rules": [
+            {"points": 15, "condition": {"operator": "and", "min": 10, "max": 20}},
+        ],
+    }
+
+    # raw=15 is inside [10, 20] → match → score=15
+    inside = calculate_metric_score(metric, 15)
+    assert inside.score == pytest.approx(15.0, abs=1e-6)
+    assert inside.matched_rule_indexes == (0,)
+
+    # raw=5 is below the interval → no match → raises
+    with pytest.raises(ScoreCalculationError, match="no scoring rule matched"):
+        calculate_metric_score(metric, 5)
