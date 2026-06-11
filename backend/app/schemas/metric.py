@@ -25,6 +25,12 @@ class MetricCreate(BaseModel):
     code: str | None = None
     direction: MetricDirection = "higher_better"
     unit: str | None = None
+    # `scoring_rules` accepts both v1 (list) and v2 (dict with
+    # `version: 2`) shapes. Within v2, the `assign_range` action's
+    # `policy: "clamp_input"` is a legacy name kept for compatibility
+    # — its behavior is plain clamp, not interpolation. See the
+    # comment in `metric_score_service._evaluate_assign_range` for
+    # the full rationale.
     scoring_rules: list[dict[str, Any]] | dict[str, Any] | None = None
     score_type: str | None = None
     min_score: int | None = None

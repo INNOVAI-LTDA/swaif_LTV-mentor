@@ -228,6 +228,18 @@ def _evaluate_assign_range(action: dict[str, Any], raw_value: Any) -> float:
     policy = _normalize_text(action.get("policy") or "max")
     if policy == "min":
         return lower
+    # `clamp_input` is a legacy policy name kept for compatibility
+    # with persisted scoring rules. Despite the name suggesting
+    # interpolation, the behavior is plain clamp: the raw value is
+    # coerced to a float and constrained to [lower, upper]. The
+    # diagnostic from 2026-05-08 raised the question of whether to
+    # rename or to change to interpolation; the decision (recorded
+    # in this repo's cycle history) was to keep the name AND the
+    # clamp behavior, on the basis that the alternative would
+    # silently change scores for any metric that already uses
+    # `policy="clamp_input"`. If the product later wants
+    # interpolation, introduce a new policy key (e.g. "interpolate")
+    # rather than repurposing this one.
     if policy == "clamp_input":
         numeric_raw = _coerce_float(raw_value)
         if numeric_raw is None:

@@ -170,6 +170,14 @@ def _evaluate_assign_range(assign_range: dict[str, Any], raw_value: Any) -> floa
     policy = _normalize_text(assign_range.get("policy") or "max")
     if policy == "min":
         return lower
+    # `clamp_input` is a legacy policy name; behavior is plain
+    # clamp (see the matching branch in
+    # `metric_score_service._evaluate_assign_range` for the full
+    # rationale and the "no rename" decision from 2026-05-08).
+    # This parity implementation lets non-numeric raw values
+    # surface as a TypeError from `min(upper, None)` rather than
+    # a typed ScoreCalculationError; the parity test exercises
+    # only numeric inputs so the divergence stays latent.
     if policy == "clamp_input":
         value = _coerce_float(raw_value)
         return max(lower, min(upper, value))
