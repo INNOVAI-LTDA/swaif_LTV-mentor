@@ -6,6 +6,15 @@ from typing import Literal
 from pydantic import BaseModel
 
 
+# `target_range` is accepted at the schema boundary for forward
+# compatibility, but the scoring engine (metric_score_service)
+# treats it as `higher_better`. The "value within a baseline-centered
+# band" semantics for `target_range` is only applied by
+# `indicator_carga_service._is_anomaly` (anomaly detection) and
+# `_build_anomaly_texts` (copy). Adding a dedicated branch in the
+# scoring engine for `target_range` is a product decision, not a
+# bug fix — see the session-2026-05-08 diagnostic and the
+# decisions recorded in this repo's cycle history.
 MetricDirection = Literal["higher_better", "lower_better", "target_range"]
 
 

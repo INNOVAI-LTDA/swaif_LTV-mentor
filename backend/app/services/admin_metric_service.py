@@ -8,6 +8,10 @@ from app.storage.pillar_repository import PillarRepository
 from app.storage.protocol_repository import ProtocolRepository
 
 
+# `target_range` is accepted on the admin validation surface for
+# forward compatibility, but the scoring engine does not have a
+# dedicated branch for it. See the comment on `MetricDirection` in
+# `app/schemas/metric.py` for the full rationale.
 VALID_DIRECTIONS = {"higher_better", "lower_better", "target_range"}
 
 

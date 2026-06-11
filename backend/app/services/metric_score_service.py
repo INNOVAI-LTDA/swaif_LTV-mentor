@@ -351,6 +351,13 @@ def _calculate_metric_score_v2(metric: dict[str, Any], raw_value: Any, definitio
 
     basis = _resolve_v2_normalization_basis(metric, normalization=normalization, matched_rules=matched_rules, score=score)
     normalized_score = 0.0 if basis <= 0 else _clamp01(score / basis)
+    # Direction inversion: only `lower_better` flips the normalized
+    # score. `target_range` (when present in the metric envelope) is
+    # intentionally treated as `higher_better` here — its "value
+    # within a band centered on baseline" semantics lives in
+    # `indicator_carga_service._is_anomaly`, not in the scoring
+    # engine. If a product decision is made to score `target_range`
+    # differently, this is the spot to branch.
     if _normalize_text(metric.get("direction") or "higher_better") == "lower_better":
         normalized_score = 1.0 - normalized_score
     return MetricScoreResult(
@@ -496,6 +503,13 @@ def calculate_metric_score(metric: dict[str, Any], raw_value: Any) -> MetricScor
 
     basis = _resolve_normalization_basis(metric, matched_rules=matched_rules, score=score)
     normalized_score = 0.0 if basis <= 0 else _clamp01(score / basis)
+    # Direction inversion: only `lower_better` flips the normalized
+    # score. `target_range` (when present in the metric envelope) is
+    # intentionally treated as `higher_better` here — its "value
+    # within a band centered on baseline" semantics lives in
+    # `indicator_carga_service._is_anomaly`, not in the scoring
+    # engine. If a product decision is made to score `target_range`
+    # differently, this is the spot to branch.
     if _normalize_text(metric.get("direction") or "higher_better") == "lower_better":
         normalized_score = 1.0 - normalized_score
     return MetricScoreResult(
